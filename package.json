@@ -1,0 +1,38 @@
+{
+	"name": "image-mark",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite --mode development --force",
+		"build": "vite build -c vite.lib.config.ts",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@arco-design/web-vue": "^2.55.3",
+		"@rollup/plugin-strip": "^3.0.4",
+		"@types/lodash": "^4.17.6",
+		"@types/node": "^20.14.9",
+		"@vitejs/plugin-vue": "^5.0.5",
+		"sass": "^1.77.6",
+		"sass-loader": "^14.2.1",
+		"typescript": "^5.2.2",
+		"vite": "^5.3.1",
+		"vite-plugin-dts": "^3.9.1",
+		"vue": "^3.4.31",
+		"vue-router": "^4.4.0",
+		"vue-tsc": "^2.0.21"
+	},
+	"main": "./dist/index.umd.js",
+	"module": "./dist/index.es.js",
+	"types": "./types/index.d.ts",
+	"files": [
+		"dist",
+		"types",
+		"README.md"
+	],
+	"dependencies": {
+		"@svgdotjs/svg.js": "^3.2.4",
+		"lodash": "^4.17.21"
+	}
+}
