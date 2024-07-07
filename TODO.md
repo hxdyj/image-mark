@@ -1,1 +1,2 @@
-1. add moving by documen
+- [ ] Plugin System
+- [ ] Rect Or Other Mode use plugin system implement
