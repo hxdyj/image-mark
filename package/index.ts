@@ -139,7 +139,6 @@ export class ImageMark {
         this.stage.on('wheel', (ev: Event) => {
             let e = ev as WheelEvent
             let enhanceEvt = this.mouseEvent2ContainerEvent(e)
-            console.log(111, [enhanceEvt.imageClientX, enhanceEvt.imageClientY]);
             this.scale(e.deltaY < 0 ? 1 : -1, [enhanceEvt.imageClientX, enhanceEvt.imageClientY], 'image')
         })
     }
@@ -169,7 +168,7 @@ export class ImageMark {
 
     private mouseEvent2ContainerEvent(event: MouseEvent): ContainerMouseEvent {
         const cloneEvent = event as ContainerMouseEvent
-        const newPoint = this.containerPoint2ImagePoint([cloneEvent.clientX, cloneEvent.clientY])
+        const newPoint = this.containerPoint2ImagePoint([cloneEvent.offsetX, cloneEvent.offsetY])
         cloneEvent.imageClientX = newPoint[0]
         cloneEvent.imageClientY = newPoint[1]
         return cloneEvent

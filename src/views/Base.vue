@@ -1,5 +1,6 @@
 <template>
-    <div class="page-base" style="height: 100vh;">
+    <div style="background-color: red;height: 30vh;"></div>
+    <div class="page-base" style="height: 60vh;">
     </div>
 </template>
 <script setup lang="ts">
