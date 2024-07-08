@@ -25,15 +25,24 @@ export type ArrayPoint = [number, number]
 export type ContainerMouseEvent = MouseEvent & ImageClient & Document2ContainerOffset
 export type ContainerType = string | HTMLElement;
 export type BoundingBox = Pick<RectData, "x" | "y" | "width" | "height">
+
+export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 export type ImageMarkOptions = {
 	el: ContainerType
 	src: string
-	scaleToCenter?: {
-		box?: BoundingBox
+	initScaleConfig?: ({
+		to?: 'image'
+	} | {
+		to: 'box'
+		box: BoundingBox
+	}) & {
+		startPosition?: 'center' | 'top-left'
+		size?: InitialScaleSize
 		/**
-		 * 留白 数值应该在0 - 1之间，按照百分比去算的
+		 * 留白
 		 *  */
 		padding?: number
+		paddingUnit?: 'px' | '%'
 	}
 	data?: ShapeData[]
 }
@@ -58,6 +67,11 @@ export class ImageMark {
 	private eventBus = new EventEmitter()
 	constructor(private options: ImageMarkOptions) {
 		this.data = options.data || []
+		this.options.initScaleConfig = this.options.initScaleConfig || {
+			to: 'image',
+			size: 'fit',
+			padding: 0.1
+		}
 		this.container = getElement(this.options.el)
 		if (!this.container) {
 			throw new Error('Container not found')
@@ -68,7 +82,7 @@ export class ImageMark {
 		this.init()
 		this.stage = SVG()
 		this.stage.attr({
-			style: `background-color:blue`
+			style: `background-color:#c9cdd4`
 		})
 		this.stageGroup = new G()
 
@@ -127,32 +141,138 @@ export class ImageMark {
 		let imgHeight = target.naturalHeight
 		let containerWidth = this.containerRectInfo.width
 		let containerHeight = this.containerRectInfo.height
-		let { padding = 0, box } = this.options?.scaleToCenter ?? {}
-		if (this.options?.scaleToCenter) {
-			let paddingWidth = containerWidth * padding
-			let paddingHeight = containerHeight * padding
 
-			let maxWidth = containerWidth - paddingWidth * 2
-			let maxHeight = containerHeight - paddingHeight * 2
-			if (box) {//如果有box，就按照box的长宽比例展示图片
-				let boxWidth = box.width
-				let boxHeight = box.height
-				let boxFitScale = maxWidth / maxHeight > boxWidth / boxHeight ? maxHeight / boxHeight : maxWidth / boxWidth // 长边尽量展示出来
-				this.stageGroup.transform({
-					scale: boxFitScale,
-					translate: [(containerWidth - boxWidth * boxFitScale) / 2 - box.x * boxFitScale, (containerHeight - boxHeight * boxFitScale) / 2 - box.y * boxFitScale]
-				})
+		let { padding = 0, size = 'fit', to = 'image', startPosition = 'center', paddingUnit = '%' } = this.options.initScaleConfig!
 
-			} else {//就是按照图片的长宽比例展示图片
-				let widthRate = maxWidth / imgWidth
-				let heightRate = maxHeight / imgHeight
-				let imageFitScale = maxWidth / maxHeight > imgWidth / imgHeight ? heightRate : widthRate // 长边尽量展示出来
-				this.stageGroup.transform({
-					scale: imageFitScale,
-					translate: [(containerWidth - imgWidth * imageFitScale) / 2, (containerHeight - imgHeight * imageFitScale) / 2]
-				})
-			}
+		let box: BoundingBox | null = null
+		if (this.options.initScaleConfig!.to === 'box') {
+			box = this.options.initScaleConfig?.box || null
 		}
+
+		let paddingWidth = padding
+		let paddingHeight = padding
+
+		if (paddingUnit === '%') {
+			paddingWidth = containerWidth * padding
+			paddingHeight = containerHeight * padding
+		}
+
+
+		let maxWidth = containerWidth - paddingWidth * 2
+		let maxHeight = containerHeight - paddingHeight * 2
+
+		let initialScale = 1
+		let translateOffset: ArrayPoint = [0, 0]
+		type Deal = {
+			[key in InitialScaleSize]: () => void
+		}
+		if (to == 'box' && box) {//如果有box，就按照box的长宽比例展示图片
+			let boxWidth = box.width
+			let boxHeight = box.height
+			let deal: Deal = {
+				fit: () => {
+					let boxFitScale = maxWidth / maxHeight > boxWidth / boxHeight ? maxHeight / boxHeight : maxWidth / boxWidth // 长边尽量展示出来
+					initialScale = boxFitScale
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - boxWidth * boxFitScale) / 2 - box.x * boxFitScale, (containerHeight - boxHeight * boxFitScale) / 2 - box.y * boxFitScale]
+					}
+				},
+				original: () => {
+					if (startPosition === 'top-left') {
+						translateOffset = [-box.x + paddingWidth, -box.y + paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - boxWidth) / 2 - box.x + paddingWidth, (containerHeight - boxHeight) / 2 - box.y + paddingHeight]
+					}
+				},
+				cover: () => {
+					let boxCoverScale = maxWidth / maxHeight < boxWidth / boxHeight ? maxHeight / boxHeight : maxWidth / boxWidth // 短边尽量展示出来
+					initialScale = boxCoverScale
+					if (startPosition === 'top-left') {
+						translateOffset = [-box.x * boxCoverScale + paddingWidth, -box.y * boxCoverScale + paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - boxWidth * boxCoverScale) / 2 - box.x * boxCoverScale + paddingWidth, (containerHeight - boxHeight * boxCoverScale) / 2 - box.y * boxCoverScale + paddingHeight]
+					}
+				},
+				width: () => {
+					initialScale = maxWidth / boxWidth
+					if (startPosition === 'top-left') {
+						translateOffset = [paddingWidth - box.x * initialScale, - box.y * initialScale + paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - boxWidth * initialScale) / 2 - box.x * initialScale, (containerHeight - boxHeight * initialScale) / 2 - box.y * initialScale + paddingHeight]
+					}
+				},
+				height: () => {
+					initialScale = maxHeight / boxHeight
+					if (startPosition === 'top-left') {
+						translateOffset = [- box.x * initialScale + paddingWidth, - box.y * initialScale + paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - boxWidth * initialScale) / 2 - box.x * initialScale + paddingWidth, (containerHeight - boxHeight * initialScale) / 2 - box.y * initialScale]
+					}
+				}
+			}
+			deal[size]()
+
+		} else if (to == 'image') {//就是按照图片的长宽比例展示图片
+			let widthRate = maxWidth / imgWidth
+			let heightRate = maxHeight / imgHeight
+
+			let deal: Deal = {
+				fit: () => {
+					let imageFitScale = maxWidth / maxHeight > imgWidth / imgHeight ? heightRate : widthRate // 长边尽量展示出来
+					initialScale = imageFitScale
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - imgWidth * imageFitScale) / 2, (containerHeight - imgHeight * imageFitScale) / 2]
+					}
+				},
+				original: () => {
+					if (startPosition === 'top-left') {
+						translateOffset = [paddingWidth, paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - imgWidth) / 2 + paddingWidth, (containerHeight - imgHeight) / 2 + paddingHeight]
+					}
+				},
+				cover: () => {
+					let imageCoverScale = maxWidth / maxHeight < imgWidth / imgHeight ? heightRate : widthRate // 短边尽量展示出来
+					initialScale = imageCoverScale
+					if (startPosition === 'top-left') {
+						translateOffset = [paddingWidth, paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - imgWidth * initialScale) / 2 + paddingWidth, (containerHeight - imgHeight * initialScale) / 2 + paddingHeight]
+					}
+				},
+				width: () => {
+					initialScale = maxWidth / imgWidth
+					if (startPosition === 'top-left') {
+						translateOffset = [paddingWidth, paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - imgWidth * initialScale) / 2, (containerHeight - imgHeight * initialScale) / 2 + paddingHeight]
+					}
+				},
+				height: () => {
+					initialScale = maxHeight / imgHeight
+					if (startPosition === 'top-left') {
+						translateOffset = [paddingWidth, paddingHeight]
+					}
+					if (startPosition === 'center') {
+						translateOffset = [(containerWidth - imgWidth * initialScale) / 2 + paddingWidth, (containerHeight - imgHeight * initialScale) / 2]
+					}
+				}
+			}
+			deal[size]()
+		}
+
+		this.stageGroup.transform({
+			scale: initialScale,
+			translate: translateOffset
+		})
+
 		this.lastTransform = this.stageGroup.transform()
 		this.image.size(target.naturalWidth, target.naturalHeight)
 		this.image.addTo(this.stageGroup)
@@ -170,7 +290,6 @@ export class ImageMark {
 
 	private onContainerWheel(e: Event) {
 		e.preventDefault()
-
 	}
 
 	addContainerEvent() {
@@ -293,8 +412,9 @@ export class ImageMark {
 		const zoomIntensity = 0.1
 		let zoom = Math.exp(direction * zoomIntensity)
 
-
-		if (zoom * this.lastTransform.scaleX! < this.minScale || zoom * this.lastTransform.scaleX! > this.maxScale) {
+		let currentScale = this.lastTransform.scaleX || 1
+		let afterScale = this.lastTransform.scaleX! * zoom
+		if ((afterScale < this.minScale || afterScale > this.maxScale) && !(currentScale > this.maxScale && afterScale < currentScale || currentScale < this.minScale && afterScale > currentScale)) {
 			console.warn(`scale out of ${this.minScale} - ${this.maxScale} range`)
 			return
 		}
