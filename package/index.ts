@@ -3,7 +3,7 @@ import { getContainerInfo, getElement } from "./utils/dom";
 import { ImageMarkShape, ShapeData, ShapeType } from "./shape/Shape";
 import { ImageMarkRect, RectData } from "./shape/Rect";
 import { ImageMarkImage, ImageData } from "./shape/Image";
-import { throttle } from "lodash";
+import { cloneDeep, throttle } from "lodash";
 import EventEmitter from "eventemitter3";
 
 
@@ -408,7 +408,7 @@ export class ImageMark {
 
 
 
-	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container') {
+	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
 		if (this.status.scaling || this.status.moving) return
 		if (point === 'left-top') {
 			point = [0, 0]
@@ -422,7 +422,8 @@ export class ImageMark {
 		let zoom = Math.exp(direction * zoomIntensity)
 
 		let currentScale = this.lastTransform.scaleX || 1
-		let afterScale = this.lastTransform.scaleX! * zoom
+		let afterScale = newScale !== undefined ? newScale : this.lastTransform.scaleX! * zoom
+
 		if ((afterScale < this.minScale || afterScale > this.maxScale) && !(currentScale > this.maxScale && afterScale < currentScale || currentScale < this.minScale && afterScale > currentScale)) {
 			console.warn(`scale out of ${this.minScale} - ${this.maxScale} range`)
 			return
@@ -432,10 +433,32 @@ export class ImageMark {
 		if (reletiveTo === 'container') {
 			origin = this.containerPoint2ImagePoint(point)
 		}
-		this.stageGroup.transform({
-			origin,
-			scale: zoom,
-		}, true)
+
+		if (newScale !== undefined) {
+			//TODO(songle): fix this
+			// let newTransform = cloneDeep(this.lastTransform)
+			// delete newTransform.a
+			// delete newTransform.b
+			// delete newTransform.c
+			// delete newTransform.d
+			// delete newTransform.e
+			// delete newTransform.f
+			// newTransform.scaleX = newScale
+			// newTransform.scaleY = newScale
+			// newTransform.originX = origin[0]
+			// newTransform.originY = origin[1]
+			// debugger
+			// this.stageGroup.transform(newTransform)
+
+		} else {
+
+			this.stageGroup.transform({
+				origin,
+				scale: zoom,
+			}, true)
+
+		}
+
 		this.lastTransform = this.stageGroup.transform()
 		this.status.scaling = false
 		return this
@@ -494,5 +517,9 @@ export class ImageMark {
 		return this
 	}
 
+	scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container') {
+		const { scale } = this.getInitialScaleAndTranslate(options)
+		this.scale(1, point, reletiveTo, scale)
+	}
 }
 

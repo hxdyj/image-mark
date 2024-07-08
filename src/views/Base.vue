@@ -6,6 +6,12 @@
 		<a-button @click="() => {
 			imgMark?.move([-50, 0])
 		}">move x -</a-button>
+		<a-button @click="() => {
+			imgMark?.scaleTo({
+				to: 'image',
+				size: 'height'
+			}, 'center')
+		}">scale to cover -</a-button>
 	</div>
 	<div class="page-base" style="height: 60vh;">
 	</div>
@@ -49,7 +55,7 @@ onMounted(() => {
 			paddingUnit: 'px'
 		}
 	}).on('firstRender', () => {
-		imgMark?.setMinScale('cover')
+		// imgMark?.setMinScale('cover')
 	})
 })
 </script>
