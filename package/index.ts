@@ -22,6 +22,7 @@ export type Document2ContainerOffset = {
 }
 
 export type ArrayPoint = [number, number]
+export type ArrayWH = ArrayPoint
 export type ContainerMouseEvent = MouseEvent & ImageClient & Document2ContainerOffset
 export type ContainerType = string | HTMLElement;
 export type BoundingBox = Pick<RectData, "x" | "y" | "width" | "height">
@@ -96,7 +97,7 @@ export class ImageMark {
 			this.render()
 			this.addDefaultAction()
 			this.addContainerEvent()
-			this.eventBus.emit(EventBusEventName.FirstRender)
+			this.eventBus.emit(EventBusEventName.FirstRender, this)
 		})
 	}
 
@@ -135,18 +136,20 @@ export class ImageMark {
 		})
 	}
 
-	private drawImage(ev: Event) {
-		let target = ev.target as HTMLImageElement
-		let imgWidth = target.naturalWidth
-		let imgHeight = target.naturalHeight
+	private getInitialScaleAndTranslate(options: ImageMarkOptions['initScaleConfig']) {
+
+		let imgWidth = this.imageDom.naturalWidth
+		let imgHeight = this.imageDom.naturalHeight
+
+
 		let containerWidth = this.containerRectInfo.width
 		let containerHeight = this.containerRectInfo.height
 
-		let { padding = 0, size = 'fit', to = 'image', startPosition = 'center', paddingUnit = '%' } = this.options.initScaleConfig!
+		let { padding = 0, size = 'fit', to = 'image', startPosition = 'center', paddingUnit = '%' } = options!
 
 		let box: BoundingBox | null = null
-		if (this.options.initScaleConfig!.to === 'box') {
-			box = this.options.initScaleConfig?.box || null
+		if (options!.to === 'box') {
+			box = options?.box || null
 		}
 
 		let paddingWidth = padding
@@ -156,7 +159,6 @@ export class ImageMark {
 			paddingWidth = containerWidth * padding
 			paddingHeight = containerHeight * padding
 		}
-
 
 		let maxWidth = containerWidth - paddingWidth * 2
 		let maxHeight = containerHeight - paddingHeight * 2
@@ -268,13 +270,20 @@ export class ImageMark {
 			deal[size]()
 		}
 
-		this.stageGroup.transform({
+		return {
 			scale: initialScale,
 			translate: translateOffset
-		})
+		}
+	}
+
+	private drawImage(ev: Event) {
+		let target = ev.target as HTMLImageElement
+
+		this.stageGroup.transform(this.getInitialScaleAndTranslate(this.options.initScaleConfig))
 
 		this.lastTransform = this.stageGroup.transform()
-		this.image.size(target.naturalWidth, target.naturalHeight)
+
+		this.image.size(this.imageDom.naturalWidth, this.imageDom.naturalHeight)
 		this.image.addTo(this.stageGroup)
 	}
 
@@ -458,13 +467,25 @@ export class ImageMark {
 		return [newX, newY]
 	}
 
-	setMinScale(minScale: number) {
-		this.minScale = minScale
+	setMinScale(minScale: number | InitialScaleSize) {
+		let minScaleValue: number = this.minScale
+		if (typeof minScale === 'string') {
+			minScaleValue = this.getInitialScaleAndTranslate({ size: minScale }).scale
+		} else {
+			minScaleValue = minScale
+		}
+		this.minScale = minScaleValue
 		return this
 	}
 
-	setMaxScale(maxScale: number) {
-		this.maxScale = maxScale
+	setMaxScale(maxScale: number | InitialScaleSize) {
+		let maxScaleValue: number = this.maxScale
+		if (typeof maxScale === 'string') {
+			maxScaleValue = this.getInitialScaleAndTranslate({ size: maxScale }).scale
+		} else {
+			maxScaleValue = maxScale
+		}
+		this.maxScale = maxScaleValue
 		return this
 	}
 

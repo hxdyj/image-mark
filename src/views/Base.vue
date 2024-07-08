@@ -49,7 +49,7 @@ onMounted(() => {
 			paddingUnit: 'px'
 		}
 	}).on('firstRender', () => {
-		// imgMark?.removeStageLmbDownMoveing()
+		imgMark?.setMinScale('cover')
 	})
 })
 </script>
