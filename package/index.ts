@@ -281,7 +281,7 @@ export class ImageMark {
 
 
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container') {
-		if (this.status.scaling) return
+		if (this.status.scaling || this.status.moving) return
 		if (point === 'left-top') {
 			point = [0, 0]
 		}
