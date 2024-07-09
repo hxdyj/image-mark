@@ -7,10 +7,13 @@
 			imgMark?.move([-50, 0])
 		}">move x -</a-button>
 		<a-button @click="() => {
+			imgMark?.scale(-1, 'center', 'image')
+		}">scale image center -</a-button>
+		<a-button @click="() => {
 			imgMark?.scaleTo({
 				to: 'image',
-				size: 'height'
-			}, 'center')
+				size: 'height',
+			}, [50, 50], 'image')
 		}">scale to cover -</a-button>
 	</div>
 	<div class="page-base" style="height: 60vh;">
@@ -45,9 +48,15 @@ onMounted(() => {
 			startPosition: 'center',
 			size: 'height',
 			to: 'box',
+			// box: {
+			// 	x: 1270,
+			// 	y: 626,
+			// 	width: 20,
+			// 	height: 20,
+			// },
 			box: {
-				x: 400,
-				y: 400,
+				x: 50,
+				y: 50,
 				width: 100,
 				height: 100,
 			},

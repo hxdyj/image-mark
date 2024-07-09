@@ -203,7 +203,7 @@ export class ImageMark {
 						translateOffset = [paddingWidth - box.x * initialScale, - box.y * initialScale + paddingHeight]
 					}
 					if (startPosition === 'center') {
-						translateOffset = [(containerWidth - boxWidth * initialScale) / 2 - box.x * initialScale, (containerHeight - boxHeight * initialScale) / 2 - box.y * initialScale + paddingHeight]
+						translateOffset = [(containerWidth - boxWidth * initialScale) / 2 - box.x * initialScale, (containerHeight - boxHeight * initialScale) / 2 - box.y * initialScale]
 					}
 				},
 				height: () => {
@@ -212,7 +212,7 @@ export class ImageMark {
 						translateOffset = [- box.x * initialScale + paddingWidth, - box.y * initialScale + paddingHeight]
 					}
 					if (startPosition === 'center') {
-						translateOffset = [(containerWidth - boxWidth * initialScale) / 2 - box.x * initialScale + paddingWidth, (containerHeight - boxHeight * initialScale) / 2 - box.y * initialScale]
+						translateOffset = [(containerWidth - boxWidth * initialScale) / 2 - box.x * initialScale, (containerHeight - boxHeight * initialScale) / 2 - box.y * initialScale]
 					}
 				}
 			}
@@ -254,7 +254,7 @@ export class ImageMark {
 						translateOffset = [paddingWidth, paddingHeight]
 					}
 					if (startPosition === 'center') {
-						translateOffset = [(containerWidth - imgWidth * initialScale) / 2, (containerHeight - imgHeight * initialScale) / 2 + paddingHeight]
+						translateOffset = [(containerWidth - imgWidth * initialScale) / 2, (containerHeight - imgHeight * initialScale) / 2]
 					}
 				},
 				height: () => {
@@ -263,7 +263,7 @@ export class ImageMark {
 						translateOffset = [paddingWidth, paddingHeight]
 					}
 					if (startPosition === 'center') {
-						translateOffset = [(containerWidth - imgWidth * initialScale) / 2 + paddingWidth, (containerHeight - imgHeight * initialScale) / 2]
+						translateOffset = [(containerWidth - imgWidth * initialScale) / 2, (containerHeight - imgHeight * initialScale) / 2]
 					}
 				}
 			}
@@ -415,6 +415,10 @@ export class ImageMark {
 		}
 		if (point === 'center') {
 			point = [this.imageDom.naturalWidth / 2, this.imageDom.naturalHeight / 2]
+			if (reletiveTo === 'container') {
+				point = [this.containerRectInfo.width / 2, this.containerRectInfo.height / 2]
+			}
+
 		}
 		let origin = point
 
@@ -433,22 +437,11 @@ export class ImageMark {
 		if (reletiveTo === 'container') {
 			origin = this.containerPoint2ImagePoint(point)
 		}
-
 		if (newScale !== undefined) {
-			//TODO(songle): fix this
-			// let newTransform = cloneDeep(this.lastTransform)
-			// delete newTransform.a
-			// delete newTransform.b
-			// delete newTransform.c
-			// delete newTransform.d
-			// delete newTransform.e
-			// delete newTransform.f
-			// newTransform.scaleX = newScale
-			// newTransform.scaleY = newScale
-			// newTransform.originX = origin[0]
-			// newTransform.originY = origin[1]
-			// debugger
-			// this.stageGroup.transform(newTransform)
+			this.stageGroup.transform({
+				origin,
+				scale: newScale / currentScale,
+			}, true)
 
 		} else {
 
