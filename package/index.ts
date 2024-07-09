@@ -3,7 +3,7 @@ import { getContainerInfo, getElement } from "./utils/dom";
 import { ImageMarkShape, ShapeData, ShapeType } from "./shape/Shape";
 import { ImageMarkRect, RectData } from "./shape/Rect";
 import { ImageMarkImage, ImageData } from "./shape/Image";
-import { cloneDeep, throttle } from "lodash";
+import { throttle } from "lodash";
 import EventEmitter from "eventemitter3";
 
 

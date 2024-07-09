@@ -73,11 +73,11 @@ export declare class ImageMark {
     private onComtainerMouseWheelEvent;
     addStageMouseScale(): this;
     removeStageMouseScale(): this;
-    moveSuccessive(point: ArrayPoint): this;
+    moveSuccessive(point: ArrayPoint): this | undefined;
     endSuccessiveMove(): this;
     startSuccessiveMove(point: ArrayPoint): this;
-    move(point: ArrayPoint): this;
-    scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image', newScale?: number): this;
+    move(point: ArrayPoint): this | undefined;
+    scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image', newScale?: number): this | undefined;
     private documentMouseEvent2EnhanceEvent;
     private getEventOffset;
     private containerMouseEvent2EnhanceEvent;
