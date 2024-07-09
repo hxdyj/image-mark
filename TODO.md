@@ -1,2 +1,7 @@
 - [ ] Plugin System
 - [ ] Rect Or Other Mode use plugin system implement
+- [ ] limit move not out of container
+- [ ] shortcut system
+- [ ] dropable
+- [ ] commonly action class
+- [ ] resize deal

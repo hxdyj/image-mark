@@ -1,9 +1,9 @@
-import { G, Image, MatrixExtract, SVG, Svg } from "@svgdotjs/svg.js";
+import { G, Image, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
 import { ImageMarkShape, ShapeData, ShapeType } from "./shape/Shape";
 import { ImageMarkRect, RectData } from "./shape/Rect";
 import { ImageMarkImage, ImageData } from "./shape/Image";
-import { throttle } from "lodash";
+import { defaultsDeep, throttle } from "lodash";
 import EventEmitter from "eventemitter3";
 
 
@@ -46,6 +46,9 @@ export type ImageMarkOptions = {
 		paddingUnit?: 'px' | '%'
 	}
 	data?: ShapeData[]
+	moveConfig?: {
+		enableOutOfContainer?: boolean
+	}
 }
 
 export class ImageMark {
@@ -68,11 +71,16 @@ export class ImageMark {
 	private eventBus = new EventEmitter()
 	constructor(private options: ImageMarkOptions) {
 		this.data = options.data || []
-		this.options.initScaleConfig = this.options.initScaleConfig || {
+		this.options.initScaleConfig = defaultsDeep(this.options.initScaleConfig, {
 			to: 'image',
 			size: 'fit',
 			padding: 0.1
-		}
+		})
+
+		this.options.moveConfig = defaultsDeep(this.options.moveConfig, {
+			enableOutOfContainer: true
+		})
+
 		this.container = getElement(this.options.el)
 		if (!this.container) {
 			throw new Error('Container not found')
@@ -369,10 +377,71 @@ export class ImageMark {
 		return this
 	}
 
+	private limitMovePoint(movePoint: ArrayPoint): ArrayPoint {
+		if (this.options.moveConfig?.enableOutOfContainer) return [0, 0]
+		let currentTransform = this.stageGroup.transform()
+
+		let currentX = currentTransform.translateX || 0
+		let currentY = currentTransform.translateY || 0
+
+		let currentScale = currentTransform.scaleX || 1
+
+		let newX = currentX + movePoint[0]
+		let newY = currentY + movePoint[1]
+
+		let { naturalWidth, naturalHeight } = this.imageDom
+
+		let imageScaleWidth = naturalWidth * currentScale
+		let imageScaleHeight = naturalHeight * currentScale
+
+		let xLimitRange = [0, this.containerRectInfo.width]
+		let yLimitRange = [0, this.containerRectInfo.height]
+
+		let fixPoint: ArrayPoint = [0, 0]
+
+		if (movePoint[0] > 0 && newX > xLimitRange[0]) {
+			fixPoint[0] = xLimitRange[0] - newX
+		}
+
+		if (movePoint[0] < 0 && (newX + imageScaleWidth) < xLimitRange[1]) {
+			fixPoint[0] = (xLimitRange[1] - (newX + imageScaleWidth))
+		}
+
+		if (movePoint[1] > 0 && newY > yLimitRange[0]) {
+			fixPoint[1] = yLimitRange[0] - newY
+		}
+
+		if (movePoint[1] < 0 && (newY + imageScaleHeight) < yLimitRange[1]) {
+			fixPoint[1] = (yLimitRange[1] - (newY + imageScaleHeight))
+		}
+
+		return fixPoint
+	}
+
+	private fixPoint(point: ArrayPoint, fixPoint: ArrayPoint): ArrayPoint {
+		return [point[0] + fixPoint[0], point[1] + fixPoint[1]]
+	}
+
+	move(point: ArrayPoint) {
+		if (this.status.scaling || this.status.moving) return
+		point = this.fixPoint(point, this.limitMovePoint(point))
+		this.status.moving = true
+
+		this.stageGroup.transform({
+			translate: point
+		}, true)
+		this.lastTransform = this.stageGroup.transform()
+		this.status.moving = false
+		return this
+	}
+
 	moveSuccessive(point: ArrayPoint) {
 		if (!this.status.moving || this.status.scaling) return
 		if (!this.movingStartPoint) return
 		let offsetPoint: ArrayPoint = [point[0] - this.movingStartPoint[0], point[1] - this.movingStartPoint[1]]
+		let currentTransform = this.stageGroup.transform()
+		let diffPoint: ArrayPoint = [((this.lastTransform.translateX || 0) + offsetPoint[0]) - (currentTransform.translateX || 0), ((this.lastTransform.translateY || 0) + offsetPoint[1]) - (currentTransform.translateY || 0)]
+		offsetPoint = this.fixPoint(offsetPoint, this.limitMovePoint(diffPoint))
 		//还原到move之前的状态
 		this.stageGroup.transform(this.lastTransform)
 		//移动
@@ -393,20 +462,6 @@ export class ImageMark {
 		this.movingStartPoint = point
 		return this
 	}
-
-	move(point: ArrayPoint) {
-		if (this.status.scaling || this.status.moving) return
-		this.status.moving = true
-
-		this.stageGroup.transform({
-			translate: point
-		}, true)
-		this.lastTransform = this.stageGroup.transform()
-		this.status.moving = false
-		return this
-	}
-
-
 
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
 		if (this.status.scaling || this.status.moving) return
@@ -432,25 +487,37 @@ export class ImageMark {
 			console.warn(`scale out of ${this.minScale} - ${this.maxScale} range`)
 			return
 		}
-		this.status.scaling = true
 
 		if (reletiveTo === 'container') {
 			origin = this.containerPoint2ImagePoint(point)
 		}
-		if (newScale !== undefined) {
-			this.stageGroup.transform({
-				origin,
-				scale: newScale / currentScale,
-			}, true)
 
-		} else {
+		function transformScale(shape: Shape) {
+			if (newScale !== undefined) {
+				shape.transform({
+					origin,
+					scale: newScale / currentScale,
+				}, true)
 
-			this.stageGroup.transform({
-				origin,
-				scale: zoom,
-			}, true)
-
+			} else {
+				shape.transform({
+					origin,
+					scale: zoom,
+				}, true)
+			}
 		}
+
+		if (this.options.moveConfig?.enableOutOfContainer) {
+			const nextStepGroup = new G()
+			nextStepGroup.transform(this.lastTransform)
+			transformScale(nextStepGroup)
+			let nextStepTransform = nextStepGroup.transform()
+			//TODO(songle):判断是否超出边界
+		}
+
+		this.status.scaling = true
+
+		transformScale(this.stageGroup)
 
 		this.lastTransform = this.stageGroup.transform()
 		this.status.scaling = false
@@ -513,6 +580,13 @@ export class ImageMark {
 	scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container') {
 		const { scale } = this.getInitialScaleAndTranslate(options)
 		this.scale(1, point, reletiveTo, scale)
+	}
+
+	setMoveEnableOutOfContainer(enable: boolean) {
+		if (this.options.moveConfig) {
+			this.options.moveConfig.enableOutOfContainer = enable
+		}
+		return this
 	}
 }
 
