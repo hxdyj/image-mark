@@ -507,12 +507,29 @@ export class ImageMark {
 			}
 		}
 
-		if (this.options.moveConfig?.enableOutOfContainer) {
+		if (direction == -1 && !this.options.moveConfig?.enableOutOfContainer) {
 			const nextStepGroup = new G()
 			nextStepGroup.transform(this.lastTransform)
 			transformScale(nextStepGroup)
+
+			const { naturalWidth, naturalHeight } = this.imageDom
+
 			let nextStepTransform = nextStepGroup.transform()
-			//TODO(songle):判断是否超出边界
+
+			let nextStepX = nextStepTransform.translateX || 0
+			let nextStepY = nextStepTransform.translateY || 0
+
+			let nextStepScale = nextStepTransform.scaleX || 1
+
+			let nextStepEndX = nextStepX + naturalWidth * nextStepScale
+			let nextStepEndY = nextStepY + naturalHeight * nextStepScale
+
+			let { width: containerWidth, height: containerHeight } = this.containerRectInfo
+
+			if (nextStepX > 0 || nextStepY > 0 || nextStepEndX < containerWidth || nextStepEndY < containerHeight) {
+				console.warn('scale out of container')
+				return this
+			}
 		}
 
 		this.status.scaling = true
