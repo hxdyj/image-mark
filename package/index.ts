@@ -20,7 +20,7 @@ export type Document2ContainerOffset = {
 	_offsetX?: number
 	_offsetY?: number
 }
-
+export type OutOfData = [boolean, number] // [是否超出,距离(正数为超出,零和负数为未超出)]
 export type ArrayPoint = [number, number]
 export type ArrayWH = ArrayPoint
 export type ContainerMouseEvent = MouseEvent & ImageClient & Document2ContainerOffset
@@ -508,25 +508,14 @@ export class ImageMark {
 		}
 
 		if (direction == -1 && !this.options.moveConfig?.enableOutOfContainer) {
-			const nextStepGroup = new G()
-			nextStepGroup.transform(this.lastTransform)
-			transformScale(nextStepGroup)
 
-			const { naturalWidth, naturalHeight } = this.imageDom
+			let nextStepTransform = this.getNextStepTransform((nextStepGroup) => {
+				transformScale(nextStepGroup)
+			})
 
-			let nextStepTransform = nextStepGroup.transform()
+			let outOfContainer = this.isOutofContainer(nextStepTransform)
 
-			let nextStepX = nextStepTransform.translateX || 0
-			let nextStepY = nextStepTransform.translateY || 0
-
-			let nextStepScale = nextStepTransform.scaleX || 1
-
-			let nextStepEndX = nextStepX + naturalWidth * nextStepScale
-			let nextStepEndY = nextStepY + naturalHeight * nextStepScale
-
-			let { width: containerWidth, height: containerHeight } = this.containerRectInfo
-
-			if (nextStepX > 0 || nextStepY > 0 || nextStepEndX < containerWidth || nextStepEndY < containerHeight) {
+			if (outOfContainer) {
 				console.warn('scale out of container')
 				return this
 			}
@@ -604,6 +593,64 @@ export class ImageMark {
 			this.options.moveConfig.enableOutOfContainer = enable
 		}
 		return this
+	}
+
+	private getNextStepTransform(nextChange: (nextStepGroup: G) => void) {
+		const nextStepGroup = new G()
+		nextStepGroup.transform(this.lastTransform)
+		nextChange(nextStepGroup)
+		return nextStepGroup.transform()
+	}
+
+	private isOutofContainer(nextStepTransform: MatrixExtract, outOfDirectionCallback?: (direction: {
+		left?: OutOfData
+		right?: OutOfData,
+		top?: OutOfData,
+		bottom?: OutOfData
+	}) => void) {
+		let nextStepX = nextStepTransform.translateX || 0
+		let nextStepY = nextStepTransform.translateY || 0
+
+		let nextStepScale = nextStepTransform.scaleX || 1
+
+		const { naturalWidth, naturalHeight } = this.imageDom
+
+
+		let nextStepEndX = nextStepX + naturalWidth * nextStepScale
+		let nextStepEndY = nextStepY + naturalHeight * nextStepScale
+
+		let { width: containerWidth, height: containerHeight } = this.containerRectInfo
+		let flag = false
+
+		if (nextStepX > 0) {
+			flag = true
+			outOfDirectionCallback?.({
+				left: [true, nextStepX]
+			})
+		}
+
+		if (nextStepY > 0) {
+			flag = true
+			outOfDirectionCallback?.({
+				top: [true, nextStepY]
+			})
+		}
+
+		if (nextStepEndX < containerWidth) {
+			flag = true
+			outOfDirectionCallback?.({
+				right: [true, nextStepEndX - containerWidth]
+			})
+		}
+
+		if (nextStepEndY < containerHeight) {
+			flag = true
+			outOfDirectionCallback?.({
+				bottom: [true, nextStepEndY - containerHeight]
+			})
+		}
+
+		return flag
 	}
 }
 
