@@ -12,6 +12,7 @@ export type Document2ContainerOffset = {
     _offsetX?: number;
     _offsetY?: number;
 };
+export type OutOfData = [boolean, number];
 export type ArrayPoint = [number, number];
 export type ArrayWH = ArrayPoint;
 export type ContainerMouseEvent = MouseEvent & ImageClient & Document2ContainerOffset;
@@ -36,6 +37,9 @@ export type ImageMarkOptions = {
         paddingUnit?: 'px' | '%';
     };
     data?: ShapeData[];
+    moveConfig?: {
+        enableOutOfContainer?: boolean;
+    };
 };
 export declare class ImageMark {
     private options;
@@ -73,10 +77,12 @@ export declare class ImageMark {
     private onComtainerMouseWheelEvent;
     addStageMouseScale(): this;
     removeStageMouseScale(): this;
+    private limitMovePoint;
+    private fixPoint;
+    move(point: ArrayPoint): this | undefined;
     moveSuccessive(point: ArrayPoint): this | undefined;
     endSuccessiveMove(): this;
     startSuccessiveMove(point: ArrayPoint): this;
-    move(point: ArrayPoint): this | undefined;
     scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image', newScale?: number): this | undefined;
     private documentMouseEvent2EnhanceEvent;
     private getEventOffset;
@@ -86,4 +92,7 @@ export declare class ImageMark {
     setMaxScale(maxScale: number | InitialScaleSize): this;
     on(...rest: any): this;
     scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image'): void;
+    setMoveEnableOutOfContainer(enable: boolean): this;
+    private getNextStepTransform;
+    private isOutofContainer;
 }

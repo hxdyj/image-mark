@@ -15,8 +15,9 @@ export default defineConfig({
 	plugins: [
 		strip({ include: '**/*.(js|ts)' }),
 		dts({
-			outDir: 'types',
+			outDir: path.resolve(__dirname, './types'),
 			root: path.resolve(__dirname, './package'),
+			include: [path.resolve(__dirname, './package') + '/**/*'],
 			tsconfigPath: path.resolve(__dirname, './tsconfig.node.json')
 		}),
 	],
