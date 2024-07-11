@@ -1,4 +1,5 @@
 import { Shape, Svg } from "@svgdotjs/svg.js";
+import { BoundingBox } from "..";
 
 export abstract class ImageMarkShape {
 	abstract shapeInstance: Shape;

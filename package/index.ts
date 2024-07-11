@@ -1,15 +1,19 @@
-import { G, Image, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
+import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
 import { ImageMarkShape, ShapeData, ShapeType } from "./shape/Shape";
 import { ImageMarkRect, RectData } from "./shape/Rect";
 import { ImageMarkImage, ImageData } from "./shape/Image";
-import { defaultsDeep, throttle } from "lodash";
+import { defaultsDeep, difference, throttle } from "lodash";
 import EventEmitter from "eventemitter3";
+import { getPointDoXaxisYaxisIntersectWithRect, getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
+import { areFloatsEqual } from "./utils/number";
 
 
 export enum EventBusEventName {
 	FirstRender = 'firstRender',
 }
+
+export type TransformStep = [MatrixAlias, boolean]
 
 export type ImageClient = {
 	imageClientX: number
@@ -25,18 +29,21 @@ export type ArrayPoint = [number, number]
 export type ArrayWH = ArrayPoint
 export type ContainerMouseEvent = MouseEvent & ImageClient & Document2ContainerOffset
 export type ContainerType = string | HTMLElement;
-export type BoundingBox = Pick<RectData, "x" | "y" | "width" | "height">
+export type BoundingBox = {
+	x: number
+	y: number
+	width: number
+	height: number
+}
 export type EnhanceBoundingBox = BoundingBox & {
 	endX: number
 	endY: number
 }
 
+export type EdgeName = 'left' | 'right' | 'top' | 'bottom'
 
 export type DirectionOutOfInfo = {
-	left?: OutOfData
-	right?: OutOfData,
-	top?: OutOfData,
-	bottom?: OutOfData
+	[key in EdgeName]: OutOfData
 }
 
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
@@ -405,19 +412,19 @@ export class ImageMark {
 
 		let { directionOutOfInfo } = this.isOutofContainer(nextStepTransform)
 
-		if (movePoint[0] > 0 && directionOutOfInfo.left) {
+		if (movePoint[0] > 0 && directionOutOfInfo.left[0]) {
 			fixPoint[0] = -directionOutOfInfo.left[1]
 		}
 
-		if (movePoint[0] < 0 && directionOutOfInfo.right) {
+		if (movePoint[0] < 0 && directionOutOfInfo.right[0]) {
 			fixPoint[0] = - directionOutOfInfo.right[1]
 		}
 
-		if (movePoint[1] > 0 && directionOutOfInfo.top) {
+		if (movePoint[1] > 0 && directionOutOfInfo.top[0]) {
 			fixPoint[1] = -directionOutOfInfo.top[1]
 		}
 
-		if (movePoint[1] < 0 && directionOutOfInfo.bottom) {
+		if (movePoint[1] < 0 && directionOutOfInfo.bottom[0]) {
 			fixPoint[1] = - directionOutOfInfo.bottom[1]
 		}
 
@@ -504,7 +511,6 @@ export class ImageMark {
 					origin,
 					scale: newScale / currentScale,
 				}, true)
-
 			} else {
 				shape.transform({
 					origin,
@@ -513,24 +519,56 @@ export class ImageMark {
 			}
 		}
 
+		// if (direction == -1 && !this.options.moveConfig?.enableOutOfContainer) {
+		// 	let cloneGroup = this.cloneGroup()
+		// 	transformScale(cloneGroup)
+		// 	let nextStepTransform = cloneGroup.transform()
+
+		// 	let { isOutOf } = this.isOutofContainer(nextStepTransform)
+
+		// 	if (isOutOf) {
+		// 		console.warn('scale out of container')
+		// 		//TODO(songle): change to scale to fit and move to edge or find proper origin to scale
+		// 		return this
+		// 	}
+		// }
+
+
+
 		if (direction == -1 && !this.options.moveConfig?.enableOutOfContainer) {
+			const { scale } = this.getInitialScaleAndTranslate({
+				size: 'cover'
+			})
+
+			if (areFloatsEqual(this.lastTransform.scaleX || 1, scale)) {
+				return this
+			}
+
 			let cloneGroup = this.cloneGroup()
 			transformScale(cloneGroup)
 			let nextStepTransform = cloneGroup.transform()
 
-			let { isOutOf } = this.isOutofContainer(nextStepTransform)
-
-			if (isOutOf) {
+			const scaleLimitResult = this.getScaleLimitImageInContainerInfo(point, this.lastTransform, nextStepTransform)
+			if (scaleLimitResult === false) {
 				console.warn('scale out of container')
-				//TODO(songle): change to scale to fit and move to edge or find proper origin to scale
 				return this
 			}
+			if (scaleLimitResult) {
+				this.status.scaling = true
+				scaleLimitResult.forEach(item => {
+					this.stageGroup.transform(...item)
+				})
+				this.lastTransform = this.stageGroup.transform()
+				this.status.scaling = false
+				return this
+			}
+
+
 		}
 
 		this.status.scaling = true
 
 		transformScale(this.stageGroup)
-
 		this.lastTransform = this.stageGroup.transform()
 		this.status.scaling = false
 		return this
@@ -623,34 +661,243 @@ export class ImageMark {
 			height,
 		}
 	}
+	private getScaleLimitImageInContainerInfo(scaleOrigin: ArrayPoint, currentTransform: MatrixExtract, nextStepTransform: MatrixExtract): Array<[MatrixAlias, boolean]> | null | false {
+		let { isOutOf, directionOutOfInfo } = this.isOutofContainer(nextStepTransform)
+		if (isOutOf) {
+			let { scaleX: currentScaleX = 1 } = currentTransform
+			let { scaleX: nextScaleX = 1 } = nextStepTransform
+
+			let { scale: minScale } = this.getInitialScaleAndTranslate({ size: 'cover' })
+
+			if (currentScaleX < minScale) {
+				this.scaleTo({ size: 'cover' }, 'center')
+				// console.log("SCALE LIMIT", 1);
+			} else if (currentScaleX > minScale) {
+
+				let { width: containerWidth, height: containerHeight } = this.containerRectInfo
+				let { naturalWidth, naturalHeight } = this.imageDom
+				let { left, top, right, bottom } = directionOutOfInfo
+
+				const currentImageBoundingBox = this.getImageBoundingBoxByTransform(currentTransform)
+				const weltList = getRectWeltContainerEdgeNameList(currentImageBoundingBox, {
+					x: 0,
+					y: 0,
+					width: containerWidth,
+					height: containerHeight
+				})
+				let newScale = nextScaleX / currentScaleX
+				const outOfContainerEdgeList = this.getOutOfContainerEdgeList(directionOutOfInfo)
+
+				if (weltList.length == 0) {//没有贴合的
+					/**
+					 * 分以下几种情况：
+					 *  1. 有一边超出   这种情况 先将scale，然后move到这个边
+					 *  2. 有两边超出	  这种情况 先scale将  然后move到顶点
+					 *  */
+
+					// console.log("SCALE LIMIT", 0, scaleOrigin, currentTransform, nextStepTransform, directionOutOfInfo);
+
+					// console.log("SCALE LIMIT", 2, JSON.stringify(outOfContainerEdgeList));
+
+					// 1. 有一边超出
+					if (outOfContainerEdgeList.length == 1) {
+						let outEdgeName = outOfContainerEdgeList[0]
+						if (outEdgeName == 'left' || outEdgeName == 'right') {
+							let translateX = 0
+							if (outEdgeName == 'left') {
+								translateX = -left[1]
+							} else {
+								translateX = -right[1]
+							}
+
+							let moveAction: TransformStep = [{ translateX }, true]
+							let scaleAction: TransformStep = [{ origin: scaleOrigin, scale: newScale }, true]
+							// console.log("SCALE LIMIT", 3, JSON.stringify(moveAction), JSON.stringify(scaleAction));
+
+							return [scaleAction, moveAction]
+						}
+
+						if (outEdgeName == 'top' || outEdgeName == 'bottom') {
+							let translateY = 0
+							if (outEdgeName == 'top') {
+								translateY = -top[1]
+							} else {
+								translateY = -bottom[1]
+							}
+							let moveAction: TransformStep = [{ translateY }, true]
+							let scaleAction: TransformStep = [{ origin: scaleOrigin, scale: newScale }, true]
+							// console.log("SCALE LIMIT", 4, JSON.stringify(moveAction), JSON.stringify(scaleAction));
+							return [scaleAction, moveAction]
+						}
+					}
+
+					// 2. 有两边超出
+					if (outOfContainerEdgeList.length == 2) {
+						let pointName = sortEdgeNames(outOfContainerEdgeList).join('-')
+						let newTranslate = [0, 0]
+						let newOrigin = scaleOrigin
+						if (pointName == 'left-top') {
+							newTranslate = [-left[1], -top[1]]
+							// console.log("SCALE LIMIT", 5);
+
+						}
+
+						if (pointName == 'left-bottom') {
+							newTranslate = [-left[1], -bottom[1]]
+							// console.log("SCALE LIMIT", 6);
+
+						}
+
+						if (pointName == 'right-top') {
+							newTranslate = [-right[1], -top[1]]
+							// console.log("SCALE LIMIT", 7);
+
+						}
+
+						if (pointName == 'right-bottom') {
+							newTranslate = [-right[1], -bottom[1]]
+							// console.log("SCALE LIMIT", 8);
+						}
+
+
+						let moveAction: TransformStep = [{ translateX: newTranslate[0], translateY: newTranslate[1] }, true]
+						let scaleAction: TransformStep = [{ origin: newOrigin, scale: newScale }, true]
+						// console.log("SCALE LIMIT", 9, JSON.stringify(moveAction), JSON.stringify(scaleAction));
+						return [scaleAction, moveAction]
+					}
+
+				} else {//有贴合的
+					/**
+					 * 分以下几种情况：
+					 *  1. 有一边贴合   这种情况 先scale，然后move到out的边
+					 *  2. 有两边贴合	  这种情况 直接在贴合的顶点scale
+					 *  */
+
+					if (weltList.length == 1) {
+						let weltPointName = weltList[0]
+						const outOfEdgeName = difference(outOfContainerEdgeList, weltList)[0]
+						// console.log("SCALE LIMIT", 24, weltList, outOfContainerEdgeList)
+						// if (!outOfEdgeName) return false
+
+						let newOrigin = scaleOrigin
+						let newTranslate = [0, 0]
+						if (weltPointName == 'left') {
+							newOrigin[0] = 0
+							// console.log("SCALE LIMIT", 10);
+
+						} else if (weltPointName == 'right') {
+							newOrigin[0] = naturalWidth
+							// console.log("SCALE LIMIT", 11);
+
+						} else if (weltPointName == 'top') {
+							newOrigin[1] = 0
+							// console.log("SCALE LIMIT", 12);
+
+						} else if (weltPointName == 'bottom') {
+							newOrigin[1] = naturalHeight
+							// console.log("SCALE LIMIT", 13);
+
+						}
+
+						if (outOfEdgeName == 'left') {
+							newTranslate[0] = -left[1]
+							// console.log("SCALE LIMIT", 14);
+
+						} else if (outOfEdgeName == 'right') {
+							newTranslate[0] = -right[1]
+							// console.log("SCALE LIMIT", 15);
+
+						} else if (outOfEdgeName == 'top') {
+							newTranslate[1] = -top[1]
+							// console.log("SCALE LIMIT", 16);
+
+						} else if (outOfEdgeName == 'bottom') {
+							newTranslate[1] = -bottom[1]
+							// console.log("SCALE LIMIT", 17);
+
+						}
+						let moveAction: TransformStep = [{ translateX: newTranslate[0], translateY: newTranslate[1] }, true]
+						let scaleAction: TransformStep = [{ origin: newOrigin, scale: newScale }, true]
+						// console.log("SCALE LIMIT", 18, JSON.stringify(moveAction), JSON.stringify(scaleAction));
+						return [scaleAction, moveAction]
+					}
+
+					if (weltList.length == 2) {
+						let weltPointName = sortEdgeNames(weltList).join('-')
+						if (weltPointName == 'left-top') {
+							// console.log("SCALE LIMIT", 19);
+
+							return [[{ origin: [0, 0], scale: newScale }, true]]
+						}
+
+						if (weltPointName == 'left-bottom') {
+							// console.log("SCALE LIMIT", 20);
+							return [[{ origin: [0, naturalHeight], scale: newScale }, true]]
+						}
+
+						if (weltPointName == 'right-top') {
+							// console.log("SCALE LIMIT", 21);
+
+							return [[{ origin: [naturalWidth, 0], scale: newScale }, true]]
+						}
+
+						if (weltPointName == 'right-bottom') {
+							// console.log("SCALE LIMIT", 22);
+							return [[{ origin: [naturalWidth, naturalHeight], scale: newScale }, true]]
+						}
+					}
+					// console.log("SCALE LIMIT", 23)
+					return false
+				}
+
+			} else {
+				return null
+			}
+		}
+		return null
+	}
+
+	private getOutOfContainerEdgeList(directionOutOfInfo: DirectionOutOfInfo) {
+		let list: EdgeName[] = []
+		Object.entries(directionOutOfInfo).forEach(([direction, [isOutOf, distance]]) => {
+			if (isOutOf) {
+				list.push(direction as EdgeName)
+			}
+		})
+		return list
+	}
 
 	private isOutofContainer(nextStepTransform: MatrixExtract): { isOutOf: boolean, directionOutOfInfo: DirectionOutOfInfo } {
 		let { x: nextStepX, y: nextStepY, endX: nextStepEndX, endY: nextStepEndY } = this.getImageBoundingBoxByTransform(nextStepTransform)
-
 		let { width: containerWidth, height: containerHeight } = this.containerRectInfo
 
-		let directionOutOfInfo: DirectionOutOfInfo = {}
+		let directionOutOfInfo: DirectionOutOfInfo = {
+			left: [false, nextStepX],
+			top: [false, nextStepY],
+			right: [false, nextStepEndX - containerWidth],
+			bottom: [false, nextStepEndY - containerHeight],
+		}
 
 		let flag = false
 
 		if (nextStepX > 0) {
 			flag = true
-			directionOutOfInfo.left = [true, nextStepX]
+			directionOutOfInfo.left[0] = true
 		}
 
 		if (nextStepY > 0) {
 			flag = true
-			directionOutOfInfo.top = [true, nextStepY]
+			directionOutOfInfo.top[0] = true
 		}
 
 		if (nextStepEndX < containerWidth) {
 			flag = true
-			directionOutOfInfo.right = [true, nextStepEndX - containerWidth]
+			directionOutOfInfo.right[0] = true
 		}
 
 		if (nextStepEndY < containerHeight) {
 			flag = true
-			directionOutOfInfo.bottom = [true, nextStepEndY - containerHeight]
+			directionOutOfInfo.bottom[0] = true
 		}
 
 		return {
