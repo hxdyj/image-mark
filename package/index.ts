@@ -26,6 +26,18 @@ export type ArrayWH = ArrayPoint
 export type ContainerMouseEvent = MouseEvent & ImageClient & Document2ContainerOffset
 export type ContainerType = string | HTMLElement;
 export type BoundingBox = Pick<RectData, "x" | "y" | "width" | "height">
+export type EnhanceBoundingBox = BoundingBox & {
+	endX: number
+	endY: number
+}
+
+
+export type DirectionOutOfInfo = {
+	left?: OutOfData
+	right?: OutOfData,
+	top?: OutOfData,
+	bottom?: OutOfData
+}
 
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 export type ImageMarkOptions = {
@@ -381,38 +393,32 @@ export class ImageMark {
 		if (this.options.moveConfig?.enableOutOfContainer) return [0, 0]
 		let currentTransform = this.stageGroup.transform()
 
-		let currentX = currentTransform.translateX || 0
-		let currentY = currentTransform.translateY || 0
-
-		let currentScale = currentTransform.scaleX || 1
-
-		let newX = currentX + movePoint[0]
-		let newY = currentY + movePoint[1]
-
-		let { naturalWidth, naturalHeight } = this.imageDom
-
-		let imageScaleWidth = naturalWidth * currentScale
-		let imageScaleHeight = naturalHeight * currentScale
-
-		let xLimitRange = [0, this.containerRectInfo.width]
-		let yLimitRange = [0, this.containerRectInfo.height]
-
 		let fixPoint: ArrayPoint = [0, 0]
 
-		if (movePoint[0] > 0 && newX > xLimitRange[0]) {
-			fixPoint[0] = xLimitRange[0] - newX
+		let cloneGroup = this.cloneGroup(currentTransform)
+
+		cloneGroup.transform({
+			translate: movePoint
+		}, true)
+
+		let nextStepTransform = cloneGroup.transform()
+
+		let { directionOutOfInfo } = this.isOutofContainer(nextStepTransform)
+
+		if (movePoint[0] > 0 && directionOutOfInfo.left) {
+			fixPoint[0] = -directionOutOfInfo.left[1]
 		}
 
-		if (movePoint[0] < 0 && (newX + imageScaleWidth) < xLimitRange[1]) {
-			fixPoint[0] = (xLimitRange[1] - (newX + imageScaleWidth))
+		if (movePoint[0] < 0 && directionOutOfInfo.right) {
+			fixPoint[0] = - directionOutOfInfo.right[1]
 		}
 
-		if (movePoint[1] > 0 && newY > yLimitRange[0]) {
-			fixPoint[1] = yLimitRange[0] - newY
+		if (movePoint[1] > 0 && directionOutOfInfo.top) {
+			fixPoint[1] = -directionOutOfInfo.top[1]
 		}
 
-		if (movePoint[1] < 0 && (newY + imageScaleHeight) < yLimitRange[1]) {
-			fixPoint[1] = (yLimitRange[1] - (newY + imageScaleHeight))
+		if (movePoint[1] < 0 && directionOutOfInfo.bottom) {
+			fixPoint[1] = - directionOutOfInfo.bottom[1]
 		}
 
 		return fixPoint
@@ -508,15 +514,15 @@ export class ImageMark {
 		}
 
 		if (direction == -1 && !this.options.moveConfig?.enableOutOfContainer) {
+			let cloneGroup = this.cloneGroup()
+			transformScale(cloneGroup)
+			let nextStepTransform = cloneGroup.transform()
 
-			let nextStepTransform = this.getNextStepTransform((nextStepGroup) => {
-				transformScale(nextStepGroup)
-			})
+			let { isOutOf } = this.isOutofContainer(nextStepTransform)
 
-			let outOfContainer = this.isOutofContainer(nextStepTransform)
-
-			if (outOfContainer) {
+			if (isOutOf) {
 				console.warn('scale out of container')
+				//TODO(songle): change to scale to fit and move to edge or find proper origin to scale
 				return this
 			}
 		}
@@ -595,62 +601,62 @@ export class ImageMark {
 		return this
 	}
 
-	private getNextStepTransform(nextChange: (nextStepGroup: G) => void) {
-		const nextStepGroup = new G()
-		nextStepGroup.transform(this.lastTransform)
-		nextChange(nextStepGroup)
-		return nextStepGroup.transform()
+
+	private cloneGroup(transform?: MatrixExtract): G {
+		const cloneGroup = new G()
+		cloneGroup.transform(transform || this.lastTransform)
+		return cloneGroup
 	}
 
-	private isOutofContainer(nextStepTransform: MatrixExtract, outOfDirectionCallback?: (direction: {
-		left?: OutOfData
-		right?: OutOfData,
-		top?: OutOfData,
-		bottom?: OutOfData
-	}) => void) {
-		let nextStepX = nextStepTransform.translateX || 0
-		let nextStepY = nextStepTransform.translateY || 0
 
-		let nextStepScale = nextStepTransform.scaleX || 1
-
+	private getImageBoundingBoxByTransform(transform: MatrixExtract): EnhanceBoundingBox {
 		const { naturalWidth, naturalHeight } = this.imageDom
+		const { translateX = 0, translateY = 0, scaleX = 1, scaleY = 1 } = transform
+		const width = naturalWidth * scaleX
+		const height = naturalHeight * scaleY
+		return {
+			x: translateX,
+			y: translateY,
+			endX: translateX + width,
+			endY: translateY + height,
+			width,
+			height,
+		}
+	}
 
-
-		let nextStepEndX = nextStepX + naturalWidth * nextStepScale
-		let nextStepEndY = nextStepY + naturalHeight * nextStepScale
+	private isOutofContainer(nextStepTransform: MatrixExtract): { isOutOf: boolean, directionOutOfInfo: DirectionOutOfInfo } {
+		let { x: nextStepX, y: nextStepY, endX: nextStepEndX, endY: nextStepEndY } = this.getImageBoundingBoxByTransform(nextStepTransform)
 
 		let { width: containerWidth, height: containerHeight } = this.containerRectInfo
+
+		let directionOutOfInfo: DirectionOutOfInfo = {}
+
 		let flag = false
 
 		if (nextStepX > 0) {
 			flag = true
-			outOfDirectionCallback?.({
-				left: [true, nextStepX]
-			})
+			directionOutOfInfo.left = [true, nextStepX]
 		}
 
 		if (nextStepY > 0) {
 			flag = true
-			outOfDirectionCallback?.({
-				top: [true, nextStepY]
-			})
+			directionOutOfInfo.top = [true, nextStepY]
 		}
 
 		if (nextStepEndX < containerWidth) {
 			flag = true
-			outOfDirectionCallback?.({
-				right: [true, nextStepEndX - containerWidth]
-			})
+			directionOutOfInfo.right = [true, nextStepEndX - containerWidth]
 		}
 
 		if (nextStepEndY < containerHeight) {
 			flag = true
-			outOfDirectionCallback?.({
-				bottom: [true, nextStepEndY - containerHeight]
-			})
+			directionOutOfInfo.bottom = [true, nextStepEndY - containerHeight]
 		}
 
-		return flag
+		return {
+			isOutOf: flag,
+			directionOutOfInfo
+		}
 	}
 }
 
