@@ -60,8 +60,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { ImageMark } from '../../package/index';
-import { ArrayPoint } from '../../package/types';
+import { ArrayPoint, ImageMark } from '../../package/index';
 let imgMark: ImageMark | null = null
 
 
@@ -87,12 +86,12 @@ onMounted(() => {
 				type: 'rect'
 			},
 		],
+		enableImageOutOfContainer: false,
 		moveConfig: {
-			enableOutOfContainer: false,
 		},
 		initScaleConfig: {
 			startPosition: 'center',
-			size: 'cover',
+			size: 'fit',
 			// to: 'box',
 			// box: {
 			// 	x: 1270,

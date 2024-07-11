@@ -92,7 +92,7 @@ export declare class ImageMark {
     setMaxScale(maxScale: number | InitialScaleSize): this;
     on(...rest: any): this;
     scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image'): void;
-    setMoveEnableOutOfContainer(enable: boolean): this;
+    setEnableImageOutOfContainer(enable: boolean): this;
     private getNextStepTransform;
     private isOutofContainer;
 }

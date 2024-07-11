@@ -66,8 +66,8 @@ export type ImageMarkOptions = {
 	}
 	data?: ShapeData[]
 	moveConfig?: {
-		enableOutOfContainer?: boolean
-	}
+	},
+	enableImageOutOfContainer?: boolean
 }
 
 export class ImageMark {
@@ -96,9 +96,9 @@ export class ImageMark {
 			padding: 0.1
 		})
 
-		this.options.moveConfig = defaultsDeep(this.options.moveConfig, {
-			enableOutOfContainer: true
-		})
+		this.options.moveConfig = defaultsDeep(this.options.moveConfig, {})
+
+		this.options.enableImageOutOfContainer = this.options.enableImageOutOfContainer ?? true
 
 		this.container = getElement(this.options.el)
 		if (!this.container) {
@@ -303,12 +303,35 @@ export class ImageMark {
 		}
 	}
 
+	private checkInitOutOfContainerAndReset() {
+		if (!this.options.enableImageOutOfContainer) {
+			const { scale: minScale } = this.getInitialScaleAndTranslate({ 'size': 'cover' })
+			let { scaleX: currentScaleX = 1 } = this.stageGroup.transform()
+
+			if (currentScaleX < minScale) {
+				let scalePoint: Parameters<InstanceType<typeof ImageMark>['scaleTo']>[1] = 'center'
+				this.scaleTo({
+					size: 'cover',
+					startPosition: this.options.initScaleConfig?.startPosition
+				}, scalePoint)
+
+				if (scalePoint !== 'center') { //scale的点不是center的时候会导致图片超出容器
+					let { translateX: currentTranslateX = 0, translateY: currentTranslateY = 0 } = this.stageGroup.transform()
+					this.stageGroup.transform({
+						translate: [-currentTranslateX, -currentTranslateY]
+					}, true)
+
+					this.lastTransform = this.stageGroup.transform()
+				}
+			}
+		}
+	}
+
 	private drawImage(ev: Event) {
 		let target = ev.target as HTMLImageElement
-
 		this.stageGroup.transform(this.getInitialScaleAndTranslate(this.options.initScaleConfig))
-
 		this.lastTransform = this.stageGroup.transform()
+		this.checkInitOutOfContainerAndReset()
 
 		this.image.size(this.imageDom.naturalWidth, this.imageDom.naturalHeight)
 		this.image.addTo(this.stageGroup)
@@ -397,7 +420,7 @@ export class ImageMark {
 	}
 
 	private limitMovePoint(movePoint: ArrayPoint): ArrayPoint {
-		if (this.options.moveConfig?.enableOutOfContainer) return [0, 0]
+		if (this.options.enableImageOutOfContainer) return [0, 0]
 		let currentTransform = this.stageGroup.transform()
 
 		let fixPoint: ArrayPoint = [0, 0]
@@ -519,23 +542,7 @@ export class ImageMark {
 			}
 		}
 
-		// if (direction == -1 && !this.options.moveConfig?.enableOutOfContainer) {
-		// 	let cloneGroup = this.cloneGroup()
-		// 	transformScale(cloneGroup)
-		// 	let nextStepTransform = cloneGroup.transform()
-
-		// 	let { isOutOf } = this.isOutofContainer(nextStepTransform)
-
-		// 	if (isOutOf) {
-		// 		console.warn('scale out of container')
-		// 		//TODO(songle): change to scale to fit and move to edge or find proper origin to scale
-		// 		return this
-		// 	}
-		// }
-
-
-
-		if (direction == -1 && !this.options.moveConfig?.enableOutOfContainer) {
+		if (direction == -1 && !this.options.enableImageOutOfContainer) {
 			const { scale } = this.getInitialScaleAndTranslate({
 				size: 'cover'
 			})
@@ -632,9 +639,12 @@ export class ImageMark {
 		this.scale(1, point, reletiveTo, scale)
 	}
 
-	setMoveEnableOutOfContainer(enable: boolean) {
+	setEnableImageOutOfContainer(enable: boolean) {
 		if (this.options.moveConfig) {
-			this.options.moveConfig.enableOutOfContainer = enable
+			this.options.enableImageOutOfContainer = enable
+			if (!enable) {
+				this.checkInitOutOfContainerAndReset()
+			}
 		}
 		return this
 	}
