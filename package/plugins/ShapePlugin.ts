@@ -46,6 +46,11 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.off('init', this.onInit)
 	}
 
+	rerender() {
+		this.createShape()
+		this.onDraw()
+	}
+
 	private onInit() {
 		this.createShape()
 	}

@@ -7,7 +7,7 @@
 		</div>
 		<div class="tree-panel flex-shrink-0 w-[300px]">
 			<a-tree blockNode :data="treeData" draggable :allow-drop="onAllowDrop" @drag-start="onDragStart"
-				@drag-end="onDragEnd" />
+				@drag-over="onDragOver" @drag-end="onDragEnd" />
 			<!-- <p draggable="true" @dragstart="onDragStart">Drag Me</p> -->
 		</div>
 	</div>
@@ -33,11 +33,18 @@ function onAllowDrop(_options: { dropNode: TreeNodeData; dropPosition: -1 | 0 | 
 	return false
 }
 
+function onDragOver(ev: DragEvent, node: TreeNodeData) {
+	debugger
+	if (ev?.dataTransfer) {
+		ev.dataTransfer.dropEffect = 'none'
+	}
+}
 
 function onDragStart(ev: DragEvent, node: TreeNodeData) {
 	const ghostEle = document.querySelector('#drag-tree-node-ghost')
 	if (ghostEle) {
-		ghostEle.textContent = node.title || 'jajaja'
+		ghostEle.textContent = node.title || 'No Title'
+		ev.dataTransfer?.setData('text', ghostEle.textContent)
 		const rect = ghostEle.getBoundingClientRect()
 		ev.dataTransfer?.setDragImage(ghostEle, rect.width / 2, rect.height)
 	}

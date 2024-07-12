@@ -387,11 +387,13 @@ export class ImageMark extends EventBindingThis {
 		this.eventBus.emit(EventBusEventName.container_drag_leave, e, this)
 	}
 	private onContainerDropEvent(e: Event) {
-		debugger
+		e.preventDefault()
 		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
 		this.eventBus.emit(EventBusEventName.container_drop, e, this)
 	}
 	private onContainerDragOverEvent(e: Event) {
+		debugger
+		e.preventDefault()
 		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
 		this.eventBus.emit(EventBusEventName.container_drag_over, e, this)
 	}
@@ -400,8 +402,6 @@ export class ImageMark extends EventBindingThis {
 		this.container.addEventListener('wheel', this.onContainerWheel)
 		this.container.addEventListener('dragover', this.onContainerDragOverEvent)
 		this.container.addEventListener('dragleave', this.onContainerDragLeaveEvent)
-
-		//TODO(songle): Drop not trigger
 		this.container.addEventListener('drop', this.onContainerDropEvent)
 
 		return this
