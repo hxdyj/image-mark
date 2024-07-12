@@ -53,6 +53,8 @@
 				size: 'cover',
 			}, [50, 50], 'image')
 		}">scale to cover -</a-button>
+
+		<p draggable="true" @dragstart="onDragStart">Drag me</p>
 	</div>
 	<div class="page-base" style="height: 60vh;">
 	</div>
@@ -65,6 +67,11 @@ let imgMark: ImageMark | null = null
 
 
 let moveSuccessive: ArrayPoint = [0, 0]
+
+
+function onDragStart(e: DragEvent) {
+	e.dataTransfer?.setData('id', '111')
+}
 
 onMounted(() => {
 	imgMark = new ImageMark({
@@ -108,7 +115,7 @@ onMounted(() => {
 			// padding: 50,
 			paddingUnit: 'px'
 		}
-	}).on('firstRender', () => {
+	}).on('first_render', () => {
 		// imgMark?.setMinScale('cover')
 		// imgMark?.removeStageLmbDownMoveing()
 	})

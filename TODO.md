@@ -1,8 +1,8 @@
-- [ ] Plugin System
+- [x] Plugin System
 - [ ] Rect Or Other Mode use plugin system implement
 - [x] limit move not out of container
 - [ ] shortcut system
 - [ ] dropable
 - [ ] commonly action class
-- [ ] resize deal
+- [ ] resize deal: resize event maybe can't listen container size change , use MutationObserver instead
 - [ ] caculate next step chunk

@@ -1,10 +1,10 @@
 import { Rect } from "@svgdotjs/svg.js";
-import { ImageMarkShape, ShapeData, ShapeType } from "./Shape";
+import { ImageMarkShape, ShapeData } from "./Shape";
 import { BoundingBox } from "..";
 
 
 export interface RectData extends BoundingBox, ShapeData {
-	type: ShapeType.Rect
+	shapeName: "rect"
 }
 
 export class ImageMarkRect extends ImageMarkShape {

@@ -1,16 +1,21 @@
 import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
-import { ImageMarkShape, ShapeData, ShapeType } from "./shape/Shape";
-import { ImageMarkRect, RectData } from "./shape/Rect";
-import { ImageMarkImage, ImageData } from "./shape/Image";
 import { defaultsDeep, difference, throttle } from "lodash";
 import EventEmitter from "eventemitter3";
-import { getPointDoXaxisYaxisIntersectWithRect, getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
+import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
 import { areFloatsEqual } from "./utils/number";
+import { Plugin } from "./plugins";
+import { EventBindingThis } from "./event";
 
 
 export enum EventBusEventName {
-	FirstRender = 'firstRender',
+	init = 'init',
+	first_render = 'first_render',
+	rerender = 'rerender',
+	draw = 'draw',
+	container_drag_over = 'container_drag_over',
+	container_drag_leave = 'container_drag_leave',
+	container_drop = 'container_drop',
 }
 
 export type TransformStep = [MatrixAlias, boolean]
@@ -64,32 +69,36 @@ export type ImageMarkOptions = {
 		padding?: number
 		paddingUnit?: 'px' | '%'
 	}
-	data?: ShapeData[]
 	moveConfig?: {
 	},
 	enableImageOutOfContainer?: boolean
+	pluginOptions?: {
+		[key: string]: any // [插件名称]：[插件配置]
+	}
 }
 
-export class ImageMark {
-	private container: HTMLElement;
-	private containerRectInfo: ReturnType<typeof getContainerInfo>;
-	private stage: Svg;
-	private stageGroup: G;
-	private node2ShapeInstanceWeakMap = new WeakMap<ShapeData, ImageMarkShape>()
-	private data: ShapeData[] = []
-	private image: Image
-	private imageDom: HTMLImageElement
-	private lastTransform: MatrixExtract = {}
-	private status = {
+
+export class ImageMark extends EventBindingThis {
+	container: HTMLElement;
+	containerRectInfo: ReturnType<typeof getContainerInfo>;
+	stage: Svg;
+	stageGroup: G;
+	image: Image
+	imageDom: HTMLImageElement
+	lastTransform: MatrixExtract = {}
+	plugin: {
+		[key: string]: Plugin
+	} = {}
+	status = {
 		scaling: false,
 		moving: false
 	}
-	private minScale = 0.1
-	private maxScale = 10
-	private movingStartPoint: ArrayPoint | null = null
-	private eventBus = new EventEmitter()
-	constructor(private options: ImageMarkOptions) {
-		this.data = options.data || []
+	minScale = 0.1
+	maxScale = 10
+	movingStartPoint: ArrayPoint | null = null
+	eventBus = new EventEmitter()
+	constructor(public options: ImageMarkOptions) {
+		super()
 		this.options.initScaleConfig = defaultsDeep(this.options.initScaleConfig, {
 			to: 'image',
 			size: 'fit',
@@ -107,60 +116,66 @@ export class ImageMark {
 
 		this.container.style.overflow = 'hidden'
 		this.containerRectInfo = getContainerInfo(this.container)
-		this.init()
+
 		this.stage = SVG()
 		this.stage.attr({
 			style: `background-color:#c9cdd4`
 		})
 		this.stageGroup = new G()
-
 		this.image = new Image()
 		this.imageDom = document.createElement('img')
+		this.initBindAllEventsThis()
+		ImageMark.pluginList.forEach(plugin => {
+			this.initPlugin(plugin)
+		})
+		this.init()
+	}
+
+	private initBindAllEventsThis() {
+		this.bindEventThis([
+			'onContainerWheel',
+			'onComtainerLmbDownMoveingMouseDownEvent',
+			'onComtainerLmbDownMoveingMouseUpEvent',
+			'onComtainerMouseWheelEvent',
+
+			'onContainerDragLeaveEvent',
+			'onContainerDragOverEvent',
+			'onContainerDropEvent'
+		])
+	}
+
+	private init(rerender = false) {
+		this.eventBus.emit(EventBusEventName.init, this)
 		this.image.load(this.options.src, (ev) => {
 			this.imageDom = ev.target as HTMLImageElement
 			this.stageGroup.addTo(this.stage)
-			this.drawImage(ev)
+			this.drawImage(ev, rerender)
 			this.draw()
 			this.render()
 			this.addDefaultAction()
 			this.addContainerEvent()
-			this.eventBus.emit(EventBusEventName.FirstRender, this)
+			this.eventBus.emit(EventBusEventName.first_render, this)
 		})
 	}
 
-	private init() {
-		this.crateDataShape()
+
+
+	rerender() {
+		this.eventBus.emit(EventBusEventName.rerender, this)
+		this.stageGroup.remove()
+		this.stageGroup = new G()
+		this.image = new Image()
+		this.imageDom = document.createElement('img')
+		this.init(true)
 	}
 
 	private draw() {
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
-		this.data.forEach(node => {
-			const shape = this.node2ShapeInstanceWeakMap.get(node)
-			if (shape) {
-				shape.render(this.stageGroup)
-			}
-		})
+		this.eventBus.emit(EventBusEventName.draw, this)
 	}
 
 	private render() {
 		this.stage.addTo(this.container)
-	}
-
-	private crateDataShape() {
-		this.data.forEach(node => {
-			if (!this.node2ShapeInstanceWeakMap.has(node)) {
-				let shape = null
-				if (node.type === ShapeType.Rect) {
-					shape = new ImageMarkRect(node as RectData)
-				}
-				if (node.type === ShapeType.Image) {
-					shape = new ImageMarkImage(node as ImageData)
-				}
-				if (shape) {
-					this.node2ShapeInstanceWeakMap.set(node, shape)
-				}
-			}
-		})
 	}
 
 	private getInitialScaleAndTranslate(options: ImageMarkOptions['initScaleConfig']) {
@@ -303,33 +318,49 @@ export class ImageMark {
 		}
 	}
 
-	private checkInitOutOfContainerAndReset() {
+
+	private checkMinScaleValidate() {
 		if (!this.options.enableImageOutOfContainer) {
 			const { scale: minScale } = this.getInitialScaleAndTranslate({ 'size': 'cover' })
 			let { scaleX: currentScaleX = 1 } = this.stageGroup.transform()
-
 			if (currentScaleX < minScale) {
-				let scalePoint: Parameters<InstanceType<typeof ImageMark>['scaleTo']>[1] = 'center'
-				this.scaleTo({
-					size: 'cover',
-					startPosition: this.options.initScaleConfig?.startPosition
-				}, scalePoint)
-
-				if (scalePoint !== 'center') { //scale的点不是center的时候会导致图片超出容器
-					let { translateX: currentTranslateX = 0, translateY: currentTranslateY = 0 } = this.stageGroup.transform()
-					this.stageGroup.transform({
-						translate: [-currentTranslateX, -currentTranslateY]
-					}, true)
-
-					this.lastTransform = this.stageGroup.transform()
+				this.minScale = minScale
+				if (this.maxScale < minScale) {
+					this.maxScale = minScale
 				}
+				return false
+			}
+		}
+		return true
+	}
+
+	private checkInitOutOfContainerAndReset() {
+		if (!this.checkMinScaleValidate()) {
+			let scalePoint: Parameters<InstanceType<typeof ImageMark>['scaleTo']>[1] = 'center'
+			this.scaleTo({
+				size: 'cover',
+				startPosition: this.options.initScaleConfig?.startPosition
+			}, scalePoint)
+
+			if (scalePoint !== 'center') { //scale的点不是center的时候会导致图片超出容器
+				let { translateX: currentTranslateX = 0, translateY: currentTranslateY = 0 } = this.stageGroup.transform()
+				this.stageGroup.transform({
+					translate: [-currentTranslateX, -currentTranslateY]
+				}, true)
+
+				this.lastTransform = this.stageGroup.transform()
 			}
 		}
 	}
 
-	private drawImage(ev: Event) {
+	private drawImage(ev: Event, rerender = false) {
 		let target = ev.target as HTMLImageElement
-		this.stageGroup.transform(this.getInitialScaleAndTranslate(this.options.initScaleConfig))
+		if (rerender) {
+			this.stageGroup.transform(this.lastTransform, false)
+		} else {
+			this.stageGroup.transform(this.getInitialScaleAndTranslate(this.options.initScaleConfig))
+		}
+
 		this.lastTransform = this.stageGroup.transform()
 		this.checkInitOutOfContainerAndReset()
 
@@ -351,13 +382,36 @@ export class ImageMark {
 		e.preventDefault()
 	}
 
+	private onContainerDragLeaveEvent(e: Event) {
+		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
+		this.eventBus.emit(EventBusEventName.container_drag_leave, e, this)
+	}
+	private onContainerDropEvent(e: Event) {
+		debugger
+		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
+		this.eventBus.emit(EventBusEventName.container_drop, e, this)
+	}
+	private onContainerDragOverEvent(e: Event) {
+		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
+		this.eventBus.emit(EventBusEventName.container_drag_over, e, this)
+	}
+
 	addContainerEvent() {
-		this.container.addEventListener('wheel', this.onContainerWheel.bind(this))
+		this.container.addEventListener('wheel', this.onContainerWheel)
+		this.container.addEventListener('dragover', this.onContainerDragOverEvent)
+		this.container.addEventListener('dragleave', this.onContainerDragLeaveEvent)
+
+		//TODO(songle): Drop not trigger
+		this.container.addEventListener('drop', this.onContainerDropEvent)
+
 		return this
 	}
 
 	removeContainerEvent() {
 		this.container.removeEventListener('wheel', this.onContainerWheel)
+		this.container.removeEventListener('dragover', this.onContainerDragOverEvent)
+		this.container.removeEventListener('dragleave', this.onContainerDragLeaveEvent)
+		this.container.removeEventListener('drop', this.onContainerDropEvent)
 		return this
 	}
 
@@ -387,9 +441,6 @@ export class ImageMark {
 	}
 
 	addStageLmbDownMoveing() {
-		this.onComtainerLmbDownMoveingMouseDownEvent = this.onComtainerLmbDownMoveingMouseDownEvent.bind(this)
-		this.onComtainerLmbDownMoveingMouseUpEvent = this.onComtainerLmbDownMoveingMouseUpEvent.bind(this)
-
 		this.container.addEventListener('mousedown', this.onComtainerLmbDownMoveingMouseDownEvent)
 		document.addEventListener('mousemove', this.onComtainerLmbDownMoveingMouseMoveEvent)
 		document.addEventListener('mouseup', this.onComtainerLmbDownMoveingMouseUpEvent)
@@ -410,10 +461,10 @@ export class ImageMark {
 	}
 
 	addStageMouseScale() {
-		this.onComtainerMouseWheelEvent = this.onComtainerMouseWheelEvent.bind(this)
 		this.stage.on('wheel', this.onComtainerMouseWheelEvent)
 		return this
 	}
+
 	removeStageMouseScale() {
 		this.stage.off('wheel', this.onComtainerMouseWheelEvent)
 		return this
@@ -608,11 +659,18 @@ export class ImageMark {
 	}
 
 	setMinScale(minScale: number | InitialScaleSize) {
+		if (!this.options.enableImageOutOfContainer) return this
+
 		let minScaleValue: number = this.minScale
 		if (typeof minScale === 'string') {
 			minScaleValue = this.getInitialScaleAndTranslate({ size: minScale }).scale
 		} else {
 			minScaleValue = minScale
+		}
+
+		if (minScaleValue > this.maxScale) {
+			console.error('minScale should be less than maxScale')
+			return this
 		}
 		this.minScale = minScaleValue
 		return this
@@ -620,17 +678,29 @@ export class ImageMark {
 
 	setMaxScale(maxScale: number | InitialScaleSize) {
 		let maxScaleValue: number = this.maxScale
+
 		if (typeof maxScale === 'string') {
 			maxScaleValue = this.getInitialScaleAndTranslate({ size: maxScale }).scale
 		} else {
 			maxScaleValue = maxScale
 		}
+
+		if (maxScaleValue < this.minScale) {
+			console.error('maxScale should be greater than minScale')
+			return this
+		}
+
 		this.maxScale = maxScaleValue
 		return this
 	}
 
 	on(...rest: any) {
 		this.eventBus.on.apply(this.eventBus, rest)
+		return this
+	}
+
+	off(...rest: any) {
+		this.eventBus.off.apply(this.eventBus, rest)
 		return this
 	}
 
@@ -915,5 +985,50 @@ export class ImageMark {
 			directionOutOfInfo
 		}
 	}
+
+	// 添加插件
+	addPlugin(plugin: typeof Plugin) {
+		let hasPlugin = ImageMark.hasPlugin(plugin)
+		if (hasPlugin) {
+			ImageMark.usePlugin(plugin)
+			this.initPlugin(plugin)
+		}
+	}
+
+	// 移除插件
+	removePlugin(plugin: typeof Plugin) {
+		let hasPlugin = ImageMark.hasPlugin(plugin)
+		if (hasPlugin) {
+			ImageMark.pluginList.splice(ImageMark.pluginList.indexOf(plugin), 1)
+
+			let pluginInstance = this.plugin[plugin.pluginName]
+			if (pluginInstance) {
+				pluginInstance?.beforePluginRemove()
+				delete this.plugin[plugin.pluginName]
+			}
+		}
+	}
+
+	// 实例化插件
+	initPlugin(plugin: typeof Plugin) {
+		this.plugin[plugin.pluginName] = new plugin(this)
+	}
+	static pluginList: Array<typeof Plugin> = []
+
+	static usePlugin(plugin: typeof Plugin) {
+		if (ImageMark.hasPlugin(plugin)) return ImageMark
+		ImageMark.pluginList.push(plugin)
+		return ImageMark
+	}
+	static hasPlugin(plugin: typeof Plugin) {
+
+		return ImageMark.pluginList.find(item => item === plugin)
+	}
+
+
 }
 
+
+export type FunctionKeys<T> = {
+	[K in keyof T]: T[K] extends Function ? K : never
+}

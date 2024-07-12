@@ -1,5 +1,5 @@
 import { Image } from "@svgdotjs/svg.js";
-import { ImageMarkShape, ShapeData, ShapeType } from "./Shape";
+import { ImageMarkShape, ShapeData } from "./Shape";
 
 
 export interface ImageData extends ShapeData {
@@ -8,7 +8,7 @@ export interface ImageData extends ShapeData {
 	width: number
 	height: number
 	src: string
-	type: ShapeType.Image
+	shapeName: 'image'
 }
 
 export class ImageMarkImage extends ImageMarkShape {

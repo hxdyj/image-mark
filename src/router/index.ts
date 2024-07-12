@@ -6,6 +6,11 @@ const routes: Array<RouteRecordRaw> = [
 		name: 'base',
 		component: () => import('../views/Base.vue'),
 	},
+	{
+		path: '/map',
+		name: 'map',
+		component: () => import('../views/Map.vue'),
+	},
 
 ]
 
