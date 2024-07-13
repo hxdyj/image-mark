@@ -1,4 +1,4 @@
-import { G, Rect, Text } from "@svgdotjs/svg.js";
+import { Circle, G, Rect, Text } from "@svgdotjs/svg.js";
 import { BoundingBox } from "../../../../package";
 import { ImageMarkShape, ShapeData } from "../../../../package/shape/Shape";
 
@@ -17,9 +17,9 @@ export class TeamShape extends ImageMarkShape {
 		this.draw()
 	}
 	draw(): G {
-		this.shapeInstance.translate(this.data.x - this.data.width / 2, this.data.y - this.data.height / 2)
+		this.shapeInstance.translate(this.data.x - this.data.width / 2, this.data.y - this.data.height)
 		let rect = new Rect()
-		rect.size(this.data.width, this.data.height).fill('rgba(239,114,0,0.7)').radius(10)
+		rect.size(this.data.width, this.data.height).fill('rgba(239,114,0,0.7)').radius(6)
 		this.shapeInstance.on('mouseover', () => {
 			document.body.style.cursor = 'pointer'
 			rect.fill('rgba(239,114,0,1)')
@@ -33,8 +33,17 @@ export class TeamShape extends ImageMarkShape {
 
 		let text = new Text()
 		text.font({ family: 'Arial', size: 18 })
-		text.text(this.data.teamName).fill('white').center(this.data.width / 2, this.data.height / 2)
+		text.text(this.data.teamName).fill('white').center(this.data.width / 2, this.data.height / 2).attr({
+			style: 'user-select:none'
+		})
 		this.shapeInstance.add(text)
+
+		let circle = new Circle()
+		circle.size(10).fill('rgba(239,114,0,1)')
+		circle.center(this.data.width / 2, this.data.height)
+
+		this.shapeInstance.add(circle)
+
 		return this.shapeInstance
 	}
 }

@@ -1,3 +1,4 @@
+import { Text } from "@svgdotjs/svg.js";
 import { ImageMark } from "../../../../package";
 import { ShapePlugin } from "../../../../package/plugins/ShapePlugin";
 
@@ -24,7 +25,12 @@ export class TeamMarkPlugin extends ShapePlugin {
 	onDrop(e: DragEvent) {
 		if (e.dataTransfer)
 			e.dataTransfer.dropEffect = "copy";
-		let data = e.dataTransfer?.getData('text/plain') || 'hahah'
+		let data = e.dataTransfer?.getData('text/plain') || 'No Title'
+
+		let text = new Text()
+		text.font({ family: 'Arial', size: 18 })
+		text.text(data)
+		let box = text.bbox()
 		if (data) {
 			this.data.push({
 				shapeName: 'teamMark',
@@ -32,8 +38,9 @@ export class TeamMarkPlugin extends ShapePlugin {
 				x: e.imageClientX,
 				// @ts-ignore
 				y: e.imageClientY,
-				width: 100,
-				height: 40,
+				//TODO(width height caculate):
+				width: 30 + box.width,
+				height: 30,
 				teamName: data
 			})
 			this.rerender()

@@ -37,5 +37,10 @@
 		"@svgdotjs/svg.js": "^3.2.4",
 		"eventemitter3": "^5.0.1",
 		"lodash": "^4.17.21"
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"@arco-design/web-vue@2.55.3": "patches/@arco-design__web-vue@2.55.3.patch"
+		}
 	}
 }

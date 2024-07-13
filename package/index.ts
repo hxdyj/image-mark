@@ -13,6 +13,7 @@ export enum EventBusEventName {
 	first_render = 'first_render',
 	rerender = 'rerender',
 	draw = 'draw',
+	container_drag_enter = 'container_drag_enter',
 	container_drag_over = 'container_drag_over',
 	container_drag_leave = 'container_drag_leave',
 	container_drop = 'container_drop',
@@ -138,6 +139,7 @@ export class ImageMark extends EventBindingThis {
 			'onComtainerLmbDownMoveingMouseUpEvent',
 			'onComtainerMouseWheelEvent',
 
+			'onContainerDragEnterEvent',
 			'onContainerDragLeaveEvent',
 			'onContainerDragOverEvent',
 			'onContainerDropEvent'
@@ -382,24 +384,32 @@ export class ImageMark extends EventBindingThis {
 		e.preventDefault()
 	}
 
-	private onContainerDragLeaveEvent(e: Event) {
-		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
+	private onContainerDragLeaveEvent(e: DragEvent) {
+		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drag_leave, e, this)
 	}
-	private onContainerDropEvent(e: Event) {
-		e.preventDefault()
-		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
+	private onContainerDropEvent(e: DragEvent) {
+		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drop, e, this)
-	}
-	private onContainerDragOverEvent(e: Event) {
-		debugger
 		e.preventDefault()
+	}
+
+	private onContainerDragEnterEvent(e: DragEvent) {
+		this.documentMouseEvent2EnhanceEvent(e)
+		this.eventBus.emit(EventBusEventName.container_drag_enter, e, this)
+		e.preventDefault()
+	}
+
+
+	private onContainerDragOverEvent(e: DragEvent) {
 		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
 		this.eventBus.emit(EventBusEventName.container_drag_over, e, this)
+		e.preventDefault()
 	}
 
 	addContainerEvent() {
 		this.container.addEventListener('wheel', this.onContainerWheel)
+		this.container.addEventListener('dragenter', this.onContainerDragEnterEvent)
 		this.container.addEventListener('dragover', this.onContainerDragOverEvent)
 		this.container.addEventListener('dragleave', this.onContainerDragLeaveEvent)
 		this.container.addEventListener('drop', this.onContainerDropEvent)
@@ -409,6 +419,7 @@ export class ImageMark extends EventBindingThis {
 
 	removeContainerEvent() {
 		this.container.removeEventListener('wheel', this.onContainerWheel)
+		this.container.removeEventListener('dragenter', this.onContainerDragEnterEvent)
 		this.container.removeEventListener('dragover', this.onContainerDragOverEvent)
 		this.container.removeEventListener('dragleave', this.onContainerDragLeaveEvent)
 		this.container.removeEventListener('drop', this.onContainerDropEvent)
