@@ -62,7 +62,7 @@ export type ImageMarkOptions = {
 		to: 'box'
 		box: BoundingBox
 	}) & {
-		startPosition?: 'center' | 'top-left'
+		startPosition?: 'center' | 'left-top'
 		size?: InitialScaleSize
 		/**
 		 * 留白
@@ -122,6 +122,8 @@ export class ImageMark extends EventBindingThis {
 		this.stage.attr({
 			style: `background-color:#c9cdd4`
 		})
+		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
+
 		this.stageGroup = new G()
 		this.image = new Image()
 		this.imageDom = document.createElement('img')
@@ -146,33 +148,45 @@ export class ImageMark extends EventBindingThis {
 		])
 	}
 
-	private init(rerender = false) {
+	private init(action?: 'resize' | 'rerender') {
 		this.eventBus.emit(EventBusEventName.init, this)
 		this.image.load(this.options.src, (ev) => {
 			this.imageDom = ev.target as HTMLImageElement
 			this.stageGroup.addTo(this.stage)
-			this.drawImage(ev, rerender)
+			this.drawImage(ev, action === 'rerender' ? 'reserve' : 'initial')
 			this.draw()
 			this.render()
-			this.addDefaultAction()
-			this.addContainerEvent()
-			this.eventBus.emit(EventBusEventName.first_render, this)
+			if (!action) {
+				this.addDefaultAction()
+				this.addContainerEvent()
+				this.eventBus.emit(EventBusEventName.first_render, this)
+			}
 		})
 	}
 
-
-
-	rerender() {
-		this.eventBus.emit(EventBusEventName.rerender, this)
+	private initVariable() {
+		this.containerRectInfo = getContainerInfo(this.container)
+		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 		this.stageGroup.remove()
 		this.stageGroup = new G()
 		this.image = new Image()
 		this.imageDom = document.createElement('img')
-		this.init(true)
+
+	}
+
+	resize() {
+		this.containerRectInfo = getContainerInfo(this.container)
+		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
+		this.init('resize')
+	}
+
+	rerender() {
+		this.eventBus.emit(EventBusEventName.rerender, this)
+		this.initVariable()
+		this.init('rerender')
 	}
 
 	private draw() {
-		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 		this.eventBus.emit(EventBusEventName.draw, this)
 	}
 
@@ -224,7 +238,7 @@ export class ImageMark extends EventBindingThis {
 					}
 				},
 				original: () => {
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [-box.x + paddingWidth, -box.y + paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -234,7 +248,7 @@ export class ImageMark extends EventBindingThis {
 				cover: () => {
 					let boxCoverScale = maxWidth / maxHeight < boxWidth / boxHeight ? maxHeight / boxHeight : maxWidth / boxWidth // 短边尽量展示出来
 					initialScale = boxCoverScale
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [-box.x * boxCoverScale + paddingWidth, -box.y * boxCoverScale + paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -243,7 +257,7 @@ export class ImageMark extends EventBindingThis {
 				},
 				width: () => {
 					initialScale = maxWidth / boxWidth
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [paddingWidth - box.x * initialScale, - box.y * initialScale + paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -252,7 +266,7 @@ export class ImageMark extends EventBindingThis {
 				},
 				height: () => {
 					initialScale = maxHeight / boxHeight
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [- box.x * initialScale + paddingWidth, - box.y * initialScale + paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -275,7 +289,7 @@ export class ImageMark extends EventBindingThis {
 					}
 				},
 				original: () => {
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [paddingWidth, paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -285,7 +299,7 @@ export class ImageMark extends EventBindingThis {
 				cover: () => {
 					let imageCoverScale = maxWidth / maxHeight < imgWidth / imgHeight ? heightRate : widthRate // 短边尽量展示出来
 					initialScale = imageCoverScale
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [paddingWidth, paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -294,7 +308,7 @@ export class ImageMark extends EventBindingThis {
 				},
 				width: () => {
 					initialScale = maxWidth / imgWidth
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [paddingWidth, paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -303,7 +317,7 @@ export class ImageMark extends EventBindingThis {
 				},
 				height: () => {
 					initialScale = maxHeight / imgHeight
-					if (startPosition === 'top-left') {
+					if (startPosition === 'left-top') {
 						translateOffset = [paddingWidth, paddingHeight]
 					}
 					if (startPosition === 'center') {
@@ -343,24 +357,22 @@ export class ImageMark extends EventBindingThis {
 				size: 'cover',
 				startPosition: this.options.initScaleConfig?.startPosition
 			}, scalePoint)
-
 			if (scalePoint !== 'center') { //scale的点不是center的时候会导致图片超出容器
 				let { translateX: currentTranslateX = 0, translateY: currentTranslateY = 0 } = this.stageGroup.transform()
 				this.stageGroup.transform({
 					translate: [-currentTranslateX, -currentTranslateY]
 				}, true)
-
-				this.lastTransform = this.stageGroup.transform()
 			}
+			this.lastTransform = this.stageGroup.transform()
 		}
 	}
 
-	private drawImage(ev: Event, rerender = false) {
+	private drawImage(ev: Event, action: 'initial' | 'reserve' = 'initial') {
 		let target = ev.target as HTMLImageElement
-		if (rerender) {
+		if (action == 'reserve') {
 			this.stageGroup.transform(this.lastTransform, false)
 		} else {
-			this.stageGroup.transform(this.getInitialScaleAndTranslate(this.options.initScaleConfig))
+			this.stageGroup.transform(this.getInitialScaleAndTranslate(this.options.initScaleConfig), false)
 		}
 
 		this.lastTransform = this.stageGroup.transform()
@@ -407,12 +419,24 @@ export class ImageMark extends EventBindingThis {
 		e.preventDefault()
 	}
 
+	private containerResizeObserverCallback: ResizeObserverCallback = (entries) => {
+		//TODO(songle): 缩小不触发
+		console.count('resize observer callback')
+		if (entries[0]?.target === this.container) {
+			this.resize()
+		}
+	}
+
+	private containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
+
 	addContainerEvent() {
 		this.container.addEventListener('wheel', this.onContainerWheel)
 		this.container.addEventListener('dragenter', this.onContainerDragEnterEvent)
 		this.container.addEventListener('dragover', this.onContainerDragOverEvent)
 		this.container.addEventListener('dragleave', this.onContainerDragLeaveEvent)
 		this.container.addEventListener('drop', this.onContainerDropEvent)
+
+		this.containerResizeObserver.observe(this.container)
 
 		return this
 	}
@@ -423,6 +447,9 @@ export class ImageMark extends EventBindingThis {
 		this.container.removeEventListener('dragover', this.onContainerDragOverEvent)
 		this.container.removeEventListener('dragleave', this.onContainerDragLeaveEvent)
 		this.container.removeEventListener('drop', this.onContainerDropEvent)
+
+		this.containerResizeObserver.disconnect()
+
 		return this
 	}
 
@@ -561,6 +588,28 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
+	private checkScaleLimitImageInContainer(point: ArrayPoint, callback?: (nextGroup: G) => void) {
+		let cloneGroup = this.cloneGroup()
+		callback?.(cloneGroup)
+		let nextStepTransform = cloneGroup.transform()
+		const scaleLimitResult = this.getScaleLimitImageInContainerInfo(point, this.lastTransform, nextStepTransform)
+		if (scaleLimitResult === false) {
+			console.warn('scale out of container')
+			return this
+		}
+		if (scaleLimitResult) {
+			this.status.scaling = true
+			scaleLimitResult.forEach(item => {
+				this.stageGroup.transform(...item)
+			})
+			this.lastTransform = this.stageGroup.transform()
+			this.status.scaling = false
+			return this
+		}
+
+		return null
+	}
+
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
 		if (this.status.scaling || this.status.moving) return
 		if (point === 'left-top') {
@@ -608,30 +657,26 @@ export class ImageMark extends EventBindingThis {
 			const { scale } = this.getInitialScaleAndTranslate({
 				size: 'cover'
 			})
-
 			if (areFloatsEqual(this.lastTransform.scaleX || 1, scale)) {
+				const { isOutOf } = this.isOutofContainer(this.lastTransform)
+				if (isOutOf) {
+					let { translate } = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
+					this.stageGroup.transform({
+						translate: [-(this.lastTransform.translateX || 0), -(this.lastTransform.translateY || 0)]
+					}, true)
+					this.stageGroup.transform({
+						translate
+					}, true)
+					this.lastTransform = this.stageGroup.transform()
+				}
 				return this
 			}
 
-			let cloneGroup = this.cloneGroup()
-			transformScale(cloneGroup)
-			let nextStepTransform = cloneGroup.transform()
+			const flag = this.checkScaleLimitImageInContainer(point, (cloneGroup) => {
+				transformScale(cloneGroup)
+			})
 
-			const scaleLimitResult = this.getScaleLimitImageInContainerInfo(point, this.lastTransform, nextStepTransform)
-			if (scaleLimitResult === false) {
-				console.warn('scale out of container')
-				return this
-			}
-			if (scaleLimitResult) {
-				this.status.scaling = true
-				scaleLimitResult.forEach(item => {
-					this.stageGroup.transform(...item)
-				})
-				this.lastTransform = this.stageGroup.transform()
-				this.status.scaling = false
-				return this
-			}
-
+			if (flag) return this
 
 		}
 
@@ -640,6 +685,7 @@ export class ImageMark extends EventBindingThis {
 		transformScale(this.stageGroup)
 		this.lastTransform = this.stageGroup.transform()
 		this.status.scaling = false
+
 		return this
 	}
 
@@ -717,7 +763,7 @@ export class ImageMark extends EventBindingThis {
 
 	scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container') {
 		const { scale } = this.getInitialScaleAndTranslate(options)
-		this.scale(1, point, reletiveTo, scale)
+		this.scale(-1, point, reletiveTo, scale)
 	}
 
 	setEnableImageOutOfContainer(enable: boolean) {
@@ -759,7 +805,6 @@ export class ImageMark extends EventBindingThis {
 			let { scaleX: nextScaleX = 1 } = nextStepTransform
 
 			let { scale: minScale } = this.getInitialScaleAndTranslate({ size: 'cover' })
-
 			if (currentScaleX < minScale) {
 				this.scaleTo({ size: 'cover' }, 'center')
 				// console.log("SCALE LIMIT", 1);

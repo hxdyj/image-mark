@@ -2,7 +2,8 @@
 - [ ] Rect Or Other Mode use plugin system implement
 - [x] limit move not out of container
 - [ ] shortcut system
-- [ ] dropable
+- [x] dropable
 - [ ] commonly action class
 - [ ] resize deal: resize event maybe can't listen container size change , use MutationObserver instead
-- [ ] caculate next step chunk
+- [x] caculate next step chunk
+- [x] company map demo finished
