@@ -1,11 +1,13 @@
 import { Shape } from '@svgdotjs/svg.js';
+import { ImageMark } from '../index';
 
 export declare abstract class ImageMarkShape {
     protected data: ShapeData;
     abstract shapeInstance: Shape;
     private isRendered;
     static shapeName: string;
-    constructor(data: ShapeData);
+    imageMark: ImageMark;
+    constructor(data: ShapeData, imageMarkInstance: ImageMark);
     abstract draw(): Shape;
     render(stage: Parameters<InstanceType<typeof Shape>['addTo']>[0]): void;
 }

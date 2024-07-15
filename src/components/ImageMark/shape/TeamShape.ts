@@ -1,6 +1,7 @@
 import { Circle, G, Rect, Text } from "@svgdotjs/svg.js";
-import { BoundingBox, EventBusEventName, ImageMark } from "../../../../package";
+import { BoundingBox, ImageMark } from "../../../../package";
 import { ImageMarkShape, ShapeData } from "../../../../package/shape/Shape";
+import { EventBusEventName } from "../../../../package/event/const";
 
 
 export interface TeamData extends BoundingBox, ShapeData {
@@ -46,7 +47,7 @@ export class TeamShape extends ImageMarkShape {
 
 		this.shapeInstance.on('dblclick', () => {
 			this.shapeInstance.remove()
-			this.imageMark.eventBus.emit('shape_delete', this.data, this.shapeInstance, this.imageMark)
+			this.imageMark.eventBus.emit(EventBusEventName.shape_delete, this.data, this.shapeInstance, this.imageMark)
 		})
 
 		return this.shapeInstance

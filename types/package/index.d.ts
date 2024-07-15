@@ -4,14 +4,17 @@ import { default as EventEmitter } from 'eventemitter3';
 import { Plugin } from './plugins';
 import { EventBindingThis } from './event';
 
-export declare enum EventBusEventName {
-    init = "init",
-    first_render = "first_render",
-    rerender = "rerender",
-    draw = "draw",
-    container_drag_over = "container_drag_over",
-    container_drag_leave = "container_drag_leave",
-    container_drop = "container_drop"
+export declare class EventBusEventName {
+    static init: string;
+    static first_render: string;
+    static rerender: string;
+    static draw: string;
+    static container_drag_enter: string;
+    static container_drag_over: string;
+    static container_drag_leave: string;
+    static container_drop: string;
+    static shape_delete: string;
+    static shape_add: string;
 }
 export type TransformStep = [MatrixAlias, boolean];
 export type ImageClient = {
@@ -51,7 +54,7 @@ export type ImageMarkOptions = {
         to: 'box';
         box: BoundingBox;
     }) & {
-        startPosition?: 'center' | 'top-left';
+        startPosition?: 'center' | 'left-top';
         size?: InitialScaleSize;
         /**
          * 留白
@@ -88,6 +91,8 @@ export declare class ImageMark extends EventBindingThis {
     constructor(options: ImageMarkOptions);
     private initBindAllEventsThis;
     private init;
+    private initVariable;
+    resize(): void;
     rerender(): void;
     private draw;
     private render;
@@ -100,7 +105,10 @@ export declare class ImageMark extends EventBindingThis {
     private onContainerWheel;
     private onContainerDragLeaveEvent;
     private onContainerDropEvent;
+    private onContainerDragEnterEvent;
     private onContainerDragOverEvent;
+    private containerResizeObserverCallback;
+    private containerResizeObserver;
     addContainerEvent(): this;
     removeContainerEvent(): this;
     private onComtainerLmbDownMoveingMouseDownEvent;
@@ -117,6 +125,7 @@ export declare class ImageMark extends EventBindingThis {
     moveSuccessive(point: ArrayPoint): this | undefined;
     endSuccessiveMove(): this;
     startSuccessiveMove(point: ArrayPoint): this;
+    private checkScaleLimitImageInContainer;
     scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image', newScale?: number): this | undefined;
     private documentMouseEvent2EnhanceEvent;
     private getEventOffset;

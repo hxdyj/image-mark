@@ -5,20 +5,7 @@ import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
 import { Plugin } from "./plugins";
 import { EventBindingThis } from "./event";
-
-
-export enum EventBusEventName {
-	init = 'init',
-	first_render = 'first_render',
-	rerender = 'rerender',
-	draw = 'draw',
-	container_drag_enter = 'container_drag_enter',
-	container_drag_over = 'container_drag_over',
-	container_drag_leave = 'container_drag_leave',
-	container_drop = 'container_drop',
-	shape_delete = 'shape_delete',
-	shape_add = 'shape_add',
-}
+import { EventBusEventName } from "./event/const";
 
 export type TransformStep = [MatrixAlias, boolean]
 
@@ -1093,3 +1080,6 @@ export class ImageMark extends EventBindingThis {
 export type FunctionKeys<T> = {
 	[K in keyof T]: T[K] extends Function ? K : never
 }
+
+
+export default ImageMark

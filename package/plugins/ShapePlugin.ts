@@ -1,6 +1,7 @@
 import { ImageMark } from "..";
 import { Plugin } from ".";
 import { ImageMarkShape, ShapeData } from "../shape/Shape";
+import { EventBusEventName } from "../event/const";
 
 export class ShapePlugin extends Plugin {
 	static pluginName = "shape";
@@ -68,7 +69,7 @@ export class ShapePlugin extends Plugin {
 		this.addNode(data)
 		this.renderNode(data)
 		if (emit) {
-			this.imageMark.eventBus.emit('shape_add', data, this.node2ShapeInstanceWeakMap.get(data))
+			this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.node2ShapeInstanceWeakMap.get(data))
 		}
 	}
 
