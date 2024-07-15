@@ -4,6 +4,6 @@
 - [ ] shortcut system
 - [x] dropable
 - [ ] commonly action class
-- [ ] resize deal: resize event maybe can't listen container size change , use MutationObserver instead
+- [x] resize deal: resize event maybe can't listen container size change , use MutationObserver instead
 - [x] caculate next step chunk
 - [x] company map demo finished

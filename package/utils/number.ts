@@ -1,4 +1,4 @@
-export function areFloatsEqual(a: number, b: number, precision: number = 3): boolean {
+export function areFloatsEqual(a: number, b: number, precision: number = 4): boolean {
 	const epsilon = Math.pow(10, -precision);
 	return Math.abs(a - b) < epsilon;
 }

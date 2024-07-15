@@ -171,12 +171,12 @@ export class ImageMark extends EventBindingThis {
 		this.stageGroup = new G()
 		this.image = new Image()
 		this.imageDom = document.createElement('img')
-
 	}
 
 	resize() {
 		this.containerRectInfo = getContainerInfo(this.container)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
+		this.initVariable()
 		this.init('resize')
 	}
 
@@ -202,9 +202,11 @@ export class ImageMark extends EventBindingThis {
 
 		let containerWidth = this.containerRectInfo.width
 		let containerHeight = this.containerRectInfo.height
-
 		let { padding = 0, size = 'fit', to = 'image', startPosition = 'center', paddingUnit = '%' } = options!
-
+		if (!this.options.enableImageOutOfContainer) {
+			padding = 0
+			size = 'cover'
+		}
 		let box: BoundingBox | null = null
 		if (options!.to === 'box') {
 			box = options?.box || null
@@ -327,7 +329,6 @@ export class ImageMark extends EventBindingThis {
 			}
 			deal[size]()
 		}
-
 		return {
 			scale: initialScale,
 			translate: translateOffset
@@ -352,18 +353,7 @@ export class ImageMark extends EventBindingThis {
 
 	private checkInitOutOfContainerAndReset() {
 		if (!this.checkMinScaleValidate()) {
-			let scalePoint: Parameters<InstanceType<typeof ImageMark>['scaleTo']>[1] = 'center'
-			this.scaleTo({
-				size: 'cover',
-				startPosition: this.options.initScaleConfig?.startPosition
-			}, scalePoint)
-			if (scalePoint !== 'center') { //scale的点不是center的时候会导致图片超出容器
-				let { translateX: currentTranslateX = 0, translateY: currentTranslateY = 0 } = this.stageGroup.transform()
-				this.stageGroup.transform({
-					translate: [-currentTranslateX, -currentTranslateY]
-				}, true)
-			}
-			this.lastTransform = this.stageGroup.transform()
+			this.checkScaleLimitImageInContainer([0, 0])
 		}
 	}
 
@@ -372,10 +362,12 @@ export class ImageMark extends EventBindingThis {
 		if (action == 'reserve') {
 			this.stageGroup.transform(this.lastTransform, false)
 		} else {
-			this.stageGroup.transform(this.getInitialScaleAndTranslate(this.options.initScaleConfig), false)
+			const initTrasform = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
+			this.stageGroup.transform(initTrasform, false)
 		}
 
 		this.lastTransform = this.stageGroup.transform()
+
 		this.checkInitOutOfContainerAndReset()
 
 		this.image.size(this.imageDom.naturalWidth, this.imageDom.naturalHeight)
@@ -592,11 +584,14 @@ export class ImageMark extends EventBindingThis {
 		let cloneGroup = this.cloneGroup()
 		callback?.(cloneGroup)
 		let nextStepTransform = cloneGroup.transform()
+
 		const scaleLimitResult = this.getScaleLimitImageInContainerInfo(point, this.lastTransform, nextStepTransform)
+
 		if (scaleLimitResult === false) {
 			console.warn('scale out of container')
 			return this
 		}
+
 		if (scaleLimitResult) {
 			this.status.scaling = true
 			scaleLimitResult.forEach(item => {
@@ -657,7 +652,8 @@ export class ImageMark extends EventBindingThis {
 			const { scale } = this.getInitialScaleAndTranslate({
 				size: 'cover'
 			})
-			if (areFloatsEqual(this.lastTransform.scaleX || 1, scale)) {
+			// if (areFloatsEqual()) {
+			if ((this.lastTransform.scaleX || 1) === scale) {
 				const { isOutOf } = this.isOutofContainer(this.lastTransform)
 				if (isOutOf) {
 					let { translate } = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
@@ -677,7 +673,6 @@ export class ImageMark extends EventBindingThis {
 			})
 
 			if (flag) return this
-
 		}
 
 		this.status.scaling = true
@@ -803,13 +798,15 @@ export class ImageMark extends EventBindingThis {
 		if (isOutOf) {
 			let { scaleX: currentScaleX = 1 } = currentTransform
 			let { scaleX: nextScaleX = 1 } = nextStepTransform
+			let newScale = nextScaleX / currentScaleX
 
-			let { scale: minScale } = this.getInitialScaleAndTranslate({ size: 'cover' })
+			let { scale: minScale, translate: initialTranslate } = this.getInitialScaleAndTranslate({ size: 'cover' })
 			if (currentScaleX < minScale) {
-				this.scaleTo({ size: 'cover' }, 'center')
-				// console.log("SCALE LIMIT", 1);
-			} else if (currentScaleX > minScale) {
+				// console.log("SCALE LIMIT", 1, currentScaleX, minScale);
+				// this.scaleTo({ size: 'cover' }, 'center')
+				return [[{ translate: [-(this.lastTransform.translateX || 0), - (this.lastTransform.translateY || 0)] }, true], [{ scale: newScale }, true], [{ translate: initialTranslate }, true]]
 
+			} else if (currentScaleX > minScale) {
 				let { width: containerWidth, height: containerHeight } = this.containerRectInfo
 				let { naturalWidth, naturalHeight } = this.imageDom
 				let { left, top, right, bottom } = directionOutOfInfo
@@ -821,7 +818,6 @@ export class ImageMark extends EventBindingThis {
 					width: containerWidth,
 					height: containerHeight
 				})
-				let newScale = nextScaleX / currentScaleX
 				const outOfContainerEdgeList = this.getOutOfContainerEdgeList(directionOutOfInfo)
 
 				if (weltList.length == 0) {//没有贴合的

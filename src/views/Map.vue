@@ -1,14 +1,17 @@
 <template>
-	<div class="page-map flex h-[100vh]">
-		<div class="flex-grow relative">
-			<div id="map" class="w-full h-full"></div>
-			<div class=" absolute left-0 top-0 p-2 text-white bg-[#333333] rounded-md" v-if="cordinary">Cordinary ( {{
-				cordinary[0] }} , {{ cordinary[1] }})</div>
+	<div class="page-map">
+		<div class="flex h-[100vh]">
+			<div class="flex-grow relative" style="min-width: 0;">
+				<div id="map" class="w-full h-full"></div>
+				<div class=" absolute left-0 top-0 p-2 text-white bg-[#333333] rounded-md" v-if="cordinary">Cordinary ( {{
+					cordinary[0] }} , {{ cordinary[1] }})</div>
+			</div>
+			<div class="tree-panel flex-shrink-0 w-[300px]">
+				<a-tree blockNode :data="treeData" draggable :allow-drop="onAllowDrop" @drag-start="onDragStart"
+					@drag-over="onDragOver" @drag-end="onDragEnd" />
+			</div>
 		</div>
-		<div class="tree-panel flex-shrink-0 w-[300px]">
-			<a-tree blockNode :data="treeData" draggable :allow-drop="onAllowDrop" @drag-start="onDragStart"
-				@drag-over="onDragOver" @drag-end="onDragEnd" />
-		</div>
+
 	</div>
 	<div id="drag-tree-node-ghost"
 		class="fixed bottom-0 left-0 text-center text-white bg-[#EF7100] px-4 py-2 rounded-md -z-10">I am flying
