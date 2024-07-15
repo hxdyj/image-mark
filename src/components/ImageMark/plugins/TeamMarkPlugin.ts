@@ -6,7 +6,6 @@ export class TeamMarkPlugin extends ShapePlugin {
 	static pluginName = "teamMark";
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);
-		this.imageMark
 		this.bindEventThis(["onDrop", "onDragOver"]);
 		this.bindTeamMarkEvent()
 	}
@@ -32,7 +31,19 @@ export class TeamMarkPlugin extends ShapePlugin {
 		text.text(data)
 		let box = text.bbox()
 		if (data) {
-			this.data.push({
+			// this.data.push({
+			// 	shapeName: 'teamMark',
+			// 	// @ts-ignore
+			// 	x: e.imageClientX,
+			// 	// @ts-ignore
+			// 	y: e.imageClientY,
+			// 	//TODO(width height caculate):
+			// 	width: 30 + box.width,
+			// 	height: 30,
+			// 	teamName: data
+			// })
+			// this.rerender()
+			this.onAdd({
 				shapeName: 'teamMark',
 				// @ts-ignore
 				x: e.imageClientX,
@@ -42,8 +53,8 @@ export class TeamMarkPlugin extends ShapePlugin {
 				width: 30 + box.width,
 				height: 30,
 				teamName: data
-			})
-			this.rerender()
+			}, false)
+
 		}
 	}
 

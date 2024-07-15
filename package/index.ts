@@ -3,7 +3,6 @@ import { getContainerInfo, getElement } from "./utils/dom";
 import { defaultsDeep, difference, throttle } from "lodash";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
-import { areFloatsEqual } from "./utils/number";
 import { Plugin } from "./plugins";
 import { EventBindingThis } from "./event";
 
@@ -17,6 +16,8 @@ export enum EventBusEventName {
 	container_drag_over = 'container_drag_over',
 	container_drag_leave = 'container_drag_leave',
 	container_drop = 'container_drop',
+	shape_delete = 'shape_delete',
+	shape_add = 'shape_add',
 }
 
 export type TransformStep = [MatrixAlias, boolean]
@@ -661,7 +662,6 @@ export class ImageMark extends EventBindingThis {
 			const { scale } = this.getInitialScaleAndTranslate({
 				size: 'cover'
 			})
-			// if (areFloatsEqual()) {
 			if ((this.lastTransform.scaleX || 1) === scale) {
 				const { isOutOf } = this.isOutofContainer(this.lastTransform)
 				if (isOutOf) {

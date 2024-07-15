@@ -1,5 +1,5 @@
 import { Circle, G, Rect, Text } from "@svgdotjs/svg.js";
-import { BoundingBox } from "../../../../package";
+import { BoundingBox, EventBusEventName, ImageMark } from "../../../../package";
 import { ImageMarkShape, ShapeData } from "../../../../package/shape/Shape";
 
 
@@ -11,8 +11,8 @@ export interface TeamData extends BoundingBox, ShapeData {
 export class TeamShape extends ImageMarkShape {
 	static shapeName = "teamMark"
 	shapeInstance: G
-	constructor(data: TeamData) {
-		super(data)
+	constructor(data: TeamData, imageMarkInstance: ImageMark) {
+		super(data, imageMarkInstance)
 		this.shapeInstance = new G()
 		this.draw()
 	}
@@ -43,6 +43,11 @@ export class TeamShape extends ImageMarkShape {
 		circle.center(this.data.width / 2, this.data.height)
 
 		this.shapeInstance.add(circle)
+
+		this.shapeInstance.on('dblclick', () => {
+			this.shapeInstance.remove()
+			this.imageMark.eventBus.emit('shape_delete', this.data, this.shapeInstance, this.imageMark)
+		})
 
 		return this.shapeInstance
 	}

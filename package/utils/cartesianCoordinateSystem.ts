@@ -1,5 +1,5 @@
 import { ArrayPoint, BoundingBox, EdgeName } from "..";
-import { areFloatsEqual, areNumberEqual } from "./number";
+import { areNumberEqual } from "./number";
 
 export type RectVertexPoints = {
 	[key in EdgeName]: ArrayPoint
