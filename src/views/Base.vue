@@ -77,7 +77,7 @@ onMounted(() => {
 	imgMark = new ImageMark({
 		el: '.page-base',
 		src: '/2.png',
-		enableImageOutOfContainer: false,
+		// enableImageOutOfContainer: false,
 		moveConfig: {
 		},
 		initScaleConfig: {

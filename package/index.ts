@@ -150,10 +150,17 @@ export class ImageMark extends EventBindingThis {
 
 	private init(action?: 'resize' | 'rerender') {
 		this.eventBus.emit(EventBusEventName.init, this)
-		this.image.load(this.options.src, (ev) => {
+		this.image.load(this.options.src, (ev: any) => {
 			this.imageDom = ev.target as HTMLImageElement
 			this.stageGroup.addTo(this.stage)
-			this.drawImage(ev, action === 'rerender' ? 'reserve' : 'initial')
+
+			let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
+
+			if (action === 'rerender' || action == 'resize' && this.options.enableImageOutOfContainer) {
+				drawSize = 'reserve'
+			}
+
+			this.drawImage(ev, drawSize)
 			this.draw()
 			this.render()
 			if (!action) {
@@ -357,11 +364,13 @@ export class ImageMark extends EventBindingThis {
 		}
 	}
 
-	private drawImage(ev: Event, action: 'initial' | 'reserve' = 'initial') {
+	private drawImage(ev: Event, size: 'initial' | 'reserve' = 'initial') {
 		let target = ev.target as HTMLImageElement
-		if (action == 'reserve') {
+		if (size == 'reserve') {
 			this.stageGroup.transform(this.lastTransform, false)
-		} else {
+		}
+
+		if (size == 'initial') {
 			const initTrasform = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
 			this.stageGroup.transform(initTrasform, false)
 		}
