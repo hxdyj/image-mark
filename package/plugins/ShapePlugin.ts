@@ -13,7 +13,7 @@ export class ShapePlugin extends Plugin {
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
 		this.data = imageMarkInstance.options.pluginOptions?.[pluginName]?.shapeList || []
-		this.bindEventThis(['onRerender', 'onDraw', 'onInit', 'onDelete', 'onAdd'])
+		this.bindEventThis(['onRerender', 'onDraw', 'onInit', 'onDelete'])
 		this.bindEvent()
 	}
 
@@ -46,7 +46,6 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.on('draw', this.onDraw)
 		this.imageMark.on('init', this.onInit)
 		this.imageMark.on('shape_delete', this.onDelete)
-		this.imageMark.on('shape_add', this.onAdd)
 	}
 
 	private unbindEvent() {
@@ -54,9 +53,6 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.off('draw', this.onDraw)
 		this.imageMark.off('init', this.onInit)
 		this.imageMark.off('shape_delete', this.onDelete)
-		this.imageMark.off('shape_add', this.onAdd)
-
-
 	}
 
 	rerender() {
