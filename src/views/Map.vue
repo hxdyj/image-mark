@@ -25,6 +25,7 @@ import { ref } from 'vue';
 import { ArrayPoint } from '../../package';
 import { TeamMarkPlugin } from '../components/ImageMark/plugins/TeamMarkPlugin';
 import { TeamShape } from '../components/ImageMark/shape/TeamShape';
+import { ShapeData } from '../../package/shape/Shape';
 TeamMarkPlugin.registerShape(TeamShape)
 ImageMark.usePlugin(TeamMarkPlugin)
 
@@ -92,6 +93,15 @@ const treeData = [
 		],
 	},
 ];
+
+const data = ref<ShapeData[]>([{
+	"shapeName": "teamMark",
+	"x": 680.4866180048662,
+	"y": 438.9635036496351,
+	"width": 106.36250305175781,
+	"height": 30,
+	"teamName": "Trunk 0-1"
+}])
 onMounted(() => {
 	imgMark = new ImageMark({
 		el: '#map',
@@ -103,10 +113,17 @@ onMounted(() => {
 			startPosition: 'center',
 			size: 'cover',
 			paddingUnit: 'px'
+		},
+		pluginOptions: {
+			[TeamMarkPlugin.pluginName]: {
+				shapeList: data.value
+			}
 		}
 	}).on('first_render', () => {
 	}).on('container_drag_over', (e: any) => {
 		cordinary.value = [parseInt(e.imageClientX), parseInt(e.imageClientY)]
+	}).on('shape_add', (shapeData: ShapeData) => {
+		data.value.push(shapeData)
 	})
 })
 </script>

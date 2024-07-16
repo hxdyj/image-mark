@@ -13,7 +13,7 @@ export class ShapePlugin extends Plugin {
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
 		this.data = imageMarkInstance.options.pluginOptions?.[pluginName]?.shapeList || []
-		this.bindEventThis(['onRerender', 'onDraw', 'onInit', 'onDelete'])
+		this.bindEventThis(['onRerender', 'onDraw', 'onInit', 'onDelete', 'onResize'])
 		this.bindEvent()
 	}
 
@@ -46,6 +46,7 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.on('draw', this.onDraw)
 		this.imageMark.on('init', this.onInit)
 		this.imageMark.on('shape_delete', this.onDelete)
+		this.imageMark.on('resize', this.onResize)
 	}
 
 	private unbindEvent() {
@@ -53,15 +54,12 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.off('draw', this.onDraw)
 		this.imageMark.off('init', this.onInit)
 		this.imageMark.off('shape_delete', this.onDelete)
+		this.imageMark.off('resize', this.onResize)
 	}
 
 	updateData(data: ShapeData[]) {
 		this.data = data
-	}
-
-	rerender() {
 		this.createShape()
-		this.onDraw()
 	}
 
 	onAdd(data: ShapeData, emit = true) {
@@ -86,9 +84,19 @@ export class ShapePlugin extends Plugin {
 		this.createShape()
 	}
 
-	private onRerender() {
+	clearMap() {
 		this.node2ShapeInstanceWeakMap = new WeakMap<ShapeData, ImageMarkShape>()
 		this.shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, ShapeData>()
+	}
+
+	private onRerender() {
+		this.onResize()
+	}
+
+	private onResize() {
+		this.clearMap()
+		this.createShape()
+		this.onDraw()
 	}
 
 	private renderNode(node: ShapeData) {

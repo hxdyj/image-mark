@@ -149,7 +149,6 @@ export class ImageMark extends EventBindingThis {
 			}
 
 			this.drawImage(ev, drawSize)
-			this.draw()
 			this.render()
 			if (!action) {
 				this.addDefaultAction()
@@ -160,6 +159,7 @@ export class ImageMark extends EventBindingThis {
 			if (action) {
 				this.eventBus.emit(action == 'resize' ? EventBusEventName.resize : EventBusEventName.rerender, this)
 			}
+			this.draw()
 		})
 	}
 
