@@ -1,6 +1,6 @@
 import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
-import { defaultsDeep, difference, throttle } from "lodash";
+import { debounce, defaultsDeep, difference, throttle } from "lodash";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
 import { Plugin } from "./plugins";
@@ -411,13 +411,12 @@ export class ImageMark extends EventBindingThis {
 		e.preventDefault()
 	}
 
-	protected containerResizeObserverCallback: ResizeObserverCallback = (entries) => {
-		//TODO(songle): 缩小不触发
+	protected containerResizeObserverCallback: ResizeObserverCallback = debounce((entries) => {
 		console.count('resize observer callback')
 		if (entries[0]?.target === this.container) {
 			this.resize()
 		}
-	}
+	}, 500)
 
 	protected containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
 
