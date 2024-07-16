@@ -156,6 +156,10 @@ export class ImageMark extends EventBindingThis {
 				this.addContainerEvent()
 				this.eventBus.emit(EventBusEventName.first_render, this)
 			}
+
+			if (action) {
+				this.eventBus.emit(action == 'resize' ? EventBusEventName.resize : EventBusEventName.rerender, this)
+			}
 		})
 	}
 
@@ -176,7 +180,6 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	rerender() {
-		this.eventBus.emit(EventBusEventName.rerender, this)
 		this.initVariable()
 		this.init('rerender')
 	}

@@ -3,6 +3,7 @@ export class EventBusEventName {
 	static first_render = 'first_render'
 	static rerender = 'rerender'
 	static draw = 'draw'
+	static resize = 'resize'
 	static container_drag_enter = 'container_drag_enter'
 	static container_drag_over = 'container_drag_over'
 	static container_drag_leave = 'container_drag_leave'

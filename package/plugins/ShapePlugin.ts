@@ -55,6 +55,10 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.off('shape_delete', this.onDelete)
 	}
 
+	updateData(data: ShapeData[]) {
+		this.data = data
+	}
+
 	rerender() {
 		this.createShape()
 		this.onDraw()
