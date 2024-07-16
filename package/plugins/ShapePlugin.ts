@@ -74,7 +74,8 @@ export class ShapePlugin extends Plugin {
 	onDelete(_data: ShapeData, shapeInstance: ImageMarkShape) {
 		const data = this.shapeInstance2NodeWeakMap.get(shapeInstance)
 		if (data) {
-			this.data = this.data.filter(item => item !== data)
+			const index = this.data.findIndex(item => item === data)
+			this.data.splice(index, 1)
 			this.node2ShapeInstanceWeakMap.delete(data)
 			this.shapeInstance2NodeWeakMap.delete(shapeInstance)
 		}
