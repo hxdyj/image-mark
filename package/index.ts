@@ -122,7 +122,7 @@ export class ImageMark extends EventBindingThis {
 		this.init()
 	}
 
-	private initBindAllEventsThis() {
+	protected initBindAllEventsThis() {
 		this.bindEventThis([
 			'onContainerWheel',
 			'onComtainerLmbDownMoveingMouseDownEvent',
@@ -136,7 +136,7 @@ export class ImageMark extends EventBindingThis {
 		])
 	}
 
-	private init(action?: 'resize' | 'rerender') {
+	protected init(action?: 'resize' | 'rerender') {
 		this.eventBus.emit(EventBusEventName.init, this)
 		this.image.load(this.options.src, (ev: any) => {
 			this.imageDom = ev.target as HTMLImageElement
@@ -163,7 +163,7 @@ export class ImageMark extends EventBindingThis {
 		})
 	}
 
-	private initVariable() {
+	protected initVariable() {
 		this.containerRectInfo = getContainerInfo(this.container)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 		this.stageGroup.remove()
@@ -184,15 +184,15 @@ export class ImageMark extends EventBindingThis {
 		this.init('rerender')
 	}
 
-	private draw() {
+	protected draw() {
 		this.eventBus.emit(EventBusEventName.draw, this)
 	}
 
-	private render() {
+	protected render() {
 		this.stage.addTo(this.container)
 	}
 
-	private getInitialScaleAndTranslate(options: ImageMarkOptions['initScaleConfig']) {
+	protected getInitialScaleAndTranslate(options: ImageMarkOptions['initScaleConfig']) {
 
 		let imgWidth = this.imageDom.naturalWidth
 		let imgHeight = this.imageDom.naturalHeight
@@ -334,7 +334,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 
-	private checkMinScaleValidate() {
+	protected checkMinScaleValidate() {
 		if (!this.options.enableImageOutOfContainer) {
 			const { scale: minScale } = this.getInitialScaleAndTranslate({ 'size': 'cover' })
 			let { scaleX: currentScaleX = 1 } = this.stageGroup.transform()
@@ -349,13 +349,13 @@ export class ImageMark extends EventBindingThis {
 		return true
 	}
 
-	private checkInitOutOfContainerAndReset() {
+	protected checkInitOutOfContainerAndReset() {
 		if (!this.checkMinScaleValidate()) {
 			this.checkScaleLimitImageInContainer([0, 0])
 		}
 	}
 
-	private drawImage(ev: Event, size: 'initial' | 'reserve' = 'initial') {
+	protected drawImage(ev: Event, size: 'initial' | 'reserve' = 'initial') {
 		let target = ev.target as HTMLImageElement
 		if (size == 'reserve') {
 			this.stageGroup.transform(this.lastTransform, false)
@@ -374,44 +374,44 @@ export class ImageMark extends EventBindingThis {
 		this.image.addTo(this.stageGroup)
 	}
 
-	private addDefaultAction() {
+	protected addDefaultAction() {
 		this.addStageMouseScale()
 		this.addStageLmbDownMoveing()
 	}
 
-	private removeDefaultAction() {
+	protected removeDefaultAction() {
 		this.removeStageMouseScale()
 		this.removeStageLmbDownMoveing()
 	}
 
-	private onContainerWheel(e: Event) {
+	protected onContainerWheel(e: Event) {
 		e.preventDefault()
 	}
 
-	private onContainerDragLeaveEvent(e: DragEvent) {
+	protected onContainerDragLeaveEvent(e: DragEvent) {
 		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drag_leave, e, this)
 	}
-	private onContainerDropEvent(e: DragEvent) {
+	protected onContainerDropEvent(e: DragEvent) {
 		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drop, e, this)
 		e.preventDefault()
 	}
 
-	private onContainerDragEnterEvent(e: DragEvent) {
+	protected onContainerDragEnterEvent(e: DragEvent) {
 		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drag_enter, e, this)
 		e.preventDefault()
 	}
 
 
-	private onContainerDragOverEvent(e: DragEvent) {
+	protected onContainerDragOverEvent(e: DragEvent) {
 		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
 		this.eventBus.emit(EventBusEventName.container_drag_over, e, this)
 		e.preventDefault()
 	}
 
-	private containerResizeObserverCallback: ResizeObserverCallback = (entries) => {
+	protected containerResizeObserverCallback: ResizeObserverCallback = (entries) => {
 		//TODO(songle): 缩小不触发
 		console.count('resize observer callback')
 		if (entries[0]?.target === this.container) {
@@ -419,7 +419,7 @@ export class ImageMark extends EventBindingThis {
 		}
 	}
 
-	private containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
+	protected containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
 
 	addContainerEvent() {
 		this.container.addEventListener('wheel', this.onContainerWheel)
@@ -446,14 +446,14 @@ export class ImageMark extends EventBindingThis {
 	}
 
 
-	private onComtainerLmbDownMoveingMouseDownEvent(e: Event) {
+	protected onComtainerLmbDownMoveingMouseDownEvent(e: Event) {
 		let ev = e as MouseEvent
 		if (ev.button === 0) {
 			this.startSuccessiveMove([ev.offsetX, ev.offsetY])
 		}
 	}
 
-	private onComtainerLmbDownMoveingMouseMoveEvent = throttle((e: Event) => {
+	protected onComtainerLmbDownMoveingMouseMoveEvent = throttle((e: Event) => {
 		let ev = e as ContainerMouseEvent
 		if (ev.button === 0 && this.status.moving && this.movingStartPoint) {
 			this.moveSuccessive(this.getEventOffset(this.documentMouseEvent2EnhanceEvent(ev)))
@@ -463,7 +463,7 @@ export class ImageMark extends EventBindingThis {
 		trailing: true
 	})
 
-	private onComtainerLmbDownMoveingMouseUpEvent(e: Event) {
+	protected onComtainerLmbDownMoveingMouseUpEvent(e: Event) {
 		let ev = e as MouseEvent
 		if (ev.button === 0 && this.status.moving && this.movingStartPoint) {
 			this.endSuccessiveMove()
@@ -484,7 +484,7 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
-	private onComtainerMouseWheelEvent(ev: Event) {
+	protected onComtainerMouseWheelEvent(ev: Event) {
 		let e = ev as WheelEvent
 		let enhanceEvt = this.containerMouseEvent2EnhanceEvent(e)
 		this.scale(e.deltaY < 0 ? 1 : -1, [enhanceEvt.imageClientX, enhanceEvt.imageClientY], 'image')
@@ -500,7 +500,7 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
-	private limitMovePoint(movePoint: ArrayPoint): ArrayPoint {
+	protected limitMovePoint(movePoint: ArrayPoint): ArrayPoint {
 		if (this.options.enableImageOutOfContainer) return [0, 0]
 		let currentTransform = this.stageGroup.transform()
 
@@ -535,7 +535,7 @@ export class ImageMark extends EventBindingThis {
 		return fixPoint
 	}
 
-	private fixPoint(point: ArrayPoint, fixPoint: ArrayPoint): ArrayPoint {
+	protected fixPoint(point: ArrayPoint, fixPoint: ArrayPoint): ArrayPoint {
 		return [point[0] + fixPoint[0], point[1] + fixPoint[1]]
 	}
 
@@ -580,7 +580,7 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
-	private checkScaleLimitImageInContainer(point: ArrayPoint, callback?: (nextGroup: G) => void) {
+	protected checkScaleLimitImageInContainer(point: ArrayPoint, callback?: (nextGroup: G) => void) {
 		let cloneGroup = this.cloneGroup()
 		callback?.(cloneGroup)
 		let nextStepTransform = cloneGroup.transform()
@@ -683,7 +683,7 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
-	private documentMouseEvent2EnhanceEvent(event: MouseEvent): ContainerMouseEvent {
+	protected documentMouseEvent2EnhanceEvent(event: MouseEvent): ContainerMouseEvent {
 		this.containerRectInfo = getContainerInfo(this.container)
 		const cloneEvent = event as ContainerMouseEvent
 		cloneEvent._offsetX = event.clientX - this.containerRectInfo.x
@@ -691,11 +691,11 @@ export class ImageMark extends EventBindingThis {
 		return this.containerMouseEvent2EnhanceEvent(cloneEvent)
 	}
 
-	private getEventOffset(event: ContainerMouseEvent): ArrayPoint {
+	protected getEventOffset(event: ContainerMouseEvent): ArrayPoint {
 		return [event._offsetX || event.offsetX, event._offsetY || event.offsetY]
 	}
 
-	private containerMouseEvent2EnhanceEvent(event: MouseEvent): ContainerMouseEvent {
+	protected containerMouseEvent2EnhanceEvent(event: MouseEvent): ContainerMouseEvent {
 		const cloneEvent = event as ContainerMouseEvent
 		const newPoint = this.containerPoint2ImagePoint(this.getEventOffset(cloneEvent))
 		cloneEvent.imageClientX = newPoint[0]
@@ -703,7 +703,7 @@ export class ImageMark extends EventBindingThis {
 		return cloneEvent
 	}
 
-	private containerPoint2ImagePoint(point: ArrayPoint): ArrayPoint {
+	protected containerPoint2ImagePoint(point: ArrayPoint): ArrayPoint {
 		let newX = (point[0] - this.lastTransform.translateX!) / this.lastTransform.scaleX!
 		let newY = (point[1] - this.lastTransform.translateY!) / this.lastTransform.scaleY!
 		return [newX, newY]
@@ -771,14 +771,14 @@ export class ImageMark extends EventBindingThis {
 	}
 
 
-	private cloneGroup(transform?: MatrixExtract): G {
+	protected cloneGroup(transform?: MatrixExtract): G {
 		const cloneGroup = new G()
 		cloneGroup.transform(transform || this.lastTransform)
 		return cloneGroup
 	}
 
 
-	private getImageBoundingBoxByTransform(transform: MatrixExtract): EnhanceBoundingBox {
+	protected getImageBoundingBoxByTransform(transform: MatrixExtract): EnhanceBoundingBox {
 		const { naturalWidth, naturalHeight } = this.imageDom
 		const { translateX = 0, translateY = 0, scaleX = 1, scaleY = 1 } = transform
 		const width = naturalWidth * scaleX
@@ -792,7 +792,7 @@ export class ImageMark extends EventBindingThis {
 			height,
 		}
 	}
-	private getScaleLimitImageInContainerInfo(scaleOrigin: ArrayPoint, currentTransform: MatrixExtract, nextStepTransform: MatrixExtract): Array<[MatrixAlias, boolean]> | null | false {
+	protected getScaleLimitImageInContainerInfo(scaleOrigin: ArrayPoint, currentTransform: MatrixExtract, nextStepTransform: MatrixExtract): Array<[MatrixAlias, boolean]> | null | false {
 		let { isOutOf, directionOutOfInfo } = this.isOutofContainer(nextStepTransform)
 		if (isOutOf) {
 			let { scaleX: currentScaleX = 1 } = currentTransform
@@ -988,7 +988,7 @@ export class ImageMark extends EventBindingThis {
 		return null
 	}
 
-	private getOutOfContainerEdgeList(directionOutOfInfo: DirectionOutOfInfo) {
+	protected getOutOfContainerEdgeList(directionOutOfInfo: DirectionOutOfInfo) {
 		let list: EdgeName[] = []
 		Object.entries(directionOutOfInfo).forEach(([direction, [isOutOf, distance]]) => {
 			if (isOutOf) {
@@ -998,7 +998,7 @@ export class ImageMark extends EventBindingThis {
 		return list
 	}
 
-	private isOutofContainer(nextStepTransform: MatrixExtract): { isOutOf: boolean, directionOutOfInfo: DirectionOutOfInfo } {
+	protected isOutofContainer(nextStepTransform: MatrixExtract): { isOutOf: boolean, directionOutOfInfo: DirectionOutOfInfo } {
 		let { x: nextStepX, y: nextStepY, endX: nextStepEndX, endY: nextStepEndY } = this.getImageBoundingBoxByTransform(nextStepTransform)
 		let { width: containerWidth, height: containerHeight } = this.containerRectInfo
 

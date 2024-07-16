@@ -5,8 +5,8 @@ import { EventBusEventName } from "../event/const";
 
 export class ShapePlugin extends Plugin {
 	static pluginName = "shape";
-	private node2ShapeInstanceWeakMap = new WeakMap<ShapeData, ImageMarkShape>()
-	private shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, ShapeData>()
+	protected node2ShapeInstanceWeakMap = new WeakMap<ShapeData, ImageMarkShape>()
+	protected shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, ShapeData>()
 	data: ShapeData[] = []
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);
@@ -17,7 +17,7 @@ export class ShapePlugin extends Plugin {
 		this.bindEvent()
 	}
 
-	private addNode(node: ShapeData) {
+	protected addNode(node: ShapeData) {
 		if (!this.node2ShapeInstanceWeakMap.has(node)) {
 			let shape = null
 			const ShapeClass = ShapePlugin.shapeList.find(item => item.shapeName == node.shapeName)
@@ -35,13 +35,13 @@ export class ShapePlugin extends Plugin {
 		}
 	}
 
-	private createShape() {
+	protected createShape() {
 		this.data.forEach(node => {
 			this.addNode(node)
 		})
 	}
 
-	private bindEvent() {
+	protected bindEvent() {
 		this.imageMark.on('rerender', this.onRerender)
 		this.imageMark.on('draw', this.onDraw)
 		this.imageMark.on('init', this.onInit)
@@ -49,7 +49,7 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.on('resize', this.onResize)
 	}
 
-	private unbindEvent() {
+	protected unbindEvent() {
 		this.imageMark.off('rerender', this.onRerender)
 		this.imageMark.off('draw', this.onDraw)
 		this.imageMark.off('init', this.onInit)
@@ -80,7 +80,7 @@ export class ShapePlugin extends Plugin {
 		}
 	}
 
-	private onInit() {
+	protected onInit() {
 		this.createShape()
 	}
 
@@ -89,24 +89,24 @@ export class ShapePlugin extends Plugin {
 		this.shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, ShapeData>()
 	}
 
-	private onRerender() {
+	protected onRerender() {
 		this.onResize()
 	}
 
-	private onResize() {
+	protected onResize() {
 		this.clearMap()
 		this.createShape()
 		this.onDraw()
 	}
 
-	private renderNode(node: ShapeData) {
+	protected renderNode(node: ShapeData) {
 		const shape = this.node2ShapeInstanceWeakMap.get(node)
 		if (shape) {
 			shape.render(this.imageMark.stageGroup)
 		}
 	}
 
-	private onDraw() {
+	protected onDraw() {
 		this.data.forEach(node => {
 			this.renderNode(node)
 		})
