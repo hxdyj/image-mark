@@ -112,6 +112,10 @@ export class ShapePlugin extends Plugin {
 		})
 	}
 
+	getInstanceByData(data: ShapeData) {
+		return this.node2ShapeInstanceWeakMap.get(data)
+	}
+
 	static shapeList: Array<typeof ImageMarkShape> = []
 	static registerShape(shape: typeof ImageMarkShape) {
 		if (ShapePlugin.hasShape(shape)) return ShapePlugin
