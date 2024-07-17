@@ -107,8 +107,8 @@ export class ImageMark extends EventBindingThis {
 		this.containerRectInfo = getContainerInfo(this.container)
 
 		this.stage = SVG()
-		this.stage.attr({
-			style: `background-color:#c9cdd4`
+		this.stage.css({
+			background: '#c9cdd4'
 		})
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 

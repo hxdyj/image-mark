@@ -11,6 +11,11 @@ const routes: Array<RouteRecordRaw> = [
 		name: 'map',
 		component: () => import('../views/Map.vue'),
 	},
+	{
+		path: '/svg',
+		name: 'svg',
+		component: () => import('../views/SvgDemo.vue'),
+	},
 
 ]
 
