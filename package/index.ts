@@ -446,6 +446,7 @@ export class ImageMark extends EventBindingThis {
 
 
 	protected onComtainerLmbDownMoveingMouseDownEvent(e: Event) {
+		e.preventDefault()
 		let ev = e as MouseEvent
 		if (ev.button === 0) {
 			this.startSuccessiveMove([ev.offsetX, ev.offsetY])
@@ -453,6 +454,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected onComtainerLmbDownMoveingMouseMoveEvent = throttle((e: Event) => {
+
 		let ev = e as ContainerMouseEvent
 		if (ev.button === 0 && this.status.moving && this.movingStartPoint) {
 			this.moveSuccessive(this.getEventOffset(this.documentMouseEvent2EnhanceEvent(ev)))

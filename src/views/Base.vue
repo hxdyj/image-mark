@@ -53,7 +53,7 @@
 				size: 'cover',
 			}, [50, 50], 'image')
 		}">scale to cover -</a-button>
-
+		<p>select text</p>
 	</div>
 	<div class="page-base" style="height: 60vh;">
 	</div>
