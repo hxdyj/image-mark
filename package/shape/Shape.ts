@@ -1,11 +1,14 @@
 import { Shape } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
-
+import { Action } from "../action";
 export abstract class ImageMarkShape {
 	abstract shapeInstance: Shape;
 	private isRendered = false
 	static shapeName: string
 	imageMark: ImageMark;
+	action: {
+		[key: string]: Action
+	} = {}
 
 	constructor(protected data: ShapeData, imageMarkInstance: ImageMark) {
 		const constructor = this.constructor
@@ -18,12 +21,31 @@ export abstract class ImageMarkShape {
 	abstract draw(): Shape;
 	render(stage: Parameters<InstanceType<typeof Shape>['addTo']>[0]): void {
 		if (!this.isRendered) {
+			ImageMarkShape.actionList.forEach(action => {
+				this.initAction(action)
+			})
 			this.shapeInstance.addTo(stage)
 			this.isRendered = true
 		}
 	}
-}
 
+	static actionList: Array<typeof Action> = []
+
+	static useAction(action: typeof Action, actionOptions: any = {}) {
+		if (ImageMarkShape.hasAction(action)) return ImageMarkShape
+		Reflect.set(action, 'actionOptions', actionOptions)
+		ImageMarkShape.actionList.push(action)
+		return ImageMarkShape
+	}
+
+	static hasAction(action: typeof Action) {
+		return ImageMarkShape.actionList.includes(action)
+	}
+
+	initAction(action: typeof Action) {
+		this.action[action.actionName] = new action(this.imageMark, this, Reflect.get(action, 'actionOptions'))
+	}
+}
 
 export interface ShapeData {
 	shapeName: string

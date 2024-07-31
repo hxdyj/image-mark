@@ -1,14 +1,14 @@
-import { Circle, G, Rect, Text } from "@svgdotjs/svg.js";
+import { Circle, G, MatrixExtract, Rect, Text } from "@svgdotjs/svg.js";
 import { BoundingBox, ImageMark } from "../../../../package";
 import { ImageMarkShape, ShapeData } from "../../../../package/shape/Shape";
 import { EventBusEventName } from "../../../../package/event/const";
+import { LmbMoveAction } from "../../../../package/action/LmbMoveAction";
 
 
 export interface TeamData extends BoundingBox, ShapeData {
 	shapeName: "teamMark"
 	teamName: string
 }
-
 export class TeamShape extends ImageMarkShape {
 	static shapeName = "teamMark"
 	shapeInstance: G
@@ -42,7 +42,6 @@ export class TeamShape extends ImageMarkShape {
 		let circle = new Circle()
 		circle.size(10).fill('rgba(239,114,0,1)')
 		circle.center(this.data.width / 2, this.data.height)
-
 		this.shapeInstance.add(circle)
 
 		this.shapeInstance.on('dblclick', () => {
@@ -53,3 +52,21 @@ export class TeamShape extends ImageMarkShape {
 		return this.shapeInstance
 	}
 }
+
+TeamShape.useAction(LmbMoveAction, {
+	limit(imageMark: ImageMark, shape: TeamShape, nextTransform: MatrixExtract) {
+		let circle = shape.shapeInstance.findOne('circle') as Circle
+		let circleBox = circle.bbox()
+		console.log(`${new Date().getTime()} nextTransform`, nextTransform);
+		let { translateX = 0, translateY = 0 } = nextTransform
+		let points = [[circleBox.x + translateX, circleBox.y + translateY], [circleBox.x + circleBox.width + translateX, circleBox.y + circleBox.height + translateY]]
+		// const {scaleX=1} = imageMark.stageGroup.transform()
+		let { naturalHeight, naturalWidth } = imageMark.imageDom
+		let isOutOfBounds = points.some(point => {
+			return !(point[0] >= 0 && point[0] <= naturalWidth && point[1] >= 0 && point[1] <= naturalHeight)
+		});
+
+		console.log(new Date().getTime(), points, isOutOfBounds);
+		return isOutOfBounds
+	}
+})
