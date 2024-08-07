@@ -1,7 +1,7 @@
 import { Shape } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action";
-export abstract class ImageMarkShape {
+export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	abstract shapeInstance: Shape;
 	private isRendered = false
 	static shapeName: string
@@ -10,7 +10,7 @@ export abstract class ImageMarkShape {
 		[key: string]: Action
 	} = {}
 
-	constructor(protected data: ShapeData, imageMarkInstance: ImageMark) {
+	constructor(protected data: T, imageMarkInstance: ImageMark) {
 		const constructor = this.constructor
 		// @ts-ignore
 		if (!constructor.shapeName) {

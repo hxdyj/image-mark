@@ -9,7 +9,7 @@ export interface TeamData extends BoundingBox, ShapeData {
 	shapeName: "teamMark"
 	teamName: string
 }
-export class TeamShape extends ImageMarkShape {
+export class TeamShape extends ImageMarkShape<TeamData> {
 	static shapeName = "teamMark"
 	shapeInstance: G
 	constructor(data: TeamData, imageMarkInstance: ImageMark) {

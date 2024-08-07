@@ -1,8 +1,9 @@
 import { Text } from "@svgdotjs/svg.js";
 import { ImageMark } from "../../../../package";
 import { ShapePlugin } from "../../../../package/plugins/ShapePlugin";
+import { TeamData } from "../shape/TeamShape";
 
-export class TeamMarkPlugin extends ShapePlugin {
+export class TeamMarkPlugin extends ShapePlugin<TeamData> {
 	static pluginName = "teamMark";
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);

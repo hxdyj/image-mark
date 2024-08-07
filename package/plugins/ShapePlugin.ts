@@ -3,11 +3,11 @@ import { Plugin } from ".";
 import { ImageMarkShape, ShapeData } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 
-export class ShapePlugin extends Plugin {
+export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	static pluginName = "shape";
-	protected node2ShapeInstanceWeakMap = new WeakMap<ShapeData, ImageMarkShape>()
-	protected shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, ShapeData>()
-	data: ShapeData[] = []
+	protected node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
+	protected shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
+	data: T[] = []
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);
 		// @ts-ignore
@@ -17,13 +17,13 @@ export class ShapePlugin extends Plugin {
 		this.bindEvent()
 	}
 
-	protected addNode(node: ShapeData) {
+	protected addNode(node: T) {
 		if (!this.node2ShapeInstanceWeakMap.has(node)) {
 			let shape = null
 			const ShapeClass = ShapePlugin.shapeList.find(item => item.shapeName == node.shapeName)
 			if (ShapeClass) {
 				if (ShapeClass.constructor === ImageMarkShape) {
-					throw new Error(`Shape ${ShapeClass.shapeName} must be a subclass of ImageMarkShape`)
+					throw new Error(`Shape ${Reflect.get(ShapeClass, 'shapeName')} must be a subclass of ImageMarkShape`)
 				}
 				// @ts-ignore
 				shape = new ShapeClass(node, this.imageMark)
@@ -57,12 +57,12 @@ export class ShapePlugin extends Plugin {
 		this.imageMark.off('resize', this.onResize)
 	}
 
-	updateData(data: ShapeData[]) {
+	updateData(data: T[]) {
 		this.data = data
 		this.createShape()
 	}
 
-	onAdd(data: ShapeData, emit = true) {
+	onAdd(data: T, emit = true) {
 		this.data.push(data)
 		this.addNode(data)
 		this.renderNode(data)
@@ -71,7 +71,7 @@ export class ShapePlugin extends Plugin {
 		}
 	}
 
-	onDelete(_data: ShapeData, shapeInstance: ImageMarkShape) {
+	onDelete(_data: T, shapeInstance: ImageMarkShape) {
 		const data = this.shapeInstance2NodeWeakMap.get(shapeInstance)
 		if (data) {
 			const index = this.data.findIndex(item => item === data)
@@ -86,8 +86,8 @@ export class ShapePlugin extends Plugin {
 	}
 
 	clearMap() {
-		this.node2ShapeInstanceWeakMap = new WeakMap<ShapeData, ImageMarkShape>()
-		this.shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, ShapeData>()
+		this.node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
+		this.shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
 	}
 
 	protected onRerender() {
@@ -100,7 +100,7 @@ export class ShapePlugin extends Plugin {
 		this.onDraw()
 	}
 
-	protected renderNode(node: ShapeData) {
+	protected renderNode(node: T) {
 		const shape = this.node2ShapeInstanceWeakMap.get(node)
 		if (shape) {
 			shape.render(this.imageMark.stageGroup)
@@ -113,17 +113,17 @@ export class ShapePlugin extends Plugin {
 		})
 	}
 
-	getInstanceByData(data: ShapeData) {
+	getInstanceByData(data: T) {
 		return this.node2ShapeInstanceWeakMap.get(data)
 	}
 
 	static shapeList: Array<typeof ImageMarkShape> = []
-	static registerShape(shape: typeof ImageMarkShape) {
-		if (ShapePlugin.hasShape(shape)) return ShapePlugin
-		ShapePlugin.shapeList.push(shape)
+	static registerShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
+		if (ShapePlugin.hasShape(shape)) return ShapePlugin<T>
+		ShapePlugin.shapeList.push(shape as typeof ImageMarkShape)
 		return ShapePlugin
 	}
-	static hasShape(shape: typeof ImageMarkShape) {
+	static hasShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
 		return ShapePlugin.shapeList.find(item => item === shape)
 	}
 }
