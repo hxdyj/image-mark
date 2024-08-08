@@ -81,6 +81,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
+	clear() {
+		while (this.data.length) {
+			let item = this.data[0]
+			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)
+			nodeInstance?.shapeInstance.remove()
+			this.onDelete(item, nodeInstance!)
+		}
+	}
+
 	protected onInit() {
 		this.createShape()
 	}
