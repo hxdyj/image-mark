@@ -5,6 +5,9 @@ import { ImageMarkShape } from "../shape/Shape";
 
 
 export type LmbMoveActionOptions = {
+	onStart?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
+	onMove?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
+	onEnd?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
 	limit?: (imageMark: ImageMark, shape: ImageMarkShape, nextTransform: MatrixExtract) => boolean
 }
 
@@ -54,6 +57,7 @@ export class LmbMoveAction extends Action {
 		this.status.mouseDown = true
 		this.startPoint = this.shape.shapeInstance.point(evt.clientX, evt.clientY)
 		this.startTransform = this.shape.shapeInstance.transform()
+		this.options?.onStart?.(this.imageMark, this.shape, evt)
 	}
 
 	protected onDoucmentMouseMoving(event: MouseEvent) {
@@ -83,6 +87,8 @@ export class LmbMoveAction extends Action {
 		this.shape.shapeInstance.transform({
 			translate: diffPoint
 		}, true)
+
+		this.options?.onMove?.(this.imageMark, this.shape, event)
 		return diffPoint
 	}
 
@@ -94,5 +100,6 @@ export class LmbMoveAction extends Action {
 		this.status.mouseDown = false
 		this.startPoint = null
 		this.startTransform = null
+		this.options?.onEnd?.(this.imageMark, this.shape, event)
 	}
 }

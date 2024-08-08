@@ -10,7 +10,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		[key: string]: Action
 	} = {}
 
-	constructor(protected data: T, imageMarkInstance: ImageMark) {
+	constructor(public data: T, imageMarkInstance: ImageMark) {
 		const constructor = this.constructor
 		// @ts-ignore
 		if (!constructor.shapeName) {
