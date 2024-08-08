@@ -14,7 +14,11 @@ export class Plugin extends EventBindingThis {
 		}
 		this.imageMark = imageMarkInstance;
 	}
+
 	beforePluginRemove() {
 
+	}
+
+	destroy() {
 	}
 }

@@ -66,6 +66,14 @@ export type ImageMarkOptions = {
 	}
 }
 
+export class ImageMarkManager {
+	imageMarkEleInstanceWeakMap: WeakMap<HTMLElement, ImageMark> = new WeakMap()
+	getWeakMap() {
+		return this.imageMarkEleInstanceWeakMap
+	}
+}
+
+const imageMarkManager = new ImageMarkManager()
 
 export class ImageMark extends EventBindingThis {
 	container: HTMLElement;
@@ -99,6 +107,13 @@ export class ImageMark extends EventBindingThis {
 		this.options.enableImageOutOfContainer = this.options.enableImageOutOfContainer ?? true
 
 		this.container = getElement(this.options.el)
+
+		if (imageMarkManager.getWeakMap().has(this.container)) {
+			imageMarkManager.getWeakMap().get(this.container)?.destroy()
+		}
+
+		imageMarkManager.getWeakMap().set(this.container, this)
+
 		if (!this.container) {
 			throw new Error('Container not found')
 		}
@@ -182,6 +197,16 @@ export class ImageMark extends EventBindingThis {
 	rerender() {
 		this.initVariable()
 		this.init('rerender')
+	}
+
+	destroy() {
+		this.removeContainerEvent()
+		this.removeDefaultAction()
+		Object.values(this.plugin).forEach(plugin => {
+			plugin.destroy()
+		})
+		this.stage.remove()
+		imageMarkManager.getWeakMap().delete(this.container)
 	}
 
 	protected draw() {
@@ -1073,7 +1098,6 @@ export class ImageMark extends EventBindingThis {
 		return ImageMark
 	}
 	static hasPlugin(plugin: typeof Plugin) {
-
 		return ImageMark.pluginList.find(item => item === plugin)
 	}
 
