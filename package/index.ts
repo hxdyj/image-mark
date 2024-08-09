@@ -705,7 +705,7 @@ export class ImageMark extends EventBindingThis {
 		transformScale(this.stageGroup)
 		this.lastTransform = this.stageGroup.transform()
 		this.status.scaling = false
-
+		this.eventBus.emit(EventBusEventName.scale, this.lastTransform.scaleX, this)
 		return this
 	}
 

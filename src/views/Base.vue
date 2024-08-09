@@ -97,6 +97,8 @@ onMounted(() => {
 	}).on('first_render', () => {
 		// imgMark?.setMinScale('cover')
 		// imgMark?.removeStageLmbDownMoveing()
+	}).on('scale', (scale: number) => {
+		console.log(scale);
 	})
 })
 </script>

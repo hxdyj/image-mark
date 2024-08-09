@@ -10,4 +10,5 @@ export class EventBusEventName {
 	static container_drop = 'container_drop'
 	static shape_delete = 'shape_delete'
 	static shape_add = 'shape_add'
+	static scale = 'scale'
 }
