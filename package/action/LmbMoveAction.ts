@@ -67,7 +67,6 @@ export class LmbMoveAction extends Action {
 		event.preventDefault()
 		let cloneShape = new G()
 		cloneShape.transform(this.shape.shapeInstance.transform())
-		const a = cloneShape.transform()
 		this.imageMark.stageGroup.add(cloneShape)
 		const cloneMovePoint = cloneShape.point(event.clientX, event.clientY)
 		cloneShape.remove()
@@ -93,7 +92,7 @@ export class LmbMoveAction extends Action {
 	}
 
 	protected onDocumentMouseUp(event: MouseEvent) {
-		if (event.button !== 0) return
+		if (event.button !== 0 || !this.status.mouseDown) return
 		event.stopPropagation()
 		event.preventDefault()
 		this.onDoucmentMouseMoving(event)
