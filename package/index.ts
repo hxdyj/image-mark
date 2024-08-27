@@ -6,6 +6,7 @@ import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesi
 import { Plugin } from "./plugins";
 import { EventBindingThis } from "./event";
 import { EventBusEventName } from "./event/const";
+import { CssNameKey } from "./const/const";
 
 export type TransformStep = [MatrixAlias, boolean]
 
@@ -213,7 +214,14 @@ export class ImageMark extends EventBindingThis {
 		this.eventBus.emit(EventBusEventName.draw, this)
 	}
 
+	protected removeContainerRenderItems() {
+		const list = this.container.querySelectorAll(`.${CssNameKey.image_mark_render_item}`)
+		list.forEach(item => item.remove())
+	}
+
 	protected render() {
+		this.removeContainerRenderItems()
+		this.stage.addClass(CssNameKey.image_mark_render_item)
 		this.stage.addTo(this.container)
 	}
 
