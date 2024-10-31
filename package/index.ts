@@ -99,6 +99,23 @@ export class ImageMark extends EventBindingThis {
 	constructor(public options: ImageMarkOptions) {
 		super()
 		this.id = uid(6)
+		this.container = getElement(this.options.el)
+
+		if (imageMarkManager.getWeakMap().has(this.container)) {
+			const oldInstance = imageMarkManager.getWeakMap().get(this.container)
+			oldInstance?.destroy()
+		}
+
+		imageMarkManager.getWeakMap().set(this.container, this)
+
+		if (!this.container) {
+			throw new Error('Container not found')
+		}
+
+		this.container.style.overflow = 'hidden'
+
+		this.containerRectInfo = getContainerInfo(this.container)
+
 		this.options.initScaleConfig = defaultsDeep(this.options.initScaleConfig, {
 			to: 'image',
 			size: 'fit',
@@ -109,22 +126,8 @@ export class ImageMark extends EventBindingThis {
 
 		this.options.enableImageOutOfContainer = this.options.enableImageOutOfContainer ?? true
 
-		this.container = getElement(this.options.el)
-
-		if (imageMarkManager.getWeakMap().has(this.container)) {
-			imageMarkManager.getWeakMap().get(this.container)?.destroy()
-		}
-
-		imageMarkManager.getWeakMap().set(this.container, this)
-
-		if (!this.container) {
-			throw new Error('Container not found')
-		}
-
-		this.container.style.overflow = 'hidden'
-		this.containerRectInfo = getContainerInfo(this.container)
-
 		this.stage = SVG()
+
 		this.stage.css({
 			background: '#c9cdd4'
 		})
@@ -152,6 +155,8 @@ export class ImageMark extends EventBindingThis {
 			'onContainerDragOverEvent',
 			'onContainerDropEvent'
 		])
+		this.addDefaultAction()
+		this.addContainerEvent()
 	}
 
 	protected init(action?: 'resize' | 'rerender') {
@@ -169,8 +174,6 @@ export class ImageMark extends EventBindingThis {
 			this.drawImage(ev, drawSize)
 			this.render()
 			if (!action) {
-				this.addDefaultAction()
-				this.addContainerEvent()
 				this.eventBus.emit(EventBusEventName.first_render, this)
 			}
 
