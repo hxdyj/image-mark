@@ -7,7 +7,7 @@ import { Plugin } from "./plugins";
 import { EventBindingThis } from "./event";
 import { EventBusEventName } from "./event/const";
 import { CssNameKey } from "./const/const";
-
+import { uid } from 'uid'
 export type TransformStep = [MatrixAlias, boolean]
 
 export type ImageClient = {
@@ -77,6 +77,7 @@ export class ImageMarkManager {
 const imageMarkManager = new ImageMarkManager()
 
 export class ImageMark extends EventBindingThis {
+	id: string;
 	container: HTMLElement;
 	containerRectInfo: ReturnType<typeof getContainerInfo>;
 	stage: Svg;
@@ -97,6 +98,7 @@ export class ImageMark extends EventBindingThis {
 	eventBus = new EventEmitter()
 	constructor(public options: ImageMarkOptions) {
 		super()
+		this.id = uid(6)
 		this.options.initScaleConfig = defaultsDeep(this.options.initScaleConfig, {
 			to: 'image',
 			size: 'fit',

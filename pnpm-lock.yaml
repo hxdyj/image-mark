@@ -22,13 +22,16 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      uid:
+        specifier: ^2.0.2
+        version: 2.0.2
     devDependencies:
       '@arco-design/web-vue':
         specifier: ^2.55.3
-        version: 2.55.3(patch_hash=ev4aybasspgcg33pewcw2es44i)(vue@3.4.31)
+        version: 2.55.3(patch_hash=ev4aybasspgcg33pewcw2es44i)(vue@3.4.31(typescript@5.5.3))
       '@rollup/plugin-strip':
         specifier: ^3.0.4
-        version: 3.0.4
+        version: 3.0.4(rollup@4.18.1)
       '@types/lodash':
         specifier: ^4.17.6
         version: 4.17.6
@@ -37,7 +40,7 @@ importers:
         version: 20.14.10
       '@vitejs/plugin-vue':
         specifier: ^5.0.5
-        version: 5.0.5(vite@5.3.3)(vue@3.4.31)
+        version: 5.0.5(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8))(vue@3.4.31(typescript@5.5.3))
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.39)
@@ -58,13 +61,13 @@ importers:
         version: 5.3.3(@types/node@20.14.10)(sass@1.77.8)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.14.10)(typescript@5.5.3)(vite@5.3.3)
+        version: 3.9.1(@types/node@20.14.10)(rollup@4.18.1)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8))
       vue:
         specifier: ^3.4.31
         version: 3.4.31(typescript@5.5.3)
       vue-router:
         specifier: ^4.4.0
-        version: 4.4.0(vue@3.4.31)
+        version: 4.4.0(vue@3.4.31(typescript@5.5.3))
       vue-tsc:
         specifier: ^2.0.21
         version: 2.0.26(typescript@5.5.3)
@@ -259,6 +262,10 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@lukeed/csprng@1.1.0':
+    resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
+    engines: {node: '>=8'}
 
   '@microsoft/api-extractor-model@7.28.13':
     resolution: {integrity: sha512-39v/JyldX4MS9uzHcdfmjjfS6cYGAoXV+io8B5a338pkHiSt+gy2eXQ0Q7cGFJ7quSa1VqqlMdlPrB6sLR/cAw==}
@@ -1138,6 +1145,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  uid@2.0.2:
+    resolution: {integrity: sha512-u3xV3X7uzvi5b1MncmZo3i2Aw222Zk1keqLA1YkHldREkAhAqi65wuPfe7lHx8H/Wzy+8CE7S7uS3jekIM5s8g==}
+    engines: {node: '>=8'}
+
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
@@ -1264,7 +1275,7 @@ snapshots:
     dependencies:
       color: 3.2.1
 
-  '@arco-design/web-vue@2.55.3(patch_hash=ev4aybasspgcg33pewcw2es44i)(vue@3.4.31)':
+  '@arco-design/web-vue@2.55.3(patch_hash=ev4aybasspgcg33pewcw2es44i)(vue@3.4.31(typescript@5.5.3))':
     dependencies:
       '@arco-design/color': 0.4.0
       b-tween: 0.3.3
@@ -1385,6 +1396,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@lukeed/csprng@1.1.0': {}
+
   '@microsoft/api-extractor-model@7.28.13(@types/node@20.14.10)':
     dependencies:
       '@microsoft/tsdoc': 0.14.2
@@ -1435,17 +1448,21 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@rollup/plugin-strip@3.0.4':
+  '@rollup/plugin-strip@3.0.4(rollup@4.18.1)':
     dependencies:
-      '@rollup/pluginutils': 5.1.0
+      '@rollup/pluginutils': 5.1.0(rollup@4.18.1)
       estree-walker: 2.0.2
       magic-string: 0.30.10
+    optionalDependencies:
+      rollup: 4.18.1
 
-  '@rollup/pluginutils@5.1.0':
+  '@rollup/pluginutils@5.1.0(rollup@4.18.1)':
     dependencies:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
+      rollup: 4.18.1
 
   '@rollup/rollup-android-arm-eabi@4.18.1':
     optional: true
@@ -1497,13 +1514,14 @@ snapshots:
 
   '@rushstack/node-core-library@4.0.2(@types/node@20.14.10)':
     dependencies:
-      '@types/node': 20.14.10
       fs-extra: 7.0.1
       import-lazy: 4.0.0
       jju: 1.4.0
       resolve: 1.22.8
       semver: 7.5.4
       z-schema: 5.0.5
+    optionalDependencies:
+      '@types/node': 20.14.10
 
   '@rushstack/rig-package@0.5.2':
     dependencies:
@@ -1513,8 +1531,9 @@ snapshots:
   '@rushstack/terminal@0.10.0(@types/node@20.14.10)':
     dependencies:
       '@rushstack/node-core-library': 4.0.2(@types/node@20.14.10)
-      '@types/node': 20.14.10
       supports-color: 8.1.1
+    optionalDependencies:
+      '@types/node': 20.14.10
 
   '@rushstack/ts-command-line@4.19.1(@types/node@20.14.10)':
     dependencies:
@@ -1537,7 +1556,7 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
-  '@vitejs/plugin-vue@5.0.5(vite@5.3.3)(vue@3.4.31)':
+  '@vitejs/plugin-vue@5.0.5(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8))(vue@3.4.31(typescript@5.5.3))':
     dependencies:
       vite: 5.3.3(@types/node@20.14.10)(sass@1.77.8)
       vue: 3.4.31(typescript@5.5.3)
@@ -1609,8 +1628,9 @@ snapshots:
       minimatch: 9.0.5
       muggle-string: 0.3.1
       path-browserify: 1.0.1
-      typescript: 5.5.3
       vue-template-compiler: 2.7.16
+    optionalDependencies:
+      typescript: 5.5.3
 
   '@vue/language-core@2.0.26(typescript@5.5.3)':
     dependencies:
@@ -1621,8 +1641,9 @@ snapshots:
       minimatch: 9.0.5
       muggle-string: 0.4.1
       path-browserify: 1.0.1
-      typescript: 5.5.3
       vue-template-compiler: 2.7.16
+    optionalDependencies:
+      typescript: 5.5.3
 
   '@vue/reactivity@3.4.31':
     dependencies:
@@ -1640,7 +1661,7 @@ snapshots:
       '@vue/shared': 3.4.31
       csstype: 3.1.3
 
-  '@vue/server-renderer@3.4.31(vue@3.4.31)':
+  '@vue/server-renderer@3.4.31(vue@3.4.31(typescript@5.5.3))':
     dependencies:
       '@vue/compiler-ssr': 3.4.31
       '@vue/shared': 3.4.31
@@ -2041,8 +2062,9 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.39):
     dependencies:
       lilconfig: 3.1.2
-      postcss: 8.4.39
       yaml: 2.4.5
+    optionalDependencies:
+      postcss: 8.4.39
 
   postcss-nested@6.0.1(postcss@8.4.39):
     dependencies:
@@ -2118,6 +2140,7 @@ snapshots:
   sass-loader@14.2.1(sass@1.77.8):
     dependencies:
       neo-async: 2.6.2
+    optionalDependencies:
       sass: 1.77.8
 
   sass@1.77.8:
@@ -2241,6 +2264,10 @@ snapshots:
 
   typescript@5.5.3: {}
 
+  uid@2.0.2:
+    dependencies:
+      '@lukeed/csprng': 1.1.0
+
   undici-types@5.26.5: {}
 
   universalify@0.1.2: {}
@@ -2259,17 +2286,18 @@ snapshots:
 
   validator@13.12.0: {}
 
-  vite-plugin-dts@3.9.1(@types/node@20.14.10)(typescript@5.5.3)(vite@5.3.3):
+  vite-plugin-dts@3.9.1(@types/node@20.14.10)(rollup@4.18.1)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)):
     dependencies:
       '@microsoft/api-extractor': 7.43.0(@types/node@20.14.10)
-      '@rollup/pluginutils': 5.1.0
+      '@rollup/pluginutils': 5.1.0(rollup@4.18.1)
       '@vue/language-core': 1.8.27(typescript@5.5.3)
       debug: 4.3.5
       kolorist: 1.8.0
       magic-string: 0.30.10
       typescript: 5.5.3
-      vite: 5.3.3(@types/node@20.14.10)(sass@1.77.8)
       vue-tsc: 1.8.27(typescript@5.5.3)
+    optionalDependencies:
+      vite: 5.3.3(@types/node@20.14.10)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -2277,17 +2305,17 @@ snapshots:
 
   vite@5.3.3(@types/node@20.14.10)(sass@1.77.8):
     dependencies:
-      '@types/node': 20.14.10
       esbuild: 0.21.5
       postcss: 8.4.39
       rollup: 4.18.1
-      sass: 1.77.8
     optionalDependencies:
+      '@types/node': 20.14.10
       fsevents: 2.3.3
+      sass: 1.77.8
 
   vscode-uri@3.0.8: {}
 
-  vue-router@4.4.0(vue@3.4.31):
+  vue-router@4.4.0(vue@3.4.31(typescript@5.5.3)):
     dependencies:
       '@vue/devtools-api': 6.6.3
       vue: 3.4.31(typescript@5.5.3)
@@ -2316,8 +2344,9 @@ snapshots:
       '@vue/compiler-dom': 3.4.31
       '@vue/compiler-sfc': 3.4.31
       '@vue/runtime-dom': 3.4.31
-      '@vue/server-renderer': 3.4.31(vue@3.4.31)
+      '@vue/server-renderer': 3.4.31(vue@3.4.31(typescript@5.5.3))
       '@vue/shared': 3.4.31
+    optionalDependencies:
       typescript: 5.5.3
 
   which@2.0.2:

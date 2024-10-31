@@ -37,7 +37,8 @@
 	"dependencies": {
 		"@svgdotjs/svg.js": "^3.2.4",
 		"eventemitter3": "^5.0.1",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+		"uid": "^2.0.2"
 	},
 	"pnpm": {
 		"patchedDependencies": {
