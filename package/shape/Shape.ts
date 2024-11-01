@@ -3,7 +3,7 @@ import { ImageMark } from "../index";
 import { Action } from "../action";
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	abstract shapeInstance: Shape;
-	private isRendered = false
+	isRendered = false
 	static shapeName: string
 	imageMark: ImageMark;
 	action: {
@@ -18,7 +18,13 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 		this.imageMark = imageMarkInstance;
 	}
+
 	abstract draw(): Shape;
+
+	afterRender() {
+
+	}
+
 	render(stage: Parameters<InstanceType<typeof Shape>['addTo']>[0]): void {
 		if (!this.isRendered) {
 			ImageMarkShape.actionList.forEach(action => {
@@ -26,6 +32,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 			})
 			this.shapeInstance.addTo(stage)
 			this.isRendered = true
+			this.afterRender()
 		}
 	}
 
