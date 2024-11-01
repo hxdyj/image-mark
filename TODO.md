@@ -7,3 +7,4 @@
 - [x] resize deal: resize event maybe can't listen container size change , use MutationObserver instead
 - [x] caculate next step chunk
 - [x] company map demo finished
+- [ ] use react write demo
