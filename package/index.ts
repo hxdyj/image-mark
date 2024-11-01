@@ -664,10 +664,6 @@ export class ImageMark extends EventBindingThis {
 		let currentScale = this.lastTransform.scaleX || 1
 		let afterScale = newScale !== undefined ? newScale : this.lastTransform.scaleX! * zoom
 
-		if ((afterScale < this.minScale || afterScale > this.maxScale) && !(currentScale > this.maxScale && afterScale < currentScale || currentScale < this.minScale && afterScale > currentScale)) {
-			console.warn(`scale out of ${this.minScale} - ${this.maxScale} range`)
-			return
-		}
 
 		if (reletiveTo === 'container') {
 			origin = this.containerPoint2ImagePoint(point)
@@ -712,6 +708,13 @@ export class ImageMark extends EventBindingThis {
 
 			if (flag) return this
 		}
+
+		if ((afterScale < this.minScale || afterScale > this.maxScale) && !(currentScale > this.maxScale && afterScale < currentScale || currentScale < this.minScale && afterScale > currentScale)) {
+			console.warn(`scale out of ${this.minScale} - ${this.maxScale} range`)
+			return
+		}
+
+
 
 		this.status.scaling = true
 
