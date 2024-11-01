@@ -1,0 +1,22 @@
+.comp-layout {
+	height: 100vh;
+	overflow: hidden;
+	.layout-right {
+		--height: calc(100vh - var(--header-height));
+		height: 100vh;
+		overflow-y: hidden;
+		.layout-main {
+			height: var(--height);
+			max-height: var(--height);
+			overflow: auto !important;
+			background-color: var(--by-color-gray-bg);
+		}
+		// .layout-main,
+		.layout-content {
+			height: var(--height);
+			overflow: visible;
+			min-width: 1230px;
+			min-height: 560px;
+		}
+	}
+}
