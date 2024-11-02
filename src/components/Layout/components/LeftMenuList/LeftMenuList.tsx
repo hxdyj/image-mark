@@ -4,7 +4,6 @@ import { IRoute, LAYOUT_ROUTE } from '../../../../router/router'
 import { useNavigate } from 'react-router-dom'
 import { IconFont } from '../../../Iconfont'
 import { useState } from 'react'
-//TODO(songle): 申明
 import logo from './logo.svg'
 export interface ReactProps {
 	children?: React.ReactNode;

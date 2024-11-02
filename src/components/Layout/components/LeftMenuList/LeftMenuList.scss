@@ -7,8 +7,9 @@
 	position: relative;
 
 	.menu-panel {
-		max-height: calc(var(--height) - 128px);
+		max-height: calc(var(--height) - 180px);
 		overflow: auto;
+		margin-top: 30px;
 	}
 	.arco-icon {
 		&:not(
