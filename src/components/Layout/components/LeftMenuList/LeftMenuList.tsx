@@ -120,7 +120,7 @@ export function LeftMenuList(props: {
 		>
 			<div className='logo-panel flex-col'>
 				<img src={logo} alt='logo' className='logo-img w-[100px]' />
-				<div className='logo-text mt-[14px]'>
+				<div className='logo-text mt-[8px]'>
 					Image Mark
 					{/* SIX PIXEL */}
 				</div>
