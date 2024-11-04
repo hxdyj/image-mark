@@ -449,7 +449,7 @@ export class ImageMark extends EventBindingThis {
 		e.preventDefault()
 	}
 
-	protected containerResizeObserverCallback: ResizeObserverCallback = debounce((entries) => {
+	protected containerResizeObserverCallback: ResizeObserverCallback = debounce((entries: any) => {
 		console.count('resize observer callback')
 		if (entries[0]?.target === this.container) {
 			this.resize()

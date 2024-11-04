@@ -1,6 +1,4 @@
 {
-	"files": [],
-	"include": ["package/**/*"],
 	"references": [
 		{
 			"path": "./tsconfig.app.json"

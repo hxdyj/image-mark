@@ -8,3 +8,4 @@
 - [x] caculate next step chunk
 - [x] company map demo finished
 - [ ] use react write demo
+- [ ] multiple instance support
