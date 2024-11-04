@@ -3,7 +3,7 @@ import { BoundingBox, ImageMark } from "../../../../package";
 import { ShapeData, ImageMarkShape } from "#/shape/Shape";
 import { LmbMoveAction } from "#/action/LmbMoveAction";
 import { EventBusEventName } from "#/event/const";
-import { curryRight } from "lodash";
+import { curryRight } from "lodash-es";
 
 export class ImageMarkEventKey {
 	static TEAM_SHAPE_LMB_MOVE_END = "team_shape_lmb_move_end";

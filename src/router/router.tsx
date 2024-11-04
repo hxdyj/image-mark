@@ -2,10 +2,10 @@ import { createBrowserRouter, resolvePath } from 'react-router-dom'
 import { Layout } from '../components/Layout/Layout'
 import type { IndexRouteObject, NonIndexRouteObject } from 'react-router-dom'
 import App from '../App'
-import { AppError } from '../views/Error/Error.tsx'
+import { AppError } from '../views/Error/Error'
 import { IconFont } from '../components/Iconfont'
-import { Demo1 } from '../views/Demo1.tsx'
-import { Demo2 } from '../views/Demo2.tsx'
+import { Base } from '../views/Base'
+import { TeamMarkPlugin } from '../views/TeamMarkPlugin'
 
 interface CustomRouteFields {
 	meta?: {
@@ -57,19 +57,19 @@ export const routes: IRoute[] = [
 							{
 								homeRoute: true,
 								childIndexRoute: true,
-								path: '/demo/1',
-								element: <Demo1 />,
+								path: '/demo/base',
+								element: <Base />,
 								meta: {
-									title: '1',
+									title: 'base',
 									menuShow: true,
 									noLogin: false,
 								},
 							},
 							{
-								path: '/demo/2',
-								element: <Demo2 />,
+								path: '/demo/teamPlugin',
+								element: <TeamMarkPlugin />,
 								meta: {
-									title: '2',
+									title: 'teamPlugin',
 									menuShow: true,
 									noLogin: false,
 								},
