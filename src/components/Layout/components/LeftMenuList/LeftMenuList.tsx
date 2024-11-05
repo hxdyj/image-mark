@@ -118,13 +118,18 @@ export function LeftMenuList(props: {
 			}}
 			style={{ userSelect: 'none' }}
 		>
-			<div className='logo-panel flex-col'>
-				<img src={logo} alt='logo' className='logo-img w-[100px]' />
-				<div className='logo-text mt-[8px]'>
-					Image Mark
-					{/* SIX PIXEL */}
-				</div>
-			</div>
+			{
+				props.collapse ? <div className='bg-blue-600 p-1 rounded-sm'> <img src={logo} alt='logo' className='logo-img w-full' /></div> :
+					<div className='logo-panel flex-col'>
+
+						<img src={logo} alt='logo' className='logo-img w-[100px]' />
+						<div className='logo-text mt-[8px]'>
+							Image Mark
+							{/* SIX PIXEL */}
+						</div>
+					</div>
+			}
+
 			<div className='menu-panel'>
 				{recursionGetMenuTree(menuList)}
 			</div>

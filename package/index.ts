@@ -19,6 +19,8 @@ export type Document2ContainerOffset = {
 	_offsetX?: number
 	_offsetY?: number
 }
+export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
+export type Position = typeof POSITION_LIST[number]
 export type OutOfData = [boolean, number] // [是否超出,距离(正数为超出,零和负数为未超出)]
 export type ArrayPoint = [number, number]
 export type ArrayWH = ArrayPoint
@@ -96,6 +98,8 @@ export class ImageMark extends EventBindingThis {
 	maxScale = 10
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
+	createTime: number
+
 	constructor(public options: ImageMarkOptions) {
 		super()
 		this.id = uid(6)
@@ -111,10 +115,12 @@ export class ImageMark extends EventBindingThis {
 		if (!this.container) {
 			throw new Error('Container not found')
 		}
-
+		this.createTime = Date.now()
 		this.container.style.overflow = 'hidden'
 
 		this.containerRectInfo = getContainerInfo(this.container)
+
+		console.log('init containerRectInfo', this.containerRectInfo)
 
 		this.options.initScaleConfig = defaultsDeep(this.options.initScaleConfig, {
 			to: 'image',
@@ -171,6 +177,11 @@ export class ImageMark extends EventBindingThis {
 				drawSize = 'reserve'
 			}
 
+
+			if (action === 'resize' && Date.now() - this.createTime <= 340) {
+				drawSize = 'initial'
+			}
+
 			this.drawImage(ev, drawSize)
 			this.render()
 			if (!action) {
@@ -195,6 +206,7 @@ export class ImageMark extends EventBindingThis {
 
 	resize() {
 		this.containerRectInfo = getContainerInfo(this.container)
+		console.log('resize containerRectInfo', this.containerRectInfo)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 		this.initVariable()
 		this.init('resize')
@@ -402,6 +414,7 @@ export class ImageMark extends EventBindingThis {
 		if (size == 'initial') {
 			const initTrasform = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
 			this.stageGroup.transform(initTrasform, false)
+			console.log('drawImage initial', initTrasform)
 		}
 
 		this.lastTransform = this.stageGroup.transform()
@@ -453,8 +466,9 @@ export class ImageMark extends EventBindingThis {
 		console.count('resize observer callback')
 		if (entries[0]?.target === this.container) {
 			this.resize()
+			console.log('containerResizeObserverCallback', Date())
 		}
-	}, 500)
+	}, 300)
 
 	protected containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
 
@@ -576,6 +590,10 @@ export class ImageMark extends EventBindingThis {
 
 	protected fixPoint(point: ArrayPoint, fixPoint: ArrayPoint): ArrayPoint {
 		return [point[0] + fixPoint[0], point[1] + fixPoint[1]]
+	}
+
+	moveTo(position: Position) {
+
 	}
 
 	move(point: ArrayPoint) {
