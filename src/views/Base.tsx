@@ -36,7 +36,7 @@ export function Base() {
 			// imgMark?.setMinScale('cover')
 			// imgMark?.removeStageLmbDownMoveing()
 		}).on('scale', (scale: number) => {
-			console.log(scale);
+			console.log('onScale', scale);
 		})
 	}, [])
 
@@ -62,6 +62,33 @@ export function Base() {
 							<Button onClick={() => {
 								imgMark.current?.move([0, -50])
 							}}>y-</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('left')
+							}}>left</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('left-top')
+							}}>left-top</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('left-bottom')
+							}}>left-bottom</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('right')
+							}}>right</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('right-top')
+							}}>right-top</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('right-bottom')
+							}}>right-bottom</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('top')
+							}}>top</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('bottom')
+							}}>bottom</Button>
+							<Button onClick={() => {
+								imgMark.current?.moveTo('center')
+							}}>center</Button>
 						</Button.Group>
 					</OperateGroup>
 					<OperateGroup desc="连续移动画布：会记录第一个点，然后根据后边的点算新的位置，适合鼠标拖动移动场景">

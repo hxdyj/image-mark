@@ -1,0 +1,13 @@
+.comp-operate-group {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	.desc {
+		padding-top: 6px;
+		max-width: 100%;
+		word-break: break-all;
+		color: #a9aeb8;
+		font-size: 10px;
+	}
+}

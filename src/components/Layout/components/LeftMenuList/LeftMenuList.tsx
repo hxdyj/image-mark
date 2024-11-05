@@ -11,7 +11,6 @@ export interface ReactProps {
 	style?: React.CSSProperties;
 }
 
-
 const MenuItem = Menu.Item
 const SubMenu = Menu.SubMenu
 function recursionCreateMenuTree(
@@ -119,7 +118,7 @@ export function LeftMenuList(props: {
 			style={{ userSelect: 'none' }}
 		>
 			{
-				props.collapse ? <div className='bg-blue-600 p-1 rounded-sm'> <img src={logo} alt='logo' className='logo-img w-full' /></div> :
+				props.collapse ? <div className='bg-blue-600 p-1 rounded-[3px]'> <img src={logo} alt='logo' className='logo-img w-full' /></div> :
 					<div className='logo-panel flex-col'>
 
 						<img src={logo} alt='logo' className='logo-img w-[100px]' />

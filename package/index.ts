@@ -593,7 +593,60 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	moveTo(position: Position) {
+		const { scaleX = 1, translateX = 0, translateY = 0 } = this.lastTransform
+		const { width, height } = this.containerRectInfo
+		const { naturalWidth, naturalHeight } = this.imageDom
+		const viewWidth = naturalWidth * scaleX
+		const viewHeight = naturalHeight * scaleX
+		const x = width - viewWidth
+		const y = height - viewHeight
 
+
+		if (position == 'left') {
+			const { translateX = 0, translateY = 0 } = this.lastTransform
+			this.stageGroup.translate(-translateX, -translateY + y / 2)
+		}
+
+		if (position == 'left-top') {
+			const { translateX = 0, translateY = 0 } = this.lastTransform
+			this.stageGroup.translate(-translateX, -translateY)
+		}
+
+		if (position == 'left-bottom') {
+			const { translateX = 0, translateY = 0 } = this.lastTransform
+			this.stageGroup.translate(-translateX, -translateY + y)
+		}
+
+		if (position == 'right') {
+			const { translateX = 0, translateY = 0 } = this.lastTransform
+			this.stageGroup.translate(-translateX + x, -translateY + y / 2)
+		}
+
+		if (position == 'right-top') {
+			this.stageGroup.translate(-translateX + x, -translateY)
+		}
+
+		if (position == 'right-bottom') {
+			this.stageGroup.translate(-translateX + x, -translateY + y)
+		}
+
+		if (position == 'top') {
+			this.stageGroup.translate(-translateX + x / 2, -translateY)
+		}
+
+		if (position == 'bottom') {
+			this.stageGroup.translate(-translateX + x / 2, -translateY + y)
+		}
+		if (position == 'center') {
+			const center = [width / 2, height / 2]
+			const viewCenter = [viewWidth / 2, viewHeight / 2]
+
+			let newPosition = [center[0] - viewCenter[0], center[1] - viewCenter[1]]
+
+			this.stageGroup.translate(-translateX + newPosition[0], -translateY + newPosition[1])
+		}
+
+		this.lastTransform = this.stageGroup.transform()
 	}
 
 	move(point: ArrayPoint) {
