@@ -780,6 +780,7 @@ export class ImageMark extends EventBindingThis {
 			if (flag) return this
 		}
 
+
 		if ((afterScale < this.minScale || afterScale > this.maxScale) && !(currentScale > this.maxScale && afterScale < currentScale || currentScale < this.minScale && afterScale > currentScale)) {
 			console.warn(`scale out of ${this.minScale} - ${this.maxScale} range`)
 			return

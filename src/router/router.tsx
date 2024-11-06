@@ -6,6 +6,7 @@ import { AppError } from '../views/Error/Error'
 import { IconFont } from '../components/Iconfont'
 import { Base } from '../views/Base'
 import { TeamMarkPlugin } from '../views/TeamMarkPlugin'
+import { SvgDemo } from '../views/SvgDemo'
 
 interface CustomRouteFields {
 	meta?: {
@@ -61,6 +62,15 @@ export const routes: IRoute[] = [
 								element: <Base />,
 								meta: {
 									title: 'base',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
+								path: '/demo/svg',
+								element: <SvgDemo />,
+								meta: {
+									title: 'Svg',
 									menuShow: true,
 									noLogin: false,
 								},

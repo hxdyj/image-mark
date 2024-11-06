@@ -16,6 +16,7 @@ export function Base() {
 			initScaleConfig: {
 				startPosition: 'center',
 				size: 'fit',
+				padding: 20,
 				// to: 'box',
 				// box: {
 				// 	x: 1270,
@@ -37,7 +38,7 @@ export function Base() {
 			// imgMark?.removeStageLmbDownMoveing()
 		}).on('scale', (scale: number) => {
 			console.log('onScale', scale);
-		})
+		}).setMaxScale(100000).setMinScale(0.01)
 	}, [])
 
 	function onMoveSuccessive() {
@@ -47,7 +48,7 @@ export function Base() {
 	return (
 		<div className="page-base">
 			<div className="operate-panel h-[fit] py-[16px]">
-				<Space size={'large'}>
+				<Space size={'large'} wrap>
 					<OperateGroup desc="Move">
 						<Button.Group>
 							<Button onClick={() => {
@@ -132,6 +133,33 @@ export function Base() {
 									size: 'cover'
 								}, 'center', 'image')
 							}}>To Cover</Button>
+							<Button onClick={() => {
+								imgMark.current?.scaleTo({
+									to: 'image',
+									size: 'fit'
+								}, 'center', 'image')
+							}}>To Fit</Button>
+							<Button onClick={() => {
+								imgMark.current?.scaleTo({
+									to: 'image',
+									size: 'width',
+									padding: 0.03,
+								}, 'center', 'image')
+							}}>To Width（Pad 3%）</Button>
+							<Button onClick={() => {
+								imgMark.current?.scaleTo({
+									to: 'box',
+									size: 'cover',
+									padding: 30,
+									paddingUnit: 'px',
+									box: {
+										x: 0,
+										y: 0,
+										width: 500,
+										height: 500,
+									}
+								}, 'left-top', 'image')
+							}}>To Box Cover（Pad 30px）</Button>
 						</Button.Group>
 
 					</OperateGroup>
