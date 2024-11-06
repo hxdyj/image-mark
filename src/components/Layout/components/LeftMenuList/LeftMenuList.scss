@@ -41,7 +41,32 @@
 		color: #4e5969;
 	}
 }
+.logo-small {
+	background-color: #3491fa;
 
+	background-image: linear-gradient(
+		45deg,
+		blue 10%,
+		transparent 10%,
+		transparent 20%,
+		blue 20%,
+		blue 30%,
+		transparent 30%,
+		transparent 40%,
+		blue 40%,
+		blue 50%,
+		transparent 50%,
+		transparent 60%,
+		blue 60%,
+		blue 70%,
+		transparent 70%,
+		transparent 80%,
+		blue 80%,
+		blue 90%,
+		transparent 90%,
+		transparent
+	);
+}
 .logo-panel {
 	box-sizing: border-box;
 	padding-top: 10px;
