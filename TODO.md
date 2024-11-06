@@ -8,4 +8,6 @@
 - [x] caculate next step chunk
 - [x] company map demo finished
 - [ ] use react write demo
-- [ ] multiple instance support
+- [x] multiple instance demo
+- [ ] shape dot、rect、circle support
+- [ ] select by drag rect

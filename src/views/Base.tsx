@@ -5,7 +5,7 @@ import { OperateGroup } from "../components/OperateGroup"
 
 export function Base() {
 	const moveSuccessive = useRef<ArrayPoint>([0, 0])
-	let imgMark = useRef<InstanceType<typeof ImageMark> | null>(null)
+	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
 	useEffect(() => {
 		if (!containerRef.current) throw new Error("containerRef is null")

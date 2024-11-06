@@ -7,6 +7,7 @@ import { IconFont } from '../components/Iconfont'
 import { Base } from '../views/Base'
 import { TeamMarkPlugin } from '../views/TeamMarkPlugin'
 import { SvgDemo } from '../views/SvgDemo'
+import { TwoInstance } from '../views/TwoInstance'
 
 interface CustomRouteFields {
 	meta?: {
@@ -62,6 +63,15 @@ export const routes: IRoute[] = [
 								element: <Base />,
 								meta: {
 									title: 'base',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
+								path: '/demo/two_instance',
+								element: <TwoInstance />,
+								meta: {
+									title: 'TwoInstance',
 									menuShow: true,
 									noLogin: false,
 								},
