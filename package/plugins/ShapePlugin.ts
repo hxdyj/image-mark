@@ -57,6 +57,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.off('resize', this.onResize)
 	}
 
+	destroy(): void {
+		super.destroy()
+		this.clear()
+		this.clearMap()
+		this.unbindEvent()
+	}
+
 	updateData(data: T[]) {
 		this.data = data
 		this.createShape()

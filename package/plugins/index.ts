@@ -15,10 +15,14 @@ export class Plugin extends EventBindingThis {
 		this.imageMark = imageMarkInstance;
 	}
 
+
+	//插件被移除之前触发
 	beforePluginRemove() {
 
 	}
 
+	// ImageMark实例被销毁时触发
 	destroy() {
+
 	}
 }
