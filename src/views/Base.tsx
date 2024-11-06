@@ -11,7 +11,7 @@ export function Base() {
 		if (!containerRef.current) throw new Error("containerRef is null")
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
-			src: '/2.png',
+			src: '/demo-base.jpg',
 			moveConfig: {},
 			initScaleConfig: {
 				startPosition: 'center',
@@ -48,7 +48,7 @@ export function Base() {
 		<div className="page-base">
 			<div className="operate-panel h-[fit] py-[16px]">
 				<Space size={'large'}>
-					<OperateGroup desc="移动画布">
+					<OperateGroup desc="Move">
 						<Button.Group>
 							<Button onClick={() => {
 								imgMark.current?.move([50, 0])
@@ -91,7 +91,7 @@ export function Base() {
 							}}>center</Button>
 						</Button.Group>
 					</OperateGroup>
-					<OperateGroup desc="连续移动画布：会记录第一个点，然后根据后边的点算新的位置，适合鼠标拖动移动场景">
+					<OperateGroup desc="Move Successive: like lmb dragging">
 						<Button.Group>
 							<Button onClick={() => {
 								moveSuccessive.current = [0, 0]
@@ -121,7 +121,7 @@ export function Base() {
 							}}>Move End</Button>
 						</Button.Group>
 					</OperateGroup>
-					<OperateGroup desc="缩放画布">
+					<OperateGroup desc="Scale">
 						<Button.Group >
 							<Button onClick={() => {
 								imgMark.current?.scale(-1, 'center', 'image')
@@ -131,7 +131,7 @@ export function Base() {
 									to: 'image',
 									size: 'cover'
 								}, 'center', 'image')
-							}}>Scale To Cover</Button>
+							}}>To Cover</Button>
 						</Button.Group>
 
 					</OperateGroup>
