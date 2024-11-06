@@ -10,21 +10,11 @@ import { CssNameKey } from "./const/const";
 import { uid } from 'uid'
 export type TransformStep = [MatrixAlias, boolean]
 
-export type ImageClient = {
-	imageClientX: number
-	imageClientY: number
-}
-
-export type Document2ContainerOffset = {
-	_offsetX?: number
-	_offsetY?: number
-}
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
 export type Position = typeof POSITION_LIST[number]
 export type OutOfData = [boolean, number] // [是否超出,距离(正数为超出,零和负数为未超出)]
 export type ArrayPoint = [number, number]
 export type ArrayWH = ArrayPoint
-export type ContainerMouseEvent = MouseEvent & ImageClient & Document2ContainerOffset
 export type ContainerType = string | HTMLElement;
 export type BoundingBox = {
 	x: number
@@ -440,24 +430,20 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected onContainerDragLeaveEvent(e: DragEvent) {
-		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drag_leave, e, this)
 	}
 	protected onContainerDropEvent(e: DragEvent) {
-		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drop, e, this)
 		e.preventDefault()
 	}
 
 	protected onContainerDragEnterEvent(e: DragEvent) {
-		this.documentMouseEvent2EnhanceEvent(e)
 		this.eventBus.emit(EventBusEventName.container_drag_enter, e, this)
 		e.preventDefault()
 	}
 
 
 	protected onContainerDragOverEvent(e: DragEvent) {
-		this.documentMouseEvent2EnhanceEvent(e as DragEvent)
 		this.eventBus.emit(EventBusEventName.container_drag_over, e, this)
 		e.preventDefault()
 	}
@@ -506,10 +492,10 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected onComtainerLmbDownMoveingMouseMoveEvent = throttle((e: Event) => {
-
-		let ev = e as ContainerMouseEvent
+		let ev = e as MouseEvent
 		if (ev.button === 0 && this.status.moving && this.movingStartPoint) {
-			this.moveSuccessive(this.getEventOffset(this.documentMouseEvent2EnhanceEvent(ev)))
+			const { x, y } = this.stage.point(ev.clientX, ev.clientY)
+			this.moveSuccessive([x, y])
 		}
 	}, 16, {
 		leading: true,
@@ -539,8 +525,8 @@ export class ImageMark extends EventBindingThis {
 
 	protected onComtainerMouseWheelEvent(ev: Event) {
 		let e = ev as WheelEvent
-		let enhanceEvt = this.containerMouseEvent2EnhanceEvent(e)
-		this.scale(e.deltaY < 0 ? 1 : -1, [enhanceEvt.imageClientX, enhanceEvt.imageClientY], 'image')
+		const imagePoint = this.image.point(e.clientX, e.clientY)
+		this.scale(e.deltaY < 0 ? 1 : -1, [imagePoint.x, imagePoint.y], 'image')
 	}
 
 	addStageMouseScale() {
@@ -795,26 +781,6 @@ export class ImageMark extends EventBindingThis {
 		this.status.scaling = false
 		this.eventBus.emit(EventBusEventName.scale, this.lastTransform.scaleX, this)
 		return this
-	}
-
-	protected documentMouseEvent2EnhanceEvent(event: MouseEvent): ContainerMouseEvent {
-		this.containerRectInfo = getContainerInfo(this.container)
-		const cloneEvent = event as ContainerMouseEvent
-		cloneEvent._offsetX = event.clientX - this.containerRectInfo.x
-		cloneEvent._offsetY = event.clientY - this.containerRectInfo.y
-		return this.containerMouseEvent2EnhanceEvent(cloneEvent)
-	}
-
-	protected getEventOffset(event: ContainerMouseEvent): ArrayPoint {
-		return [event._offsetX || event.offsetX, event._offsetY || event.offsetY]
-	}
-
-	protected containerMouseEvent2EnhanceEvent(event: MouseEvent): ContainerMouseEvent {
-		const cloneEvent = event as ContainerMouseEvent
-		const newPoint = this.containerPoint2ImagePoint(this.getEventOffset(cloneEvent))
-		cloneEvent.imageClientX = newPoint[0]
-		cloneEvent.imageClientY = newPoint[1]
-		return cloneEvent
 	}
 
 	protected containerPoint2ImagePoint(point: ArrayPoint): ArrayPoint {
