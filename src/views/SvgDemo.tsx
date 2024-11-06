@@ -39,7 +39,7 @@ export function SvgDemo() {
 			<div className="h-[100vh] bg-gray-500">
 			</div>
 			<div className="w-[1px] fixed h-[100vh] bg-red-500 top-0 left-[890px]"></div>
-			<div className="flex fixed right-0 top-0 bg-black p-4 rounded-md text-white w-[300px] justify-center flex-col gap-y-2">
+			<div className="flex fixed right-0 top-0 bg-black p-4 rounded-md rounded-r-none rounded-tl-none text-white w-[300px] justify-center flex-col gap-y-2">
 				<div>
 					Svg Point <span className="ml-8">{point?.x.toFixed(2)} {point?.y.toFixed(2)}</span>
 				</div>

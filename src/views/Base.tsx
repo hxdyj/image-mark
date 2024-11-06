@@ -38,7 +38,9 @@ export function Base() {
 			// imgMark?.removeStageLmbDownMoveing()
 		}).on('scale', (scale: number) => {
 			console.log('onScale', scale);
-		}).setMaxScale(100000).setMinScale(0.01)
+		})
+			.setMaxScale(100000)
+			.setMinScale(0.01)
 	}, [])
 
 	function onMoveSuccessive() {
