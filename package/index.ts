@@ -81,7 +81,7 @@ export class ImageMarkManager {
 	}
 }
 
-const imageMarkManager = new ImageMarkManager()
+export const imageMarkManager = new ImageMarkManager()
 
 export class ImageMark extends EventBindingThis {
 	id: string;
