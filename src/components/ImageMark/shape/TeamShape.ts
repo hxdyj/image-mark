@@ -70,7 +70,7 @@ export class TeamShape extends ImageMarkShape<TeamData, G> {
 		const { _width, _height, width, height, prefixName, getNum } = this.getStageGroupScaleInfo()
 		innerGroup.addClass('team-shape-inner-group')
 
-		groupRect.size(_width, _height).fill('rgba(239,114,0,0.7)').radius(getNum(6)).addClass('team-shape-group-rect')
+		groupRect.size(_width, _height).fill('rgba(22, 93, 255,0.7)').radius(getNum(6)).addClass('team-shape-group-rect')
 		if (prefixName) {
 			centerLine?.plot(0, getNum(30), getNum(width), getNum(30)).stroke({ color: 'white', width: getNum(1), opacity: 0.7 }).addClass('team-shape-center-line')
 			topText?.font({ family: 'Arial', size: getNum(16) }).text(prefixName).fill('white').center(_width / 2, getNum((height - (prefixName ? 30 : 0)) / 2)).attr({
@@ -115,12 +115,12 @@ export class TeamShape extends ImageMarkShape<TeamData, G> {
 		let groupRect = new Rect()
 		this.shapeInstance.on('mouseover', () => {
 			document.body.style.cursor = 'pointer'
-			groupRect.fill('rgba(239,114,0,1)')
+			groupRect.fill('rgba(22, 93, 255,1)')
 		})
 
 		this.shapeInstance.on('mouseout', () => {
 			document.body.style.cursor = 'auto'
-			groupRect.fill('rgba(239,114,0,0.7)')
+			groupRect.fill('rgba(22, 93, 255,0.7)')
 		})
 
 		innerGroup.add(groupRect)

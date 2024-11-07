@@ -21,9 +21,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 			throw new Error(`${constructor.name} must have a static property 'shapeName'`);
 		}
 		this.imageMark = imageMarkInstance;
-		ImageMarkShape.actionList.forEach(action => {
-			this.initAction(action)
-		})
+
 		this.shapeInstance = shapeInstance
 		this.draw()
 	}
@@ -44,6 +42,9 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 	render(stage: AddToShape): void {
 		if (!this.isRendered) {
 			this.shapeInstance.addTo(stage)
+			ImageMarkShape.actionList.forEach(action => {
+				this.initAction(action)
+			})
 			this.isRendered = true
 			this.afterRender()
 		}
@@ -62,7 +63,9 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 	}
 
 	initAction(action: typeof Action) {
-		this.action[action.actionName] = new action(this.imageMark, this, Reflect.get(action, 'actionOptions'))
+		if (!this.action[action.actionName]) {
+			this.action[action.actionName] = new action(this.imageMark, this, Reflect.get(action, 'actionOptions'))
+		}
 	}
 
 	static actionList: Array<typeof Action> = []

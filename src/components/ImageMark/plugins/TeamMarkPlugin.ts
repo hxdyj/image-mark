@@ -3,9 +3,7 @@ import { ImageMark } from "#/index";
 import { ShapePlugin } from "#/plugins/ShapePlugin";
 import { TeamData, TeamShape } from "../shape/TeamShape";
 import { Text, Box } from "@svgdotjs/svg.js";
-export const TroopsList = ['unit', 'squad', 'platoon', 'company'] as const
 
-export type TroopsType = typeof TroopsList[number]
 
 export declare namespace SchemaDTO {
 
@@ -30,15 +28,9 @@ export declare namespace SchemaDTO {
 		 */
 		remark: string;
 		/**
-		 * Troops Type
-		 */
-		troops_type: TroopsType;
-		/**
 		 * Uuid
 		 */
 		uuid: string;
-
-		mix_data: string
 	}
 }
 
@@ -133,10 +125,9 @@ export class TeamMarkPlugin extends ShapePlugin<TeamData> {
 		if (this.data.find(item => item.uuid === node.uuid)) return
 		let shapeData = createTeamDataByTreeNode(node)
 
-		// @ts-ignore
-		shapeData.x = e.imageClientX
-		// @ts-ignore
-		shapeData.y = e.imageClientY
+		const { x, y } = this.imageMark.image.point(e)
+		shapeData.x = x
+		shapeData.y = y
 
 		this.onAdd(shapeData)
 	}

@@ -21,11 +21,11 @@ export function SvgDemo() {
 
 		const g = new G()
 		imageRef.current = new Image()
-		imageRef.current.load('/demo-map.jpg')
-		imageRef.current.size(1280, 948)
+		imageRef.current.load('/demo-parking.jpg')
+		imageRef.current.size(3891, 2916)
 		g.add(imageRef.current)
 		g.transform({
-			scale: 0.5,
+			scale: 0.16448,
 			origin: [0, 0],
 			translate: [250, 250]
 		})

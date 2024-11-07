@@ -5,7 +5,7 @@ import App from '../App'
 import { AppError } from '../views/Error/Error'
 import { IconFont } from '../components/Iconfont'
 import { Base } from '../views/Base'
-import { TeamMarkPlugin } from '../views/TeamMarkPlugin'
+import { TeamMarkPluginDemo } from '../views/TeamMarkPluginDemo'
 import { SvgDemo } from '../views/SvgDemo'
 import { TwoInstance } from '../views/TwoInstance'
 
@@ -87,7 +87,7 @@ export const routes: IRoute[] = [
 							},
 							{
 								path: '/demo/teamPlugin',
-								element: <TeamMarkPlugin />,
+								element: <TeamMarkPluginDemo />,
 								meta: {
 									title: 'TeamPlugin',
 									menuShow: true,

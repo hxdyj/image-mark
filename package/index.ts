@@ -1143,7 +1143,9 @@ export class ImageMark extends EventBindingThis {
 
 	// 实例化插件
 	initPlugin(plugin: typeof Plugin) {
-		this.plugin[plugin.pluginName] = new plugin(this)
+		if (!this.plugin[plugin.pluginName]) {
+			this.plugin[plugin.pluginName] = new plugin(this)
+		}
 	}
 
 	static pluginList: Array<typeof Plugin> = []
