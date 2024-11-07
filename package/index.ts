@@ -1,6 +1,6 @@
 import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
-import { debounce, defaultsDeep, difference, throttle } from "lodash-es";
+import { debounce, defaultsDeep, difference, forEach, throttle } from "lodash-es";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
 import { Plugin } from "./plugins";
@@ -61,8 +61,23 @@ export type ImageMarkOptions = {
 
 export class ImageMarkManager {
 	imageMarkEleInstanceWeakMap: WeakMap<HTMLElement, ImageMark> = new WeakMap()
-	getWeakMap() {
-		return this.imageMarkEleInstanceWeakMap
+	idInstanceMap: Map<string, ImageMark> = new Map()
+	addNewInstance(instance: ImageMark) {
+		if (this.imageMarkEleInstanceWeakMap.has(instance.container)) {
+			const oldInstance = this.imageMarkEleInstanceWeakMap.get(instance.container)
+			oldInstance?.destroy()
+		}
+		this.idInstanceMap.set(instance.id, instance)
+		this.imageMarkEleInstanceWeakMap.set(instance.container, instance)
+	}
+	removeInstance(instance: ImageMark) {
+		this.idInstanceMap.delete(instance.id)
+		this.imageMarkEleInstanceWeakMap.delete(instance.container)
+	}
+	unusePlugin(plugin: typeof Plugin) {
+		forEach(this.idInstanceMap.values(), (instance: ImageMark) => {
+			instance.removePlugin(plugin)
+		})
 	}
 }
 
@@ -95,12 +110,7 @@ export class ImageMark extends EventBindingThis {
 		this.id = uid(6)
 		this.container = getElement(this.options.el)
 
-		if (imageMarkManager.getWeakMap().has(this.container)) {
-			const oldInstance = imageMarkManager.getWeakMap().get(this.container)
-			oldInstance?.destroy()
-		}
-
-		imageMarkManager.getWeakMap().set(this.container, this)
+		imageMarkManager.addNewInstance(this)
 
 		if (!this.container) {
 			throw new Error('Container not found')
@@ -214,7 +224,7 @@ export class ImageMark extends EventBindingThis {
 			plugin.destroy()
 		})
 		this.stage.remove()
-		imageMarkManager.getWeakMap().delete(this.container)
+		imageMarkManager.removeInstance(this)
 	}
 
 	protected draw() {
@@ -1117,26 +1127,17 @@ export class ImageMark extends EventBindingThis {
 		}
 	}
 
-	// 添加插件
+	// 添加实例上的插件
 	addPlugin(plugin: typeof Plugin) {
-		let hasPlugin = ImageMark.hasPlugin(plugin)
-		if (hasPlugin) {
-			ImageMark.usePlugin(plugin)
-			this.initPlugin(plugin)
-		}
+		this.initPlugin(plugin)
 	}
 
-	// 移除插件
+	// 移除实例上的插件
 	removePlugin(plugin: typeof Plugin) {
-		let hasPlugin = ImageMark.hasPlugin(plugin)
-		if (hasPlugin) {
-			ImageMark.pluginList.splice(ImageMark.pluginList.indexOf(plugin), 1)
-
-			let pluginInstance = this.plugin[plugin.pluginName]
-			if (pluginInstance) {
-				pluginInstance?.beforePluginRemove()
-				delete this.plugin[plugin.pluginName]
-			}
+		let pluginInstance = this.plugin[plugin.pluginName]
+		if (pluginInstance) {
+			pluginInstance?.beforePluginRemove()
+			delete this.plugin[plugin.pluginName]
 		}
 	}
 
@@ -1152,11 +1153,21 @@ export class ImageMark extends EventBindingThis {
 		ImageMark.pluginList.push(plugin)
 		return ImageMark
 	}
+
+	static unusePlugin(plugin: typeof Plugin, currentInstanceRemove = false) {
+		let hasPlugin = ImageMark.hasPlugin(plugin)
+		if (hasPlugin) {
+			ImageMark.pluginList.splice(ImageMark.pluginList.indexOf(plugin), 1)
+		}
+		if (currentInstanceRemove) {
+			imageMarkManager.unusePlugin(plugin)
+		}
+		return ImageMark
+	}
+
 	static hasPlugin(plugin: typeof Plugin) {
 		return ImageMark.pluginList.find(item => item === plugin)
 	}
-
-
 }
 
 
