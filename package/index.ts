@@ -1134,9 +1134,9 @@ export class ImageMark extends EventBindingThis {
 
 	// 移除实例上的插件
 	removePlugin(plugin: typeof Plugin) {
-		let pluginInstance = this.plugin[plugin.pluginName]
+		const pluginInstance = this.plugin[plugin.pluginName]
 		if (pluginInstance) {
-			pluginInstance?.beforePluginRemove()
+			pluginInstance.beforePluginRemove()
 			delete this.plugin[plugin.pluginName]
 		}
 	}

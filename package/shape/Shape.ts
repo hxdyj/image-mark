@@ -6,6 +6,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	isRendered = false
 	static shapeName: string
 	imageMark: ImageMark;
+
 	action: {
 		[key: string]: Action
 	} = {}
@@ -17,6 +18,11 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 			throw new Error(`${constructor.name} must have a static property 'shapeName'`);
 		}
 		this.imageMark = imageMarkInstance;
+
+		ImageMarkShape.actionList.forEach(action => {
+			this.initAction(action)
+		})
+
 	}
 
 	abstract draw(): Shape;
@@ -25,15 +31,35 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 
 	}
 
+	destroy() {
+		this.shapeInstance.remove()
+		Object.values(this.action).forEach(action => {
+			action.destroy()
+		})
+	}
+
 	render(stage: Parameters<InstanceType<typeof Shape>['addTo']>[0]): void {
 		if (!this.isRendered) {
-			ImageMarkShape.actionList.forEach(action => {
-				this.initAction(action)
-			})
 			this.shapeInstance.addTo(stage)
 			this.isRendered = true
 			this.afterRender()
 		}
+	}
+
+	addAction(action: typeof Action) {
+		this.initAction(action)
+	}
+
+	removeAction(action: typeof Action) {
+		const actionInstance = this.action[action.actionName]
+		if (actionInstance) {
+			actionInstance.beforeActionRemove()
+			delete this.action[action.actionName]
+		}
+	}
+
+	initAction(action: typeof Action) {
+		this.action[action.actionName] = new action(this.imageMark, this, Reflect.get(action, 'actionOptions'))
 	}
 
 	static actionList: Array<typeof Action> = []
@@ -44,14 +70,18 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		ImageMarkShape.actionList.push(action)
 		return ImageMarkShape
 	}
-
+	static unuseAction(action: typeof Action) {
+		const hasAction = ImageMarkShape.hasAction(action)
+		if (hasAction) {
+			ImageMarkShape.actionList.splice(ImageMarkShape.actionList.indexOf(action), 1)
+		}
+		return ImageMarkShape
+	}
 	static hasAction(action: typeof Action) {
 		return ImageMarkShape.actionList.includes(action)
 	}
 
-	initAction(action: typeof Action) {
-		this.action[action.actionName] = new action(this.imageMark, this, Reflect.get(action, 'actionOptions'))
-	}
+
 }
 
 export interface ShapeData {

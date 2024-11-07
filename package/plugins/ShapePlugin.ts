@@ -13,6 +13,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
 		this.data = imageMarkInstance.options.pluginOptions?.[pluginName]?.shapeList || []
+
+		ShapePlugin.shapeList.forEach(shape => {
+			this.initShape(shape)
+		})
+
 		this.bindEventThis(['onRerender', 'onDraw', 'onInit', 'onDelete', 'onResize'])
 		this.bindEvent()
 	}
@@ -20,7 +25,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	protected addNode(node: T) {
 		if (!this.node2ShapeInstanceWeakMap.has(node)) {
 			let shape = null
-			const ShapeClass = ShapePlugin.shapeList.find(item => item.shapeName == node.shapeName)
+			const ShapeClass = this.shape[node.shapeName]
 			if (ShapeClass) {
 				if (ShapeClass.constructor === ImageMarkShape) {
 					throw new Error(`Shape ${Reflect.get(ShapeClass, 'shapeName')} must be a subclass of ImageMarkShape`)
@@ -92,7 +97,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		while (this.data.length) {
 			let item = this.data[0]
 			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)
-			nodeInstance?.shapeInstance.remove()
+			nodeInstance?.destroy()
 			this.onDelete(item, nodeInstance!)
 		}
 	}
@@ -133,10 +138,34 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		return this.node2ShapeInstanceWeakMap.get(data)
 	}
 
+	shape: {
+		[key: string]: ImageMarkShape
+	} = {}
+
+	addShape(shape: typeof ImageMarkShape<T>) {
+		this.initShape(shape)
+	}
+
+	removeShape(shape: typeof ImageMarkShape<T>) {
+		Reflect.deleteProperty(this.shape, shape.shapeName)
+	}
+
+	initShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
+		this.shape[shape.shapeName] = shape as unknown as ImageMarkShape<T>
+	}
+
 	static shapeList: Array<typeof ImageMarkShape> = []
-	static registerShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
+	static useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
 		if (ShapePlugin.hasShape(shape)) return ShapePlugin<T>
 		ShapePlugin.shapeList.push(shape as typeof ImageMarkShape)
+		return ShapePlugin
+	}
+	static unuseShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
+		const hasShape = ShapePlugin.hasShape(shape)
+		if (hasShape) {
+			//@ts-ignore
+			ShapePlugin.shapeList.splice(ShapePlugin.shapeList.indexOf(shape), 1)
+		}
 		return ShapePlugin
 	}
 	static hasShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {

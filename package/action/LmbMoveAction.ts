@@ -48,6 +48,11 @@ export class LmbMoveAction extends Action {
 		this.moveable = true
 	}
 
+	destroy(): void {
+		super.destroy()
+		this.unbindEvent()
+	}
+
 	protected onMouseDown(event: Event) {
 		if (!this.moveable) return
 		let evt = event as MouseEvent

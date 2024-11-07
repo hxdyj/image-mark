@@ -8,4 +8,8 @@ export class Action extends EventBindingThis {
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: any) {
 		super()
 	}
+
+	beforeActionRemove() { }
+
+	destroy() { }
 }
