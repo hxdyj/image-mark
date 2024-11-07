@@ -10,33 +10,33 @@ export function TeamMarkPluginDemo() {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const imgMark = useRef<ImageMark | null>(null)
 	let treeData: SchemaDTO.TreeNode | null = {
-		"name": "A公司",
+		"name": "A",
 		"uuid": "685d462a4",
 		"num": 1,
 		"remark": "",
 		"children": [
 			{
-				"name": "B部门",
+				"name": "B",
 				"uuid": "9894a1987",
 				"num": 1,
 				"remark": "",
 				"children": [
 					{
-						"name": "B1员工",
+						"name": "B1",
 						"uuid": "894a19870",
 						"num": 1,
 						"remark": "",
 						"children": []
 					},
 					{
-						"name": "B2员工",
+						"name": "B2",
 						"uuid": "94a198705",
 						"num": 1,
 						"remark": "",
 						"children": []
 					},
 					{
-						"name": "B3员工",
+						"name": "B3",
 						"uuid": "4a1987058",
 						"num": 9,
 						"remark": "",
@@ -45,27 +45,27 @@ export function TeamMarkPluginDemo() {
 				]
 			},
 			{
-				"name": "C部门",
+				"name": "C",
 				"uuid": "05806ce43",
 				"num": 1,
 				"remark": "",
 				"children": [
 					{
-						"name": "C1员工",
+						"name": "C1",
 						"uuid": "5806ce43d",
 						"num": 1,
 						"remark": "",
 						"children": []
 					},
 					{
-						"name": "C2员工",
+						"name": "C2",
 						"uuid": "806ce43d7",
 						"num": 9,
 						"remark": "",
 						"children": []
 					},
 					{
-						"name": "C3员工",
+						"name": "C3",
 						"uuid": "06ce43d71",
 						"num": 1,
 						"remark": "",
@@ -74,27 +74,27 @@ export function TeamMarkPluginDemo() {
 				]
 			},
 			{
-				"name": "D部门",
+				"name": "D",
 				"uuid": "d71d4fcf3",
 				"num": 1,
 				"remark": "",
 				"children": [
 					{
-						"name": "D1员工",
+						"name": "D1",
 						"uuid": "71d4fcf38",
 						"num": 1,
 						"remark": "",
 						"children": []
 					},
 					{
-						"name": "D2员工",
+						"name": "D2",
 						"uuid": "1d4fcf389",
 						"num": 9,
 						"remark": "",
 						"children": []
 					},
 					{
-						"name": "D3员工",
+						"name": "D3",
 						"uuid": "d4fcf3891",
 						"num": 1,
 						"remark": "",
