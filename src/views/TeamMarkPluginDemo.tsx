@@ -121,6 +121,9 @@ export function TeamMarkPluginDemo() {
 				}
 			}
 		})
+		return () => {
+			imgMark.current?.destroy()
+		}
 	}, [])
 	const ghostRef = useRef<HTMLDivElement>(null)
 

@@ -165,21 +165,17 @@ export class ImageMark extends EventBindingThis {
 		this.addContainerEvent()
 	}
 
-	protected init(action?: 'resize' | 'rerender') {
-		this.eventBus.emit(EventBusEventName.init, this)
+	protected init(action?: 'rerender') {
+		if (!action) {
+			this.eventBus.emit(EventBusEventName.init, this)
+		}
 		this.image.load(this.options.src, (ev: any) => {
 			this.imageDom = ev.target as HTMLImageElement
 			this.stageGroup.addTo(this.stage)
-
 			let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
 
-			if (action === 'rerender' || action == 'resize' && this.options.enableImageOutOfContainer) {
+			if (action === 'rerender') {
 				drawSize = 'reserve'
-			}
-
-
-			if (action === 'resize' && Date.now() - this.createTime <= 340) {
-				drawSize = 'initial'
 			}
 
 			this.drawImage(ev, drawSize)
@@ -189,8 +185,9 @@ export class ImageMark extends EventBindingThis {
 			}
 
 			if (action) {
-				this.eventBus.emit(action == 'resize' ? EventBusEventName.resize : EventBusEventName.rerender, this)
+				this.eventBus.emit(EventBusEventName.rerender, this)
 			}
+
 			this.draw()
 		})
 	}
@@ -208,8 +205,19 @@ export class ImageMark extends EventBindingThis {
 		this.containerRectInfo = getContainerInfo(this.container)
 		console.log('resize containerRectInfo', this.containerRectInfo)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
-		this.initVariable()
-		this.init('resize')
+		console.log('###########  resize stage size', this.stage, this.containerRectInfo.width, this.containerRectInfo.height)
+		let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
+		if (this.options.enableImageOutOfContainer) {
+			drawSize = 'reserve'
+		}
+		if (Date.now() - this.createTime <= 340) {
+			drawSize = 'initial'
+		}
+
+		console.log('-----------------------------> resize:', drawSize, Date.now() - this.createTime)
+
+		this.drawImage(null, drawSize, false)
+		this.eventBus.emit(EventBusEventName.resize, this)
 	}
 
 	rerender() {
@@ -405,14 +413,17 @@ export class ImageMark extends EventBindingThis {
 		}
 	}
 
-	protected drawImage(ev: Event, size: 'initial' | 'reserve' = 'initial') {
-		let target = ev.target as HTMLImageElement
+	protected drawImage(ev: Event | null, size: 'initial' | 'reserve' = 'initial', addTo = true) {
+		let target = ev?.target as HTMLImageElement
 		if (size == 'reserve') {
 			this.stageGroup.transform(this.lastTransform, false)
+			console.log('drawImage reserve', this.lastTransform)
 		}
 
 		if (size == 'initial') {
-			const initTrasform = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
+			let initTrasform = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
+			const { translateX = 0, translateY = 0 } = this.lastTransform || {}
+			initTrasform.translate = [-translateX + initTrasform.translate[0], -translateY + initTrasform.translate[1]]
 			this.stageGroup.transform(initTrasform, false)
 			console.log('drawImage initial', initTrasform)
 		}
@@ -422,7 +433,7 @@ export class ImageMark extends EventBindingThis {
 		this.checkInitOutOfContainerAndReset()
 
 		this.image.size(this.imageDom.naturalWidth, this.imageDom.naturalHeight)
-		this.image.addTo(this.stageGroup)
+		addTo && this.image.addTo(this.stageGroup)
 	}
 
 	protected addDefaultAction() {
