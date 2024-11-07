@@ -69,11 +69,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.unbindEvent()
 	}
 
-	updateData(data: T[]) {
-		this.data = data
-		this.createShape()
-	}
-
 	onAdd(data: T, emit = true) {
 		this.data.push(data)
 		this.addNode(data)

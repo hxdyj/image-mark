@@ -151,7 +151,7 @@ export class TeamMarkPlugin extends ShapePlugin<TeamData> {
 		Promise.resolve().then(() => {
 			this.data.forEach(item => {
 				let instance = this.getInstanceByData(item) as TeamShape | null
-				instance?.update()
+				instance?.onScaleUpdate()
 			})
 		})
 	}

@@ -41,6 +41,10 @@ export function Base() {
 		})
 			.setMaxScale(100000)
 			.setMinScale(0.01)
+
+		return () => {
+			imgMark.current?.destroy()
+		}
 	}, [])
 
 	function onMoveSuccessive() {

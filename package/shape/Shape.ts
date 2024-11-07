@@ -1,8 +1,11 @@
 import { Shape } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action";
-export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
-	abstract shapeInstance: Shape;
+
+type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
+
+export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends Shape = Shape> {
+	shapeInstance: S;
 	isRendered = false
 	static shapeName: string
 	imageMark: ImageMark;
@@ -11,21 +14,21 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		[key: string]: Action
 	} = {}
 
-	constructor(public data: T, imageMarkInstance: ImageMark) {
+	constructor(public data: T, imageMarkInstance: ImageMark, shapeInstance: S) {
 		const constructor = this.constructor
 		// @ts-ignore
 		if (!constructor.shapeName) {
 			throw new Error(`${constructor.name} must have a static property 'shapeName'`);
 		}
 		this.imageMark = imageMarkInstance;
-
 		ImageMarkShape.actionList.forEach(action => {
 			this.initAction(action)
 		})
-
+		this.shapeInstance = shapeInstance
+		this.draw()
 	}
 
-	abstract draw(): Shape;
+	abstract draw(): S;
 
 	afterRender() {
 
@@ -38,7 +41,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		})
 	}
 
-	render(stage: Parameters<InstanceType<typeof Shape>['addTo']>[0]): void {
+	render(stage: AddToShape): void {
 		if (!this.isRendered) {
 			this.shapeInstance.addTo(stage)
 			this.isRendered = true

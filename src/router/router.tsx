@@ -89,7 +89,7 @@ export const routes: IRoute[] = [
 								path: '/demo/teamPlugin',
 								element: <TeamMarkPlugin />,
 								meta: {
-									title: 'teamPlugin',
+									title: 'TeamPlugin',
 									menuShow: true,
 									noLogin: false,
 								},

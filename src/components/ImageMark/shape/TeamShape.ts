@@ -22,16 +22,13 @@ const getScaleNumber = curryRight((num: number, scale: number) => {
 	return num / scale
 })
 
-export class TeamShape extends ImageMarkShape<TeamData> {
+export class TeamShape extends ImageMarkShape<TeamData, G> {
 	static shapeName = "teamMark"
-	shapeInstance: G
 	constructor(data: TeamData, imageMarkInstance: ImageMark) {
-		super(data, imageMarkInstance)
-		this.shapeInstance = new G()
-		this.draw()
+		super(data, imageMarkInstance, new G())
 	}
 
-	update() {
+	onScaleUpdate() {
 		this.drawElements({
 			groupRect: this.shapeInstance.findOne('.team-shape-group-rect') as Rect,
 			centerLine: this.shapeInstance.findOne('.team-shape-center-line') as Line,
@@ -109,7 +106,6 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 
 	draw(): G {
 		const { prefixName, x, y } = this.data
-
 		this.shapeInstance.translate(x, y)
 		let debugRect = new Rect()
 		this.shapeInstance.add(debugRect)
@@ -181,7 +177,6 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 			closeIcon,
 			innerGroup
 		})
-
 		return this.shapeInstance
 	}
 }

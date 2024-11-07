@@ -23,7 +23,10 @@ export function TwoInstance() {
 			el: container2Ref.current,
 			src: '/demo-two-instance-2.jpg'
 		}).setMinScale(0.0001)
-
+		return () => {
+			imgMark1.current?.destroy()
+			imgMark2.current?.destroy()
+		}
 	}, [])
 
 	return (
