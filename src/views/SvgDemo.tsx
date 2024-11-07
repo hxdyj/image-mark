@@ -16,7 +16,7 @@ export function SvgDemo() {
 	useEffect(() => {
 		if (svgRef.current) return
 		svgRef.current = SVG()
-		svgRef.current.size(890, 724).css({ 'background-color': 'red' })
+		svgRef.current.size(890, 724).css({ 'background-color': '#165DFF' })
 		svgRef.current.addTo('.svg-container')
 
 		const g = new G()
@@ -36,9 +36,8 @@ export function SvgDemo() {
 	return (
 		/* @ts-ignore */
 		<div className="page-svg-demo" onMouseMove={onMouseOver}>
-			<div className="h-[100vh] bg-gray-500">
+			<div className="h-[70vh] bg-gray-500">
 			</div>
-			<div className="w-[1px] fixed h-[100vh] bg-red-500 top-0 left-[890px]"></div>
 			<div className="flex fixed right-0 top-0 bg-black p-4 rounded-md rounded-r-none rounded-tl-none text-white w-[300px] justify-center flex-col gap-y-2">
 				<div>
 					Svg Point <span className="ml-8">{point?.x.toFixed(2)} {point?.y.toFixed(2)}</span>
@@ -47,8 +46,10 @@ export function SvgDemo() {
 					Image Point <span className="ml-4"> {imagePoint?.x.toFixed(2)} {imagePoint?.y.toFixed(2)}</span>
 				</div>
 			</div>
-			<div className="svg-container w-[890px] h-[724px]">
+			<div className="bg-[#94BFFF]">
+				<div className="svg-container w-[890px] h-[724px]">
 
+				</div>
 			</div>
 			<div className="h-[100px] bg-gray-500"></div>
 		</div >
