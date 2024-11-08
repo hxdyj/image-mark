@@ -4,8 +4,6 @@ import { SchemaDTO, TeamMarkPlugin } from "../components/ImageMark/plugins/TeamM
 import { Tree } from "@arco-design/web-react"
 import { cloneDeep } from "lodash-es"
 import { TeamShape } from "../components/ImageMark/shape/TeamShape"
-TeamMarkPlugin.useShape(TeamShape)
-ImageMark.usePlugin(TeamMarkPlugin)
 export function TeamMarkPluginDemo() {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const imgMark = useRef<ImageMark | null>(null)
@@ -120,6 +118,10 @@ export function TeamMarkPluginDemo() {
 					shapeList: []
 				}
 			}
+		}).addPlugin(TeamMarkPlugin, (instance) => {
+			const teamMarkPluginInstance = new TeamMarkPlugin(instance)
+			teamMarkPluginInstance.addShape(TeamShape)
+			return teamMarkPluginInstance
 		})
 		return () => {
 			imgMark.current?.destroy()

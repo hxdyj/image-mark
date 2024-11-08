@@ -16,6 +16,7 @@ export type OutOfData = [boolean, number] // [是否超出,距离(正数为超�
 export type ArrayPoint = [number, number]
 export type ArrayWH = ArrayPoint
 export type ContainerType = string | HTMLElement;
+export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin
 export type BoundingBox = {
 	x: number
 	y: number
@@ -212,7 +213,6 @@ export class ImageMark extends EventBindingThis {
 			drawSize = 'reserve'
 		}
 
-		console.log('------------------------resize', drawSize)
 		this.drawImage(null, drawSize, false)
 		this.eventBus.emit(EventBusEventName.resize, this)
 	}
@@ -1142,8 +1142,9 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	// 添加实例上的插件
-	addPlugin(plugin: typeof Plugin) {
-		this.initPlugin(plugin)
+	addPlugin(plugin: typeof Plugin, newCall?: PluginNewCall) {
+		this.initPlugin(plugin, newCall)
+		return this
 	}
 
 	// 移除实例上的插件
@@ -1153,13 +1154,15 @@ export class ImageMark extends EventBindingThis {
 			pluginInstance.beforePluginRemove()
 			delete this.plugin[plugin.pluginName]
 		}
+		return this
 	}
 
 	// 实例化插件
-	initPlugin(plugin: typeof Plugin) {
+	initPlugin(plugin: typeof Plugin, newCall?: PluginNewCall) {
 		if (!this.plugin[plugin.pluginName]) {
-			this.plugin[plugin.pluginName] = new plugin(this)
+			this.plugin[plugin.pluginName] = newCall ? newCall(this) : new plugin(this)
 		}
+		return this
 	}
 
 	static pluginList: Array<typeof Plugin> = []

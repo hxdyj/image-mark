@@ -9,6 +9,7 @@ import { TeamMarkPluginDemo } from '../views/TeamMarkPluginDemo'
 import { TwoInstance } from '../views/TwoInstance'
 import { SvgPointDemo } from '../views/test/SvgPointDemo'
 import { SvgMaskDemo } from '../views/test/SvgMaskDemo'
+import { ShapePluginDemo } from '../views/ShapePluginDemo'
 
 interface CustomRouteFields {
 	meta?: {
@@ -82,6 +83,15 @@ export const routes: IRoute[] = [
 								element: <TeamMarkPluginDemo />,
 								meta: {
 									title: 'TeamPlugin',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
+								path: '/demo/shapePlugin',
+								element: <ShapePluginDemo />,
+								meta: {
+									title: 'ShapePlugin',
 									menuShow: true,
 									noLogin: false,
 								},

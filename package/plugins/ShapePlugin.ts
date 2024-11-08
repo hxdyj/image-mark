@@ -13,7 +13,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
 		this.data = imageMarkInstance.options.pluginOptions?.[pluginName]?.shapeList || []
-
 		ShapePlugin.shapeList.forEach(shape => {
 			this.initShape(shape)
 		})
@@ -111,9 +110,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected onResize() {
-		this.clearMap()
-		this.createShape()
-		this.onDraw()
+		//TODO(songle): do this
+		// this.clearMap()
+		// this.createShape()
+		// this.onDraw()
 	}
 
 	protected renderNode(node: T) {
@@ -146,6 +146,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	initShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
+		if (!shape.shapeName) throw new Error(`${shape.name} shapeName is required`)
 		this.shape[shape.shapeName] = shape as unknown as ImageMarkShape<T>
 	}
 
