@@ -13,6 +13,7 @@ export function Base() {
 			el: containerRef.current,
 			src: '/demo-base.jpg',
 			moveConfig: {},
+			enableImageOutOfContainer: false,
 			initScaleConfig: {
 				startPosition: 'center',
 				size: 'fit',

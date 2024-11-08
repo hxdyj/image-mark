@@ -91,7 +91,6 @@ export class ImageMark extends EventBindingThis {
 	stageGroup: G;
 	image: Image
 	imageDom: HTMLImageElement
-	lastTransform: MatrixExtract = {}
 	plugin: {
 		[key: string]: Plugin
 	} = {}
@@ -104,6 +103,8 @@ export class ImageMark extends EventBindingThis {
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
 	private destroyed = false
+
+
 
 	constructor(public options: ImageMarkOptions) {
 		super()
@@ -202,6 +203,7 @@ export class ImageMark extends EventBindingThis {
 		this.imageDom = document.createElement('img')
 	}
 
+
 	resize() {
 		this.containerRectInfo = getContainerInfo(this.container)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
@@ -209,6 +211,8 @@ export class ImageMark extends EventBindingThis {
 		if (this.options.enableImageOutOfContainer) {
 			drawSize = 'reserve'
 		}
+
+		console.log('------------------------resize', drawSize)
 		this.drawImage(null, drawSize, false)
 		this.eventBus.emit(EventBusEventName.resize, this)
 	}
@@ -245,10 +249,9 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected getInitialScaleAndTranslate(options: ImageMarkOptions['initScaleConfig']) {
-
+		/* 图片没加载出来的时候有可能图片宽高获取都为0 */
 		let imgWidth = this.imageDom.naturalWidth
 		let imgHeight = this.imageDom.naturalHeight
-
 
 		let containerWidth = this.containerRectInfo.width
 		let containerHeight = this.containerRectInfo.height
@@ -379,6 +382,7 @@ export class ImageMark extends EventBindingThis {
 			}
 			deal[size]()
 		}
+
 		return {
 			scale: initialScale,
 			translate: translateOffset
@@ -388,7 +392,11 @@ export class ImageMark extends EventBindingThis {
 
 	protected checkMinScaleValidate() {
 		if (!this.options.enableImageOutOfContainer) {
-			const { scale: minScale } = this.getInitialScaleAndTranslate({ 'size': 'cover' })
+			let { scale: minScale } = this.getInitialScaleAndTranslate({ 'size': 'cover' })
+
+			/* 图片没加载出来的时候有可能图片宽高获取都为0，导致这里scale计算为Infinity，无法缩小 */
+			if (minScale == Infinity) minScale = -Infinity
+
 			let { scaleX: currentScaleX = 1 } = this.stageGroup.transform()
 			if (currentScaleX < minScale) {
 				this.minScale = minScale
@@ -410,20 +418,17 @@ export class ImageMark extends EventBindingThis {
 	protected drawImage(ev: Event | null, size: 'initial' | 'reserve' = 'initial', addTo = true) {
 		let target = ev?.target as HTMLImageElement
 		if (size == 'reserve') {
-			this.stageGroup.transform(this.lastTransform, false)
+			this.stageGroup.transform(this.stageGroup.transform(), false)
 		}
 
 		if (size == 'initial') {
 			let initTrasform = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
-			const { translateX = 0, translateY = 0 } = this.lastTransform || {}
+			const { translateX = 0, translateY = 0, scaleX = 1 } = this.stageGroup.transform() || {}
 			initTrasform.translate = [-translateX + initTrasform.translate[0], -translateY + initTrasform.translate[1]]
-			this.stageGroup.transform(initTrasform, false)
+			initTrasform.scale = initTrasform.scale / scaleX
+			this.stageGroup.transform(initTrasform, true)
 		}
-
-		this.lastTransform = this.stageGroup.transform()
-
 		this.checkInitOutOfContainerAndReset()
-
 		this.image.size(this.imageDom.naturalWidth, this.imageDom.naturalHeight)
 		addTo && this.image.addTo(this.stageGroup)
 	}
@@ -592,7 +597,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	moveTo(position: Position) {
-		const { scaleX = 1, translateX = 0, translateY = 0 } = this.lastTransform
+		const { scaleX = 1, translateX = 0, translateY = 0 } = this.stageGroup.transform()
 		const { width, height } = this.containerRectInfo
 		const { naturalWidth, naturalHeight } = this.imageDom
 		const viewWidth = naturalWidth * scaleX
@@ -602,22 +607,18 @@ export class ImageMark extends EventBindingThis {
 
 
 		if (position == 'left') {
-			const { translateX = 0, translateY = 0 } = this.lastTransform
 			this.stageGroup.translate(-translateX, -translateY + y / 2)
 		}
 
 		if (position == 'left-top') {
-			const { translateX = 0, translateY = 0 } = this.lastTransform
 			this.stageGroup.translate(-translateX, -translateY)
 		}
 
 		if (position == 'left-bottom') {
-			const { translateX = 0, translateY = 0 } = this.lastTransform
 			this.stageGroup.translate(-translateX, -translateY + y)
 		}
 
 		if (position == 'right') {
-			const { translateX = 0, translateY = 0 } = this.lastTransform
 			this.stageGroup.translate(-translateX + x, -translateY + y / 2)
 		}
 
@@ -645,7 +646,6 @@ export class ImageMark extends EventBindingThis {
 			this.stageGroup.translate(-translateX + newPosition[0], -translateY + newPosition[1])
 		}
 
-		this.lastTransform = this.stageGroup.transform()
 	}
 
 	move(point: ArrayPoint) {
@@ -656,20 +656,32 @@ export class ImageMark extends EventBindingThis {
 		this.stageGroup.transform({
 			translate: point
 		}, true)
-		this.lastTransform = this.stageGroup.transform()
+		// this.lastTransform = this.stageGroup.transform()
 		this.status.moving = false
 		return this
 	}
 
+	movingStartTransform: MatrixExtract | null = null
+
+	startSuccessiveMove(point: ArrayPoint) {
+		this.status.moving = true
+		this.movingStartPoint = point
+		this.movingStartTransform = this.stageGroup.transform()
+		return this
+	}
+
 	moveSuccessive(point: ArrayPoint) {
-		if (!this.status.moving || this.status.scaling) return
+		if (!this.status.moving || this.status.scaling || !this.movingStartTransform) return
 		if (!this.movingStartPoint) return
 		let offsetPoint: ArrayPoint = [point[0] - this.movingStartPoint[0], point[1] - this.movingStartPoint[1]]
 		let currentTransform = this.stageGroup.transform()
-		let diffPoint: ArrayPoint = [((this.lastTransform.translateX || 0) + offsetPoint[0]) - (currentTransform.translateX || 0), ((this.lastTransform.translateY || 0) + offsetPoint[1]) - (currentTransform.translateY || 0)]
+
+		const { translateX = 0, translateY = 0 } = this.movingStartTransform
+
+		let diffPoint: ArrayPoint = [(translateX + offsetPoint[0]) - (currentTransform.translateX || 0), (translateY + offsetPoint[1]) - (currentTransform.translateY || 0)]
 		offsetPoint = this.fixPoint(offsetPoint, this.limitMovePoint(diffPoint))
 		//还原到move之前的状态
-		this.stageGroup.transform(this.lastTransform)
+		this.stageGroup.transform(this.movingStartTransform)
 		//移动
 		this.stageGroup.transform({
 			translate: offsetPoint
@@ -680,12 +692,7 @@ export class ImageMark extends EventBindingThis {
 	endSuccessiveMove() {
 		this.status.moving = false
 		this.movingStartPoint = null
-		this.lastTransform = this.stageGroup.transform()
-		return this
-	}
-	startSuccessiveMove(point: ArrayPoint) {
-		this.status.moving = true
-		this.movingStartPoint = point
+		this.movingStartTransform = null
 		return this
 	}
 
@@ -694,7 +701,7 @@ export class ImageMark extends EventBindingThis {
 		callback?.(cloneGroup)
 		let nextStepTransform = cloneGroup.transform()
 
-		const scaleLimitResult = this.getScaleLimitImageInContainerInfo(point, this.lastTransform, nextStepTransform)
+		const scaleLimitResult = this.getScaleLimitImageInContainerInfo(point, this.stageGroup.transform(), nextStepTransform)
 
 		if (scaleLimitResult === false) {
 			console.warn('scale out of container')
@@ -706,7 +713,6 @@ export class ImageMark extends EventBindingThis {
 			scaleLimitResult.forEach(item => {
 				this.stageGroup.transform(...item)
 			})
-			this.lastTransform = this.stageGroup.transform()
 			this.status.scaling = false
 			return this
 		}
@@ -731,8 +737,9 @@ export class ImageMark extends EventBindingThis {
 		const zoomIntensity = 0.1
 		let zoom = Math.exp(direction * zoomIntensity)
 
-		let currentScale = this.lastTransform.scaleX || 1
-		let afterScale = newScale !== undefined ? newScale : this.lastTransform.scaleX! * zoom
+		const { scaleX: currentScale = 1 } = this.stageGroup.transform()
+
+		let afterScale = newScale !== undefined ? newScale : currentScale * zoom
 
 
 		if (reletiveTo === 'container') {
@@ -757,17 +764,18 @@ export class ImageMark extends EventBindingThis {
 			const { scale } = this.getInitialScaleAndTranslate({
 				size: 'cover'
 			})
-			if ((this.lastTransform.scaleX || 1) === scale) {
-				const { isOutOf } = this.isOutofContainer(this.lastTransform)
+			if (currentScale === scale) {
+				const currentTransform = this.stageGroup.transform()
+				const { translateX = 0, translateY = 0 } = currentTransform
+				const { isOutOf } = this.isOutofContainer(currentTransform)
 				if (isOutOf) {
 					let { translate } = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
 					this.stageGroup.transform({
-						translate: [-(this.lastTransform.translateX || 0), -(this.lastTransform.translateY || 0)]
+						translate: [-translateX, -translateY]
 					}, true)
 					this.stageGroup.transform({
 						translate
 					}, true)
-					this.lastTransform = this.stageGroup.transform()
 				}
 				return this
 			}
@@ -775,7 +783,6 @@ export class ImageMark extends EventBindingThis {
 			const flag = this.checkScaleLimitImageInContainer(point, (cloneGroup) => {
 				transformScale(cloneGroup)
 			})
-
 			if (flag) return this
 		}
 
@@ -790,15 +797,17 @@ export class ImageMark extends EventBindingThis {
 		this.status.scaling = true
 
 		transformScale(this.stageGroup)
-		this.lastTransform = this.stageGroup.transform()
+
 		this.status.scaling = false
-		this.eventBus.emit(EventBusEventName.scale, this.lastTransform.scaleX, this)
+		const { scaleX = 1 } = this.stageGroup.transform()
+		this.eventBus.emit(EventBusEventName.scale, scaleX, this)
 		return this
 	}
 
 	protected containerPoint2ImagePoint(point: ArrayPoint): ArrayPoint {
-		let newX = (point[0] - this.lastTransform.translateX!) / this.lastTransform.scaleX!
-		let newY = (point[1] - this.lastTransform.translateY!) / this.lastTransform.scaleY!
+		const { translateX = 0, translateY = 0, scaleX = 1, scaleY = 1 } = this.stageGroup.transform()
+		let newX = (point[0] - translateX) / scaleX
+		let newY = (point[1] - translateY) / scaleY
 		return [newX, newY]
 	}
 
@@ -866,7 +875,7 @@ export class ImageMark extends EventBindingThis {
 
 	protected cloneGroup(transform?: MatrixExtract): G {
 		const cloneGroup = new G()
-		cloneGroup.transform(transform || this.lastTransform)
+		cloneGroup.transform(transform || this.stageGroup.transform())
 		return cloneGroup
 	}
 
@@ -896,7 +905,9 @@ export class ImageMark extends EventBindingThis {
 			if (currentScaleX < minScale) {
 				// console.log("SCALE LIMIT", 1, currentScaleX, minScale);
 				// this.scaleTo({ size: 'cover' }, 'center')
-				return [[{ translate: [-(this.lastTransform.translateX || 0), - (this.lastTransform.translateY || 0)] }, true], [{ scale: newScale }, true], [{ translate: initialTranslate }, true]]
+
+				const { translateX = 0, translateY = 0 } = this.stageGroup.transform()
+				return [[{ translate: [-translateX, - translateY] }, true], [{ scale: newScale }, true], [{ translate: initialTranslate }, true]]
 
 			} else if (currentScaleX > minScale) {
 				let { width: containerWidth, height: containerHeight } = this.containerRectInfo
