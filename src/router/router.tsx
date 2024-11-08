@@ -109,10 +109,10 @@ export const routes: IRoute[] = [
 								},
 							},
 							{
-								path: '/test/clipPath',
+								path: '/test/mask',
 								element: <SvgMaskDemo />,
 								meta: {
-									title: 'SvgClipPathDemo',
+									title: 'SvgMaskDemo',
 									menuShow: true,
 									noLogin: false,
 								},
