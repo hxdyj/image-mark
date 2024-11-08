@@ -104,6 +104,7 @@ export class ImageMark extends EventBindingThis {
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
 	createTime: number
+	private destroyed = false
 
 	constructor(public options: ImageMarkOptions) {
 		super()
@@ -120,7 +121,7 @@ export class ImageMark extends EventBindingThis {
 
 		this.containerRectInfo = getContainerInfo(this.container)
 
-		console.log('init containerRectInfo', this.containerRectInfo)
+		console.log('init containerRectInfo', this.id, this.containerRectInfo)
 
 		this.options.initScaleConfig = defaultsDeep(this.options.initScaleConfig, {
 			to: 'image',
@@ -166,10 +167,12 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected init(action?: 'rerender') {
+		if (this.destroyed) return
 		if (!action) {
 			this.eventBus.emit(EventBusEventName.init, this)
 		}
 		this.image.load(this.options.src, (ev: any) => {
+			if (this.destroyed) return
 			this.imageDom = ev.target as HTMLImageElement
 			this.stageGroup.addTo(this.stage)
 			let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
@@ -203,18 +206,16 @@ export class ImageMark extends EventBindingThis {
 
 	resize() {
 		this.containerRectInfo = getContainerInfo(this.container)
-		console.log('resize containerRectInfo', this.containerRectInfo)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
-		console.log('###########  resize stage size', this.stage, this.containerRectInfo.width, this.containerRectInfo.height)
 		let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
 		if (this.options.enableImageOutOfContainer) {
 			drawSize = 'reserve'
 		}
-		if (Date.now() - this.createTime <= 340) {
+
+		//flex布局时候，如果容器是flex-grow，有可能发生尺寸变化触发resize，如果createTime小于300ms，就将图片归位到初始配置的位置
+		if (Date.now() - this.createTime <= 300) {
 			drawSize = 'initial'
 		}
-
-		console.log('-----------------------------> resize:', drawSize, Date.now() - this.createTime)
 
 		this.drawImage(null, drawSize, false)
 		this.eventBus.emit(EventBusEventName.resize, this)
@@ -226,6 +227,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	destroy() {
+		this.destroyed = true
 		this.removeContainerEvent()
 		this.removeDefaultAction()
 		Object.values(this.plugin).forEach(plugin => {
@@ -417,7 +419,6 @@ export class ImageMark extends EventBindingThis {
 		let target = ev?.target as HTMLImageElement
 		if (size == 'reserve') {
 			this.stageGroup.transform(this.lastTransform, false)
-			console.log('drawImage reserve', this.lastTransform)
 		}
 
 		if (size == 'initial') {
@@ -425,7 +426,6 @@ export class ImageMark extends EventBindingThis {
 			const { translateX = 0, translateY = 0 } = this.lastTransform || {}
 			initTrasform.translate = [-translateX + initTrasform.translate[0], -translateY + initTrasform.translate[1]]
 			this.stageGroup.transform(initTrasform, false)
-			console.log('drawImage initial', initTrasform)
 		}
 
 		this.lastTransform = this.stageGroup.transform()
@@ -469,13 +469,13 @@ export class ImageMark extends EventBindingThis {
 		e.preventDefault()
 	}
 
-	protected containerResizeObserverCallback: ResizeObserverCallback = debounce((entries: any) => {
+	protected containerResizeObserverCallback: ResizeObserverCallback = (entries: any) => {
 		console.count('resize observer callback')
 		if (entries[0]?.target === this.container) {
 			this.resize()
-			console.log('containerResizeObserverCallback', Date())
+			console.log('containerResizeObserverCallback', this.id, Date())
 		}
-	}, 300)
+	}
 
 	protected containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
 

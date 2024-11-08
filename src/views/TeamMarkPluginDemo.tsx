@@ -163,7 +163,7 @@ export function TeamMarkPluginDemo() {
 				/>
 
 			</div>
-			<div className="img-mark-container flex-grow" ref={containerRef}></div>
+			<div className="img-mark-container flex-grow min-w-0" ref={containerRef}></div>
 		</div>
 	)
 }
