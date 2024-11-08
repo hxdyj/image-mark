@@ -9,5 +9,5 @@
 - [x] company map demo finished
 - [ ] use react write demo
 - [x] multiple instance demo
-- [ ] shape dot、rect、circle support
+- [ ] shape rect、circle support
 - [ ] select by drag rect

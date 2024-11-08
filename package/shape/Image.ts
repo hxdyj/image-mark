@@ -12,11 +12,9 @@ export interface ImageData extends ShapeData {
 	shapeName: 'image'
 }
 
-export class ImageMarkImage extends ImageMarkShape {
-	shapeInstance: Image
+export class ImageMarkImage extends ImageMarkShape<ImageData, Image> {
 	constructor(data: ImageData, imageMarkInstance: ImageMark) {
-		super(data, imageMarkInstance)
-		this.shapeInstance = new Image()
+		super(data, imageMarkInstance, new Image())
 		this.shapeInstance.load(this.data.src)
 		this.draw()
 	}

@@ -1,7 +1,7 @@
 import { G, Image, Point, SVG, Svg } from "@svgdotjs/svg.js"
 import { useEffect, useRef, useState } from "react"
 
-export function SvgDemo() {
+export function SvgPointDemo() {
 
 	let svgRef = useRef<Svg | null>(null)
 	let imageRef = useRef<Image | null>(null)
@@ -35,7 +35,7 @@ export function SvgDemo() {
 
 	return (
 		/* @ts-ignore */
-		<div className="page-svg-demo" onMouseMove={onMouseOver}>
+		<div className="page-svg-point-demo" onMouseMove={onMouseOver}>
 			<div className="h-[70vh] bg-gray-500">
 			</div>
 			<div className="flex fixed right-0 top-0 bg-black p-4 rounded-md rounded-r-none rounded-tl-none text-white w-[300px] justify-center flex-col gap-y-2">

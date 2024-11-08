@@ -103,7 +103,6 @@ export class ImageMark extends EventBindingThis {
 	maxScale = 10
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
-	createTime: number
 	private destroyed = false
 
 	constructor(public options: ImageMarkOptions) {
@@ -116,7 +115,6 @@ export class ImageMark extends EventBindingThis {
 		if (!this.container) {
 			throw new Error('Container not found')
 		}
-		this.createTime = Date.now()
 		this.container.style.overflow = 'hidden'
 
 		this.containerRectInfo = getContainerInfo(this.container)
@@ -211,12 +209,6 @@ export class ImageMark extends EventBindingThis {
 		if (this.options.enableImageOutOfContainer) {
 			drawSize = 'reserve'
 		}
-
-		//flex布局时候，如果容器是flex-grow，有可能发生尺寸变化触发resize，如果createTime小于300ms，就将图片归位到初始配置的位置
-		if (Date.now() - this.createTime <= 300) {
-			drawSize = 'initial'
-		}
-
 		this.drawImage(null, drawSize, false)
 		this.eventBus.emit(EventBusEventName.resize, this)
 	}

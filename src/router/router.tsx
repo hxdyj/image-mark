@@ -6,8 +6,9 @@ import { AppError } from '../views/Error/Error'
 import { IconFont } from '../components/Iconfont'
 import { Base } from '../views/Base'
 import { TeamMarkPluginDemo } from '../views/TeamMarkPluginDemo'
-import { SvgDemo } from '../views/SvgDemo'
 import { TwoInstance } from '../views/TwoInstance'
+import { SvgPointDemo } from '../views/test/SvgPointDemo'
+import { SvgMaskDemo } from '../views/test/SvgMaskDemo'
 
 interface CustomRouteFields {
 	meta?: {
@@ -77,15 +78,6 @@ export const routes: IRoute[] = [
 								},
 							},
 							{
-								path: '/demo/svg',
-								element: <SvgDemo />,
-								meta: {
-									title: 'Svg',
-									menuShow: true,
-									noLogin: false,
-								},
-							},
-							{
 								path: '/demo/teamPlugin',
 								element: <TeamMarkPluginDemo />,
 								meta: {
@@ -96,6 +88,37 @@ export const routes: IRoute[] = [
 							},
 						],
 					},
+					{
+						path: '/test',
+						childIndexRoute: true,
+						meta: {
+							title: 'Test',
+							menuShow: true,
+							noLogin: false,
+							icon: <IconFont type="icon-bianjibiaoge" style={{ fontSize: '18px' }} />,
+						},
+						children: [
+							{
+								childIndexRoute: true,
+								path: '/test/point',
+								element: <SvgPointDemo />,
+								meta: {
+									title: 'SvgPointDemo',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
+								path: '/test/clipPath',
+								element: <SvgMaskDemo />,
+								meta: {
+									title: 'SvgClipPathDemo',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+						]
+					}
 				],
 			},
 		],
