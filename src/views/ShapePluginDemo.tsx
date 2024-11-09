@@ -28,6 +28,8 @@ export function ShapePluginDemo() {
 		}).addPlugin((imageMarkInstance) => {
 			const shapeInstance = new ShapePlugin(imageMarkInstance)
 			shapeInstance.addShape(ImageMarkRect)
+
+			//TODO(songle): 把添加shape addAction 的部分完成并测试
 			return shapeInstance
 		})
 		return () => {

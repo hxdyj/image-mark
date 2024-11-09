@@ -1,6 +1,7 @@
 import { Shape } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action";
+import { uid } from "uid";
 
 type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 
@@ -9,7 +10,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 	isRendered = false
 	static shapeName: string
 	imageMark: ImageMark;
-
+	uid: string
 	action: {
 		[key: string]: Action
 	} = {}
@@ -20,6 +21,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 		if (!constructor.shapeName) {
 			throw new Error(`${constructor.name} must have a static property 'shapeName'`);
 		}
+		this.uid = uid(6)
 		this.imageMark = imageMarkInstance;
 
 		this.shapeInstance = shapeInstance
@@ -43,7 +45,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 		if (!this.isRendered) {
 			this.shapeInstance.addTo(stage)
 			//TODO(songle): 这里需要重新设计一下，没办法用到部分action
-			ImageMarkShape.actionList.forEach(action => {
+			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T, S>
+			constructor.actionList.forEach(action => {
 				this.initAction(action)
 			})
 			this.isRendered = true
@@ -65,7 +68,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 
 	initAction(action: typeof Action) {
 		if (!this.action[action.actionName]) {
-			this.action[action.actionName] = new action(this.imageMark, this, Reflect.get(action, 'actionOptions'))
+			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T, S>
+			this.action[action.actionName] = new action(this.imageMark, this, action.actionOptions[constructor.shapeName])
 		}
 	}
 
@@ -73,7 +77,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 
 	static useAction(action: typeof Action, actionOptions: any = {}) {
 		if (ImageMarkShape.hasAction(action)) return ImageMarkShape
-		Reflect.set(action, 'actionOptions', actionOptions)
+		action.actionOptions[this.shapeName] = actionOptions
 		ImageMarkShape.actionList.push(action)
 		return ImageMarkShape
 	}

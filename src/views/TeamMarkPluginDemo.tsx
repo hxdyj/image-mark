@@ -108,6 +108,7 @@ export function TeamMarkPluginDemo() {
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
 			src: '/demo-parking.jpg',
+			enableImageOutOfContainer: false,
 			initScaleConfig: {
 				startPosition: 'center',
 				size: 'cover',

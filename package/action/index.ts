@@ -5,6 +5,9 @@ import ImageMark from "..";
 
 export class Action extends EventBindingThis {
 	static actionName: string;
+	static actionOptions: {
+		[key: string]: any
+	} = {};
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: any) {
 		super()
 	}

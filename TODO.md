@@ -11,3 +11,4 @@
 - [x] multiple instance demo
 - [ ] shape rect、circle support
 - [ ] select by drag rect
+- [ ] mini map

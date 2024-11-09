@@ -2,6 +2,7 @@ import { G, MatrixExtract, Point, Shape } from "@svgdotjs/svg.js";
 import ImageMark, { ArrayPoint } from "..";
 import { Action } from ".";
 import { ImageMarkShape } from "../shape/Shape";
+import { uid } from "uid";
 
 
 export type LmbMoveActionOptions = {
@@ -22,10 +23,18 @@ export class LmbMoveAction extends Action {
 
 	protected startPoint: Point | null = null
 	protected startTransform: MatrixExtract | null = null
+	protected uid: string
 
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: LmbMoveActionOptions) {
 		super(imageMark, shape, options)
-		this.bindEventThis(['onMouseDown', 'onDoucmentMouseMoving', 'onDocumentMouseUp'])
+		this.uid = shape.uid + '_' + uid(6)
+		const __args = {
+			uid: this.uid
+		}
+		this.bindEventThis(['onMouseDown', 'onDoucmentMouseMoving', 'onDocumentMouseUp'], {
+			onDoucmentMouseMoving: __args,
+			onDocumentMouseUp: __args
+		})
 		this.bindEvents()
 	}
 
@@ -66,6 +75,8 @@ export class LmbMoveAction extends Action {
 	}
 
 	protected onDoucmentMouseMoving(event: MouseEvent) {
+		const { uid } = Reflect.get(event, '__args') || {}
+		if (uid !== this.uid) return
 		if (event.button !== 0) return
 		if (!this.status.mouseDown || !this.startTransform || !this.startPoint) return
 		event.stopPropagation()
@@ -97,6 +108,9 @@ export class LmbMoveAction extends Action {
 	}
 
 	protected onDocumentMouseUp(event: MouseEvent) {
+		const { uid } = Reflect.get(event, '__args') || {}
+
+		if (uid !== this.uid) return
 		if (event.button !== 0 || !this.status.mouseDown) return
 		event.stopPropagation()
 		event.preventDefault()
