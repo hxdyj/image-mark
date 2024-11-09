@@ -118,7 +118,7 @@ export function TeamMarkPluginDemo() {
 					shapeList: []
 				}
 			}
-		}).addPlugin(TeamMarkPlugin, (instance) => {
+		}).addPlugin((instance) => {
 			const teamMarkPluginInstance = new TeamMarkPlugin(instance)
 			teamMarkPluginInstance.addShape(TeamShape)
 			return teamMarkPluginInstance

@@ -1142,8 +1142,8 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	// 添加实例上的插件
-	addPlugin(plugin: typeof Plugin, newCall?: PluginNewCall) {
-		this.initPlugin(plugin, newCall)
+	addPlugin(plugin: typeof Plugin | PluginNewCall) {
+		this.initPlugin(plugin)
 		return this
 	}
 
@@ -1158,9 +1158,17 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	// 实例化插件
-	initPlugin(plugin: typeof Plugin, newCall?: PluginNewCall) {
-		if (!this.plugin[plugin.pluginName]) {
-			this.plugin[plugin.pluginName] = newCall ? newCall(this) : new plugin(this)
+	initPlugin(plugin: typeof Plugin | PluginNewCall) {
+		if ('pluginName' in plugin) {
+			if (!this.plugin[plugin.pluginName]) {
+				this.plugin[plugin.pluginName] = new plugin(this)
+			}
+		} else {
+			const pluginInstance = plugin(this)
+			const pluginName = (Reflect.getPrototypeOf(pluginInstance)?.constructor as typeof Plugin).pluginName
+			if (pluginName) {
+				this.plugin[pluginName] = pluginInstance
+			}
 		}
 		return this
 	}
