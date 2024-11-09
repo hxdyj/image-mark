@@ -3,6 +3,11 @@ import { Plugin } from ".";
 import { ImageMarkShape, ShapeData } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 
+
+export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
+	shapeList: T[]
+}
+
 export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	static pluginName = "shape";
 	protected node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
@@ -78,7 +83,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	onDelete(_data: T, shapeInstance: ImageMarkShape) {
-		const data = this.shapeInstance2NodeWeakMap.get(shapeInstance)
+		const data = this.shapeInstance2NodeWeakMap.get(shapeInstance) || _data
 		if (data) {
 			const index = this.data.findIndex(item => item === data)
 			this.data.splice(index, 1)
@@ -88,7 +93,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	clear() {
-		while (this.data.length) {
+		while (this.data?.length) {
 			let item = this.data[0]
 			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)
 			nodeInstance?.destroy()
@@ -96,7 +101,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	protected onInit() {
+	onInit() {
+		console.log('shape plugin on init')
 		this.createShape()
 	}
 
@@ -106,14 +112,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected onRerender() {
-		this.onResize()
+		console.log('shape plugin on rerender')
+		this.clearMap()
+		this.createShape()
+		this.onDraw()
 	}
 
 	protected onResize() {
-		//TODO(songle): do this
-		// this.clearMap()
-		// this.createShape()
-		// this.onDraw()
+		console.log('shape plugin on resize')
 	}
 
 	protected renderNode(node: T) {

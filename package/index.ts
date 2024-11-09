@@ -8,6 +8,7 @@ import { EventBindingThis } from "./event";
 import { EventBusEventName } from "./event/const";
 import { CssNameKey } from "./const/const";
 import { uid } from 'uid'
+import { ShapePlugin } from './plugins/ShapePlugin';
 export type TransformStep = [MatrixAlias, boolean]
 
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
@@ -1168,6 +1169,11 @@ export class ImageMark extends EventBindingThis {
 			const pluginName = (Reflect.getPrototypeOf(pluginInstance)?.constructor as typeof Plugin).pluginName
 			if (pluginName) {
 				this.plugin[pluginName] = pluginInstance
+
+				// 通过addPlugin添加的插件需要手动触发onInit,因为组件在这之前已经初始化过了
+				if (pluginName == ShapePlugin.pluginName) {
+					(pluginInstance as ShapePlugin)?.onInit?.()
+				}
 			}
 		}
 		return this

@@ -16,7 +16,8 @@ export class ImageMarkRect extends ImageMarkShape<RectData, Rect> {
 	}
 
 	draw(): Rect {
-		this.shapeInstance.size(100, 100).fill('rgba(29,33,41,0.8)')
+		const { x, y, width, height } = this.data
+		this.shapeInstance.move(x, y).size(width, height).fill('none').stroke({ width: 5, color: '#F53F3F' })
 		return this.shapeInstance
 	}
 }
