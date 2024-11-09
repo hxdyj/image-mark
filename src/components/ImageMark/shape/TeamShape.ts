@@ -184,7 +184,6 @@ export class TeamShape extends ImageMarkShape<TeamData, G> {
 
 TeamShape.useAction(LmbMoveAction, {
 	limit(imageMark: ImageMark, shape: TeamShape, nextTransform: MatrixExtract) {
-		//TODO(songle): 这里现在限制有问题
 		let circle = shape.shapeInstance.findOne('circle') as Circle
 		let circleBox = circle.bbox()
 		let { translateX = 0, translateY = 0 } = nextTransform
