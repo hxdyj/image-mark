@@ -50,18 +50,18 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		})
 	}
 
-	protected bindEvent() {
+	bindEvent() {
+		super.bindEvent()
 		this.imageMark.on('rerender', this.onRerender)
 		this.imageMark.on('draw', this.onDraw)
-		this.imageMark.on('init', this.onInit)
 		this.imageMark.on('shape_delete', this.onDelete)
 		this.imageMark.on('resize', this.onResize)
 	}
 
-	protected unbindEvent() {
+	unbindEvent() {
+		super.unbindEvent()
 		this.imageMark.off('rerender', this.onRerender)
 		this.imageMark.off('draw', this.onDraw)
-		this.imageMark.off('init', this.onInit)
 		this.imageMark.off('shape_delete', this.onDelete)
 		this.imageMark.off('resize', this.onResize)
 	}
@@ -102,7 +102,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	onInit() {
-		console.log('shape plugin on init')
+		super.onInit()
 		this.createShape()
 	}
 
@@ -112,14 +112,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected onRerender() {
-		console.log('shape plugin on rerender')
 		this.clearMap()
 		this.createShape()
 		this.onDraw()
 	}
 
 	protected onResize() {
-		console.log('shape plugin on resize')
+
 	}
 
 	protected renderNode(node: T) {
@@ -130,7 +129,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected onDraw() {
-		this.data.forEach(node => {
+		(this.data || []).forEach(node => {
 			this.renderNode(node)
 		})
 	}

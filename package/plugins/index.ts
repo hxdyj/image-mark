@@ -13,8 +13,23 @@ export class Plugin extends EventBindingThis {
 			throw new Error(`${constructor.name} must have a static property 'pluginName'`);
 		}
 		this.imageMark = imageMarkInstance;
+
+		this.bindEventThis(['onInit'])
+		this.bindEvent()
 	}
 
+	bindEvent() {
+		this.imageMark.on('init', this.onInit)
+	}
+
+	unbindEvent() {
+		this.imageMark.off('init', this.onInit)
+	}
+
+	//当ImageMark init之后触发
+	onInit() {
+
+	}
 
 	//插件被移除之前触发
 	beforePluginRemove() {
@@ -23,6 +38,6 @@ export class Plugin extends EventBindingThis {
 
 	// ImageMark实例被销毁时触发
 	destroy() {
-
+		this.unbindEvent()
 	}
 }

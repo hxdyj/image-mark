@@ -1,7 +1,9 @@
+import { LmbMoveAction } from "#/action/LmbMoveAction"
 import ImageMark from "#/index"
 import { ShapePlugin } from "#/plugins/ShapePlugin"
 import { ImageMarkRect } from "#/shape/Rect"
 import { useEffect, useRef } from "react"
+ImageMarkRect.useAction(LmbMoveAction)
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)

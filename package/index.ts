@@ -105,7 +105,7 @@ export class ImageMark extends EventBindingThis {
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
 	private destroyed = false
-
+	createTime: number
 
 
 	constructor(public options: ImageMarkOptions) {
@@ -114,6 +114,8 @@ export class ImageMark extends EventBindingThis {
 		this.container = getElement(this.options.el)
 
 		imageMarkManager.addNewInstance(this)
+
+		this.createTime = Date.now()
 
 		if (!this.container) {
 			throw new Error('Container not found')
@@ -212,6 +214,10 @@ export class ImageMark extends EventBindingThis {
 		let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
 		if (this.options.enableImageOutOfContainer) {
 			drawSize = 'reserve'
+		}
+
+		if (Date.now() - this.createTime < 300) {
+			drawSize = 'initial'
 		}
 
 		this.drawImage(null, drawSize, false)
@@ -468,7 +474,6 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected containerResizeObserverCallback: ResizeObserverCallback = (entries: any) => {
-		console.count('resize observer callback')
 		if (entries[0]?.target === this.container) {
 			this.resize()
 			console.log('containerResizeObserverCallback', this.id, Date())
@@ -1169,11 +1174,8 @@ export class ImageMark extends EventBindingThis {
 			const pluginName = (Reflect.getPrototypeOf(pluginInstance)?.constructor as typeof Plugin).pluginName
 			if (pluginName) {
 				this.plugin[pluginName] = pluginInstance
-
 				// 通过addPlugin添加的插件需要手动触发onInit,因为组件在这之前已经初始化过了
-				if (pluginName == ShapePlugin.pluginName) {
-					(pluginInstance as ShapePlugin)?.onInit?.()
-				}
+				pluginInstance?.onInit?.()
 			}
 		}
 		return this

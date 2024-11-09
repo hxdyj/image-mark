@@ -42,6 +42,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 	render(stage: AddToShape): void {
 		if (!this.isRendered) {
 			this.shapeInstance.addTo(stage)
+			//TODO(songle): 这里需要重新设计一下，没办法用到部分action
 			ImageMarkShape.actionList.forEach(action => {
 				this.initAction(action)
 			})
@@ -86,8 +87,6 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 	static hasAction(action: typeof Action) {
 		return ImageMarkShape.actionList.includes(action)
 	}
-
-
 }
 
 export interface ShapeData {
