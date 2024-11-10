@@ -1,12 +1,14 @@
 import { ImageMark } from "..";
 import { Plugin } from ".";
-import { ImageMarkShape, ShapeData } from "../shape/Shape";
+import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
 }
+
+
 
 export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	static pluginName = "shape";
@@ -29,13 +31,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	protected addNode(node: T) {
 		if (!this.node2ShapeInstanceWeakMap.has(node)) {
 			let shape = null
-			const ShapeClass = this.shape[node.shapeName]
-			if (ShapeClass) {
-				if (ShapeClass.constructor === ImageMarkShape) {
-					throw new Error(`Shape ${Reflect.get(ShapeClass, 'shapeName')} must be a subclass of ImageMarkShape`)
+			const shapeInfo = this.shape[node.shapeName]
+			if (shapeInfo) {
+				if (shapeInfo.ShapeClass.constructor === ImageMarkShape) {
+					throw new Error(`Shape ${Reflect.get(shapeInfo.ShapeClass, 'shapeName')} must be a subclass of ImageMarkShape`)
 				}
 				// @ts-ignore
-				shape = new ShapeClass(node, this.imageMark)
+				shape = new shapeInfo.ShapeClass(node, this.imageMark, shapeInfo.shapeOptions)
 				if (shape) {
 					this.node2ShapeInstanceWeakMap.set(node, shape)
 					this.shapeInstance2NodeWeakMap.set(shape, node)
@@ -83,9 +85,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	onDelete(_data: T, shapeInstance: ImageMarkShape) {
-		const data = this.shapeInstance2NodeWeakMap.get(shapeInstance) || _data
+		const data = this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data
 		if (data) {
-			const index = this.data.findIndex(item => item === data)
+			const index = this.data?.findIndex(item => item === data)
+			if (index == -1 || index == undefined) return
 			this.data.splice(index, 1)
 			this.node2ShapeInstanceWeakMap.delete(data)
 			this.shapeInstance2NodeWeakMap.delete(shapeInstance)
@@ -139,20 +142,26 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	shape: {
-		[key: string]: ImageMarkShape
+		[key: string]: {
+			ShapeClass: ImageMarkShape,
+			shapeOptions?: ShapeOptions
+		}
 	} = {}
 
-	addShape(shape: typeof ImageMarkShape<T>) {
-		this.initShape(shape)
+	addShape(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions) {
+		this.initShape(shape, shapeOptions)
 	}
 
 	removeShape(shape: typeof ImageMarkShape<T>) {
 		Reflect.deleteProperty(this.shape, shape.shapeName)
 	}
 
-	initShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
+	initShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions) {
 		if (!shape.shapeName) throw new Error(`${shape.name} shapeName is required`)
-		this.shape[shape.shapeName] = shape as unknown as ImageMarkShape<T>
+		this.shape[shape.shapeName] = {
+			ShapeClass: shape as unknown as ImageMarkShape<T>,
+			shapeOptions
+		}
 	}
 
 	static shapeList: Array<typeof ImageMarkShape> = []

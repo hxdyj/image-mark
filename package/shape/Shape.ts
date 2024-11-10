@@ -3,11 +3,16 @@ import { ImageMark } from "../index";
 import { Action } from "../action";
 import { uid } from "uid";
 
-type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
+export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
+
+export type ShapeOptions = {
+	afterRender?: (shapeInstance: ImageMarkShape) => void
+}
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends Shape = Shape> {
 	shapeInstance: S;
 	isRendered = false
+	isBindActions = false
 	static shapeName: string
 	imageMark: ImageMark;
 	uid: string
@@ -15,7 +20,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 		[key: string]: Action
 	} = {}
 
-	constructor(public data: T, imageMarkInstance: ImageMark, shapeInstance: S) {
+	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions, shapeInstance: S) {
 		const constructor = this.constructor
 		// @ts-ignore
 		if (!constructor.shapeName) {
@@ -23,39 +28,49 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 		}
 		this.uid = uid(6)
 		this.imageMark = imageMarkInstance;
-
 		this.shapeInstance = shapeInstance
 		this.draw()
 	}
 
 	abstract draw(): S;
 
-	afterRender() {
 
+	bindActions() {
+		if (!this.isBindActions) {
+			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T, S>
+			constructor.actionList.forEach(action => {
+				this.initAction(action, action.actionOptions[constructor.shapeName])
+			})
+			this.isBindActions = true
+		}
+	}
+
+	afterRender() {
+		this.bindActions()
+		this.options?.afterRender?.(this)
 	}
 
 	destroy() {
 		this.shapeInstance.remove()
+		this.isRendered = false
 		Object.values(this.action).forEach(action => {
 			action.destroy()
 		})
+		this.isBindActions = false
 	}
 
 	render(stage: AddToShape): void {
 		if (!this.isRendered) {
 			this.shapeInstance.addTo(stage)
-			//TODO(songle): 这里需要重新设计一下，没办法用到部分action
-			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T, S>
-			constructor.actionList.forEach(action => {
-				this.initAction(action)
-			})
+
 			this.isRendered = true
 			this.afterRender()
 		}
 	}
 
-	addAction(action: typeof Action) {
-		this.initAction(action)
+	addAction(action: typeof Action, actionOptions: any = {}) {
+		if (!this.isRendered) return
+		this.initAction(action, actionOptions)
 	}
 
 	removeAction(action: typeof Action) {
@@ -66,10 +81,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 		}
 	}
 
-	initAction(action: typeof Action) {
+	initAction(action: typeof Action, actionOptions: any = {}) {
 		if (!this.action[action.actionName]) {
 			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T, S>
-			this.action[action.actionName] = new action(this.imageMark, this, action.actionOptions[constructor.shapeName])
+			this.action[action.actionName] = new action(this.imageMark, this, actionOptions || action.actionOptions[constructor.shapeName])
 		}
 	}
 

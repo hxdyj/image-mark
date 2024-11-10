@@ -9,7 +9,7 @@ export type LmbMoveActionOptions = {
 	onStart?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
 	onMove?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
 	onEnd?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
-	limit?: (imageMark: ImageMark, shape: ImageMarkShape, nextTransform: MatrixExtract) => boolean
+	limit?: (imageMark: ImageMark, shape: ImageMarkShape, nextTransform: MatrixExtract) => ArrayPoint
 }
 
 export class LmbMoveAction extends Action {
@@ -93,12 +93,13 @@ export class LmbMoveAction extends Action {
 
 		const nextTransform = cloneShape.transform()
 
-		let limitFlag = this.options?.limit?.(this.imageMark, this.shape, nextTransform) ?? false
-		if (limitFlag) return
+		const limitFlag = this.options?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
 
 		this.shape.shapeInstance.transform(this.startTransform)
+
 		const movePoint = this.shape.shapeInstance.point(event.clientX, event.clientY)
-		let diffPoint: ArrayPoint = [movePoint.x - this.startPoint.x, movePoint.y - this.startPoint.y]
+
+		let diffPoint: ArrayPoint = [movePoint.x - this.startPoint.x + limitFlag[0], movePoint.y - this.startPoint.y + limitFlag[1]]
 		this.shape.shapeInstance.transform({
 			translate: diffPoint
 		}, true)

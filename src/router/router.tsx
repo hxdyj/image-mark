@@ -55,7 +55,7 @@ export const routes: IRoute[] = [
 							title: 'Demo',
 							menuShow: true,
 							noLogin: false,
-							icon: <IconFont type="icon-bianjibiaoge" style={{ fontSize: '18px' }} />,
+							icon: <IconFont type="icon-demo" style={{ fontSize: '18px' }} />,
 						},
 						children: [
 							{
@@ -105,7 +105,7 @@ export const routes: IRoute[] = [
 							title: 'Test',
 							menuShow: true,
 							noLogin: false,
-							icon: <IconFont type="icon-bianjibiaoge" style={{ fontSize: '18px' }} />,
+							icon: <IconFont type="icon-test" style={{ fontSize: '22px' }} className=' relative left-[-2px]' />,
 						},
 						children: [
 							{

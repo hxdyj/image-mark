@@ -3,7 +3,10 @@ import { useEffect, useRef } from "react"
 import { SchemaDTO, TeamMarkPlugin } from "../components/ImageMark/plugins/TeamMarkPlugin"
 import { Tree } from "@arco-design/web-react"
 import { cloneDeep } from "lodash-es"
-import { TeamShape } from "../components/ImageMark/shape/TeamShape"
+import { ImageMarkEventKey, TeamData, TeamShape } from "../components/ImageMark/shape/TeamShape"
+import { LmbMoveAction } from "#/action/LmbMoveAction"
+import { Circle, MatrixExtract } from "@svgdotjs/svg.js"
+import { ImageMarkShape } from "#/shape/Shape"
 export function TeamMarkPluginDemo() {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const imgMark = useRef<ImageMark | null>(null)
@@ -121,7 +124,49 @@ export function TeamMarkPluginDemo() {
 			}
 		}).addPlugin((instance) => {
 			const teamMarkPluginInstance = new TeamMarkPlugin(instance)
-			teamMarkPluginInstance.addShape(TeamShape)
+			teamMarkPluginInstance.addShape(TeamShape, {
+				afterRender(shapeInstance) {
+					shapeInstance.addAction(LmbMoveAction, {
+						limit(imageMark: ImageMark, shape: TeamShape, nextTransform: MatrixExtract) {
+							let { translateX = 0, translateY = 0 } = nextTransform
+							let { naturalHeight, naturalWidth } = imageMark.imageDom
+
+							let isOutOfBounds = false
+							const fixTranslate = [0, 0]
+							if (translateX < 0) {
+								isOutOfBounds = true
+								fixTranslate[0] = -translateX
+							}
+
+							if (translateX > naturalWidth) {
+								isOutOfBounds = true
+								fixTranslate[0] = naturalWidth - translateX
+							}
+
+							if (translateY < 0) {
+								isOutOfBounds = true
+								fixTranslate[1] = -translateY
+							}
+
+							if (translateY > naturalHeight) {
+								isOutOfBounds = true
+								fixTranslate[1] = naturalHeight - translateY
+							}
+
+							return fixTranslate
+
+						},
+						onEnd(imageMark: ImageMark, shape: ImageMarkShape) {
+							const teamData = shape.data as TeamData
+							const { translateX = teamData.x, translateY = teamData.y } = shape.shapeInstance.transform()
+							const coordinate = [translateX, translateY]
+							console.log('coordinate', coordinate)
+							imageMark.eventBus.emit(ImageMarkEventKey.TEAM_SHAPE_LMB_MOVE_END, imageMark, shape, coordinate)
+						}
+					}
+					)
+				},
+			})
 			return teamMarkPluginInstance
 		})
 		return () => {

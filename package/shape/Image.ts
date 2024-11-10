@@ -1,5 +1,5 @@
 import { Image } from "@svgdotjs/svg.js";
-import { ImageMarkShape, ShapeData } from "./Shape";
+import { ImageMarkShape, ShapeData, ShapeOptions } from "./Shape";
 import { ImageMark } from "..";
 
 
@@ -13,8 +13,8 @@ export interface ImageData extends ShapeData {
 }
 
 export class ImageMarkImage extends ImageMarkShape<ImageData, Image> {
-	constructor(data: ImageData, imageMarkInstance: ImageMark) {
-		super(data, imageMarkInstance, new Image())
+	constructor(data: ImageData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+		super(data, imageMarkInstance, options, new Image())
 		this.shapeInstance.load(this.data.src)
 		this.draw()
 	}

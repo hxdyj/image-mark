@@ -25,6 +25,7 @@ export default function App() {
 	}
 
 	useEffect(() => {
+		//TODO(songle): /demo  如果这个路由存在，但是没有具体的页面，自动跳转到子页面的childIndex，如果没有childIndex，就child[0]
 		if (location.pathname === '/') {
 			navigate(INDEX_PATH, {
 				replace: true,

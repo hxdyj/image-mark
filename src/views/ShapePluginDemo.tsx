@@ -3,7 +3,6 @@ import ImageMark from "#/index"
 import { ShapePlugin } from "#/plugins/ShapePlugin"
 import { ImageMarkRect } from "#/shape/Rect"
 import { useEffect, useRef } from "react"
-ImageMarkRect.useAction(LmbMoveAction)
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -26,11 +25,13 @@ export function ShapePluginDemo() {
 				}
 			}
 		}).addPlugin((imageMarkInstance) => {
-			const shapeInstance = new ShapePlugin(imageMarkInstance)
-			shapeInstance.addShape(ImageMarkRect)
-
-			//TODO(songle): 把添加shape addAction 的部分完成并测试
-			return shapeInstance
+			const shapePluginInstance = new ShapePlugin(imageMarkInstance)
+			shapePluginInstance.addShape(ImageMarkRect, {
+				afterRender(shapeInstance) {
+					shapeInstance.addAction(LmbMoveAction)
+				}
+			})
+			return shapePluginInstance
 		})
 		return () => {
 			imgMark.current?.destroy()

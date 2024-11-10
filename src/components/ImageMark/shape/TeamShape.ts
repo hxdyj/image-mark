@@ -1,6 +1,6 @@
 import { Box, Circle, G, Line, MatrixExtract, Rect, Svg, Text } from "@svgdotjs/svg.js";
 import { BoundingBox, ImageMark } from "../../../../package";
-import { ShapeData, ImageMarkShape } from "#/shape/Shape";
+import { ShapeData, ImageMarkShape, ShapeOptions } from "#/shape/Shape";
 import { LmbMoveAction } from "#/action/LmbMoveAction";
 import { EventBusEventName } from "#/event/const";
 import { curryRight } from "lodash-es";
@@ -24,8 +24,8 @@ const getScaleNumber = curryRight((num: number, scale: number) => {
 
 export class TeamShape extends ImageMarkShape<TeamData, G> {
 	static shapeName = "teamMark"
-	constructor(data: TeamData, imageMarkInstance: ImageMark) {
-		super(data, imageMarkInstance, new G())
+	constructor(data: TeamData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+		super(data, imageMarkInstance, options, new G())
 	}
 
 	onScaleUpdate() {
@@ -97,6 +97,7 @@ export class TeamShape extends ImageMarkShape<TeamData, G> {
 	}
 
 	afterRender(): void {
+		super.afterRender()
 		const { _width, _height } = this.getStageGroupScaleInfo()
 		const innerGroup = this.shapeInstance.findOne('.team-shape-inner-group') as G
 		innerGroup.transform({
@@ -182,24 +183,24 @@ export class TeamShape extends ImageMarkShape<TeamData, G> {
 }
 
 
-TeamShape.useAction(LmbMoveAction, {
-	limit(imageMark: ImageMark, shape: TeamShape, nextTransform: MatrixExtract) {
-		let circle = shape.shapeInstance.findOne('circle') as Circle
-		let circleBox = circle.bbox()
-		let { translateX = 0, translateY = 0 } = nextTransform
-		let points = [[circleBox.x + translateX, circleBox.y + translateY], [circleBox.x + circleBox.width + translateX, circleBox.y + circleBox.height + translateY]]
-		let { naturalHeight, naturalWidth } = imageMark.imageDom
-		let isOutOfBounds = points.some(point => {
-			return !(point[0] >= 0 && point[0] <= naturalWidth && point[1] >= 0 && point[1] <= naturalHeight)
-		});
-		return isOutOfBounds
-	},
-	onEnd(imageMark: ImageMark, shape: ImageMarkShape) {
-		const teamData = shape.data as TeamData
-		const { translateX = teamData.x, translateY = teamData.y } = shape.shapeInstance.transform()
-		const anchorCircle = shape.shapeInstance.findOne('.team-shape-anchor-circle') as Circle
-		const box = anchorCircle.bbox()
-		const coordinate = [translateX + box.x + box.width / 2, translateY + box.y + box.height / 2]
-		imageMark.eventBus.emit(ImageMarkEventKey.TEAM_SHAPE_LMB_MOVE_END, imageMark, shape, coordinate)
-	}
-})
+// TeamShape.useAction(LmbMoveAction, {
+// 	limit(imageMark: ImageMark, shape: TeamShape, nextTransform: MatrixExtract) {
+// 		let circle = shape.shapeInstance.findOne('circle') as Circle
+// 		let circleBox = circle.bbox()
+// 		let { translateX = 0, translateY = 0 } = nextTransform
+// 		let points = [[circleBox.x + translateX, circleBox.y + translateY], [circleBox.x + circleBox.width + translateX, circleBox.y + circleBox.height + translateY]]
+// 		let { naturalHeight, naturalWidth } = imageMark.imageDom
+// 		let isOutOfBounds = points.some(point => {
+// 			return !(point[0] >= 0 && point[0] <= naturalWidth && point[1] >= 0 && point[1] <= naturalHeight)
+// 		});
+// 		return isOutOfBounds
+// 	},
+// 	onEnd(imageMark: ImageMark, shape: ImageMarkShape) {
+// 		const teamData = shape.data as TeamData
+// 		const { translateX = teamData.x, translateY = teamData.y } = shape.shapeInstance.transform()
+// 		const anchorCircle = shape.shapeInstance.findOne('.team-shape-anchor-circle') as Circle
+// 		const box = anchorCircle.bbox()
+// 		const coordinate = [translateX + box.x + box.width / 2, translateY + box.y + box.height / 2]
+// 		imageMark.eventBus.emit(ImageMarkEventKey.TEAM_SHAPE_LMB_MOVE_END, imageMark, shape, coordinate)
+// 	}
+// })
