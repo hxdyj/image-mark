@@ -85,6 +85,12 @@ export class ImageMarkManager {
 
 export const imageMarkManager = new ImageMarkManager()
 
+export type ImageMarkStatus = {
+	scaling: boolean
+	moving: boolean
+	drawing: boolean | string  //string的时候为shapeName
+}
+
 export class ImageMark extends EventBindingThis {
 	id: string;
 	container: HTMLElement;
@@ -96,9 +102,10 @@ export class ImageMark extends EventBindingThis {
 	plugin: {
 		[key: string]: Plugin
 	} = {}
-	status = {
+	status: ImageMarkStatus = {
 		scaling: false,
-		moving: false
+		moving: false,
+		drawing: false
 	}
 	minScale = 0.1
 	maxScale = 10
