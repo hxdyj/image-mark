@@ -22,10 +22,14 @@ const getScaleNumber = curryRight((num: number, scale: number) => {
 	return num / scale
 })
 
-export class TeamShape extends ImageMarkShape<TeamData, G> {
+export class TeamShape extends ImageMarkShape<TeamData> {
 	static shapeName = "teamMark"
 	constructor(data: TeamData, imageMarkInstance: ImageMark, options: ShapeOptions) {
 		super(data, imageMarkInstance, options, new G())
+	}
+
+	updateData(data: TeamData) {
+		return this.shapeInstance
 	}
 
 	onScaleUpdate() {

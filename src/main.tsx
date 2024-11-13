@@ -13,9 +13,9 @@ const componentConfig: ComponentConfig = {
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-	<React.StrictMode>
-		<ConfigProvider componentConfig={componentConfig}>
-			<RouterProvider router={router}></RouterProvider>
-		</ConfigProvider>
-	</React.StrictMode>
+	// <React.StrictMode>
+	<ConfigProvider componentConfig={componentConfig}>
+		<RouterProvider router={router}></RouterProvider>
+	</ConfigProvider>
+	// </React.StrictMode>
 )

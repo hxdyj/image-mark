@@ -610,6 +610,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	moveTo(position: Position) {
+		if (this.status.drawing) return
 		const { scaleX = 1, translateX = 0, translateY = 0 } = this.stageGroup.transform()
 		const { width, height } = this.containerRectInfo
 		const { naturalWidth, naturalHeight } = this.imageDom
@@ -662,7 +663,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	move(point: ArrayPoint) {
-		if (this.status.scaling || this.status.moving) return
+		if (this.status.scaling || this.status.moving || this.status.drawing) return
 		point = this.fixPoint(point, this.limitMovePoint(point))
 		this.status.moving = true
 
@@ -677,6 +678,7 @@ export class ImageMark extends EventBindingThis {
 	movingStartTransform: MatrixExtract | null = null
 
 	startSuccessiveMove(point: ArrayPoint) {
+		if (this.status.drawing) return
 		this.status.moving = true
 		this.movingStartPoint = point
 		this.movingStartTransform = this.stageGroup.transform()
@@ -734,7 +736,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
-		if (this.status.scaling || this.status.moving) return
+		if (this.status.scaling || this.status.moving || this.status.drawing) return
 		if (point === 'left-top') {
 			point = [0, 0]
 		}

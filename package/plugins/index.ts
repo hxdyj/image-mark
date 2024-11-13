@@ -13,9 +13,7 @@ export class Plugin extends EventBindingThis {
 			throw new Error(`${constructor.name} must have a static property 'pluginName'`);
 		}
 		this.imageMark = imageMarkInstance;
-
 		this.bindEventThis(['onInit'])
-		this.bindEvent()
 	}
 
 	bindEvent() {

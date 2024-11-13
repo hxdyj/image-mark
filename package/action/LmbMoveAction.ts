@@ -63,6 +63,7 @@ export class LmbMoveAction extends Action {
 	}
 
 	protected onMouseDown(event: Event) {
+		if (this.imageMark.status.drawing) return
 		if (!this.moveable) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return

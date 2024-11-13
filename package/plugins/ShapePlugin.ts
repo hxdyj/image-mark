@@ -3,12 +3,9 @@ import { Plugin } from ".";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 
-
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
 }
-
-
 
 export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	static pluginName = "shape";
@@ -23,8 +20,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		ShapePlugin.shapeList.forEach(shape => {
 			this.initShape(shape)
 		})
-
-		this.bindEventThis(['onRerender', 'onDraw', 'onInit', 'onDelete', 'onResize'])
+		this.bindEventThis(['onRerender', 'onDraw', 'onDelete', 'onResize', 'onDrawingMouseDown', 'onDrawingMouseMove', 'onDrawingMouseUp'])
 		this.bindEvent()
 	}
 
@@ -58,6 +54,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.on('draw', this.onDraw)
 		this.imageMark.on('shape_delete', this.onDelete)
 		this.imageMark.on('resize', this.onResize)
+		this.imageMark.container.addEventListener('mousedown', this.onDrawingMouseDown)
+		document.addEventListener('mousemove', this.onDrawingMouseMove)
+		document.addEventListener('mouseup', this.onDrawingMouseUp)
 	}
 
 	unbindEvent() {
@@ -66,6 +65,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.off('draw', this.onDraw)
 		this.imageMark.off('shape_delete', this.onDelete)
 		this.imageMark.off('resize', this.onResize)
+
+		this.imageMark.container.removeEventListener('mousedown', this.onDrawingMouseDown)
+		document.removeEventListener('mousemove', this.onDrawingMouseMove)
+		document.removeEventListener('mouseup', this.onDrawingMouseUp)
 	}
 
 	destroy(): void {
@@ -162,6 +165,62 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			ShapeClass: shape as unknown as ImageMarkShape<T>,
 			shapeOptions
 		}
+	}
+
+
+	drawingShape: ImageMarkShape<T> | null = null
+
+
+
+	startDrawing(shape: ImageMarkShape<T>) {
+		// const isClass = !(shape instanceof ImageMarkShape)
+		// const shapeName = isClass ? shape.shapeName : Object.getPrototypeOf(shape).constructor.shapeName
+		const shapeName = Object.getPrototypeOf(shape).constructor.shapeName
+		this.imageMark.status.drawing = shapeName
+		this.drawingShape = shape
+	}
+
+
+	drawing(shapeData: T) {
+		if (!this.drawingShape) throw new Error('drawingShape is null')
+		if (!this.drawingShape.isRendered) {
+			this.drawingShape.render(this.imageMark.stageGroup)
+		}
+		this.drawingShape.updateData(shapeData)
+	}
+
+	endDrawing() {
+		if (!this.drawingShape) throw new Error('drawingShape is null')
+		this.onAdd(this.drawingShape.data, true)
+		this.drawingShape.destroy()
+		this.drawingShape = null
+		this.imageMark.status.drawing = false
+	}
+
+	drawingMouseTrace: Array<MouseEvent> = []
+
+	onDrawingMouseDown(event: MouseEvent) {
+		if (!this.imageMark.status.drawing) return
+		this.drawingMouseTrace.push(event)
+	}
+
+	onDrawingMouseMove(event: MouseEvent) {
+		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		if (event.buttons === 0) {
+			return
+		}
+		this.drawingMouseTrace.push(event)
+		const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
+		newData && this.drawing(newData)
+	}
+
+	onDrawingMouseUp(event: MouseEvent) {
+		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		this.drawingMouseTrace.push(event)
+		const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
+		newData && this.drawing(newData)
+		this.drawingMouseTrace = []
+		this.endDrawing()
 	}
 
 	static shapeList: Array<typeof ImageMarkShape> = []

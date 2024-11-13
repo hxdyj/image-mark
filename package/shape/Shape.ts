@@ -1,4 +1,4 @@
-import { Shape } from "@svgdotjs/svg.js";
+import { G, Shape } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action";
 import { uid } from "uid";
@@ -9,8 +9,8 @@ export type ShapeOptions = {
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 }
 
-export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends Shape = Shape> {
-	shapeInstance: S;
+export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
+	shapeInstance: G;
 	isRendered = false
 	isBindActions = false
 	static shapeName: string
@@ -20,7 +20,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 		[key: string]: Action
 	} = {}
 
-	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions, shapeInstance: S) {
+	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions, shapeInstance: G) {
 		const constructor = this.constructor
 		// @ts-ignore
 		if (!constructor.shapeName) {
@@ -32,12 +32,17 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 		this.draw()
 	}
 
-	abstract draw(): S;
+	abstract draw(): G;
 
+	abstract updateData(data: T): G;
+
+	mouseEvent2Data(eventList: MouseEvent[]): T | null {
+		return null
+	}
 
 	bindActions() {
 		if (!this.isBindActions) {
-			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T, S>
+			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T>
 			constructor.actionList.forEach(action => {
 				this.initAction(action, action.actionOptions[constructor.shapeName])
 			})
@@ -83,7 +88,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData, S extends 
 
 	initAction(action: typeof Action, actionOptions: any = {}) {
 		if (!this.action[action.actionName]) {
-			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T, S>
+			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T>
 			this.action[action.actionName] = new action(this.imageMark, this, actionOptions || action.actionOptions[constructor.shapeName])
 		}
 	}
