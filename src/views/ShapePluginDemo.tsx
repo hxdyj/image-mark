@@ -8,6 +8,7 @@ import { Button, Space, Switch } from "@arco-design/web-react"
 import { OperateGroup } from "../components/OperateGroup"
 import hotkeys from "hotkeys-js"
 import { ImageMarkImage, ImageData as ImgData } from "#/shape/Image"
+import { ImageMarkCircle } from "#/shape/Circle"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -33,7 +34,13 @@ export function ShapePluginDemo() {
 							width: 200,
 							height: 200,
 							src: '/star.svg'
-						}
+						},
+						{
+							shapeName: 'circle',
+							x: 0,
+							y: 0,
+							r: 50
+						},
 					]
 				}
 			}
@@ -46,6 +53,11 @@ export function ShapePluginDemo() {
 					}
 				})
 				.addShape(ImageMarkImage, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkCircle, {
 					afterRender(shapeInstance) {
 						shapeInstance.addAction(LmbMoveAction)
 					}

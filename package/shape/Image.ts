@@ -1,4 +1,4 @@
-import { G, Image, Rect } from "@svgdotjs/svg.js";
+import { G, Image } from "@svgdotjs/svg.js";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "./Shape";
 import { ImageMark } from "..";
 import { getBoundingBoxByTwoPoints } from "./Rect";
@@ -23,29 +23,36 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		this.draw()
 	}
 
+	protected loadUrl: string = ''
+
 	draw(): G {
 		const image = this.shapeInstance.findOne('image') as Image
 		image.opacity(0.8)
 		image.attr({
 			preserveAspectRatio: 'none'
 		})
-		this.shapeInstance.move(this.data.x, this.data.y)
 
-		image.load(this.data.src, () => {
-			image.size(this.data.width, this.data.height)
-			const width = image.width()
-			const height = image.height()
-			const { translateX = 0, translateY = 0 } = this.shapeInstance.transform()
 
-			this.shapeInstance.transform({
-				translate: [- translateX, - translateY]
+
+		if (this.loadUrl === this.data.src) {
+			this.drawInfo()
+		} else {
+			image.load(this.data.src, () => {
+				this.loadUrl = this.data.src
+				this.drawInfo()
 			})
+		}
 
-			this.shapeInstance.transform({
-				translate: [-width / 2, -height / 2]
-			})
-		})
 		return this.shapeInstance
+	}
+
+	protected drawInfo() {
+		const image = this.shapeInstance.findOne('image') as Image
+		image.size(this.data.width, this.data.height)
+		const width = image.width() as number
+		const height = image.height() as number
+
+		this.shapeInstance.move(this.data.x - width / 2, this.data.y - height / 2)
 	}
 
 	updateData(newData: ImageData): G {
