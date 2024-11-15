@@ -2,6 +2,7 @@ import { Shape } from "@svgdotjs/svg.js";
 import { EventBindingThis } from "../event";
 import { ImageMarkShape } from "../shape/Shape";
 import ImageMark from "..";
+import { ShapePlugin } from "#/plugins/ShapePlugin";
 
 export class Action extends EventBindingThis {
 	static actionName: string;
@@ -15,4 +16,9 @@ export class Action extends EventBindingThis {
 	beforeActionRemove() { }
 
 	destroy() { }
+
+	protected getShapePlugin(): ShapePlugin | undefined {
+		const shapeInstance = this.imageMark.plugin[ShapePlugin.pluginName] as ShapePlugin
+		return shapeInstance
+	}
 }

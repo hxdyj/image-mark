@@ -12,6 +12,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	protected node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
 	protected shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
 	data: T[] = []
+	disableActionList: Set<string> = new Set()
+
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);
 		// @ts-ignore
@@ -22,6 +24,22 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		})
 		this.bindEventThis(['onRerender', 'onDraw', 'onDelete', 'onResize', 'onDrawingMouseDown', 'onDrawingMouseMove', 'onDrawingMouseUp'])
 		this.bindEvent()
+	}
+
+	disableAction(action: string | string[]) {
+		if (typeof action === 'string') {
+			this.disableActionList.add(action)
+		} else {
+			action.forEach(item => this.disableActionList.add(item))
+		}
+	}
+
+	enableAction(action: string | string[]) {
+		if (typeof action === 'string') {
+			this.disableActionList.delete(action)
+		} else {
+			action.forEach(item => this.disableActionList.delete(item))
+		}
 	}
 
 	protected addNode(node: T) {
@@ -74,6 +92,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	destroy(): void {
 		super.destroy()
 		this.clear()
+		this.disableActionList.clear()
 		this.clearMap()
 		this.unbindEvent()
 	}

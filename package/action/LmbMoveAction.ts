@@ -57,6 +57,12 @@ export class LmbMoveAction extends Action {
 		this.moveable = true
 	}
 
+	getEnableMove() {
+		const shapePlugin = this.getShapePlugin()
+		return this.moveable && !shapePlugin?.disableActionList.has(LmbMoveAction.actionName)
+	}
+
+
 	destroy(): void {
 		super.destroy()
 		this.unbindEvent()
@@ -64,7 +70,7 @@ export class LmbMoveAction extends Action {
 
 	protected onMouseDown(event: Event) {
 		if (this.imageMark.status.drawing) return
-		if (!this.moveable) return
+		if (!this.getEnableMove()) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
 		event.stopPropagation()
@@ -122,4 +128,5 @@ export class LmbMoveAction extends Action {
 		this.startTransform = null
 		this.options?.onEnd?.(this.imageMark, this.shape, event)
 	}
+
 }

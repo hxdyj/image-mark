@@ -53,6 +53,7 @@
 	"dependencies": {
 		"@svgdotjs/svg.js": "^3.2.4",
 		"eventemitter3": "^5.0.1",
+		"hotkeys-js": "^3.13.7",
 		"uid": "^2.0.2"
 	},
 	"pnpm": {}
