@@ -7,7 +7,7 @@ export interface RectData extends BoundingBox, ShapeData {
 	shapeName: "rect",
 }
 
-function getBoundingBoxByTwoPoints(point1: Point, point2: Point): BoundingBox {
+export function getBoundingBoxByTwoPoints(point1: Point, point2: Point): BoundingBox {
 	const xMin = Math.min(point1.x, point2.x);
 	const xMax = Math.max(point1.x, point2.x);
 	const yMin = Math.min(point1.y, point2.y);
@@ -31,8 +31,8 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		this.draw()
 	}
 
-	draw(newData?: RectData): G {
-		const { x, y, width, height } = newData || this.data
+	draw(): G {
+		const { x, y, width, height } = this.data
 		this.shapeInstance.move(x, y)
 		const rect = this.shapeInstance.findOne('rect') as Rect
 		if (rect) {
@@ -42,8 +42,8 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 	}
 
 	updateData(newData: RectData): G {
-		this.draw(newData)
 		this.data = newData
+		this.draw()
 		return this.shapeInstance
 	}
 

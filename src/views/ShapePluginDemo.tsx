@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { Button, Space, Switch } from "@arco-design/web-react"
 import { OperateGroup } from "../components/OperateGroup"
 import hotkeys from "hotkeys-js"
+import { ImageMarkImage, ImageData as ImgData } from "#/shape/Image"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -24,17 +25,31 @@ export function ShapePluginDemo() {
 							y: 200,
 							width: 100,
 							height: 200,
+						},
+						{
+							shapeName: 'image',
+							x: 600,
+							y: 600,
+							width: 200,
+							height: 200,
+							src: '/star.svg'
 						}
 					]
 				}
 			}
 		}).addPlugin((imageMarkInstance) => {
 			const shapePluginInstance = new ShapePlugin(imageMarkInstance)
-			shapePluginInstance.addShape(ImageMarkRect, {
-				afterRender(shapeInstance) {
-					shapeInstance.addAction(LmbMoveAction)
-				}
-			})
+			shapePluginInstance
+				.addShape(ImageMarkRect, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkImage, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
 			return shapePluginInstance
 		})
 		return () => {
@@ -119,6 +134,22 @@ export function ShapePluginDemo() {
 								shapePlugin.startDrawing(rectInstance)
 							}}>
 								Rect
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								if (!shapePlugin) return
+								const starImageData: ImgData = {
+									shapeName: 'image',
+									x: 0,
+									y: 0,
+									width: 0,
+									height: 0,
+									src: '/sea.jpg'
+								}
+								const imgInstance = new ImageMarkImage(starImageData, imgMark.current!, {})
+								shapePlugin.startDrawing(imgInstance)
+							}}>
+								Image
 							</Button>
 						</Button.Group>
 

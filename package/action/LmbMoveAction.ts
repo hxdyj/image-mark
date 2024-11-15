@@ -125,7 +125,18 @@ export class LmbMoveAction extends Action {
 		this.onDoucmentMouseMoving(event)
 		this.status.mouseDown = false
 		this.startPoint = null
+
+		const { translateX: startTranslateX = 0, translateY: startTranslateY = 0 } = this.startTransform || {}
+		const { translateX = 0, translateY = 0 } = this.shape.shapeInstance.transform()
+		const diffTranslate: [number, number] = [translateX - startTranslateX, translateY - startTranslateY]
+
+		this.shape.data.x += diffTranslate[0]
+		this.shape.data.y += diffTranslate[1]
+
+		this.shape.shapeInstance.transform(this.startTransform!)
+		this.shape.updateData(this.shape.data)
 		this.startTransform = null
+
 		this.options?.onEnd?.(this.imageMark, this.shape, event)
 	}
 

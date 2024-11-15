@@ -172,10 +172,12 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	addShape(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions) {
 		this.initShape(shape, shapeOptions)
+		return this
 	}
 
 	removeShape(shape: typeof ImageMarkShape<T>) {
 		Reflect.deleteProperty(this.shape, shape.shapeName)
+		return this
 	}
 
 	initShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions) {
@@ -184,6 +186,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			ShapeClass: shape as unknown as ImageMarkShape<T>,
 			shapeOptions
 		}
+		return this
 	}
 
 
@@ -197,6 +200,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		const shapeName = Object.getPrototypeOf(shape).constructor.shapeName
 		this.imageMark.status.drawing = shapeName
 		this.drawingShape = shape
+		return this
 	}
 
 
@@ -206,6 +210,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			this.drawingShape.render(this.imageMark.stageGroup)
 		}
 		this.drawingShape.updateData(shapeData)
+		return this
 	}
 
 	endDrawing() {
@@ -214,6 +219,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.drawingShape.destroy()
 		this.drawingShape = null
 		this.imageMark.status.drawing = false
+		return this
 	}
 
 	drawingMouseTrace: Array<MouseEvent> = []
