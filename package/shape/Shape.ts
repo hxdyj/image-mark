@@ -50,6 +50,17 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 	}
 
+	dmoveData(dmove: [number, number]): T {
+		const { x, y } = this.data
+		if (typeof x == 'number' || typeof y == 'number') {
+			//@ts-ignore
+			this.data.x += dmove[0]
+			//@ts-ignore
+			this.data.y += dmove[1]
+		}
+		return this.data
+	}
+
 	afterRender() {
 		this.bindActions()
 		this.options?.afterRender?.(this)

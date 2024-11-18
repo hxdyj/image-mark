@@ -9,6 +9,7 @@ import { OperateGroup } from "../components/OperateGroup"
 import hotkeys from "hotkeys-js"
 import { ImageMarkImage, ImageData as ImgData } from "#/shape/Image"
 import { CircleData, ImageMarkCircle } from "#/shape/Circle"
+import { ImageMarkLine, LineData } from "#/shape/Line"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -41,6 +42,13 @@ export function ShapePluginDemo() {
 							y: 0,
 							r: 50
 						},
+						{
+							shapeName: 'line',
+							x: 500,
+							y: 500,
+							x2: 600,
+							y2: 600
+						},
 					]
 				}
 			}
@@ -58,6 +66,11 @@ export function ShapePluginDemo() {
 					}
 				})
 				.addShape(ImageMarkCircle, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkLine, {
 					afterRender(shapeInstance) {
 						shapeInstance.addAction(LmbMoveAction)
 					}
@@ -176,6 +189,21 @@ export function ShapePluginDemo() {
 								shapePlugin.startDrawing(rectInstance)
 							}}>
 								Circle
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								if (!shapePlugin) return
+								const lineData: LineData = {
+									shapeName: 'line',
+									x: 0,
+									y: 0,
+									x2: 0,
+									y2: 0
+								}
+								const rectInstance = new ImageMarkLine(lineData, imgMark.current!, {})
+								shapePlugin.startDrawing(rectInstance)
+							}}>
+								Line
 							</Button>
 						</Button.Group>
 

@@ -1,7 +1,6 @@
 - [x] Plugin System
 - [x] Rect Or Other Mode use plugin system implement
 - [x] limit move not out of container
-- [ ] shortcut system
 - [x] dropable
 - [x] commonly action class
 - [x] resize deal: resize event maybe can't listen container size change , use MutationObserver instead
@@ -11,7 +10,12 @@
 - [x] multiple instance demo
 - [x] shape rect、circle support
 - [ ] shape line、polygon、polyline、path support
-- [ ] select by drag rect
+- [ ] single/multiple select
+- [ ] zIndex support
+- [ ] rect select
+- [ ] operate history and undo redo
 - [ ] mini map
 - [ ] resize action
 - [ ] rotate action
+- [ ] shape options
+- [ ] shortcut system

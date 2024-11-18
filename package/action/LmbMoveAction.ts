@@ -130,8 +130,7 @@ export class LmbMoveAction extends Action {
 		const { translateX = 0, translateY = 0 } = this.shape.shapeInstance.transform()
 		const diffTranslate: [number, number] = [translateX - startTranslateX, translateY - startTranslateY]
 
-		this.shape.data.x += diffTranslate[0]
-		this.shape.data.y += diffTranslate[1]
+		this.shape.dmoveData(diffTranslate)
 
 		this.shape.shapeInstance.transform(this.startTransform!)
 		this.shape.updateData(this.shape.data)
