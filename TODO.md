@@ -1,14 +1,17 @@
 - [x] Plugin System
-- [ ] Rect Or Other Mode use plugin system implement
+- [x] Rect Or Other Mode use plugin system implement
 - [x] limit move not out of container
 - [ ] shortcut system
 - [x] dropable
-- [ ] commonly action class
+- [x] commonly action class
 - [x] resize deal: resize event maybe can't listen container size change , use MutationObserver instead
 - [x] caculate next step chunk
 - [x] company map demo finished
-- [ ] use react write demo
+- [x] use react write demo
 - [x] multiple instance demo
-- [ ] shape rect、circle support
+- [x] shape rect、circle support
+- [ ] shape line、polygon、polyline、path support
 - [ ] select by drag rect
 - [ ] mini map
+- [ ] resize action
+- [ ] rotate action
