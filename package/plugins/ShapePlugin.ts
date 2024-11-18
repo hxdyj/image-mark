@@ -227,10 +227,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	drawingMouseTrace: Array<MouseEvent> = []
 
+	//TODO(songle): add multi touch support
+
 	onDrawingMouseDown(event: MouseEvent) {
 		if (!this.imageMark.status.drawing) return
 		if (this.programmaticDrawing) return
-		this.drawingMouseTrace.push(event)
+
+		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
+			this.drawingMouseTrace.push(event)
+		}
 	}
 
 	onDrawingMouseMove(event: MouseEvent) {
@@ -239,19 +244,25 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (event.buttons === 0) {
 			return
 		}
-		this.drawingMouseTrace.push(event)
-		const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
-		newData && this.drawing(newData)
+
+		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
+			this.drawingMouseTrace.push(event)
+			const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
+			newData && this.drawing(newData)
+		}
 	}
 
 	onDrawingMouseUp(event: MouseEvent) {
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
-		this.drawingMouseTrace.push(event)
-		const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
-		newData && this.drawing(newData)
-		this.drawingMouseTrace = []
-		this.endDrawing()
+
+		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
+			this.drawingMouseTrace.push(event)
+			const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
+			newData && this.drawing(newData)
+			this.drawingMouseTrace = []
+			this.endDrawing()
+		}
 	}
 
 	static shapeList: Array<typeof ImageMarkShape> = []

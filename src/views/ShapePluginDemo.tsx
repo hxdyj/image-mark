@@ -10,6 +10,7 @@ import hotkeys from "hotkeys-js"
 import { ImageMarkImage, ImageData as ImgData } from "#/shape/Image"
 import { CircleData, ImageMarkCircle } from "#/shape/Circle"
 import { ImageMarkLine, LineData } from "#/shape/Line"
+import { ImageMarkPolyLine } from "#/shape/PolyLine"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -49,6 +50,10 @@ export function ShapePluginDemo() {
 							x2: 600,
 							y2: 600
 						},
+						{
+							shapeName: 'polyline',
+							points: [800, 800, 850, 850, 800, 900]
+						},
 					]
 				}
 			}
@@ -71,6 +76,11 @@ export function ShapePluginDemo() {
 					}
 				})
 				.addShape(ImageMarkLine, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkPolyLine, {
 					afterRender(shapeInstance) {
 						shapeInstance.addAction(LmbMoveAction)
 					}
@@ -206,8 +216,6 @@ export function ShapePluginDemo() {
 								Line
 							</Button>
 						</Button.Group>
-
-
 					</OperateGroup>
 					<OperateGroup desc="Disable Shape LmbAction While Space KeyDown">
 						<Switch checked={disableShapeLmbActionWhileSpaceKeyDown} onKeyDown={e => e.preventDefault()} onChange={(checked) => {
@@ -215,7 +223,6 @@ export function ShapePluginDemo() {
 						}}></Switch>
 					</OperateGroup>
 				</Space>
-
 			</div>
 			<div className="image-mark-container">
 				<div ref={containerRef} className="shape-container h-full"></div>

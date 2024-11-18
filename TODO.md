@@ -9,7 +9,7 @@
 - [x] use react write demo
 - [x] multiple instance demo
 - [x] shape rect、circle support
-- [ ] shape line、polygon、polyline、path support
+- [ ] shape line、polygon、polyline、path、paint support
 - [ ] single/multiple select
 - [ ] zIndex support
 - [ ] rect select

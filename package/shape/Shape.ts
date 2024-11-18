@@ -11,6 +11,8 @@ export type ShapeOptions = {
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	shapeInstance: G;
+	//鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制，paint:作画模式绘制，相当于多笔绘制
+	mouseDrawType: 'oneTouch' | 'multiPress' | 'paint' = 'oneTouch'
 	isRendered = false
 	isBindActions = false
 	static shapeName: string
