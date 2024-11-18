@@ -126,7 +126,7 @@ export function ShapePluginDemo() {
 									height: 200,
 								}
 								const rectInstance = new ImageMarkRect(rectData.current, imgMark.current!, {})
-								shapePlugin.startDrawing(rectInstance)
+								shapePlugin.startDrawing(rectInstance, true)
 							}}>Start</Button>
 							<Button onClick={() => {
 								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin

@@ -193,13 +193,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	drawingShape: ImageMarkShape<T> | null = null
 
 
+	programmaticDrawing = false
 
-	startDrawing(shape: ImageMarkShape<T>) {
+	startDrawing(shape: ImageMarkShape<T>, programmaticDrawing = false) {
 		// const isClass = !(shape instanceof ImageMarkShape)
 		// const shapeName = isClass ? shape.shapeName : Object.getPrototypeOf(shape).constructor.shapeName
 		const shapeName = Object.getPrototypeOf(shape).constructor.shapeName
 		this.imageMark.status.drawing = shapeName
 		this.drawingShape = shape
+		this.programmaticDrawing = programmaticDrawing
 		return this
 	}
 
@@ -219,6 +221,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.drawingShape.destroy()
 		this.drawingShape = null
 		this.imageMark.status.drawing = false
+		this.programmaticDrawing = false
 		return this
 	}
 
@@ -226,11 +229,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	onDrawingMouseDown(event: MouseEvent) {
 		if (!this.imageMark.status.drawing) return
+		if (this.programmaticDrawing) return
 		this.drawingMouseTrace.push(event)
 	}
 
 	onDrawingMouseMove(event: MouseEvent) {
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		if (this.programmaticDrawing) return
 		if (event.buttons === 0) {
 			return
 		}
@@ -241,6 +246,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	onDrawingMouseUp(event: MouseEvent) {
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		if (this.programmaticDrawing) return
 		this.drawingMouseTrace.push(event)
 		const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
 		newData && this.drawing(newData)

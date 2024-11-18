@@ -19,3 +19,4 @@
 - [ ] rotate action
 - [ ] shape options
 - [ ] shortcut system
+- [ ] mask base image support
