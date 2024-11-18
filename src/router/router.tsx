@@ -109,7 +109,7 @@ export const routes: IRoute[] = [
 						},
 						children: [
 							{
-								childIndexRoute: true,
+								// childIndexRoute: true,
 								path: '/test/point',
 								element: <SvgPointDemo />,
 								meta: {
@@ -185,6 +185,31 @@ function getLayoutRoute(routes: IRoute[] = [], result: IRoute | null = null) {
 	return result
 }
 export const LAYOUT_ROUTE = getLayoutRoute(routes)
+
+function recursionGetRouteIndexPath(route: IRoute, pathTrack: string[]) {
+	let result: string[] = []
+	const list = route.children || []
+	if (!list.length) return pathTrack.slice()
+	let childIndexRoute = list.find(item => item.homeRoute || item.childIndexRoute)
+	if (!childIndexRoute) childIndexRoute = list[0]
+
+	if (childIndexRoute) {
+		pathTrack.push(childIndexRoute.path || '')
+		result = recursionGetRouteIndexPath(childIndexRoute, pathTrack)
+		pathTrack.pop()
+		if (result?.length) {
+			return result
+		}
+	}
+	return result
+}
+
+export function getRouteIndexPath(route: IRoute) {
+	const pathArr = recursionGetRouteIndexPath(route, []) || []
+	return pathArr.reduce((pre, current) => {
+		return resolvePath(current, pre).pathname
+	}, '/')
+}
 
 const router = createBrowserRouter(routes)
 
