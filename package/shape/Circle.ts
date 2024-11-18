@@ -1,6 +1,13 @@
-import { Circle, G } from "@svgdotjs/svg.js";
+import { Circle, G, } from "@svgdotjs/svg.js";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
+
+
+function calculateDistance(point1: { x: number; y: number }, point2: { x: number; y: number }): number {
+	const dx = point2.x - point1.x;
+	const dy = point2.y - point1.y;
+	return Math.sqrt(dx * dx + dy * dy);
+}
 
 
 export interface CircleData extends ShapeData {
@@ -37,5 +44,20 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		this.data = newData
 		this.draw()
 		return this.shapeInstance
+	}
+
+	mouseEvent2Data(eventList: MouseEvent[]): CircleData | null {
+		if (eventList.length < 2) return null
+		const startPoint = this.imageMark.image.point(eventList[0])
+		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
+		const r = calculateDistance(startPoint, endPoint)
+
+		const newCircle: CircleData = {
+			...this.data,
+			x: startPoint.x,
+			y: startPoint.y,
+			r,
+		}
+		return newCircle
 	}
 }
