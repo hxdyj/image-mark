@@ -39,7 +39,7 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 				y1: y,
 				x2: x2,
 				y2: y2
-			}).stroke({ width: 4, color: '#F53F3F' })
+			}).stroke({ width: 10, color: '#FADC19' })
 		}
 		return this.shapeInstance
 	}

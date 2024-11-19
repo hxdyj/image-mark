@@ -35,7 +35,7 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		this.shapeInstance.move(x, y)
 		const rect = this.shapeInstance.findOne('rect') as Rect
 		if (rect) {
-			rect.size(width, height).fill('transparent').stroke({ width: 5, color: '#F53F3F' })
+			rect.size(width, height).fill('transparent').stroke({ width: 10, color: '#FADC19' })
 		}
 		return this.shapeInstance
 	}

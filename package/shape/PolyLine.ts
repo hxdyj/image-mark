@@ -38,7 +38,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		if (line) {
 			line.attr({
 				points: points.concat(this.data.auxiliaryPoint || []).join(',')
-			}).stroke({ width: 4, color: '#F53F3F' }).fill('none')
+			}).stroke({ width: 10, color: '#FADC19' }).fill('none')
 		}
 		return this.shapeInstance
 	}

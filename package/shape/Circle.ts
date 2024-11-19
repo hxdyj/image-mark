@@ -35,7 +35,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		if (circle) {
 			circle.attr({
 				r
-			}).fill('transparent').stroke({ width: 4, color: '#F53F3F' })
+			}).fill('transparent').stroke({ width: 10, color: '#FADC19' })
 		}
 		return this.shapeInstance
 	}
