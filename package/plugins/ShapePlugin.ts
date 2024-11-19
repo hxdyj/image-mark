@@ -2,6 +2,7 @@ import { ImageMark } from "..";
 import { Plugin } from ".";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
+import { cloneDeep } from "lodash-es";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
@@ -22,7 +23,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		ShapePlugin.shapeList.forEach(shape => {
 			this.initShape(shape)
 		})
-		this.bindEventThis(['onRerender', 'onDraw', 'onDelete', 'onResize', 'onDrawingMouseDown', 'onDrawingMouseMove', 'onDrawingMouseUp'])
+		this.bindEventThis(['onRerender', 'onDraw', 'onDelete', 'onResize', 'onDrawingMouseDown', 'onDrawingDocumentMouseMove', 'onDrawingDocumentMouseUp', 'onDrawingMouseMove'])
 		this.bindEvent()
 	}
 
@@ -73,8 +74,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.on('shape_delete', this.onDelete)
 		this.imageMark.on('resize', this.onResize)
 		this.imageMark.container.addEventListener('mousedown', this.onDrawingMouseDown)
-		document.addEventListener('mousemove', this.onDrawingMouseMove)
-		document.addEventListener('mouseup', this.onDrawingMouseUp)
+		this.imageMark.container.addEventListener('mousemove', this.onDrawingMouseMove)
+		document.addEventListener('mousemove', this.onDrawingDocumentMouseMove)
+		document.addEventListener('mouseup', this.onDrawingDocumentMouseUp)
 	}
 
 	unbindEvent() {
@@ -85,8 +87,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.off('resize', this.onResize)
 
 		this.imageMark.container.removeEventListener('mousedown', this.onDrawingMouseDown)
-		document.removeEventListener('mousemove', this.onDrawingMouseMove)
-		document.removeEventListener('mouseup', this.onDrawingMouseUp)
+		this.imageMark.container.removeEventListener('mousemove', this.onDrawingMouseMove)
+		document.removeEventListener('mousemove', this.onDrawingDocumentMouseMove)
+		document.removeEventListener('mouseup', this.onDrawingDocumentMouseUp)
 	}
 
 	destroy(): void {
@@ -218,8 +221,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	endDrawing() {
 		if (!this.drawingShape) throw new Error('drawingShape is null')
-		this.onAdd(this.drawingShape.data, true)
+		const shapeData = cloneDeep(this.drawingShape.data)
 		this.drawingShape.destroy()
+		this.onAdd(shapeData, true)
 		this.drawingShape = null
 		this.imageMark.status.drawing = false
 		this.programmaticDrawing = false
@@ -228,8 +232,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	drawingMouseTrace: Array<MouseEvent> = []
-
-	//TODO(songle): add multi touch support
 
 	onDrawingMouseDown(event: MouseEvent) {
 		if (!this.imageMark.status.drawing) return
@@ -257,8 +259,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 				eventList: this.drawingMouseTrace,
 				auxiliaryEvent: event
 			})
+			console.log('onDrawingMouseMove')
 			newData && this.drawing(newData)
 		}
+	}
+
+
+	onDrawingDocumentMouseMove(event: MouseEvent) {
+		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		if (this.programmaticDrawing) return
 
 		if (event.buttons === 0) {
 			return
@@ -269,11 +278,12 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			const newData = this.drawingShape.mouseEvent2Data({
 				eventList: this.drawingMouseTrace
 			})
+			console.log('onDrawingDocumentMouseMove')
 			newData && this.drawing(newData)
 		}
 	}
 
-	onDrawingMouseUp(event: MouseEvent) {
+	onDrawingDocumentMouseUp(event: MouseEvent) {
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 

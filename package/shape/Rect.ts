@@ -22,21 +22,19 @@ export function getBoundingBoxByTwoPoints(point1: Point, point2: Point): Boundin
 
 export class ImageMarkRect extends ImageMarkShape<RectData> {
 	static shapeName = "rect"
+	rect: Rect
 	constructor(data: RectData, imageMarkInstance: ImageMark, options: ShapeOptions) {
 		const group = new G()
-		const rect = new Rect()
-		group.add(rect)
 		super(data, imageMarkInstance, options, group)
+		this.rect = new Rect()
+		group.add(this.rect)
 		this.draw()
 	}
 
 	draw(): G {
 		const { x, y, width, height } = this.data
+		this.rect.size(width, height).fill('transparent').stroke({ width: 10, color: '#FADC19' })
 		this.shapeInstance.move(x, y)
-		const rect = this.shapeInstance.findOne('rect') as Rect
-		if (rect) {
-			rect.size(width, height).fill('transparent').stroke({ width: 10, color: '#FADC19' })
-		}
 		return this.shapeInstance
 	}
 

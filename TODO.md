@@ -17,6 +17,7 @@
 - [ ] mini map
 - [ ] resize action
 - [ ] rotate action
+- [ ] move action add mode to holder and custom holder ui
 - [ ] shape options
 - [ ] shortcut system
 - [ ] mask base image support

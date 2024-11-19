@@ -1,3 +1,4 @@
+import { Button } from "@arco-design/web-react"
 import { G, Image, Point, SVG, Svg } from "@svgdotjs/svg.js"
 import { useEffect, useRef, useState } from "react"
 
@@ -13,24 +14,27 @@ export function SvgPointDemo() {
 		setImagePoint(imageRef.current?.point(e.clientX, e.clientY))
 	}
 
+	const groupRef = useRef<G | null>(null)
+
 	useEffect(() => {
 		if (svgRef.current) return
 		svgRef.current = SVG()
+		//@ts-ignore
 		svgRef.current.size(890, 724).css({ 'background-color': '#165DFF' })
 		svgRef.current.addTo('.svg-container')
 
-		const g = new G()
+		groupRef.current = new G()
 		imageRef.current = new Image()
 		imageRef.current.load('/demo-parking.jpg')
 		imageRef.current.size(3891, 2916)
-		g.add(imageRef.current)
-		g.transform({
+		groupRef.current.add(imageRef.current)
+		groupRef.current.transform({
 			scale: 0.16448,
 			origin: [0, 0],
 			translate: [250, 250]
 		})
 
-		svgRef.current?.add(g)
+		svgRef.current?.add(groupRef.current)
 	}, [])
 
 	return (
@@ -51,7 +55,11 @@ export function SvgPointDemo() {
 
 				</div>
 			</div>
-			<div className="h-[100px] bg-gray-500"></div>
+			<div className="h-[100px] bg-gray-500 p-8">
+				<Button onClick={() => {
+					groupRef.current?.remove()
+				}}>Remove Group</Button>
+			</div>
 		</div >
 	)
 }

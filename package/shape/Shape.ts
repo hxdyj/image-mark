@@ -15,7 +15,6 @@ export type ShapeOptions = {
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress' | 'paint'
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	shapeInstance: G;
-
 	isRendered = false
 	isBindActions = false
 	static shapeName: string
@@ -33,8 +32,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 		this.uid = uid(6)
 		this.imageMark = imageMarkInstance;
+		shapeInstance.id(this.uid)
 		this.shapeInstance = shapeInstance
-		this.draw()
 	}
 
 	abstract draw(): G;
@@ -86,12 +85,12 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 			action.destroy()
 		})
 		this.isBindActions = false
+		console.log(333, this.uid, JSON.stringify(this.data))
 	}
 
 	render(stage: AddToShape): void {
 		if (!this.isRendered) {
 			this.shapeInstance.addTo(stage)
-
 			this.isRendered = true
 			this.afterRender()
 		}

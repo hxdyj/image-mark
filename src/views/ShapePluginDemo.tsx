@@ -11,6 +11,7 @@ import { ImageMarkImage, ImageData as ImgData } from "#/shape/Image"
 import { CircleData, ImageMarkCircle } from "#/shape/Circle"
 import { ImageMarkLine, LineData } from "#/shape/Line"
 import { ImageMarkPolyLine, PolyLineData } from "#/shape/PolyLine"
+import { ImageMarkPolygon, PolygonData } from "#/shape/Polygon"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -54,6 +55,10 @@ export function ShapePluginDemo() {
 							shapeName: 'polyline',
 							points: [800, 800, 850, 850, 800, 900]
 						},
+						{
+							shapeName: 'polygon',
+							points: [1000, 1000, 1400, 1400, 1000, 1400]
+						},
 					]
 				}
 			}
@@ -85,6 +90,11 @@ export function ShapePluginDemo() {
 						shapeInstance.addAction(LmbMoveAction)
 					}
 				})
+				.addShape(ImageMarkPolygon, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
 			return shapePluginInstance
 		})
 		return () => {
@@ -101,7 +111,7 @@ export function ShapePluginDemo() {
 		if (disableShapeLmbActionWhileSpaceKeyDown) {
 			hotkeys('space', { keyup: true }, (event) => {
 				event.preventDefault()
-				const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+				const shapePlugin = getShapePlugin()
 				if (!shapePlugin) return
 				if (event.type === 'keydown') {
 					shapePlugin.disableAction(LmbMoveAction.actionName)
@@ -119,6 +129,10 @@ export function ShapePluginDemo() {
 		}
 	}, [disableShapeLmbActionWhileSpaceKeyDown])
 
+	function getShapePlugin(): ShapePlugin | null {
+		return imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+	}
+
 	return (
 		<div className="page-shape-plugin-demo bg-[#e5e6eb] ">
 			<div className="operate-bar">
@@ -126,7 +140,7 @@ export function ShapePluginDemo() {
 					<OperateGroup desc="Draw Rect Programmatically">
 						<Button.Group>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								rectData.current = {
 									shapeName: 'rect',
@@ -139,14 +153,14 @@ export function ShapePluginDemo() {
 								shapePlugin.startDrawing(rectInstance, true)
 							}}>Start</Button>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin || !rectData.current) return
 								rectData.current.width += 10
 								rectData.current.height += 10
 								shapePlugin.drawing(rectData.current)
 							}}>Drawing</Button>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								shapePlugin.endDrawing()
 								rectData.current = null
@@ -156,7 +170,7 @@ export function ShapePluginDemo() {
 					<OperateGroup desc="Draw Rect Mouse Event">
 						<Button.Group>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								rectData.current = {
 									shapeName: 'rect',
@@ -171,7 +185,7 @@ export function ShapePluginDemo() {
 								Rect
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								const starImageData: ImgData = {
 									shapeName: 'image',
@@ -187,7 +201,7 @@ export function ShapePluginDemo() {
 								Image
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								const circleData: CircleData = {
 									shapeName: 'circle',
@@ -201,7 +215,7 @@ export function ShapePluginDemo() {
 								Circle
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								const lineData: LineData = {
 									shapeName: 'line',
@@ -216,7 +230,7 @@ export function ShapePluginDemo() {
 								Line
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								const lineData: PolyLineData = {
 									shapeName: 'polyline',
@@ -228,11 +242,30 @@ export function ShapePluginDemo() {
 								PolyLine Start
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								shapePlugin.endDrawing()
 							}}>
 								PolyLine End
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = getShapePlugin()
+								if (!shapePlugin) return
+								const polygonData: PolygonData = {
+									shapeName: 'polygon',
+									points: []
+								}
+								const lineInstance = new ImageMarkPolygon(polygonData, imgMark.current!, {})
+								shapePlugin.startDrawing(lineInstance)
+							}}>
+								Polygon Start
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = getShapePlugin()
+								if (!shapePlugin) return
+								shapePlugin.endDrawing()
+							}}>
+								Polygon End
 							</Button>
 						</Button.Group>
 					</OperateGroup>

@@ -12,13 +12,14 @@ export interface LineData extends ShapeData {
 
 export class ImageMarkLine extends ImageMarkShape<LineData> {
 	static shapeName = "line"
-
+	line: Line
 	constructor(data: LineData, imageMarkInstance: ImageMark, options: ShapeOptions) {
 		const group = new G()
-		const line = new Line()
-		group.add(line)
 		super(data, imageMarkInstance, options, group)
+		this.line = new Line()
+		group.add(this.line)
 		this.draw()
+
 	}
 
 	dmoveData(dmove: [number, number]): LineData {
@@ -32,15 +33,12 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 
 	draw(): G {
 		const { x, y, x2, y2 } = this.data
-		const line = this.shapeInstance.findOne('line') as Line
-		if (line) {
-			line.attr({
-				x1: x,
-				y1: y,
-				x2: x2,
-				y2: y2
-			}).stroke({ width: 10, color: '#FADC19' })
-		}
+		this.line.attr({
+			x1: x,
+			y1: y,
+			x2: x2,
+			y2: y2
+		}).stroke({ width: 10, color: '#FADC19' })
 		return this.shapeInstance
 	}
 

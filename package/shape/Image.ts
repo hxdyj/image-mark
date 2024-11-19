@@ -15,20 +15,20 @@ export interface ImageData extends ShapeData {
 
 export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	static shapeName = 'image'
+	image: Image
 	constructor(data: ImageData, imageMarkInstance: ImageMark, options: ShapeOptions) {
 		const group = new G()
-		const image = new Image()
-		group.add(image)
 		super(data, imageMarkInstance, options, group)
+		this.image = new Image()
+		group.add(this.image)
 		this.draw()
 	}
 
 	protected loadUrl: string = ''
 
 	draw(): G {
-		const image = this.shapeInstance.findOne('image') as Image
-		image.opacity(0.8)
-		image.attr({
+		this.image.opacity(0.8)
+		this.image.attr({
 			preserveAspectRatio: 'none'
 		})
 
@@ -37,7 +37,7 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		if (this.loadUrl === this.data.src) {
 			this.drawInfo()
 		} else {
-			image.load(this.data.src, () => {
+			this.image.load(this.data.src, () => {
 				this.loadUrl = this.data.src
 				this.drawInfo()
 			})
@@ -47,11 +47,9 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	}
 
 	protected drawInfo() {
-		const image = this.shapeInstance.findOne('image') as Image
-		image.size(this.data.width, this.data.height)
-		const width = image.width() as number
-		const height = image.height() as number
-
+		this.image.size(this.data.width, this.data.height)
+		const width = this.image.width() as number
+		const height = this.image.height() as number
 		this.shapeInstance.move(this.data.x - width / 2, this.data.y - height / 2)
 	}
 
