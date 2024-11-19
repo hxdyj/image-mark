@@ -202,6 +202,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.status.drawing = shapeName
 		this.drawingShape = shape
 		this.programmaticDrawing = programmaticDrawing
+		this.drawingMouseTrace = []
 		return this
 	}
 
@@ -222,6 +223,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.drawingShape = null
 		this.imageMark.status.drawing = false
 		this.programmaticDrawing = false
+		this.drawingMouseTrace = []
 		return this
 	}
 
@@ -236,18 +238,37 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
 			this.drawingMouseTrace.push(event)
 		}
+
+		if (this.drawingShape?.mouseDrawType == 'multiPress') {
+			this.drawingMouseTrace.push(event)
+			const newData = this.drawingShape.mouseEvent2Data({
+				eventList: this.drawingMouseTrace
+			})
+			newData && this.drawing(newData)
+		}
 	}
 
 	onDrawingMouseMove(event: MouseEvent) {
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
+
+		if (this.drawingShape?.mouseDrawType == 'multiPress') {
+			const newData = this.drawingShape.mouseEvent2Data({
+				eventList: this.drawingMouseTrace,
+				auxiliaryEvent: event
+			})
+			newData && this.drawing(newData)
+		}
+
 		if (event.buttons === 0) {
 			return
 		}
 
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
 			this.drawingMouseTrace.push(event)
-			const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
+			const newData = this.drawingShape.mouseEvent2Data({
+				eventList: this.drawingMouseTrace
+			})
 			newData && this.drawing(newData)
 		}
 	}
@@ -258,9 +279,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
 			this.drawingMouseTrace.push(event)
-			const newData = this.drawingShape.mouseEvent2Data(this.drawingMouseTrace)
+			const newData = this.drawingShape.mouseEvent2Data({
+				eventList: this.drawingMouseTrace
+			})
 			newData && this.drawing(newData)
-			this.drawingMouseTrace = []
+
 			this.endDrawing()
 		}
 	}

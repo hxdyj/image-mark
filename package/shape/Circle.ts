@@ -1,5 +1,5 @@
 import { Circle, G, } from "@svgdotjs/svg.js";
-import { ImageMarkShape, ShapeData, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 
 
@@ -46,7 +46,8 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		return this.shapeInstance
 	}
 
-	mouseEvent2Data(eventList: MouseEvent[]): CircleData | null {
+	mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null {
+		const { eventList = [] } = options
 		if (eventList.length < 2) return null
 		const startPoint = this.imageMark.image.point(eventList[0])
 		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])

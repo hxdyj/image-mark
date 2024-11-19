@@ -10,7 +10,7 @@ import hotkeys from "hotkeys-js"
 import { ImageMarkImage, ImageData as ImgData } from "#/shape/Image"
 import { CircleData, ImageMarkCircle } from "#/shape/Circle"
 import { ImageMarkLine, LineData } from "#/shape/Line"
-import { ImageMarkPolyLine } from "#/shape/PolyLine"
+import { ImageMarkPolyLine, PolyLineData } from "#/shape/PolyLine"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -195,8 +195,8 @@ export function ShapePluginDemo() {
 									y: 0,
 									r: 0
 								}
-								const rectInstance = new ImageMarkCircle(circleData, imgMark.current!, {})
-								shapePlugin.startDrawing(rectInstance)
+								const circleInstance = new ImageMarkCircle(circleData, imgMark.current!, {})
+								shapePlugin.startDrawing(circleInstance)
 							}}>
 								Circle
 							</Button>
@@ -210,10 +210,29 @@ export function ShapePluginDemo() {
 									x2: 0,
 									y2: 0
 								}
-								const rectInstance = new ImageMarkLine(lineData, imgMark.current!, {})
-								shapePlugin.startDrawing(rectInstance)
+								const lineInstance = new ImageMarkLine(lineData, imgMark.current!, {})
+								shapePlugin.startDrawing(lineInstance)
 							}}>
 								Line
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								if (!shapePlugin) return
+								const lineData: PolyLineData = {
+									shapeName: 'polyline',
+									points: []
+								}
+								const lineInstance = new ImageMarkPolyLine(lineData, imgMark.current!, {})
+								shapePlugin.startDrawing(lineInstance)
+							}}>
+								PolyLine Start
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+								if (!shapePlugin) return
+								shapePlugin.endDrawing()
+							}}>
+								PolyLine End
 							</Button>
 						</Button.Group>
 					</OperateGroup>

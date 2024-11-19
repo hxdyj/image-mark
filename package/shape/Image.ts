@@ -1,5 +1,5 @@
 import { G, Image } from "@svgdotjs/svg.js";
-import { ImageMarkShape, ShapeData, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import { ImageMark } from "..";
 import { getBoundingBoxByTwoPoints } from "./Rect";
 
@@ -62,7 +62,8 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	}
 
 
-	mouseEvent2Data(eventList: MouseEvent[]): ImageData | null {
+	mouseEvent2Data(options: MouseEvent2DataOptions): ImageData | null {
+		const { eventList = [] } = options
 		if (eventList.length < 2) return null
 		const startPoint = this.imageMark.image.point(eventList[0])
 		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])

@@ -1,5 +1,5 @@
 import { G, Point, Rect } from "@svgdotjs/svg.js";
-import { ImageMarkShape, ShapeData, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark, { BoundingBox } from "..";
 
 
@@ -22,7 +22,6 @@ export function getBoundingBoxByTwoPoints(point1: Point, point2: Point): Boundin
 
 export class ImageMarkRect extends ImageMarkShape<RectData> {
 	static shapeName = "rect"
-
 	constructor(data: RectData, imageMarkInstance: ImageMark, options: ShapeOptions) {
 		const group = new G()
 		const rect = new Rect()
@@ -47,7 +46,8 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		return this.shapeInstance
 	}
 
-	mouseEvent2Data(eventList: MouseEvent[]): RectData | null {
+	mouseEvent2Data(options: MouseEvent2DataOptions): RectData | null {
+		const { eventList = [] } = options
 		if (eventList.length < 2) return null
 		const startPoint = this.imageMark.image.point(eventList[0])
 		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])

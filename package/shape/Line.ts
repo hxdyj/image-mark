@@ -1,5 +1,5 @@
 import { G, Line, } from "@svgdotjs/svg.js";
-import { ImageMarkShape, ShapeData, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 
 export interface LineData extends ShapeData {
@@ -50,7 +50,8 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		return this.shapeInstance
 	}
 
-	mouseEvent2Data(eventList: MouseEvent[]): LineData | null {
+	mouseEvent2Data(options: MouseEvent2DataOptions): LineData | null {
+		const { eventList = [] } = options
 		if (eventList.length < 2) return null
 		const startPoint = this.imageMark.image.point(eventList[0])
 		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
