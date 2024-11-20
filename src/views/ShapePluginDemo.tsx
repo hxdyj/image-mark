@@ -108,6 +108,29 @@ export function ShapePluginDemo() {
 
 
 	useEffect(() => {
+		hotkeys('enter', (event) => {
+			event.preventDefault()
+			if (imgMark.current?.status.drawing) {
+				const shapePlugin = getShapePlugin()
+				if (!shapePlugin) return
+				shapePlugin.endDrawing()
+			}
+		})
+		hotkeys('esc', (event) => {
+			if (imgMark.current?.status.drawing) {
+				const shapePlugin = getShapePlugin()
+				if (!shapePlugin) return
+				shapePlugin.endDrawing(true)
+			}
+		})
+		hotkeys('backspace', (event) => {
+			if (imgMark.current?.status.drawing) {
+				const shapePlugin = getShapePlugin()
+				if (!shapePlugin) return
+				shapePlugin.dropLastMouseTrace()
+			}
+		})
+
 		if (disableShapeLmbActionWhileSpaceKeyDown) {
 			hotkeys('space', { keyup: true }, (event) => {
 				event.preventDefault()
@@ -125,7 +148,7 @@ export function ShapePluginDemo() {
 			hotkeys.unbind('space')
 		}
 		return () => {
-			hotkeys.unbind('space')
+			hotkeys.unbind()
 		}
 	}, [disableShapeLmbActionWhileSpaceKeyDown])
 
@@ -244,13 +267,6 @@ export function ShapePluginDemo() {
 							<Button onClick={() => {
 								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
-								shapePlugin.endDrawing()
-							}}>
-								PolyLine End
-							</Button>
-							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
-								if (!shapePlugin) return
 								const polygonData: PolygonData = {
 									shapeName: 'polygon',
 									points: []
@@ -260,13 +276,7 @@ export function ShapePluginDemo() {
 							}}>
 								Polygon Start
 							</Button>
-							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
-								if (!shapePlugin) return
-								shapePlugin.endDrawing()
-							}}>
-								Polygon End
-							</Button>
+
 						</Button.Group>
 					</OperateGroup>
 					<OperateGroup desc="Disable Shape LmbAction While Space KeyDown">

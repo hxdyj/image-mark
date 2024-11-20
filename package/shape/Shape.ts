@@ -85,7 +85,6 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 			action.destroy()
 		})
 		this.isBindActions = false
-		console.log(333, this.uid, JSON.stringify(this.data))
 	}
 
 	render(stage: AddToShape): void {

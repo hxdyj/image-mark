@@ -37,7 +37,6 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 
 	draw(): G {
 		const { points, auxiliaryPoint } = this.data
-		console.log('ImageMarkPolygon draw', this.uid, JSON.stringify(this.data))
 		if (auxiliaryPoint) {
 			this.polygon.opacity(0)
 			let polyline = this.shapeInstance.findOne('polyline') as Polyline
@@ -50,8 +49,8 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 				points: points.concat(this.data.auxiliaryPoint || []).join(',')
 			}).stroke({ width: 10, color: '#FADC19' }).fill('none')
 
+			let dashLine = this.shapeInstance.findOne('line') as Line
 			if (points.length > 2) {
-				let dashLine = this.shapeInstance.findOne('line') as Line
 				if (!dashLine) {
 					dashLine = new Line()
 					this.shapeInstance.add(dashLine)
@@ -63,13 +62,16 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 					x2: points[0],
 					y2: points[1],
 				}).stroke({ width: 10, color: '#FADC19', dasharray: `20,20` })
-				console.log(111, this.uid)
+
+			} else {
+				if (dashLine) {
+					dashLine.remove()
+				}
 			}
 		} else {
 			this.polygon.attr({
 				points: points.join(',')
 			}).stroke({ width: 10, color: '#FADC19' }).fill('none')
-			console.log(222, this.uid)
 		}
 		return this.shapeInstance
 	}
@@ -82,17 +84,20 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): PolygonData | null {
 		const { eventList = [], auxiliaryEvent } = options
-		if (!(eventList.length && auxiliaryEvent)) return null
+		if (!eventList.length) return null
 		const points = eventList.map(event => {
 			const { x, y } = this.imageMark.image.point(event)
 			return [x, y]
 		}).flat() as unknown as number[]
 
-		const auxiliaryPoint = this.imageMark.image.point(auxiliaryEvent)
 		const newLine: PolygonData = {
 			...this.data,
 			points,
-			auxiliaryPoint: [auxiliaryPoint.x, auxiliaryPoint.y]
+		}
+
+		if (auxiliaryEvent) {
+			const auxiliaryPoint = this.imageMark.image.point(auxiliaryEvent)
+			newLine.auxiliaryPoint = [auxiliaryPoint.x, auxiliaryPoint.y]
 		}
 		return newLine
 	}

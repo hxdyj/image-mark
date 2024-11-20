@@ -210,6 +210,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 
+
 	drawing(shapeData: T) {
 		if (!this.drawingShape) throw new Error('drawingShape is null')
 		if (!this.drawingShape.isRendered) {
@@ -219,11 +220,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		return this
 	}
 
-	endDrawing() {
+	endDrawing(cancel = false) {
 		if (!this.drawingShape) throw new Error('drawingShape is null')
 		const shapeData = cloneDeep(this.drawingShape.data)
+		console.log('endDrawing shapeData', JSON.stringify(shapeData))
 		this.drawingShape.destroy()
-		this.onAdd(shapeData, true)
+		if (!cancel) {
+			this.onAdd(shapeData, true)
+		}
 		this.drawingShape = null
 		this.imageMark.status.drawing = false
 		this.programmaticDrawing = false
@@ -232,6 +236,24 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	drawingMouseTrace: Array<MouseEvent> = []
+
+	dropLastMouseTrace() {
+		if (!this.imageMark.status.drawing) return
+		if (this.programmaticDrawing) return
+		if (this.drawingShape?.mouseDrawType !== 'multiPress') return
+
+		if (this.drawingMouseTrace.length == 1) {
+			this.endDrawing(true)
+			return
+		}
+
+		this.drawingMouseTrace.pop()
+		const newData = this.drawingShape.mouseEvent2Data({
+			eventList: this.drawingMouseTrace,
+			auxiliaryEvent: this.drawingShape.data.auxiliaryEvent
+		})
+		newData && this.drawing(newData)
+	}
 
 	onDrawingMouseDown(event: MouseEvent) {
 		if (!this.imageMark.status.drawing) return
@@ -259,7 +281,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 				eventList: this.drawingMouseTrace,
 				auxiliaryEvent: event
 			})
-			console.log('onDrawingMouseMove')
 			newData && this.drawing(newData)
 		}
 	}
