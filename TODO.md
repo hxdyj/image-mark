@@ -21,3 +21,4 @@
 - [ ] shape options
 - [ ] shortcut system
 - [ ] mask base image support
+- [ ] mobile support
