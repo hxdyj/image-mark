@@ -223,7 +223,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	endDrawing(cancel = false) {
 		if (!this.drawingShape) throw new Error('drawingShape is null')
 		const shapeData = cloneDeep(this.drawingShape.data)
-		console.log('endDrawing shapeData', JSON.stringify(shapeData))
 		this.drawingShape.destroy()
 		if (!cancel) {
 			this.onAdd(shapeData, true)
@@ -299,7 +298,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			const newData = this.drawingShape.mouseEvent2Data({
 				eventList: this.drawingMouseTrace
 			})
-			console.log('onDrawingDocumentMouseMove')
 			newData && this.drawing(newData)
 		}
 	}

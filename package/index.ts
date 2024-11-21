@@ -737,6 +737,8 @@ export class ImageMark extends EventBindingThis {
 
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
 		if (this.status.scaling || this.status.moving || this.status.drawing) return
+		this.status.scaling = true
+
 		if (point === 'left-top') {
 			point = [0, 0]
 		}
@@ -761,7 +763,15 @@ export class ImageMark extends EventBindingThis {
 			origin = this.containerPoint2ImagePoint(point)
 		}
 
-		function transformScale(shape: Shape) {
+		const that = this
+
+		function endScale() {
+			that.status.scaling = false
+			const { scaleX = 1 } = that.stageGroup.transform()
+			that.eventBus.emit(EventBusEventName.scale, scaleX, that)
+		}
+
+		function transformScale(shape: Shape, end = false) {
 			if (newScale !== undefined) {
 				shape.transform({
 					origin,
@@ -773,7 +783,22 @@ export class ImageMark extends EventBindingThis {
 					scale: zoom,
 				}, true)
 			}
+			end && endScale()
 		}
+
+		function toInitScale(end = true) {
+			const currentTransform = that.stageGroup.transform()
+			const { translateX = 0, translateY = 0 } = currentTransform
+			let { translate } = that.getInitialScaleAndTranslate(that.options.initScaleConfig)
+			that.stageGroup.transform({
+				translate: [-translateX, -translateY]
+			}, true)
+			that.stageGroup.transform({
+				translate
+			}, true)
+			end && endScale()
+		}
+
 
 		if (direction == -1 && !this.options.enableImageOutOfContainer) {
 			const { scale } = this.getInitialScaleAndTranslate({
@@ -781,41 +806,31 @@ export class ImageMark extends EventBindingThis {
 			})
 			if (currentScale === scale) {
 				const currentTransform = this.stageGroup.transform()
-				const { translateX = 0, translateY = 0 } = currentTransform
 				const { isOutOf } = this.isOutofContainer(currentTransform)
 				if (isOutOf) {
-					let { translate } = this.getInitialScaleAndTranslate(this.options.initScaleConfig)
-					this.stageGroup.transform({
-						translate: [-translateX, -translateY]
-					}, true)
-					this.stageGroup.transform({
-						translate
-					}, true)
+					toInitScale(false)
 				}
+				endScale()
 				return this
 			}
-
 			const flag = this.checkScaleLimitImageInContainer(point, (cloneGroup) => {
 				transformScale(cloneGroup)
 			})
-			if (flag) return this
+			if (flag) {
+				toInitScale()
+				return this
+			}
 		}
 
 
 		if ((afterScale < this.minScale || afterScale > this.maxScale) && !(currentScale > this.maxScale && afterScale < currentScale || currentScale < this.minScale && afterScale > currentScale)) {
 			console.warn(`scale out of ${this.minScale} - ${this.maxScale} range`)
-			return
+			endScale()
+			return this
 		}
 
 
-
-		this.status.scaling = true
-
-		transformScale(this.stageGroup)
-
-		this.status.scaling = false
-		const { scaleX = 1 } = this.stageGroup.transform()
-		this.eventBus.emit(EventBusEventName.scale, scaleX, this)
+		transformScale(this.stageGroup, true)
 		return this
 	}
 

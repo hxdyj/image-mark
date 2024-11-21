@@ -12,15 +12,9 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 	static shapeName = "polyline"
 	readonly mouseDrawType: ShapeMouseDrawType = 'multiPress'
 
-	polyline: Polyline
 	constructor(data: PolyLineData, imageMarkInstance: ImageMark, options: ShapeOptions) {
-		const group = new G()
 		data.auxiliaryPoint = undefined
-		super(data, imageMarkInstance, options, group)
-		this.polyline = new Polyline()
-		group.add(this.polyline)
-		this.draw()
-
+		super(data, imageMarkInstance, options)
 	}
 
 	dmoveData(dmove: [number, number]): PolyLineData {
@@ -37,17 +31,14 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 
 	draw(): G {
 		const { points } = this.data
-		this.polyline.attr({
+		const polyline = this.shapeInstance.findOne('polyline') as Polyline || new Polyline()
+		polyline.addTo(this.shapeInstance)
+		polyline.attr({
 			points: points.concat(this.data.auxiliaryPoint || []).join(',')
 		}).stroke({ width: 10, color: '#FADC19' }).fill('none')
 		return this.shapeInstance
 	}
 
-	updateData(newData: PolyLineData): G {
-		this.data = newData
-		this.draw()
-		return this.shapeInstance
-	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null {
 		const { eventList = [], auxiliaryEvent } = options

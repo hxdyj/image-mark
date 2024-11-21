@@ -1,4 +1,4 @@
-import { Circle, G, } from "@svgdotjs/svg.js";
+import { Circle, G, Rect, } from "@svgdotjs/svg.js";
 import { AddToShape, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 
@@ -19,30 +19,25 @@ export interface CircleData extends ShapeData {
 
 export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	static shapeName = "circle"
-	circle: Circle
 	constructor(data: CircleData, imageMarkInstance: ImageMark, options: ShapeOptions) {
-		const group = new G()
-		super(data, imageMarkInstance, options, group)
-		this.circle = new Circle()
-		group.add(this.circle)
-		this.draw()
+		super(data, imageMarkInstance, options)
 	}
 
 	draw(): G {
 		const { x, y, r } = this.data
-		this.circle.attr({
+
+		const circle = this.shapeInstance.findOne('circle') as Circle || new Circle()
+		circle.addTo(this.shapeInstance)
+
+		circle.attr({
 			r
 		}).fill('transparent').stroke({ width: 10, color: '#FADC19' })
 
 		this.shapeInstance.move(x - r, y - r)
+
 		return this.shapeInstance
 	}
 
-	updateData(newData: CircleData): G {
-		this.data = newData
-		this.draw()
-		return this.shapeInstance
-	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null {
 		const { eventList = [] } = options

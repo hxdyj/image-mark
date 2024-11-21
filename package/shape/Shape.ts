@@ -24,7 +24,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		[key: string]: Action
 	} = {}
 
-	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions, shapeInstance: G) {
+	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions) {
 		const constructor = this.constructor
 		// @ts-ignore
 		if (!constructor.shapeName) {
@@ -32,13 +32,19 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 		this.uid = uid(6)
 		this.imageMark = imageMarkInstance;
-		shapeInstance.id(this.uid)
-		this.shapeInstance = shapeInstance
+		const group = new G()
+		group.id(this.uid)
+		this.shapeInstance = group
+		this.draw()
 	}
 
 	abstract draw(): G;
 
-	abstract updateData(data: T): G;
+	updateData(data: T): G {
+		this.data = data
+		this.draw()
+		return this.shapeInstance
+	}
 
 
 	//鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制，paint:作画模式绘制，相当于多笔绘制
