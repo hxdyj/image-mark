@@ -68,7 +68,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 		} else {
 			polygon.attr({
 				points: points.join(',')
-			}).stroke({ width: 10, color: '#FADC19' }).fill('none')
+			}).stroke({ width: 10, color: '#FADC19' }).fill('transparent')
 		}
 		return this.shapeInstance
 	}

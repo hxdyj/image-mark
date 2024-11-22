@@ -12,6 +12,7 @@ import { CircleData, ImageMarkCircle } from "#/shape/Circle"
 import { ImageMarkLine, LineData } from "#/shape/Line"
 import { ImageMarkPolyLine, PolyLineData } from "#/shape/PolyLine"
 import { ImageMarkPolygon, PolygonData } from "#/shape/Polygon"
+import { ImageMarkPathLine, PathLineData } from "#/shape/PathLine"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -91,6 +92,11 @@ export function ShapePluginDemo() {
 					}
 				})
 				.addShape(ImageMarkPolygon, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkPathLine, {
 					afterRender(shapeInstance) {
 						shapeInstance.addAction(LmbMoveAction)
 					}
@@ -255,6 +261,18 @@ export function ShapePluginDemo() {
 							<Button onClick={() => {
 								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
+								const lineData: PathLineData = {
+									shapeName: 'pathline',
+									points: []
+								}
+								const lineInstance = new ImageMarkPathLine(lineData, imgMark.current!, {})
+								shapePlugin.startDrawing(lineInstance)
+							}}>
+								PathLine
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = getShapePlugin()
+								if (!shapePlugin) return
 								const lineData: PolyLineData = {
 									shapeName: 'polyline',
 									points: []
@@ -284,6 +302,13 @@ export function ShapePluginDemo() {
 							setDisableShapeLmbActionWhileSpaceKeyDown(checked)
 						}}></Switch>
 					</OperateGroup>
+					<Button.Group>
+						<Button onClick={() => {
+							const shapePlugin = getShapePlugin()
+							if (!shapePlugin) return
+							console.log(shapePlugin.data)
+						}}>Console Shape Data List</Button>
+					</Button.Group>
 				</Space>
 			</div>
 			<div className="image-mark-container">

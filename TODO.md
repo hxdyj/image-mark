@@ -9,16 +9,17 @@
 - [x] use react write demo
 - [x] multiple instance demo
 - [x] shape rect、circle support
-- [ ] shape line、polygon、polyline、paint support
+- [x] shape line、polygon、polyline、pathline support
+- [ ] resize action
 - [ ] single/multiple select
 - [ ] zIndex support
 - [ ] rect select
 - [ ] operate history and undo redo
 - [ ] mini map
-- [ ] resize action
 - [ ] rotate action
 - [ ] move action add mode to holder and custom holder ui
 - [ ] shape options
 - [ ] shortcut system
 - [ ] mask base image support
 - [ ] mobile support
+- [ ] docs

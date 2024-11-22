@@ -7,12 +7,11 @@ export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
 	eventList?: MouseEvent[]
 	auxiliaryEvent?: MouseEvent
-	paintEvent?: MouseEvent[][]
 }
 export type ShapeOptions = {
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 }
-export type ShapeMouseDrawType = 'oneTouch' | 'multiPress' | 'paint'
+export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	shapeInstance: G;
 	isRendered = false
@@ -50,10 +49,22 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	//鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制，paint:作画模式绘制，相当于多笔绘制
 	readonly mouseDrawType: ShapeMouseDrawType = 'oneTouch'
 
+	private mouseMoveThreshold = 0
+
+	getMouseMoveThreshold() {
+		return this.mouseMoveThreshold
+	}
+
+	setMouseMoveThreshold(threshold: number) {
+		if (threshold < 0) {
+			console.warn('setMouseMoveThreshold should be a positive number')
+			return
+		}
+		this.mouseMoveThreshold = threshold
+	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions = {
 		eventList: [],
-		paintEvent: []
 	}): T | null {
 		return null;
 	}

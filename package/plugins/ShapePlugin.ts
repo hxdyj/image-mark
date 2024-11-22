@@ -2,7 +2,8 @@ import { ImageMark } from "..";
 import { Plugin } from ".";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, last } from "lodash-es";
+import { twoPointsDistance } from "#/utils/cartesianCoordinateSystem";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
@@ -294,6 +295,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
+			const threshold = this.drawingShape.getMouseMoveThreshold()
+			if (threshold) {
+				const lastEvent = last(this.drawingMouseTrace) as MouseEvent
+				const distance = twoPointsDistance([lastEvent.pageX, lastEvent.pageY], [event.pageX, event.pageY])
+				console.log(distance)
+				if (distance < threshold) return
+			}
 			this.drawingMouseTrace.push(event)
 			const newData = this.drawingShape.mouseEvent2Data({
 				eventList: this.drawingMouseTrace
