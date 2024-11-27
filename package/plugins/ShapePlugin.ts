@@ -122,6 +122,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	clear() {
+		this.data = this.data.slice()
 		while (this.data?.length) {
 			let item = this.data[0]
 			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)

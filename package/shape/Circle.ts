@@ -1,5 +1,5 @@
 import { Circle, G, Rect, } from "@svgdotjs/svg.js";
-import { AddToShape, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
+import { AddToShape, getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 
 
@@ -12,8 +12,6 @@ function calculateDistance(point1: { x: number; y: number }, point2: { x: number
 
 export interface CircleData extends ShapeData {
 	shapeName: "circle",
-	x: number,
-	y: number,
 	r: number
 }
 
@@ -24,8 +22,8 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	}
 
 	draw(): G {
-		const { x, y, r } = this.data
-
+		const { r, transform = getDefaultTransform() } = this.data
+		this.shapeInstance.transform(transform.matrix)
 		const circle = this.shapeInstance.findOne('circle') as Circle || new Circle()
 		circle.addTo(this.shapeInstance)
 
@@ -33,7 +31,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 			r
 		}).fill('transparent').stroke({ width: 10, color: '#FADC19' })
 
-		this.shapeInstance.move(x - r, y - r)
+		// this.shapeInstance.move(x - r, y - r)
 
 		return this.shapeInstance
 	}

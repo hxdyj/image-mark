@@ -13,54 +13,79 @@ import { ImageMarkLine, LineData } from "#/shape/Line"
 import { ImageMarkPolyLine, PolyLineData } from "#/shape/PolyLine"
 import { ImageMarkPolygon, PolygonData } from "#/shape/Polygon"
 import { ImageMarkPathLine, PathLineData } from "#/shape/PathLine"
+import { ImageMarkShape, ShapeData } from "#/shape/Shape"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
+	const shapeList = useRef<ShapeData[]>([
+		{
+			shapeName: 'rect',
+			x: 0,
+			y: 0,
+			width: 100,
+			height: 200,
+		},
+		{
+			shapeName: 'circle',
+			transform: {
+				matrix: {
+					a: 1,
+					b: 0,
+					c: 0,
+					d: 1,
+					e: 50,
+					f: 100,
+				}
+			},
+			r: 5
+		},
+		{
+			shapeName: 'image',
+			x: 600,
+			y: 600,
+			width: 200,
+			height: 200,
+			src: '/star.svg'
+		},
+		{
+			shapeName: 'circle',
+			transform: {
+				matrix: {
+					a: 0.5,
+					b: 0,
+					c: 0,
+					d: 0.5,
+					e: 0,
+					f: 0,
+				}
+			},
+			r: 50
+		},
+		{
+			shapeName: 'line',
+			x: 500,
+			y: 500,
+			x2: 600,
+			y2: 600
+		},
+		{
+			shapeName: 'polyline',
+			points: [800, 800, 850, 850, 800, 900]
+		},
+		{
+			shapeName: 'polygon',
+			points: [1000, 1000, 1400, 1400, 1000, 1400]
+		},
+	])
 	useEffect(() => {
 		if (!containerRef.current) throw new Error("containerRef is null")
+
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
 			src: '/demo-parking.jpg',
 			pluginOptions: {
 				[ShapePlugin.pluginName]: {
-					shapeList: [
-						{
-							shapeName: 'rect',
-							x: 200,
-							y: 200,
-							width: 100,
-							height: 200,
-						},
-						{
-							shapeName: 'image',
-							x: 600,
-							y: 600,
-							width: 200,
-							height: 200,
-							src: '/star.svg'
-						},
-						{
-							shapeName: 'circle',
-							x: 0,
-							y: 0,
-							r: 50
-						},
-						{
-							shapeName: 'line',
-							x: 500,
-							y: 500,
-							x2: 600,
-							y2: 600
-						},
-						{
-							shapeName: 'polyline',
-							points: [800, 800, 850, 850, 800, 900]
-						},
-						{
-							shapeName: 'polygon',
-							points: [1000, 1000, 1400, 1400, 1000, 1400]
-						},
-					]
+					shapeList: shapeList.current
 				}
 			}
 		}).addPlugin((imageMarkInstance) => {
@@ -308,7 +333,17 @@ export function ShapePluginDemo() {
 							if (!shapePlugin) return
 							console.log(shapePlugin.data)
 						}}>Console Shape Data List</Button>
+						<Button onClick={() => {
+							const shapePlugin = getShapePlugin()
+							if (!shapePlugin) return
+							const rectData = shapeList.current[0]
+							if (!rectData) return
+							const rectInstance = shapePlugin.getInstanceByData(rectData)
+							if (!rectInstance) return
+							rectInstance.rotate(45)
+						}}>Rotate Rect</Button>
 					</Button.Group>
+
 				</Space>
 			</div>
 			<div className="image-mark-container">

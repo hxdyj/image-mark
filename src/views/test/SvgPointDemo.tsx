@@ -1,5 +1,5 @@
 import { Button } from "@arco-design/web-react"
-import { G, Image, Point, SVG, Svg } from "@svgdotjs/svg.js"
+import { G, Image, Point, Rect, SVG, Svg } from "@svgdotjs/svg.js"
 import { useEffect, useRef, useState } from "react"
 
 export function SvgPointDemo() {
@@ -33,6 +33,16 @@ export function SvgPointDemo() {
 			origin: [0, 0],
 			translate: [250, 250]
 		})
+
+		const testGroup = new G()
+		const testRect = new Rect()
+		testRect.size(100, 50)
+		testGroup.add(testRect)
+		testGroup.addClass('.test-group')
+		testGroup.transform({
+			origin: [100, 100]
+		})
+		svgRef.current?.add(testGroup)
 
 		svgRef.current?.add(groupRef.current)
 	}, [])

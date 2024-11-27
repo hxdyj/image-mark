@@ -12,6 +12,33 @@ export type ShapeOptions = {
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 }
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
+
+export type ShapeTransform = {
+	matrix: {
+		a: number,
+		b: number,
+		c: number,
+		d: number,
+		e: number,
+		f: number,
+	},
+	// origin: [number, number]
+}
+
+export function getDefaultTransform(): ShapeTransform {
+	return {
+		matrix: {
+			a: 1,
+			b: 0,
+			c: 0,
+			d: 1,
+			e: 0,
+			f: 0,
+		},
+		// origin: [0, 0]
+	}
+}
+
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	shapeInstance: G;
 	isRendered = false
@@ -140,6 +167,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		ImageMarkShape.actionList.push(action)
 		return ImageMarkShape
 	}
+
 	static unuseAction(action: typeof Action) {
 		const hasAction = ImageMarkShape.hasAction(action)
 		if (hasAction) {
@@ -147,13 +175,40 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 		return ImageMarkShape
 	}
+
 	static hasAction(action: typeof Action) {
 		return ImageMarkShape.actionList.includes(action)
 	}
+
+
+	rotate(angle: number) {
+		// 1. 获取当前的变换信息
+		const currentTransform = this.shapeInstance.transform();
+		const currentTranslate = {
+			x: currentTransform.translateX || 0,
+			y: currentTransform.translateY || 0
+		};
+
+		// 2. 获取innerGroup的边界盒，计算中心点
+		const bbox = this.shapeInstance.bbox();
+		const center = {
+			x: bbox.x + bbox.width / 2,
+			y: bbox.y + bbox.height / 2
+		};
+
+		this.shapeInstance.transform({
+			rotate: angle,
+			origin: [center.x, center.y] // 补偿平移带来的影响
+		}, true);
+
+		return this;
+	}
+
 }
 
 export interface ShapeData {
 	shapeName: string
+	transform?: ShapeTransform
 	[x: string]: any
 }
 
