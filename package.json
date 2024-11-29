@@ -6,7 +6,9 @@
 	"scripts": {
 		"dev": "vite --mode development --force",
 		"build": "vite build -c vite.lib.config.ts",
-		"preview": "vite preview"
+		"build-demo": "vite build --mode dev",
+		"preview": "vite preview",
+		"deploy:dev": "pnpm run build-demo && node ./node_modules/bbl-scripts/scripts/deploy.js dev"
 	},
 	"devDependencies": {
 		"@arco-design/web-react": "^2.64.1",
@@ -21,6 +23,7 @@
 		"@typescript-eslint/parser": "^8.12.2",
 		"@vitejs/plugin-react": "^4.3.3",
 		"autoprefixer": "^10.4.19",
+		"bbl-scripts": "^0.0.2",
 		"classnames": "^2.5.1",
 		"eslint": "^9.13.0",
 		"eslint-plugin-react-hooks": "^5.0.0",

@@ -1,5 +1,4 @@
 import { BoundingBox } from '..';
-
 export type Point = {
     x: number;
     y: number;

@@ -1,5 +1,4 @@
 import { ArrayPoint, BoundingBox, EdgeName } from '..';
-
 export type RectVertexPoints = {
     [key in EdgeName]: ArrayPoint;
 };

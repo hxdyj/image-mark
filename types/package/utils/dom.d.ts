@@ -1,5 +1,4 @@
 import { ContainerType } from '../index';
-
 export declare function getElement(el: ContainerType): HTMLElement;
 export declare function getContainerInfo(el: ContainerType): {
     top: number;

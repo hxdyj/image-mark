@@ -1,53 +1,59 @@
-import { add, bignumber, cos as mathCos, sin as mathSin, divide, multiply, pi } from "mathjs";
-
 export class Matrix2D1 {
 	constructor(
-		public a = bignumber(1), public b = bignumber(0),
-		public c = bignumber(0), public d = bignumber(1),
-		public e = bignumber(0), public f = bignumber(0)
+		public a = 1, public b = 0,
+		public c = 0, public d = 1,
+		public e = 0, public f = 0
 	) { }
 
 	createNewMatrix(...params: ConstructorParameters<typeof Matrix2D1>) {
 		const constructor = Object.getPrototypeOf(this).constructor
-		//@ts-ignore
-		params[5] = multiply(bignumber(-1), params[5])
 		return new constructor(...params)
 	}
 
 	// 矩阵乘法
 	multiply(m: Matrix2D1): Matrix2D1 {
 		return this.createNewMatrix(
-			add(multiply(this.a, m.a), multiply(this.b, m.c)),        // a
-			add(multiply(this.a, m.b), multiply(this.b, m.d)),        // b
-			add(multiply(this.c, m.a), multiply(this.d, m.c)),        // c
-			add(multiply(this.c, m.b), multiply(this.d, m.d)),        // d
-			add(multiply(this.a, m.e), multiply(this.b, m.f), this.e),  // e
-			add(multiply(this.c, m.e), multiply(this.d, m.f), this.f)   // f
+			m.a * this.a + m.b * this.c, //a
+			m.a * this.b + m.b * this.d, //b
+			m.c * this.a + m.d * this.c, //c
+			m.c * this.b + m.d * this.d, //d
+			m.a * this.e + m.b * this.f + m.e, //e
+			m.c * this.e + m.d * this.f + m.f, //f
 		);
 	}
 
 	// 平移
 	translate(x: number, y: number): Matrix2D1 {
-		return this.multiply(this.createNewMatrix(bignumber(1), bignumber(0), bignumber(0), bignumber(1), bignumber(x), bignumber(y)));
+		return this.multiply(this.createNewMatrix(1, 0, 0, 1, x, y));
 	}
 
 	// 旋转（角度）
 	rotate(angle: number): Matrix2D1 {
 		const { cos, sin } = this.calculateRotateInfo(angle);
-		const inverseSin = multiply(bignumber(-1), sin);
-		// 直接处理旋转后的b和c值，确保符号与SVG一致
-		return this.multiply(this.createNewMatrix(cos, sin, inverseSin, cos, bignumber(0), bignumber(0)));
+		const yflip = this.createNewMatrix(1, 0, 0, -1, 0, 0)
+		let a = this.clone()
+		a.f *= -1
+		// a = a.multiply(yflip)
+		const b = a.multiply(this.createNewMatrix(cos, sin, -sin, cos, 0, 0));
+		const c = b
+		// .multiply(yflip)
+
+		c.f *= -1
+		return c
 	}
 
+	clone(): Matrix2D1 {
+		return this.createNewMatrix(this.a, this.b, this.c, this.d, this.e, this.f);
+	}
 
 	angle2rad(angle: number) {
-		return divide(multiply(bignumber(angle), bignumber(pi)), bignumber(180));
+		return angle * Math.PI / 180;
 	}
 
 	calculateRotateInfo(angle: number) {
 		const rad = this.angle2rad(angle);
-		const cos = mathCos(rad);
-		const sin = mathSin(rad);
+		const cos = Math.cos(rad);
+		const sin = Math.sin(rad);
 		return { cos, sin };
 	}
 
@@ -64,8 +70,10 @@ export class Matrix2D1 {
 			.translate(-x, -y);
 	}
 
+
 	log() {
-		console.log(`matrix: ${this.a} ${this.b} ${this.c} ${this.d} ${this.e} ${this.f}`);
+		console.log(`matrix(${this.a}, ${this.b}, ${this.c}, ${this.d}, ${this.e}, ${this.f})`);
 		return this;
 	}
 }
+
