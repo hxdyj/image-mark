@@ -1,4 +1,8 @@
 export class Matrix2D {
+	/*
+		[ a , c  , e  ]
+		[	b , d  , f  ]
+	*/
 	constructor(
 		public a = 1, public b = 0,
 		public c = 0, public d = 1,
@@ -13,12 +17,12 @@ export class Matrix2D {
 	// 矩阵乘法
 	multiply(m: Matrix2D): Matrix2D {
 		return this.createNewMatrix(
-			m.a * this.a + m.b * this.c, //a
-			m.a * this.b + m.b * this.d, //b
-			m.c * this.a + m.d * this.c, //c
-			m.c * this.b + m.d * this.d, //d
-			m.a * this.e + m.b * this.f + m.e, //e
-			m.c * this.e + m.d * this.f + m.f, //f
+			this.a * m.a + this.c * m.b,
+			this.b * m.a + this.d * m.b,
+			this.a * m.c + this.c * m.d,
+			this.b * m.c + this.d * m.d,
+			this.a * m.e + this.c * m.f + this.e,
+			this.b * m.e + this.d * m.f + this.f
 		);
 	}
 
@@ -30,7 +34,16 @@ export class Matrix2D {
 	// 旋转（角度）
 	rotate(angle: number): Matrix2D {
 		const { cos, sin } = this.calculateRotateInfo(angle);
-		return this.multiply(this.createNewMatrix(cos, -sin, sin, cos, 0, 0));
+		// console.log(`
+		// 	rotate angle: ${angle}
+		// 	cos: ${cos}
+		// 	sin: ${sin}
+		// 	`)
+		return this.multiply(this.createNewMatrix(cos, sin, -sin, cos, 0, 0))
+	}
+
+	rotateByPoint(angle: number, point: [number, number]): Matrix2D {
+		return this.translate(point[0], point[1]).rotate(angle).translate(-point[0], -point[1]);
 	}
 
 	angle2rad(angle: number) {
@@ -49,17 +62,16 @@ export class Matrix2D {
 		return this.multiply(this.createNewMatrix(sx, 0, 0, sy, 0, 0));
 	}
 
-	// 围绕指定点旋转
-	rotateAroundPoint(angle: number, x: number, y: number): Matrix2D {
-		return this
-			.translate(x, y)
-			.rotate(angle)
-			.translate(-x, -y);
-	}
-
-
 	log() {
-		console.log(`matrix(${this.a}, ${this.b}, ${this.c}, ${this.d}, ${this.e}, ${this.f})`);
+		console.log(`
+========================================
+${this.a} ${this.c} ${this.e}
+${this.b} ${this.d} ${this.f}
+0 0 1
+========================================
+matrix(${this.a}, ${this.b}, ${this.c}, ${this.d}, ${this.e}, ${this.f})
+========================================
+`);
 		return this;
 	}
 }

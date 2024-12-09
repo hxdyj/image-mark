@@ -14,6 +14,9 @@ importers:
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
+      gl-matrix:
+        specifier: ^3.4.3
+        version: 3.4.3
       hotkeys-js:
         specifier: ^3.13.7
         version: 3.13.7
@@ -36,6 +39,9 @@ importers:
       '@rollup/plugin-strip':
         specifier: ^3.0.4
         version: 3.0.4(rollup@4.24.4)
+      '@types/gl-matrix':
+        specifier: ^3.2.0
+        version: 3.2.0
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -728,6 +734,10 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+  '@types/gl-matrix@3.2.0':
+    resolution: {integrity: sha512-CY4JAtSOGQX7rVgqVuOk7ZfaLv8VeadDMPj3smMOy8Hp/YiHONa3Mr0mEUgbo0eEwV7+Owpf6BwspcA7hv4NXg==}
+    deprecated: This is a stub types definition. gl-matrix provides its own type definitions, so you do not need this installed.
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1238,6 +1248,9 @@ packages:
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
+
+  gl-matrix@3.4.3:
+    resolution: {integrity: sha512-wcCp8vu8FT22BnvKVPjXa/ICBWRq/zjFfdofZy1WSpQZpphblv12/bOQLBC1rMM7SGOFS9ltVmKOHil5+Ml7gA==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -2645,6 +2658,10 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
+  '@types/gl-matrix@3.2.0':
+    dependencies:
+      gl-matrix: 3.4.3
+
   '@types/json-schema@7.0.15': {}
 
   '@types/lodash-es@4.17.12':
@@ -3215,6 +3232,8 @@ snapshots:
   function-bind@1.1.2: {}
 
   gensync@1.0.0-beta.2: {}
+
+  gl-matrix@3.4.3: {}
 
   glob-parent@5.1.2:
     dependencies:
