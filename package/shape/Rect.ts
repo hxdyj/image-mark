@@ -1,10 +1,14 @@
 import { G, Point, Rect } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark, { BoundingBox } from "..";
 
 
 export interface RectData extends BoundingBox, ShapeData {
 	shapeName: "rect",
+	x: number,
+	y: number,
+	width: number,
+	height: number,
 }
 
 export function getBoundingBoxByTwoPoints(point1: Point, point2: Point): BoundingBox {
@@ -27,11 +31,11 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 	}
 
 	draw(): G {
-		const { x, y, width, height } = this.data
+		const { x, y, width, height, transform = getDefaultTransform() } = this.data
 		const rect = this.shapeInstance.findOne('rect') as Rect || new Rect()
 		rect.addTo(this.shapeInstance)
-		rect.size(width, height).fill('transparent').stroke({ width: 10, color: '#FADC19' })
-		this.shapeInstance.move(x, y)
+		rect.move(x, y).size(width, height).fill('transparent').stroke({ width: 10, color: '#FADC19' })
+		this.shapeInstance.transform(transform.matrix)
 		return this.shapeInstance
 	}
 

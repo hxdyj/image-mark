@@ -1,5 +1,5 @@
 import { G, Line, Path, Polygon, Polyline } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 
 export interface PathLineData extends ShapeData {
@@ -14,21 +14,8 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 		super(data, imageMarkInstance, options)
 	}
 
-	dmoveData(dmove: [number, number]): PathLineData {
-		const { points = [] } = this.data
-		points.forEach((point, index) => {
-			if (index % 2 === 0) {
-				points[index] = point + dmove[0]
-			} else {
-				points[index] = point + dmove[1]
-			}
-		})
-		return this.data
-	}
-
 	draw(): G {
-		const { points } = this.data
-
+		const { points, transform = getDefaultTransform() } = this.data
 		const path = this.shapeInstance.findOne('path') as Path || new Path()
 		path.addTo(this.shapeInstance)
 		const d = points.reduce((pre, current, index) => {
@@ -41,7 +28,7 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 		path.attr({
 			d
 		}).stroke({ width: 10, color: '#FADC19' }).fill('none')
-
+		this.shapeInstance.transform(transform.matrix)
 		return this.shapeInstance
 	}
 

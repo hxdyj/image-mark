@@ -1,5 +1,5 @@
 import { G, Image } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
+import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import { ImageMark } from "..";
 import { getBoundingBoxByTwoPoints } from "./Rect";
 
@@ -22,7 +22,7 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	protected loadUrl: string = ''
 
 	draw(): G {
-
+		const { src, x, y, width, height, transform = getDefaultTransform() } = this.data
 		const image = this.shapeInstance.findOne('image') as Image || new Image()
 		image.addTo(this.shapeInstance)
 
@@ -32,14 +32,16 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		})
 
 
-		if (this.loadUrl === this.data.src) {
+		if (this.loadUrl === src) {
 			this.drawInfo()
 		} else {
-			image.load(this.data.src, () => {
-				this.loadUrl = this.data.src
+			image.load(src, () => {
+				this.loadUrl = src
 				this.drawInfo()
 			})
 		}
+
+		this.shapeInstance.transform(transform.matrix)
 
 		return this.shapeInstance
 	}

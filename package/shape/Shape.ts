@@ -90,6 +90,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		this.mouseMoveThreshold = threshold
 	}
 
+	//通过鼠标事件怎么画出Shape
 	mouseEvent2Data(options: MouseEvent2DataOptions = {
 		eventList: [],
 	}): T | null {
@@ -106,16 +107,6 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 	}
 
-	dmoveData(dmove: [number, number]): T {
-		const { x, y } = this.data
-		if (typeof x == 'number' || typeof y == 'number') {
-			//@ts-ignore
-			this.data.x += dmove[0]
-			//@ts-ignore
-			this.data.y += dmove[1]
-		}
-		return this.data
-	}
 
 	afterRender() {
 		this.bindActions()

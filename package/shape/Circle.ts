@@ -12,6 +12,8 @@ function calculateDistance(point1: { x: number; y: number }, point2: { x: number
 
 export interface CircleData extends ShapeData {
 	shapeName: "circle",
+	x: number,
+	y: number,
 	r: number
 }
 
@@ -22,17 +24,13 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	}
 
 	draw(): G {
-		const { r, transform = getDefaultTransform() } = this.data
+		const { x, y, r, transform = getDefaultTransform() } = this.data
 		this.shapeInstance.transform(transform.matrix)
 		const circle = this.shapeInstance.findOne('circle') as Circle || new Circle()
 		circle.addTo(this.shapeInstance)
-
-		circle.attr({
+		circle.move(x - r, y - r).attr({
 			r
 		}).fill('transparent').stroke({ width: 10, color: '#FADC19' })
-
-		// this.shapeInstance.move(x - r, y - r)
-
 		return this.shapeInstance
 	}
 

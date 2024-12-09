@@ -1,5 +1,5 @@
 import { G, Line, } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
+import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 
 export interface LineData extends ShapeData {
@@ -16,17 +16,8 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		super(data, imageMarkInstance, options)
 	}
 
-	dmoveData(dmove: [number, number]): LineData {
-		const { x, y, x2, y2 } = this.data
-		this.data.x += dmove[0]
-		this.data.y += dmove[1]
-		this.data.x2 = x2 + this.data.x - x
-		this.data.y2 = y2 + this.data.y - y
-		return this.data
-	}
-
 	draw(): G {
-		const { x, y, x2, y2 } = this.data
+		const { x, y, x2, y2, transform = getDefaultTransform() } = this.data
 
 		const line = this.shapeInstance.findOne('line') as Line || new Line()
 		line.addTo(this.shapeInstance)
@@ -37,6 +28,8 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 			x2: x2,
 			y2: y2
 		}).stroke({ width: 10, color: '#FADC19' })
+		this.shapeInstance.transform(transform.matrix)
+
 		return this.shapeInstance
 	}
 

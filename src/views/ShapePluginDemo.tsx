@@ -20,10 +20,20 @@ export function ShapePluginDemo() {
 	const shapeList = useRef<ShapeData[]>([
 		{
 			shapeName: 'rect',
-			x: 0,
-			y: 0,
 			width: 100,
 			height: 200,
+			x: 100,
+			y: 100,
+			transform: {
+				matrix: {
+					a: 1,
+					b: 0,
+					c: 0,
+					d: 1,
+					e: 0,
+					f: 0,
+				}
+			},
 		},
 		{
 			shapeName: 'circle',
@@ -37,6 +47,8 @@ export function ShapePluginDemo() {
 					f: 100,
 				}
 			},
+			x: 0,
+			y: 0,
 			r: 5
 		},
 		{
@@ -59,7 +71,9 @@ export function ShapePluginDemo() {
 					f: 0,
 				}
 			},
-			r: 50
+			r: 50,
+			x: 300,
+			y: 300
 		},
 		{
 			shapeName: 'line',

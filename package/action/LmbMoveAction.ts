@@ -1,7 +1,7 @@
 import { G, MatrixExtract, Point, Shape } from "@svgdotjs/svg.js";
 import ImageMark, { ArrayPoint } from "..";
 import { Action } from ".";
-import { ImageMarkShape } from "../shape/Shape";
+import { getDefaultTransform, ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
 
 
@@ -76,7 +76,7 @@ export class LmbMoveAction extends Action {
 		event.stopPropagation()
 		event.preventDefault()
 		this.status.mouseDown = true
-		this.startPoint = this.shape.shapeInstance.point(evt.clientX, evt.clientY)
+		this.startPoint = this.imageMark.stageGroup.point(evt.clientX, evt.clientY)
 		this.startTransform = this.shape.shapeInstance.transform()
 		this.options?.onStart?.(this.imageMark, this.shape, evt)
 	}
@@ -90,21 +90,19 @@ export class LmbMoveAction extends Action {
 		event.preventDefault()
 		let cloneShape = new G()
 		cloneShape.transform(this.shape.shapeInstance.transform())
-		this.imageMark.stageGroup.add(cloneShape)
-		const cloneMovePoint = cloneShape.point(event.clientX, event.clientY)
-		cloneShape.remove()
+		const cloneMovePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)
+
 		let cloneDiffPoint: ArrayPoint = [cloneMovePoint.x - this.startPoint.x, cloneMovePoint.y - this.startPoint.y]
 		cloneShape.transform({
 			translate: cloneDiffPoint
 		}, true)
 
 		const nextTransform = cloneShape.transform()
-
 		const limitFlag = this.options?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
 
 		this.shape.shapeInstance.transform(this.startTransform)
 
-		const movePoint = this.shape.shapeInstance.point(event.clientX, event.clientY)
+		const movePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)
 
 		let diffPoint: ArrayPoint = [movePoint.x - this.startPoint.x + limitFlag[0], movePoint.y - this.startPoint.y + limitFlag[1]]
 		this.shape.shapeInstance.transform({
@@ -126,13 +124,18 @@ export class LmbMoveAction extends Action {
 		this.status.mouseDown = false
 		this.startPoint = null
 
-		const { translateX: startTranslateX = 0, translateY: startTranslateY = 0 } = this.startTransform || {}
-		const { translateX = 0, translateY = 0 } = this.shape.shapeInstance.transform()
-		const diffTranslate: [number, number] = [translateX - startTranslateX, translateY - startTranslateY]
+		const currentMatrix = Object.assign(getDefaultTransform(), this.shape.shapeInstance.transform())
 
-		this.shape.dmoveData(diffTranslate)
-
-		this.shape.shapeInstance.transform(this.startTransform!)
+		this.shape.data.transform = {
+			matrix: {
+				a: currentMatrix.a!,
+				b: currentMatrix.b!,
+				c: currentMatrix.c!,
+				d: currentMatrix.d!,
+				e: currentMatrix.e!,
+				f: currentMatrix.f!
+			}
+		}
 		this.shape.updateData(this.shape.data)
 		this.startTransform = null
 
