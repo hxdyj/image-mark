@@ -11,6 +11,7 @@ import { SvgPointDemo } from '../views/test/SvgPointDemo'
 import { SvgMaskDemo } from '../views/test/SvgMaskDemo'
 import { ShapePluginDemo } from '../views/ShapePluginDemo'
 import { SvgNestGroupTransform } from '../views/test/SvgNestGroupTransform'
+import { SvgNestDemo } from '../views/test/SvgNestDemo'
 
 interface CustomRouteFields {
 	meta?: {
@@ -133,6 +134,15 @@ export const routes: IRoute[] = [
 								element: <SvgNestGroupTransform />,
 								meta: {
 									title: 'SvgNestGroupTransform',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
+								path: '/test/nestSvg',
+								element: <SvgNestDemo />,
+								meta: {
+									title: 'SvgNestDemo',
 									menuShow: true,
 									noLogin: false,
 								},

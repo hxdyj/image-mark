@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+	<symbol id="circle" viewBox="0 0 50 50">
+		<circle cx="25" cy="25" r="20" fill="blue" />
+	</symbol>
+	<use xlink:href="#circle" x="100" y="100" />
+	<use xlink:href="#circle" x="200" y="200" fill="red" />
+</svg>

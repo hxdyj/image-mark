@@ -1,4 +1,4 @@
-import { G, Shape } from "@svgdotjs/svg.js";
+import { G, Shape, Svg } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action";
 import { uid } from "uid";
@@ -40,7 +40,7 @@ export function getDefaultTransform(): ShapeTransform {
 }
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
-	shapeInstance: G;
+	shapeInstance: Svg;
 	isRendered = false
 	isBindActions = false
 	static shapeName: string
@@ -58,15 +58,15 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 		this.uid = uid(6)
 		this.imageMark = imageMarkInstance;
-		const group = new G()
+		const group = new Svg()
 		group.id(this.uid)
 		this.shapeInstance = group
 		this.draw()
 	}
 
-	abstract draw(): G;
+	abstract draw(): Svg;
 
-	updateData(data: T): G {
+	updateData(data: T): Svg {
 		this.data = data
 		this.draw()
 		return this.shapeInstance
