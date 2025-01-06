@@ -3,7 +3,7 @@ import { Plugin } from ".";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 import { cloneDeep, last } from "lodash-es";
-import { twoPointsDistance } from "#/utils/cartesianCoordinateSystem";
+import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
