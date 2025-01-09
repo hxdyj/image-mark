@@ -1,6 +1,7 @@
 import { Circle, G, Rect, } from "@svgdotjs/svg.js";
 import { AddToShape, getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
+import { cloneDeep } from "lodash-es";
 
 
 function calculateDistance(point1: { x: number; y: number }, point2: { x: number; y: number }): number {
@@ -25,12 +26,13 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 
 	draw(): G {
 		const { x, y, r, transform = getDefaultTransform() } = this.data
-		this.shapeInstance.transform(transform.matrix)
+		console.log('draw circle', cloneDeep(transform), x, y, r)
 		const circle = this.shapeInstance.findOne('circle') as Circle || new Circle()
 		circle.addTo(this.shapeInstance)
-		circle.move(x - r, y - r).attr({
+		circle.center(x, y).attr({
 			r
 		}).fill('transparent').stroke({ width: 10, color: '#FADC19' })
+		this.shapeInstance.transform(transform.matrix)
 		return this.shapeInstance
 	}
 

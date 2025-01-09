@@ -40,7 +40,7 @@ export function getDefaultTransform(): ShapeTransform {
 }
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
-	shapeInstance: Svg;
+	shapeInstance: G;
 	isRendered = false
 	isBindActions = false
 	static shapeName: string
@@ -58,15 +58,15 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 		this.uid = uid(6)
 		this.imageMark = imageMarkInstance;
-		const group = new Svg()
+		const group = new G()
 		group.id(this.uid)
 		this.shapeInstance = group
 		this.draw()
 	}
 
-	abstract draw(): Svg;
+	abstract draw(): G;
 
-	updateData(data: T): Svg {
+	updateData(data: T): G {
 		this.data = data
 		this.draw()
 		return this.shapeInstance

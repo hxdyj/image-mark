@@ -110,36 +110,36 @@ export function ShapePluginDemo() {
 						shapeInstance.addAction(LmbMoveAction)
 					}
 				})
-			// .addShape(ImageMarkImage, {
-			// 	afterRender(shapeInstance) {
-			// 		shapeInstance.addAction(LmbMoveAction)
-			// 	}
-			// })
-			// .addShape(ImageMarkCircle, {
-			// 	afterRender(shapeInstance) {
-			// 		shapeInstance.addAction(LmbMoveAction)
-			// 	}
-			// })
-			// .addShape(ImageMarkLine, {
-			// 	afterRender(shapeInstance) {
-			// 		shapeInstance.addAction(LmbMoveAction)
-			// 	}
-			// })
-			// .addShape(ImageMarkPolyLine, {
-			// 	afterRender(shapeInstance) {
-			// 		shapeInstance.addAction(LmbMoveAction)
-			// 	}
-			// })
-			// .addShape(ImageMarkPolygon, {
-			// 	afterRender(shapeInstance) {
-			// 		shapeInstance.addAction(LmbMoveAction)
-			// 	}
-			// })
-			// .addShape(ImageMarkPathLine, {
-			// 	afterRender(shapeInstance) {
-			// 		shapeInstance.addAction(LmbMoveAction)
-			// 	}
-			// })
+				.addShape(ImageMarkImage, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkCircle, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkLine, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkPolyLine, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkPolygon, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
+				.addShape(ImageMarkPathLine, {
+					afterRender(shapeInstance) {
+						shapeInstance.addAction(LmbMoveAction)
+					}
+				})
 			return shapePluginInstance
 		})
 		return () => {
@@ -252,7 +252,7 @@ export function ShapePluginDemo() {
 							}}>
 								Rect
 							</Button>
-							{/* <Button onClick={() => {
+							<Button onClick={() => {
 								const shapePlugin = getShapePlugin()
 								if (!shapePlugin) return
 								const starImageData: ImgData = {
@@ -332,7 +332,7 @@ export function ShapePluginDemo() {
 								shapePlugin.startDrawing(lineInstance)
 							}}>
 								Polygon Start
-							</Button> */}
+							</Button>
 
 						</Button.Group>
 					</OperateGroup>
