@@ -3,6 +3,7 @@ import ImageMark, { ArrayPoint } from "..";
 import { Action } from ".";
 import { getDefaultTransform, ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
+import { cloneDeep } from "lodash-es";
 
 
 export type LmbMoveActionOptions = {
@@ -89,9 +90,8 @@ export class LmbMoveAction extends Action {
 		event.stopPropagation()
 		event.preventDefault()
 		let cloneShape = new G()
-		cloneShape.transform(this.shape.shapeInstance.transform())
+		cloneShape.transform(this.startTransform)
 		const cloneMovePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)
-
 		let cloneDiffPoint: ArrayPoint = [cloneMovePoint.x - this.startPoint.x, cloneMovePoint.y - this.startPoint.y]
 		cloneShape.transform({
 			translate: cloneDiffPoint
@@ -105,6 +105,7 @@ export class LmbMoveAction extends Action {
 		const movePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)
 
 		let diffPoint: ArrayPoint = [movePoint.x - this.startPoint.x + limitFlag[0], movePoint.y - this.startPoint.y + limitFlag[1]]
+
 		this.shape.shapeInstance.transform({
 			translate: diffPoint
 		}, true)

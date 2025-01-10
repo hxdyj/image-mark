@@ -2,6 +2,8 @@ import { G, Shape, Svg } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action";
 import { uid } from "uid";
+import { DeepPartial } from "@arco-design/web-react/es/Form/store";
+import { defaultsDeep } from "lodash-es";
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
@@ -25,8 +27,8 @@ export type ShapeTransform = {
 	// origin: [number, number]
 }
 
-export function getDefaultTransform(): ShapeTransform {
-	return {
+export function getDefaultTransform(option?: DeepPartial<ShapeTransform>): ShapeTransform {
+	return defaultsDeep(option, {
 		matrix: {
 			a: 1,
 			b: 0,
@@ -36,7 +38,7 @@ export function getDefaultTransform(): ShapeTransform {
 			f: 0,
 		},
 		// origin: [0, 0]
-	}
+	})
 }
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {

@@ -130,7 +130,6 @@ export function TeamMarkPluginDemo() {
 						limit(imageMark: ImageMark, shape: TeamShape, nextTransform: MatrixExtract) {
 							let { translateX = 0, translateY = 0 } = nextTransform
 							let { naturalHeight, naturalWidth } = imageMark.imageDom
-
 							let isOutOfBounds = false
 							const fixTranslate = [0, 0]
 							if (translateX < 0) {
@@ -139,20 +138,22 @@ export function TeamMarkPluginDemo() {
 							}
 
 							if (translateX > naturalWidth) {
+
 								isOutOfBounds = true
 								fixTranslate[0] = naturalWidth - translateX
 							}
 
 							if (translateY < 0) {
+
 								isOutOfBounds = true
 								fixTranslate[1] = -translateY
 							}
 
 							if (translateY > naturalHeight) {
+
 								isOutOfBounds = true
 								fixTranslate[1] = naturalHeight - translateY
 							}
-
 							return fixTranslate
 
 						},
