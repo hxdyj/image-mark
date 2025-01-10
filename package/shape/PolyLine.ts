@@ -21,9 +21,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		const { points, transform = getDefaultTransform() } = this.data
 		const polyline = this.shapeInstance.findOne('polyline') as Polyline || new Polyline()
 		polyline.addTo(this.shapeInstance)
-		polyline.attr({
-			points: points.concat(this.data.auxiliaryPoint || []).join(',')
-		}).stroke({ width: 10, color: '#FADC19' }).fill('none')
+		polyline.plot(points.concat(this.data.auxiliaryPoint || [])).stroke({ width: 10, color: '#FADC19' }).fill('none')
 		this.shapeInstance.transform(transform.matrix)
 		return this.shapeInstance
 	}

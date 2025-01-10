@@ -25,9 +25,7 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 			}
 			return pre + append
 		}, points?.length ? 'M' : '')
-		path.attr({
-			d
-		}).stroke({ width: 10, color: '#FADC19' }).fill('none')
+		path.plot(d).stroke({ width: 10, color: '#FADC19' }).fill('none')
 		this.shapeInstance.transform(transform.matrix)
 		return this.shapeInstance
 	}

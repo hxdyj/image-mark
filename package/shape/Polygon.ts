@@ -30,9 +30,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 				this.shapeInstance.add(polyline)
 			}
 
-			polyline.attr({
-				points: points.concat(this.data.auxiliaryPoint || []).join(',')
-			}).stroke({ width: 10, color: '#FADC19' }).fill('none')
+			polyline.plot(points.concat(this.data.auxiliaryPoint || [])).stroke({ width: 10, color: '#FADC19' }).fill('none')
 
 			let dashLine = this.shapeInstance.findOne('line') as Line
 			if (points.length > 2) {
