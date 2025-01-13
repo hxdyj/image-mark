@@ -14,6 +14,8 @@ import { ImageMarkPolyLine, PolyLineData } from "#/shape/PolyLine"
 import { ImageMarkPolygon, PolygonData } from "#/shape/Polygon"
 import { ImageMarkPathLine, PathLineData } from "#/shape/PathLine"
 import { ImageMarkShape, ShapeData } from "#/shape/Shape"
+import { SelectionAction } from "#/action/SelectionAction"
+import { SelectionPlugin } from "#/plugins/SelectionPlugin"
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -102,46 +104,65 @@ export function ShapePluginDemo() {
 					shapeList: shapeList.current
 				}
 			}
-		}).addPlugin((imageMarkInstance) => {
-			const shapePluginInstance = new ShapePlugin(imageMarkInstance)
-			shapePluginInstance
-				.addShape(ImageMarkRect, {
-					afterRender(shapeInstance) {
-						shapeInstance.addAction(LmbMoveAction)
-					}
-				})
-				.addShape(ImageMarkImage, {
-					afterRender(shapeInstance) {
-						shapeInstance.addAction(LmbMoveAction)
-					}
-				})
-				.addShape(ImageMarkCircle, {
-					afterRender(shapeInstance) {
-						shapeInstance.addAction(LmbMoveAction)
-					}
-				})
-				.addShape(ImageMarkLine, {
-					afterRender(shapeInstance) {
-						shapeInstance.addAction(LmbMoveAction)
-					}
-				})
-				.addShape(ImageMarkPolyLine, {
-					afterRender(shapeInstance) {
-						shapeInstance.addAction(LmbMoveAction)
-					}
-				})
-				.addShape(ImageMarkPolygon, {
-					afterRender(shapeInstance) {
-						shapeInstance.addAction(LmbMoveAction)
-					}
-				})
-				.addShape(ImageMarkPathLine, {
-					afterRender(shapeInstance) {
-						shapeInstance.addAction(LmbMoveAction)
-					}
-				})
-			return shapePluginInstance
-		})
+		}).addPlugin(SelectionPlugin)
+			.addPlugin((imageMarkInstance) => {
+				const shapePluginInstance = new ShapePlugin(imageMarkInstance)
+				shapePluginInstance
+					.addShape(ImageMarkRect, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(LmbMoveAction)
+							shapeInstance.addAction(SelectionAction, {
+								initDrawFunc(selection: SelectionAction) {
+									const shape = selection.getSelectionShape()
+									shape?.stroke({
+										color: '#165DFF'
+									})
+								}
+							})
+						}
+					})
+					.addShape(ImageMarkImage, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(LmbMoveAction)
+							shapeInstance.addAction(SelectionAction)
+
+						}
+					})
+					.addShape(ImageMarkCircle, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(LmbMoveAction)
+							shapeInstance.addAction(SelectionAction)
+
+						}
+					})
+					.addShape(ImageMarkLine, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(LmbMoveAction)
+							shapeInstance.addAction(SelectionAction)
+
+						}
+					})
+					.addShape(ImageMarkPolyLine, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(LmbMoveAction)
+							shapeInstance.addAction(SelectionAction)
+
+						}
+					})
+					.addShape(ImageMarkPolygon, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(SelectionAction)
+							shapeInstance.addAction(LmbMoveAction)
+						}
+					})
+					.addShape(ImageMarkPathLine, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(LmbMoveAction)
+							shapeInstance.addAction(SelectionAction)
+						}
+					})
+				return shapePluginInstance
+			})
 		return () => {
 			imgMark.current?.destroy()
 		}

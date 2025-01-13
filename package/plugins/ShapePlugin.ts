@@ -70,10 +70,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	bindEvent() {
 		super.bindEvent()
-		this.imageMark.on('rerender', this.onRerender)
-		this.imageMark.on('draw', this.onDraw)
-		this.imageMark.on('shape_delete', this.onDelete)
-		this.imageMark.on('resize', this.onResize)
+		this.imageMark.on(EventBusEventName.rerender, this.onRerender)
+		this.imageMark.on(EventBusEventName.draw, this.onDraw)
+		this.imageMark.on(EventBusEventName.shape_delete, this.onDelete)
+		this.imageMark.on(EventBusEventName.resize, this.onResize)
 		this.imageMark.container.addEventListener('mousedown', this.onDrawingMouseDown)
 		this.imageMark.container.addEventListener('mousemove', this.onDrawingMouseMove)
 		document.addEventListener('mousemove', this.onDrawingDocumentMouseMove)
@@ -82,10 +82,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	unbindEvent() {
 		super.unbindEvent()
-		this.imageMark.off('rerender', this.onRerender)
-		this.imageMark.off('draw', this.onDraw)
-		this.imageMark.off('shape_delete', this.onDelete)
-		this.imageMark.off('resize', this.onResize)
+		this.imageMark.off(EventBusEventName.rerender, this.onRerender)
+		this.imageMark.off(EventBusEventName.draw, this.onDraw)
+		this.imageMark.off(EventBusEventName.shape_delete, this.onDelete)
+		this.imageMark.off(EventBusEventName.resize, this.onResize)
 
 		this.imageMark.container.removeEventListener('mousedown', this.onDrawingMouseDown)
 		this.imageMark.container.removeEventListener('mousemove', this.onDrawingMouseMove)

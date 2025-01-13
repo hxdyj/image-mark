@@ -12,8 +12,11 @@ export type MouseEvent2DataOptions = {
 }
 export type ShapeOptions = {
 	afterRender?: (shapeInstance: ImageMarkShape) => void
+	initDrawFunc?: ShapeDrawFunc
 }
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
+
+export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 
 export type ShapeTransform = {
 	matrix: {
@@ -67,6 +70,27 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	}
 
 	abstract draw(): G;
+
+	protected drawFuncList: ShapeDrawFunc[] = []
+
+	addDrawFunc(func: ShapeDrawFunc) {
+		this.drawFuncList.push(func)
+	}
+
+	removeDrawFunc(func: ShapeDrawFunc) {
+		const index = this.drawFuncList.indexOf(func)
+		if (index > -1) {
+			this.drawFuncList.splice(index, 1)
+		}
+	}
+
+	getMainShape<T = Shape>() {
+		return this.shapeInstance.find(`#${this.getMainId()}`)[0] as T
+	}
+
+	getMainId() {
+		return `main_${this.uid}`
+	}
 
 	updateData(data: T): G {
 		this.data = data

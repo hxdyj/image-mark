@@ -18,12 +18,19 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 
 	draw(): G {
 		const { x, y, x2, y2, transform = getDefaultTransform() } = this.data
-
-		const line = this.shapeInstance.findOne('line') as Line || new Line()
-		line.addTo(this.shapeInstance)
+		const line = this.getMainShape<Line>() || new Line()
+		line.id(this.getMainId())
 
 		line.plot([x, y, x2, y2]).stroke({ width: 10, color: '#FADC19' })
 		this.shapeInstance.transform(transform.matrix)
+
+		line.addTo(this.shapeInstance)
+
+		this.drawFuncList.forEach(func => {
+			func(this)
+		})
+
+		this.options.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

@@ -2,6 +2,7 @@ import ImageMark, { ArrayPoint } from "#/index"
 import { Button, Space } from "@arco-design/web-react"
 import { useEffect, useRef } from "react"
 import { OperateGroup } from "../components/OperateGroup"
+import { EventBusEventName } from "#/event/const"
 
 export function Base() {
 	const moveSuccessive = useRef<ArrayPoint>([0, 0])
@@ -33,10 +34,10 @@ export function Base() {
 				// padding: 50,
 				paddingUnit: 'px'
 			}
-		}).on('first_render', () => {
+		}).on(EventBusEventName.first_render, () => {
 			// imgMark?.setMinScale('cover')
 			// imgMark?.removeStageLmbDownMoveing()
-		}).on('scale', (scale: number) => {
+		}).on(EventBusEventName.scale, (scale: number) => {
 			console.log('onScale', scale);
 		})
 			.setMaxScale(100000)

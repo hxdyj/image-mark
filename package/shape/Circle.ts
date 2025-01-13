@@ -27,12 +27,22 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	draw(): G {
 		const { x, y, r, transform = getDefaultTransform() } = this.data
 		console.log('draw circle', cloneDeep(transform), x, y, r)
-		const circle = this.shapeInstance.findOne('circle') as Circle || new Circle()
-		circle.addTo(this.shapeInstance)
+		const circle = this.getMainShape<Circle>() || new Circle()
+		circle.id(this.getMainId())
+
 		circle.center(x, y).attr({
 			r
 		}).fill('transparent').stroke({ width: 10, color: '#FADC19' })
 		this.shapeInstance.transform(transform.matrix)
+
+		circle.addTo(this.shapeInstance)
+
+		this.drawFuncList.forEach(func => {
+			func(this)
+		})
+
+		this.options.initDrawFunc?.(this)
+
 		return this.shapeInstance
 	}
 

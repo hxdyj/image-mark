@@ -19,8 +19,9 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 
 	draw(): G {
 		const { points, auxiliaryPoint, transform = getDefaultTransform() } = this.data
-		const polygon = this.shapeInstance.findOne('polygon') as Polygon || new Polygon()
-		polygon.addTo(this.shapeInstance)
+		const polygon = this.getMainShape<Polygon>() || new Polygon()
+		polygon.id(this.getMainId())
+
 
 		if (auxiliaryPoint) {
 			polygon.opacity(0)
@@ -57,6 +58,16 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 			}).stroke({ width: 10, color: '#FADC19' }).fill('transparent')
 		}
 		this.shapeInstance.transform(transform.matrix)
+
+		polygon.addTo(this.shapeInstance)
+
+
+		this.drawFuncList.forEach(func => {
+			func(this)
+		})
+
+		this.options.initDrawFunc?.(this)
+
 		return this.shapeInstance
 	}
 

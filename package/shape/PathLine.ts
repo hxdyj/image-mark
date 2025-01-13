@@ -16,8 +16,9 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 
 	draw(): G {
 		const { points, transform = getDefaultTransform() } = this.data
-		const path = this.shapeInstance.findOne('path') as Path || new Path()
-		path.addTo(this.shapeInstance)
+		const path = this.getMainShape<Path>() || new Path()
+		path.id(this.getMainId())
+
 		const d = points.reduce((pre, current, index) => {
 			let append = ` ${current}`
 			if (index % 2 === 0 && index !== 0) {
@@ -27,6 +28,15 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 		}, points?.length ? 'M' : '')
 		path.plot(d).stroke({ width: 10, color: '#FADC19' }).fill('none')
 		this.shapeInstance.transform(transform.matrix)
+
+		path.addTo(this.shapeInstance)
+
+		this.drawFuncList.forEach(func => {
+			func(this)
+		})
+
+		this.options.initDrawFunc?.(this)
+
 		return this.shapeInstance
 	}
 

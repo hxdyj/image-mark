@@ -23,8 +23,9 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 
 	draw(): G {
 		const { src, x, y, width, height, transform = getDefaultTransform() } = this.data
-		const image = this.shapeInstance.findOne('image') as Image || new Image()
-		image.addTo(this.shapeInstance)
+		const image = this.getMainShape<Image>() || new Image()
+		image.id(this.getMainId())
+
 
 		image.opacity(0.8)
 		image.attr({
@@ -42,6 +43,14 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		}
 
 		this.shapeInstance.transform(transform.matrix)
+
+		image.addTo(this.shapeInstance)
+
+		this.drawFuncList.forEach(func => {
+			func(this)
+		})
+
+		this.options.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

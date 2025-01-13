@@ -4,11 +4,14 @@ export class EventBusEventName {
 	static rerender = 'rerender'
 	static draw = 'draw'
 	static resize = 'resize'
+	static scale = 'scale'
+
 	static container_drag_enter = 'container_drag_enter'
 	static container_drag_over = 'container_drag_over'
 	static container_drag_leave = 'container_drag_leave'
 	static container_drop = 'container_drop'
+
 	static shape_delete = 'shape_delete'
 	static shape_add = 'shape_add'
-	static scale = 'scale'
+	static shape_select = 'shape_select'
 }

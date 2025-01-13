@@ -3,6 +3,7 @@ import { ImageMark } from "#/index";
 import { ShapePlugin } from "#/plugins/ShapePlugin";
 import { TeamData, TeamShape } from "../shape/TeamShape";
 import { Text, Box } from "@svgdotjs/svg.js";
+import { EventBusEventName } from "#/event/const";
 
 
 export declare namespace SchemaDTO {
@@ -100,15 +101,15 @@ export class TeamMarkPlugin extends ShapePlugin<TeamData> {
 	}
 
 	bindTeamMarkEvent() {
-		this.imageMark.on('container_drop', this.onDrop)
-		this.imageMark.on('container_drag_over', this.onDragOver)
-		this.imageMark.on('scale', this.onScale)
+		this.imageMark.on(EventBusEventName.container_drop, this.onDrop)
+		this.imageMark.on(EventBusEventName.container_drag_over, this.onDragOver)
+		this.imageMark.on(EventBusEventName.scale, this.onScale)
 	}
 
 	unbindTeamMarkEvent() {
-		this.imageMark.off('container_drop', this.onDrop)
-		this.imageMark.off('container_drag_over', this.onDragOver)
-		this.imageMark.off('scale', this.onScale)
+		this.imageMark.off(EventBusEventName.container_drop, this.onDrop)
+		this.imageMark.off(EventBusEventName.container_drag_over, this.onDragOver)
+		this.imageMark.off(EventBusEventName.scale, this.onScale)
 	}
 
 	rerender() {

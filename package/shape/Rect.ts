@@ -32,10 +32,20 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 
 	draw(): G {
 		const { x, y, width, height, transform = getDefaultTransform() } = this.data
-		const rect = this.shapeInstance.find('polygon')[0] as Polygon || new Polygon()
+		const rect = this.getMainShape<Polygon>() || new Polygon()
+		rect.id(this.getMainId())
+
 		rect.plot([x, y, x + width, y, x + width, y + height, x, y + height]).size(width, height).fill('transparent').stroke({ width: 10, color: '#FADC19' }).fill('transparent')
 		this.shapeInstance.transform(transform.matrix)
+
 		rect.addTo(this.shapeInstance)
+
+		this.drawFuncList.forEach(func => {
+			func(this)
+		})
+
+		this.options.initDrawFunc?.(this)
+
 		return this.shapeInstance
 	}
 
