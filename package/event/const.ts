@@ -14,4 +14,6 @@ export class EventBusEventName {
 	static shape_delete = 'shape_delete'
 	static shape_add = 'shape_add'
 	static shape_select = 'shape_select'
+
+	static selection_action_click = 'selection_action_click'
 }

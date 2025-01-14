@@ -4,11 +4,7 @@ import { ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
 import { SelectionPlugin } from "../plugins/SelectionPlugin";
 import { Rect } from "@svgdotjs/svg.js";
-
-export type SelectType =
-	| 'click'  //点击选中
-	| 'multi-click' //类似与按着ctrl去多选
-	| 'draw-box' //鼠标画框多选
+import { EventBusEventName } from "#/event/const";
 
 
 export type SelectionDrawFunc = (selection: SelectionAction) => void
@@ -57,15 +53,13 @@ export class SelectionAction extends Action {
 	}
 
 	public disableSelection() {
-		if (!this.selected) return
-
-		this.getSelectionShape()?.remove()
 		this.shape.removeDrawFunc(this.draw)
-
+		this.getSelectionShape()?.remove()
 		const selectionPlugin = this.getSelectionPlugin()
-		selectionPlugin.unselectShape(this.shape, 'click', false)
+		selectionPlugin.unselectShape(this.shape, false)
 		this.selected = false
 	}
+
 
 	private draw() {
 		const mainShape = this.shape.getMainShape()
@@ -87,12 +81,12 @@ export class SelectionAction extends Action {
 	}
 
 	public enableSelection() {
-		if (this.selected) return
 		this.shape.addDrawFunc(this.draw)
 		const selectionPlugin = this.getSelectionPlugin()
-		selectionPlugin.selectShape(this.shape, 'click', false)
+		selectionPlugin.selectShape(this.shape, false)
 		this.selected = true
 	}
+
 
 	destroy(): void {
 		super.destroy()
@@ -117,8 +111,8 @@ export class SelectionAction extends Action {
 		if (evt.button !== 0) return
 		if (!this.downTime) return
 
-		if ((Date.now() - this.downTime) < 100) {
-			this.enableSelection()
+		if ((Date.now() - this.downTime) < 150) {
+			this.imageMark.eventBus.emit(EventBusEventName.selection_action_click, this.shape)
 		}
 
 		this.downTime = null

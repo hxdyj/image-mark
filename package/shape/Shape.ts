@@ -74,6 +74,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	protected drawFuncList: ShapeDrawFunc[] = []
 
 	addDrawFunc(func: ShapeDrawFunc) {
+		if (this.drawFuncList.indexOf(func) > -1) return
 		this.drawFuncList.push(func)
 	}
 

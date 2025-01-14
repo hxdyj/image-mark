@@ -1,33 +1,54 @@
 import { ImageMark } from "..";
 import { Plugin } from ".";
 import { ImageMarkShape } from "../shape/Shape";
-import { SelectionAction, SelectType } from "../action/SelectionAction";
+import { SelectionAction } from "../action/SelectionAction";
+import { EventBusEventName } from "#/event/const";
 
 export type SelectionPluginOptions = {
 }
 
+export type SelectionType = 'single' | 'multiple'
+
 export class SelectionPlugin extends Plugin {
 	static pluginName = "selection";
 	protected selectShapeList: ImageMarkShape[] = []
+	private _mode: SelectionType = 'single'
 
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
-		this.bindEventThis(['onRerender'])
+		this.bindEventThis(['onSelectionActionClick'])
 		this.bindEvent()
 	}
 
+	mode(newMode?: SelectionType) {
+		if (!newMode) return this._mode
+		this._mode = newMode
+		return this._mode
+	}
+
+	onSelectionActionClick(shape: ImageMarkShape) {
+		if (this.mode() === 'single') {
+			const selectionActoin = this.getSelectionAction(shape)
+			if (selectionActoin?.selected) {
+				this.unselectShape(shape)
+			} else {
+				this.clear()
+				this.selectShape(shape)
+			}
+		}
+	}
 
 	getSelectionAction(shape: ImageMarkShape): SelectionAction | undefined {
 		return shape.action[SelectionAction.actionName] as SelectionAction | undefined
 	}
 
-	selectShape(shape: ImageMarkShape, selectMode: SelectType = 'click', callAction: boolean = true) {
-		this.selectShapes([shape], selectMode, callAction)
+	selectShape(shape: ImageMarkShape, callAction: boolean = true) {
+		this.selectShapes([shape], callAction)
 	}
 
-	selectShapes(shapeList: ImageMarkShape[], selectMode: SelectType = 'click', callAction: boolean = true) {
+	selectShapes(shapeList: ImageMarkShape[], callAction: boolean = true) {
 		const selectShapeList: ImageMarkShape[] = []
 		shapeList.forEach(shape => {
 			const selectionActoin = this.getSelectionAction(shape)
@@ -46,11 +67,11 @@ export class SelectionPlugin extends Plugin {
 		})
 	}
 
-	unselectShape(shape: ImageMarkShape, selectMode: SelectType = 'click', callAction: boolean = true) {
-		this.unselectShapes([shape], selectMode, callAction)
+	unselectShape(shape: ImageMarkShape, callAction: boolean = true) {
+		this.unselectShapes([shape], callAction)
 	}
 
-	unselectShapes(shapeList: ImageMarkShape[], selectMode: SelectType = 'click', callAction: boolean = true) {
+	unselectShapes(shapeList: ImageMarkShape[], callAction: boolean = true) {
 		const unselectShapeList: ImageMarkShape[] = []
 		shapeList.forEach(shape => {
 			const selectionActoin = this.getSelectionAction(shape)
@@ -70,18 +91,17 @@ export class SelectionPlugin extends Plugin {
 	}
 
 	clear() {
-		this.unselectShapes(this.selectShapeList, 'draw-box', true)
-		this.selectShapeList = []
+		this.unselectShapes(this.selectShapeList)
 	}
 
 	bindEvent() {
 		super.bindEvent()
-		// this.imageMark.on('shape_delete', this.onDelete)
+		this.imageMark.on(EventBusEventName.selection_action_click, this.onSelectionActionClick)
 	}
 
 	unbindEvent() {
 		super.unbindEvent()
-		// this.imageMark.off('shape_delete', this.onDelete)
+		this.imageMark.off(EventBusEventName.selection_action_click, this.onSelectionActionClick)
 	}
 
 	destroy(): void {
