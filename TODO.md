@@ -17,7 +17,7 @@
 - [ ] resize action
 - [ ] rect select (delay)
 - [ ] editPlugin editAction to resize shape or rotate shape
-- [ ] rotate action
+- [ ] rotate action (all shape rotate by bbox center)
 - [ ] zIndex support
 - [ ] operate history and undo redo
 - [ ] mini map
@@ -26,9 +26,3 @@
 - [ ] mask base image support
 - [ ] mobile support
 - [ ] docs
-
-## resize or scale
-
-## rotate
-
-都以 shape bbox 中心旋转
