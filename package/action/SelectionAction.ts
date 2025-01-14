@@ -52,12 +52,15 @@ export class SelectionAction extends Action {
 		return `selection_${this.uid}`
 	}
 
-	public disableSelection() {
-		this.shape.removeDrawFunc(this.draw)
+	disableSelection() {
 		this.getSelectionShape()?.remove()
-		const selectionPlugin = this.getSelectionPlugin()
-		selectionPlugin.unselectShape(this.shape, false)
+		this.shape.removeDrawFunc(this.draw)
 		this.selected = false
+	}
+
+	enableSelection() {
+		this.shape.addDrawFunc(this.draw)
+		this.selected = true
 	}
 
 
@@ -80,12 +83,7 @@ export class SelectionAction extends Action {
 		this.options?.initDrawFunc?.(this)
 	}
 
-	public enableSelection() {
-		this.shape.addDrawFunc(this.draw)
-		const selectionPlugin = this.getSelectionPlugin()
-		selectionPlugin.selectShape(this.shape, false)
-		this.selected = true
-	}
+
 
 
 	destroy(): void {

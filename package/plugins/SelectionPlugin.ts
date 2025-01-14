@@ -3,6 +3,7 @@ import { Plugin } from ".";
 import { ImageMarkShape } from "../shape/Shape";
 import { SelectionAction } from "../action/SelectionAction";
 import { EventBusEventName } from "#/event/const";
+import { cloneDeep } from "lodash-es";
 
 export type SelectionPluginOptions = {
 }
@@ -29,12 +30,18 @@ export class SelectionPlugin extends Plugin {
 	}
 
 	onSelectionActionClick(shape: ImageMarkShape) {
+		const selectionActoin = this.getSelectionAction(shape)
 		if (this.mode() === 'single') {
-			const selectionActoin = this.getSelectionAction(shape)
+			if (selectionActoin?.selected) {
+				this.clear()
+			} else {
+				this.clear()
+				this.selectShape(shape,)
+			}
+		} else {
 			if (selectionActoin?.selected) {
 				this.unselectShape(shape)
 			} else {
-				this.clear()
 				this.selectShape(shape)
 			}
 		}
@@ -44,53 +51,58 @@ export class SelectionPlugin extends Plugin {
 		return shape.action[SelectionAction.actionName] as SelectionAction | undefined
 	}
 
-	selectShape(shape: ImageMarkShape, callAction: boolean = true) {
-		this.selectShapes([shape], callAction)
+	selectShape(shape: ImageMarkShape) {
+		this.selectShapes([shape])
 	}
 
-	selectShapes(shapeList: ImageMarkShape[], callAction: boolean = true) {
-		const selectShapeList: ImageMarkShape[] = []
+	selectShapes(shapeList: ImageMarkShape[]) {
+		console.log(`selectShapes`)
+
+		// const selectShapeList: ImageMarkShape[] = []
 		shapeList.forEach(shape => {
 			const selectionActoin = this.getSelectionAction(shape)
 			if (!selectionActoin) throw new Error('shape has no selection action')
 
 			if (!selectionActoin.selected) {
 				this.selectShapeList.push(shape)
-				selectShapeList.push(shape)
+				console.log(`push shape`)
+				// selectShapeList.push(shape)
 			}
 
-			callAction && selectionActoin.enableSelection()
+			// type == 'action' && selectionActoin.enableSelection()
+			selectionActoin.enableSelection()
 
-			if (selectShapeList.length > 0) {
-				//TODO(songle): emit event to update selection
-			}
 		})
+		// if (selectShapeList.length > 0) {}
+		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList)
 	}
 
-	unselectShape(shape: ImageMarkShape, callAction: boolean = true) {
-		this.unselectShapes([shape], callAction)
+	unselectShape(shape: ImageMarkShape) {
+		this.unselectShapes([shape])
 	}
 
-	unselectShapes(shapeList: ImageMarkShape[], callAction: boolean = true) {
-		const unselectShapeList: ImageMarkShape[] = []
-		shapeList.forEach(shape => {
+	unselectShapes(shapeList: ImageMarkShape[]) {
+		console.log(`unselectShapes 0`, cloneDeep(shapeList))
+
+		// const unselectShapeList: ImageMarkShape[] = []
+		shapeList.slice().forEach(shape => {
+			console.log(`unselectShapes`, shape.uid)
 			const selectionActoin = this.getSelectionAction(shape)
 			if (!selectionActoin) throw new Error('shape has no selection action')
 
 			if (selectionActoin.selected) {
 				this.selectShapeList.splice(this.selectShapeList.indexOf(shape), 1)
-				unselectShapeList.push(shape)
+				// unselectShapeList.push(shape)
 			}
-
-			callAction && selectionActoin.disableSelection()
-
-			if (unselectShapeList.length > 0) {
-				//TODO(songle): emit event to update selection
-			}
+			// type == 'action' && selectionActoin.disableSelection()
+			selectionActoin.disableSelection()
 		})
+		// if (unselectShapeList.length > 0) {}
+		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList)
 	}
 
 	clear() {
+		console.log(`clear selection`, cloneDeep(this.selectShapeList))
 		this.unselectShapes(this.selectShapeList)
 	}
 

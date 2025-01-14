@@ -177,21 +177,21 @@ export function ShapePluginDemo() {
 		hotkeys('enter', (event) => {
 			event.preventDefault()
 			if (imgMark.current?.status.drawing) {
-				const shapePlugin = getShapePlugin()
+				const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 				if (!shapePlugin) return
 				shapePlugin.endDrawing()
 			}
 		})
 		hotkeys('esc', (event) => {
 			if (imgMark.current?.status.drawing) {
-				const shapePlugin = getShapePlugin()
+				const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 				if (!shapePlugin) return
 				shapePlugin.endDrawing(true)
 			}
 		})
 		hotkeys('backspace', (event) => {
 			if (imgMark.current?.status.drawing) {
-				const shapePlugin = getShapePlugin()
+				const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 				if (!shapePlugin) return
 				shapePlugin.dropLastMouseTrace()
 			}
@@ -200,7 +200,7 @@ export function ShapePluginDemo() {
 		if (disableShapeLmbActionWhileSpaceKeyDown) {
 			hotkeys('space', { keyup: true }, (event) => {
 				event.preventDefault()
-				const shapePlugin = getShapePlugin()
+				const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 				if (!shapePlugin) return
 				if (event.type === 'keydown') {
 					shapePlugin.disableAction(LmbMoveAction.actionName)
@@ -218,8 +218,9 @@ export function ShapePluginDemo() {
 		}
 	}, [disableShapeLmbActionWhileSpaceKeyDown])
 
-	function getShapePlugin(): ShapePlugin | null {
-		return imgMark.current?.plugin[ShapePlugin.pluginName] as ShapePlugin
+
+	function getPlugin<T>(name: string): T | null {
+		return imgMark.current?.plugin[name] as T
 	}
 
 	return (
@@ -229,7 +230,7 @@ export function ShapePluginDemo() {
 					<OperateGroup desc="Draw Rect Programmatically">
 						<Button.Group>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								rectData.current = {
 									shapeName: 'rect',
@@ -242,14 +243,14 @@ export function ShapePluginDemo() {
 								shapePlugin.startDrawing(rectInstance, true)
 							}}>Start</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin || !rectData.current) return
 								rectData.current.width += 10
 								rectData.current.height += 10
 								shapePlugin.drawing(rectData.current)
 							}}>Drawing</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								shapePlugin.endDrawing()
 								rectData.current = null
@@ -259,7 +260,7 @@ export function ShapePluginDemo() {
 					<OperateGroup desc="Draw Rect Mouse Event">
 						<Button.Group>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								rectData.current = {
 									shapeName: 'rect',
@@ -274,7 +275,7 @@ export function ShapePluginDemo() {
 								Rect
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								const starImageData: ImgData = {
 									shapeName: 'image',
@@ -290,7 +291,7 @@ export function ShapePluginDemo() {
 								Image
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								const circleData: CircleData = {
 									shapeName: 'circle',
@@ -304,7 +305,7 @@ export function ShapePluginDemo() {
 								Circle
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								const lineData: LineData = {
 									shapeName: 'line',
@@ -319,7 +320,7 @@ export function ShapePluginDemo() {
 								Line
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								const lineData: PathLineData = {
 									shapeName: 'pathline',
@@ -331,7 +332,7 @@ export function ShapePluginDemo() {
 								PathLine
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								const lineData: PolyLineData = {
 									shapeName: 'polyline',
@@ -343,7 +344,7 @@ export function ShapePluginDemo() {
 								PolyLine Start
 							</Button>
 							<Button onClick={() => {
-								const shapePlugin = getShapePlugin()
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								if (!shapePlugin) return
 								const polygonData: PolygonData = {
 									shapeName: 'polygon',
@@ -364,12 +365,12 @@ export function ShapePluginDemo() {
 					</OperateGroup>
 					<Button.Group>
 						<Button onClick={() => {
-							const shapePlugin = getShapePlugin()
+							const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 							if (!shapePlugin) return
 							console.log(shapePlugin.data)
 						}}>Console Shape Data List</Button>
 						<Button onClick={() => {
-							const shapePlugin = getShapePlugin()
+							const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 							if (!shapePlugin) return
 							const rectData = shapeList.current[0]
 							if (!rectData) return
@@ -377,6 +378,18 @@ export function ShapePluginDemo() {
 							if (!rectInstance) return
 							rectInstance.rotate(45)
 						}}>Rotate Rect</Button>
+					</Button.Group>
+					<Button.Group>
+						<Button onClick={() => {
+							const plugin = getPlugin<SelectionPlugin>(SelectionPlugin.pluginName)
+							if (!plugin) return
+							plugin.mode('single')
+						}}>Selection Single</Button>
+						<Button onClick={() => {
+							const plugin = getPlugin<SelectionPlugin>(SelectionPlugin.pluginName)
+							if (!plugin) return
+							plugin.mode('multiple')
+						}}>Selection Multiple</Button>
 					</Button.Group>
 
 				</Space>
