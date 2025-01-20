@@ -55,7 +55,8 @@ export const zh = defineConfig({
 		},
 
 		outline: {
-			label: '大纲'
+			label: '大纲',
+			level: 'deep'
 		},
 
 		lastUpdated: {

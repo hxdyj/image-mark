@@ -36,6 +36,7 @@ export type DirectionOutOfInfo = {
 }
 
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
+export type StartPosition = 'center' | 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom'
 export type ImageMarkOptions = {
 	el: ContainerType
 	src: string
@@ -45,7 +46,7 @@ export type ImageMarkOptions = {
 		to: 'box'
 		box: BoundingBox
 	}) & {
-		startPosition?: 'center' | 'left-top'
+		startPosition?: StartPosition
 		size?: InitialScaleSize
 		/**
 		 * 留白
