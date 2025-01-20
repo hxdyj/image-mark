@@ -4,7 +4,7 @@ import { ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
 import { SelectionPlugin } from "../plugins/SelectionPlugin";
 import { Rect } from "@svgdotjs/svg.js";
-import { EventBusEventName } from "#/event/const";
+import { EventBusEventName } from "../event/const";
 
 
 export type SelectionDrawFunc = (selection: SelectionAction) => void

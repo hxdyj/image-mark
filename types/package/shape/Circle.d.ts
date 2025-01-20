@@ -3,6 +3,8 @@ import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from 
 import { default as ImageMark } from '..';
 export interface CircleData extends ShapeData {
     shapeName: "circle";
+    x: number;
+    y: number;
     r: number;
 }
 export declare class ImageMarkCircle extends ImageMarkShape<CircleData> {

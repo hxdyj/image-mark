@@ -1,6 +1,7 @@
 import { G, Shape } from '@svgdotjs/svg.js';
 import { ImageMark } from '../index';
 import { Action } from '../action';
+import { DeepPartial } from '@arco-design/web-react/es/Form/store';
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0];
 export type MouseEvent2DataOptions = {
     eventList?: MouseEvent[];
@@ -8,8 +9,10 @@ export type MouseEvent2DataOptions = {
 };
 export type ShapeOptions = {
     afterRender?: (shapeInstance: ImageMarkShape) => void;
+    initDrawFunc?: ShapeDrawFunc;
 };
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress';
+export type ShapeDrawFunc = (shape: ImageMarkShape) => void;
 export type ShapeTransform = {
     matrix: {
         a: number;
@@ -20,7 +23,7 @@ export type ShapeTransform = {
         f: number;
     };
 };
-export declare function getDefaultTransform(): ShapeTransform;
+export declare function getDefaultTransform(option?: DeepPartial<ShapeTransform>): ShapeTransform;
 export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
     data: T;
     options: ShapeOptions;
@@ -35,6 +38,11 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
     };
     constructor(data: T, imageMarkInstance: ImageMark, options: ShapeOptions);
     abstract draw(): G;
+    protected drawFuncList: ShapeDrawFunc[];
+    addDrawFunc(func: ShapeDrawFunc): void;
+    removeDrawFunc(func: ShapeDrawFunc): void;
+    getMainShape<T = Shape>(): T;
+    getMainId(): string;
     updateData(data: T): G;
     readonly mouseDrawType: ShapeMouseDrawType;
     private mouseMoveThreshold;
@@ -42,7 +50,6 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
     setMouseMoveThreshold(threshold: number): void;
     mouseEvent2Data(options?: MouseEvent2DataOptions): T | null;
     bindActions(): void;
-    dmoveData(dmove: [number, number]): T;
     afterRender(): void;
     destroy(): void;
     render(stage: AddToShape): void;

@@ -8,7 +8,6 @@ export interface PathLineData extends ShapeData {
 export declare class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
     static shapeName: string;
     constructor(data: PathLineData, imageMarkInstance: ImageMark, options: ShapeOptions);
-    dmoveData(dmove: [number, number]): PathLineData;
     draw(): G;
     mouseEvent2Data(options: MouseEvent2DataOptions): PathLineData | null;
 }

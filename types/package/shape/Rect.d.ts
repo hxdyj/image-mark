@@ -3,6 +3,10 @@ import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from 
 import { default as ImageMark, BoundingBox } from '..';
 export interface RectData extends BoundingBox, ShapeData {
     shapeName: "rect";
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 }
 export declare function getBoundingBoxByTwoPoints(point1: Point, point2: Point): BoundingBox;
 export declare class ImageMarkRect extends ImageMarkShape<RectData> {

@@ -1,7 +1,7 @@
 import { EventBindingThis } from '../event';
 import { ImageMarkShape } from '../shape/Shape';
 import { default as ImageMark } from '..';
-import { ShapePlugin } from '#/plugins/ShapePlugin';
+import { ShapePlugin } from '../plugins/ShapePlugin';
 export declare class Action extends EventBindingThis {
     protected imageMark: ImageMark;
     protected shape: ImageMarkShape;

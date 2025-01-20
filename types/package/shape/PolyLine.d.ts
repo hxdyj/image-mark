@@ -10,7 +10,6 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
     static shapeName: string;
     readonly mouseDrawType: ShapeMouseDrawType;
     constructor(data: PolyLineData, imageMarkInstance: ImageMark, options: ShapeOptions);
-    dmoveData(dmove: [number, number]): PolyLineData;
     draw(): G;
     mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null;
 }

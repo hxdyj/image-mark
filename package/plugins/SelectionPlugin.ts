@@ -2,7 +2,7 @@ import { ImageMark } from "..";
 import { Plugin } from ".";
 import { ImageMarkShape } from "../shape/Shape";
 import { SelectionAction } from "../action/SelectionAction";
-import { EventBusEventName } from "#/event/const";
+import { EventBusEventName } from "../event/const";
 import { cloneDeep } from "lodash-es";
 
 export type SelectionPluginOptions = {
@@ -56,24 +56,16 @@ export class SelectionPlugin extends Plugin {
 	}
 
 	selectShapes(shapeList: ImageMarkShape[]) {
-		console.log(`selectShapes`)
-
-		// const selectShapeList: ImageMarkShape[] = []
 		shapeList.forEach(shape => {
 			const selectionActoin = this.getSelectionAction(shape)
 			if (!selectionActoin) throw new Error('shape has no selection action')
 
 			if (!selectionActoin.selected) {
 				this.selectShapeList.push(shape)
-				console.log(`push shape`)
-				// selectShapeList.push(shape)
 			}
-
-			// type == 'action' && selectionActoin.enableSelection()
 			selectionActoin.enableSelection()
 
 		})
-		// if (selectShapeList.length > 0) {}
 		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList)
 	}
 
@@ -82,22 +74,15 @@ export class SelectionPlugin extends Plugin {
 	}
 
 	unselectShapes(shapeList: ImageMarkShape[]) {
-		console.log(`unselectShapes 0`, cloneDeep(shapeList))
-
-		// const unselectShapeList: ImageMarkShape[] = []
 		shapeList.slice().forEach(shape => {
-			console.log(`unselectShapes`, shape.uid)
 			const selectionActoin = this.getSelectionAction(shape)
 			if (!selectionActoin) throw new Error('shape has no selection action')
 
 			if (selectionActoin.selected) {
 				this.selectShapeList.splice(this.selectShapeList.indexOf(shape), 1)
-				// unselectShapeList.push(shape)
 			}
-			// type == 'action' && selectionActoin.disableSelection()
 			selectionActoin.disableSelection()
 		})
-		// if (unselectShapeList.length > 0) {}
 		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList)
 	}
 

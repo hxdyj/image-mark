@@ -11,7 +11,6 @@ export interface LineData extends ShapeData {
 export declare class ImageMarkLine extends ImageMarkShape<LineData> {
     static shapeName: string;
     constructor(data: LineData, imageMarkInstance: ImageMark, options: ShapeOptions);
-    dmoveData(dmove: [number, number]): LineData;
     draw(): G;
     mouseEvent2Data(options: MouseEvent2DataOptions): LineData | null;
 }

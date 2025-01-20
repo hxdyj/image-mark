@@ -6,11 +6,12 @@
 	"scripts": {
 		"dev": "vite --mode development --force",
 		"build": "vite build -c vite.lib.config.ts",
+		"build-web": "pnpm run build-demo && pnpm run docs:build",
 		"build-demo": "vite build --mode dev",
 		"preview": "vite preview",
 		"deploy:dev": "pnpm run build-demo && node ./node_modules/bbl-scripts/scripts/deploy.js dev",
 		"docs:dev": "vitepress dev docs --port 6003",
-		"docs:build": "vitepress build docs",
+		"docs:build": "vitepress build docs --outDir web-dist/docs",
 		"docs:preview": "vitepress preview docs"
 	},
 	"devDependencies": {

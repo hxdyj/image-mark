@@ -25,7 +25,7 @@ export function SvgPointDemo() {
 
 		groupRef.current = new G()
 		imageRef.current = new Image()
-		imageRef.current.load('/demo-parking.jpg')
+		imageRef.current.load('/img/demo-parking.jpg')
 		imageRef.current.size(3891, 2916)
 		groupRef.current.add(imageRef.current)
 		groupRef.current.transform({

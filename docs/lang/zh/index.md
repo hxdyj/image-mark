@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: Demo
-      link: /markdown-examples
+      link: http://localhost:5173/
     - theme: alt
       text: 快速使用
-      link: /api-examples
+      link: /start/start
 
 features:
   - title: 框架无关

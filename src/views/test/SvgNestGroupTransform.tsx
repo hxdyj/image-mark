@@ -4,7 +4,7 @@ export function SvgNestGroupTransform() {
 		<div className="page-svg-mask-demo bg-[#e5e6eb] min-h-[100vh]">
 			<svg width="800" height="800" className="bg-[#165DFF]">
 				<g transform="matrix(1.8, 0, 0, 1.8, 100, 100)">
-					<image href="/demo-parking.jpg" width="700" />
+					<image href="/img/demo-parking.jpg" width="700" />
 					<g transform="matrix(1.6, 0, 0, 1.6, 0, 0)" opacity={0.5}>
 						<circle cx={0} cy={0} r={10} fill="yellow" />
 					</g>

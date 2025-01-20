@@ -12,7 +12,7 @@ export function Base() {
 		if (!containerRef.current) throw new Error("containerRef is null")
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
-			src: '/demo-base.jpg',
+			src: '/img/demo-base.jpg',
 			moveConfig: {},
 			initScaleConfig: {
 				startPosition: 'center',

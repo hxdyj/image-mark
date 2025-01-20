@@ -10,12 +10,12 @@ export declare class Matrix2D {
     multiply(m: Matrix2D): Matrix2D;
     translate(x: number, y: number): Matrix2D;
     rotate(angle: number): Matrix2D;
+    rotateByPoint(angle: number, point: [number, number]): Matrix2D;
     angle2rad(angle: number): number;
     calculateRotateInfo(angle: number): {
         cos: number;
         sin: number;
     };
     scale(sx: number, sy?: number): Matrix2D;
-    rotateAroundPoint(angle: number, x: number, y: number): Matrix2D;
     log(): this;
 }

@@ -22,7 +22,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		let pluginName = this.constructor['pluginName']
 		this.data = imageMarkInstance.options.pluginOptions?.[pluginName]?.shapeList || []
 		ShapePlugin.shapeList.forEach(shape => {
-			this.initShape(shape)
+			this.initShape(shape.shape, shape.shapeOptions)
 		})
 		this.bindEventThis(['onRerender', 'onDraw', 'onDelete', 'onResize', 'onDrawingMouseDown', 'onDrawingDocumentMouseMove', 'onDrawingDocumentMouseUp', 'onDrawingMouseMove'])
 		this.bindEvent()
@@ -326,10 +326,16 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	static shapeList: Array<typeof ImageMarkShape> = []
-	static useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
+	static shapeList: Array<{
+		shape: typeof ImageMarkShape,
+		shapeOptions?: ShapeOptions
+	}> = []
+	static useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions) {
 		if (ShapePlugin.hasShape(shape)) return ShapePlugin<T>
-		ShapePlugin.shapeList.push(shape as typeof ImageMarkShape)
+		ShapePlugin.shapeList.push({
+			shape: shape as typeof ImageMarkShape,
+			shapeOptions
+		})
 		return ShapePlugin
 	}
 	static unuseShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
@@ -341,6 +347,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		return ShapePlugin
 	}
 	static hasShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
-		return ShapePlugin.shapeList.find(item => item === shape)
+		return ShapePlugin.shapeList.find(item => item.shape === shape)
 	}
 }

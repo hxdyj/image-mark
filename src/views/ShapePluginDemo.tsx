@@ -98,7 +98,7 @@ export function ShapePluginDemo() {
 
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
-			src: '/demo-parking.jpg',
+			src: '/img/demo-parking.jpg',
 			pluginOptions: {
 				[ShapePlugin.pluginName]: {
 					shapeList: shapeList.current

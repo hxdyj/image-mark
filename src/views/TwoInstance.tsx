@@ -16,12 +16,12 @@ export function TwoInstance() {
 
 		imgMark1.current = new ImageMark({
 			el: container1Ref.current,
-			src: '/demo-two-instance-1.jpg'
+			src: '/img/demo-two-instance-1.jpg'
 		}).setMinScale(0.0001)
 
 		imgMark2.current = new ImageMark({
 			el: container2Ref.current,
-			src: '/demo-two-instance-2.jpg'
+			src: '/img/demo-two-instance-2.jpg'
 		}).setMinScale(0.0001)
 		return () => {
 			imgMark1.current?.destroy()

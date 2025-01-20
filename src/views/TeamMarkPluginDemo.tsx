@@ -110,7 +110,7 @@ export function TeamMarkPluginDemo() {
 		if (!containerRef.current) return
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
-			src: '/demo-parking.jpg',
+			src: '/img/demo-parking.jpg',
 			enableImageOutOfContainer: false,
 			initScaleConfig: {
 				startPosition: 'center',
