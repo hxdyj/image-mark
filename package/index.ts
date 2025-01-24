@@ -239,6 +239,7 @@ export class ImageMark extends EventBindingThis {
 
 	destroy() {
 		this.destroyed = true
+		this.eventBus.removeAllListeners()
 		this.removeContainerEvent()
 		this.removeDefaultAction()
 		Object.values(this.plugin).forEach(plugin => {
