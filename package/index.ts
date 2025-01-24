@@ -113,7 +113,8 @@ export class ImageMark extends EventBindingThis {
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
 	private destroyed = false
-	createTime: number
+	createTime: number = Date.now()
+
 
 
 	constructor(public options: ImageMarkOptions) {
@@ -122,8 +123,6 @@ export class ImageMark extends EventBindingThis {
 		this.container = getElement(this.options.el)
 
 		imageMarkManager.addNewInstance(this)
-
-		this.createTime = Date.now()
 
 		if (!this.container) {
 			throw new Error('Container not found')
