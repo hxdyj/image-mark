@@ -44,7 +44,7 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 			func(this)
 		})
 
-		this.options.initDrawFunc?.(this)
+		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

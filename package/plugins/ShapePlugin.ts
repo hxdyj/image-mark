@@ -4,6 +4,13 @@ import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 import { cloneDeep, last } from "lodash-es";
 import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
+import { ImageMarkRect } from "#/shape/Rect";
+import { ImageMarkCircle } from "#/shape/Circle";
+import { ImageMarkPathLine } from "#/shape/PathLine";
+import { ImageMarkLine } from "#/shape/Line";
+import { ImageMarkImage } from "#/shape/Image";
+import { ImageMarkPolyLine } from "#/shape/PolyLine";
+import { ImageMarkPolygon } from "#/shape/Polygon";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
@@ -349,4 +356,27 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	static hasShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>) {
 		return ShapePlugin.shapeList.find(item => item.shape === shape)
 	}
+
+	static useDefaultShape() {
+		ShapePlugin.useShape(ImageMarkRect)
+		ShapePlugin.useShape(ImageMarkCircle)
+		ShapePlugin.useShape(ImageMarkPathLine)
+		ShapePlugin.useShape(ImageMarkLine)
+		ShapePlugin.useShape(ImageMarkImage)
+		ShapePlugin.useShape(ImageMarkPolyLine)
+		ShapePlugin.useShape(ImageMarkPolygon)
+	}
+
+	static unuseDefaultShape() {
+		ShapePlugin.unuseShape(ImageMarkRect)
+		ShapePlugin.unuseShape(ImageMarkCircle)
+		ShapePlugin.unuseShape(ImageMarkPathLine)
+		ShapePlugin.unuseShape(ImageMarkLine)
+		ShapePlugin.unuseShape(ImageMarkImage)
+		ShapePlugin.unuseShape(ImageMarkPolyLine)
+		ShapePlugin.unuseShape(ImageMarkPolygon)
+	}
 }
+
+
+ShapePlugin.useDefaultShape()

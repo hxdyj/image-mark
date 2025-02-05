@@ -283,7 +283,7 @@ export function ShapePluginDemo() {
 									y: 0,
 									width: 0,
 									height: 0,
-									src: '/sea.jpg'
+									src: '/img/sea.jpg'
 								}
 								const imgInstance = new ImageMarkImage(starImageData, imgMark.current!, {})
 								shapePlugin.startDrawing(imgInstance)

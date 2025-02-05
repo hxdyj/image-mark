@@ -41,7 +41,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 			func(this)
 		})
 
-		this.options.initDrawFunc?.(this)
+		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

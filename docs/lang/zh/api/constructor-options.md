@@ -99,7 +99,7 @@ type InitScaleConfig = {
 - 类型: `boolean`
 - 默认值: `true`
 
-是否允许图片超出容器的范围
+是否允许图片超出容器的范围，`false` 时候类似 css background `cover` 效果
 
 ### pluginOptions
 

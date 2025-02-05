@@ -4,6 +4,7 @@ import { Action } from "../action";
 import { uid } from "uid";
 import { DeepPartial } from "@arco-design/web-react/es/Form/store";
 import { defaultsDeep } from "lodash-es";
+import { LmbMoveAction } from "#/action/LmbMoveAction";
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
@@ -222,7 +223,18 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		return this;
 	}
 
+
+	static useDefaultAction() {
+		ImageMarkShape.useAction(LmbMoveAction)
+	}
+
+	static unuseDefaultAction() {
+		ImageMarkShape.unuseAction(LmbMoveAction)
+	}
+
 }
+
+ImageMarkShape.useDefaultAction()
 
 export interface ShapeData {
 	shapeName: string

@@ -448,12 +448,21 @@ export class ImageMark extends EventBindingThis {
 		addTo && this.image.addTo(this.stageGroup)
 	}
 
-	protected addDefaultAction() {
+
+	static useDefaultPlugin() {
+		ImageMark.usePlugin(ShapePlugin)
+	}
+
+	static unuseDefaultPlugin() {
+		ImageMark.unusePlugin(ShapePlugin)
+	}
+
+	addDefaultAction() {
 		this.addStageMouseScale()
 		this.addStageLmbDownMoveing()
 	}
 
-	protected removeDefaultAction() {
+	removeDefaultAction() {
 		this.removeStageMouseScale()
 		this.removeStageLmbDownMoveing()
 	}
@@ -1235,5 +1244,6 @@ export type FunctionKeys<T> = {
 	[K in keyof T]: T[K] extends Function ? K : never
 }
 
+ImageMark.useDefaultPlugin()
 
 export default ImageMark

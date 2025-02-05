@@ -11,7 +11,7 @@
 - [x] shape rect、circle support
 - [x] shape line、polygon、polyline、pathline support
 - [x] Shape draw function call config
-
+- [ ] default use shape plugin
 - [ ] single/multiple select (delete can use del key)
 - [ ] context menu support
 - [ ] resize action

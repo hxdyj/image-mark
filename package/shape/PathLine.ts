@@ -35,7 +35,7 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 			func(this)
 		})
 
-		this.options.initDrawFunc?.(this)
+		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

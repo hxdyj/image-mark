@@ -66,7 +66,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 			func(this)
 		})
 
-		this.options.initDrawFunc?.(this)
+		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

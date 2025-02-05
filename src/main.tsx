@@ -5,6 +5,12 @@ import router from './router/router'
 import './index.scss'
 import { ComponentConfig } from '@arco-design/web-react/es/ConfigProvider/interface'
 import { ConfigProvider } from '@arco-design/web-react';
+import ImageMark from '#/index'
+import { ShapePlugin } from '#/plugins/ShapePlugin'
+import { ImageMarkShape } from '#/shape/Shape'
+ImageMark.unuseDefaultPlugin()
+ShapePlugin.unuseDefaultShape()
+ImageMarkShape.unuseDefaultAction()
 
 const componentConfig: ComponentConfig = {
 	Button: {
