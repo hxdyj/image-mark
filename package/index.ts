@@ -499,7 +499,7 @@ export class ImageMark extends EventBindingThis {
 
 	protected containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
 
-	addContainerEvent() {
+	protected addContainerEvent() {
 		this.container.addEventListener('wheel', this.onContainerWheel)
 		this.container.addEventListener('dragenter', this.onContainerDragEnterEvent)
 		this.container.addEventListener('dragover', this.onContainerDragOverEvent)
@@ -511,7 +511,7 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
-	removeContainerEvent() {
+	protected removeContainerEvent() {
 		this.container.removeEventListener('wheel', this.onContainerWheel)
 		this.container.removeEventListener('dragenter', this.onContainerDragEnterEvent)
 		this.container.removeEventListener('dragover', this.onContainerDragOverEvent)

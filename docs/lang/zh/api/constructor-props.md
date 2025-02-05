@@ -76,3 +76,7 @@ export type ImageMarkStatus = {
 ### createTime
 
 当前实例的创建时间
+
+### movingStartTransform
+
+当前实例的画布移动起始时的变换矩阵
