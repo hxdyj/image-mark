@@ -9,6 +9,7 @@ import { EventBusEventName } from "./event/const";
 import { CssNameKey } from "./const/const";
 import { uid } from 'uid'
 import { ShapePlugin } from './plugins/ShapePlugin';
+import { SelectionPlugin } from "./plugins/SelectionPlugin";
 export type TransformStep = [MatrixAlias, boolean]
 
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
@@ -1179,6 +1180,15 @@ export class ImageMark extends EventBindingThis {
 			isOutOf: flag,
 			directionOutOfInfo
 		}
+	}
+
+
+	getShapePlugin(): ShapePlugin | null {
+		return this.plugin[ShapePlugin.pluginName] as ShapePlugin || null
+	}
+
+	getSelectionPlugin(): SelectionPlugin | null {
+		return this.plugin[SelectionPlugin.pluginName] as SelectionPlugin || null
 	}
 
 	// 添加实例上的插件

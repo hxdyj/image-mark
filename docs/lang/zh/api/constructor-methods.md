@@ -3,8 +3,6 @@ layout: doc
 footer: false
 ---
 
-# 构造函数
-
 ## 静态方法
 
 ### usePlugin
@@ -177,3 +175,11 @@ export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin
 参数：(plugin: typeof Plugin)
 
 移除实例上的插件
+
+### getShapePlugin
+
+获取实例上的 `shape` 插件实例
+
+### getSelectionPlugin
+
+获取实例上的 `selection` 插件实例

@@ -26,15 +26,30 @@ export const zh = defineConfig({
 				base: '/api',
 				items: [
 					{
-						text: '构造函数', items: [
-							{ text: '实例化选项', link: '/constructor-options' },
+						text: 'ImageMark类', items: [
+							{ text: '构造函数', link: '/constructor-options' },
 							{ text: '属性', link: '/constructor-props' },
 							{ text: '方法', link: '/constructor-methods' },
 						]
 					},
 					{ text: 'Plugin类', link: '/plugin-class' },
-					{ text: 'Shape类', link: '/shape-class' },
-					{ text: 'Action类', link: '/action-class' },
+					{
+						text: 'Shape类', link: '/shape-class', items: [
+							{ text: 'Line', link: '/shape/line' },
+							{ text: 'Rect', link: '/shape/rect' },
+							{ text: 'Image', link: '/shape/image' },
+							{ text: 'Circle', link: '/shape/circle' },
+							{ text: 'Polygon', link: '/shape/polygon' },
+							{ text: 'PolyLine', link: '/shape/poly-line' },
+							{ text: 'PathLine', link: '/shape/path-line' },
+						]
+					},
+					{
+						text: 'Action类', link: '/action-class', items: [
+							{ text: 'LmbMove', link: '/action/lmb-move' },
+							{ text: 'Selection', link: '/action/selection' },
+						]
+					},
 				]
 			},
 		},

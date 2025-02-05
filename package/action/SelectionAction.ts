@@ -40,10 +40,6 @@ export class SelectionAction extends Action {
 		this.shape.shapeInstance.off('mouseup', this.onMouseUp)
 	}
 
-	getSelectionPlugin() {
-		return this.imageMark.plugin[SelectionPlugin.pluginName] as SelectionPlugin
-	}
-
 	getSelectionShape(): Rect | undefined {
 		return this.shape.shapeInstance.find(`#${this.getSelectionId()}`)[0] as Rect | undefined
 	}

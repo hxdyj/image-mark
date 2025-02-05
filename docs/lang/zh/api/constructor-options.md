@@ -3,8 +3,6 @@ layout: doc
 footer: false
 ---
 
-# 构造函数
-
 ## 初始化实例
 
 ```html
