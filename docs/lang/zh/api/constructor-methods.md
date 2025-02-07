@@ -86,13 +86,14 @@ export type ArrayPoint = [number, number]
 
 ### startSuccessiveMove
 
-参数：(point: ArrayPoint)
+参数：`(point: ArrayPoint)`
 
 开始连续移动
 
 ### moveSuccessive
 
-参数：(point: ArrayPoint)
+参数：`(point: ArrayPoint)`
+
 连续移动
 
 ### endSuccessiveMove()
@@ -126,13 +127,13 @@ export type ArrayPoint = [number, number]
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 ```
 
-参数：(minScale: number|InitialScaleSize)
+参数：`(minScale: number|InitialScaleSize)`
 
 设置最小缩放比例
 
 ### setMaxScale
 
-参数：(minScale: number|InitialScaleSize)
+参数：`(minScale: number|InitialScaleSize)`
 
 设置最大缩放比例
 
@@ -150,7 +151,7 @@ export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 
 ### setEnableImageOutOfContainer
 
-参数：(enable: boolean)
+参数：`(enable: boolean)`
 
 设置图片是否可以超出容器
 
@@ -160,19 +161,19 @@ export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin
 ```
 
-参数：(plugin: typeof Plugin|PluginNewCall)
+参数：`(plugin: typeof Plugin|PluginNewCall)`
 
 实例化插件
 
 ### addPlugin
 
-参数：(plugin: typeof Plugin|PluginNewCall)
+参数：`(plugin: typeof Plugin|PluginNewCall)`
 
 添加实例上的插件,目前和 `initPlugin` 效果一致
 
 ### removePlugin
 
-参数：(plugin: typeof Plugin)
+参数：`(plugin: typeof Plugin)`
 
 移除实例上的插件
 

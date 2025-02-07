@@ -13,8 +13,6 @@ export class Action extends EventBindingThis {
 		super()
 	}
 
-	beforeActionRemove() { }
-
 	destroy() { }
 
 	protected getShapePlugin(): ShapePlugin | undefined {

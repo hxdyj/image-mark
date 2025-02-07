@@ -5,7 +5,7 @@ footer: false
 
 # Selection
 
-通过鼠标选中`Shape`的 Action
+通过鼠标选中`Shape`的 Action, 当使用 `selection` 插件的时候，这个 action 会在 `selection` 插件里被插件在每个`Shape`上边添加上。当然也可以自己在`Shape`实例上边添加此 action 来替换掉之前的 selection action，用于添加 initDrawFunc 来自定义 selection action 样式
 
 ## Options
 
@@ -20,6 +20,8 @@ export type SelectionActionOptions = {
 ### selected
 
 是否选中了当前`Shape`
+
+## 实例方法
 
 ### getSelectionPlugin
 

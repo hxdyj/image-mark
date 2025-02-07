@@ -104,7 +104,7 @@ export function ShapePluginDemo() {
 					shapeList: shapeList.current
 				}
 			}
-		}).addPlugin(SelectionPlugin)
+		})
 			.addPlugin((imageMarkInstance) => {
 				const shapePluginInstance = new ShapePlugin(imageMarkInstance)
 				shapePluginInstance
@@ -124,45 +124,36 @@ export function ShapePluginDemo() {
 					.addShape(ImageMarkImage, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
-							shapeInstance.addAction(SelectionAction)
-
 						}
 					})
 					.addShape(ImageMarkCircle, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
-							shapeInstance.addAction(SelectionAction)
-
 						}
 					})
 					.addShape(ImageMarkLine, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
-							shapeInstance.addAction(SelectionAction)
-
 						}
 					})
 					.addShape(ImageMarkPolyLine, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
-							shapeInstance.addAction(SelectionAction)
-
 						}
 					})
 					.addShape(ImageMarkPolygon, {
 						afterRender(shapeInstance) {
-							shapeInstance.addAction(SelectionAction)
 							shapeInstance.addAction(LmbMoveAction)
 						}
 					})
 					.addShape(ImageMarkPathLine, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
-							shapeInstance.addAction(SelectionAction)
 						}
 					})
 				return shapePluginInstance
 			})
+			.addPlugin(SelectionPlugin)
 		return () => {
 			imgMark.current?.destroy()
 		}

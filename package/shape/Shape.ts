@@ -5,6 +5,7 @@ import { uid } from "uid";
 import { DeepPartial } from "@arco-design/web-react/es/Form/store";
 import { defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "#/action/LmbMoveAction";
+import { EventBusEventName } from "#/event/const";
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
@@ -131,6 +132,13 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 			constructor.actionList.forEach(action => {
 				this.initAction(action, action.actionOptions[constructor.shapeName])
 			})
+
+			let needCall = this.actionAfterRenderNeedAdd.pop()
+			while (needCall) {
+				needCall()
+				needCall = this.actionAfterRenderNeedAdd.pop()
+			}
+
 			this.isBindActions = true
 		}
 	}
@@ -139,6 +147,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	afterRender() {
 		this.bindActions()
 		this.options?.afterRender?.(this)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_after_render, this)
 	}
 
 	destroy() {
@@ -158,24 +167,30 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 	}
 
+	private actionAfterRenderNeedAdd: Function[] = []
+
 	addAction(action: typeof Action, actionOptions: any = {}) {
-		if (!this.isRendered) return
-		this.initAction(action, actionOptions)
+		if (!this.isRendered) {
+			this.actionAfterRenderNeedAdd.push(() => this.initAction(action, actionOptions))
+		} else {
+			this.initAction(action, actionOptions)
+		}
 	}
 
 	removeAction(action: typeof Action) {
 		const actionInstance = this.action[action.actionName]
 		if (actionInstance) {
-			actionInstance.beforeActionRemove()
+			actionInstance.destroy()
 			delete this.action[action.actionName]
 		}
 	}
 
 	initAction(action: typeof Action, actionOptions: any = {}) {
-		if (!this.action[action.actionName]) {
-			const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T>
-			this.action[action.actionName] = new action(this.imageMark, this, actionOptions || action.actionOptions[constructor.shapeName])
+		const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T>
+		if (this.action[action.actionName]) {
+			this.removeAction(action)
 		}
+		this.action[action.actionName] = new action(this.imageMark, this, actionOptions || action.actionOptions[constructor.shapeName])
 	}
 
 	static actionList: Array<typeof Action> = []

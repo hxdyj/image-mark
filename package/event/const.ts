@@ -13,6 +13,7 @@ export class EventBusEventName {
 
 	static shape_delete = 'shape_delete'
 	static shape_add = 'shape_add'
+	static shape_after_render = 'shape_after_render'
 
 	static selection_select_list_change = 'selection_select_list_change'
 	static selection_action_click = 'selection_action_click'

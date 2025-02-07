@@ -32,7 +32,13 @@ export const zh = defineConfig({
 							{ text: '方法', link: '/constructor-methods' },
 						]
 					},
-					{ text: 'Plugin类', link: '/plugin-class' },
+					{
+						text: 'Plugin类', link: '/plugin-class', items:
+							[
+								{ text: 'Shape', link: '/plugin/shape' },
+								{ text: 'Selection', link: '/plugin/selection' },
+							]
+					},
 					{
 						text: 'Shape类', link: '/shape-class', items: [
 							{ text: 'Line', link: '/shape/line' },
@@ -103,19 +109,9 @@ function nav(): DefaultTheme.NavItem[] {
 			activeMatch: '/start'
 		},
 		{
-			text: '教程',
-			link: '/zh/guide/base',
-			activeMatch: '/guide'
-		},
-		{
 			text: 'API',
 			link: '/zh/api/constructor-options',
 			activeMatch: '/api'
-		},
-		{
-			text: '插件',
-			link: '/zh/guide/what-is-vitepress',
-			activeMatch: '/zh/guide/'
 		},
 		{
 			text: '赞助',

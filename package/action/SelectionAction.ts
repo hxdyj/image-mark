@@ -2,7 +2,6 @@ import ImageMark from "..";
 import { Action } from ".";
 import { ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
-import { SelectionPlugin } from "../plugins/SelectionPlugin";
 import { Rect } from "@svgdotjs/svg.js";
 import { EventBusEventName } from "../event/const";
 
@@ -78,8 +77,6 @@ export class SelectionAction extends Action {
 
 		this.options?.initDrawFunc?.(this)
 	}
-
-
 
 
 	destroy(): void {

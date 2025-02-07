@@ -54,19 +54,19 @@ shape 的动作列表
 
 ### useAction
 
-参数：(action: typeof Action, actionOptions: any = {})
+参数：`(action: typeof Action, actionOptions: any = {})`
 
 使用指定的动作
 
 ### unuseAction
 
-参数：(action: typeof Action)
+参数：`(action: typeof Action)`
 
 取消使用指定的动作
 
 ### hasAction
 
-参数：(action: typeof Action)
+参数：`(action: typeof Action)`
 
 判断是否有指定的动作
 
@@ -130,13 +130,13 @@ action:{
 
 ### addDrawFunc
 
-参数：(func: ShapeDrawFunc)
+参数：`(func: ShapeDrawFunc)`
 
 添加绘制函数，用于自定义绘制，在每次`draw`时都会调用，比如自定义 fillColor，strokeWidth 等,或者 select fillColor 等等
 
 ### removeDrawFunc
 
-参数：(func: ShapeDrawFunc)
+参数：`(func: ShapeDrawFunc)`
 
 移除绘制函数
 
@@ -150,7 +150,7 @@ action:{
 
 ### updateData
 
-参数：(data: T)
+参数：`(data: T)`
 
 更新形状的数据
 
@@ -160,7 +160,7 @@ action:{
 
 ### setMouseMoveThreshold
 
-参数：(threshold: number)
+参数：`(threshold: number)`
 
 设置鼠标移动绘制形状时候的阈值
 
@@ -174,19 +174,19 @@ action:{
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 ```
 
-参数：(stage: AddToShape)
+参数：`(stage: AddToShape)`
 
 渲染形状到画布上，如果已经渲染过，则不再渲染
 
 ### addAction
 
-参数：(action: typeof Action, actionOptions: any = {})
+参数：`(action: typeof Action, actionOptions: any = {})`
 
 添加实例动作
 
 ### removeAction
 
-参数：(action: typeof Action)
+参数：`(action: typeof Action)`
 
 移除实例动作
 
