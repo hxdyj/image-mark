@@ -30,6 +30,7 @@ export const zh = defineConfig({
 							{ text: '构造函数', link: '/constructor-options' },
 							{ text: '属性', link: '/constructor-props' },
 							{ text: '方法', link: '/constructor-methods' },
+							{ text: '事件', link: '/constructor-on' },
 						]
 					},
 					{

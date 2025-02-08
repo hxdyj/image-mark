@@ -141,7 +141,7 @@ export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 
 参数：(...rest: any) `参考 eventemitter3 的 on 方法`
 
-绑定实例事件
+绑定实例事件，目前实例可监听的事件参考文档 [事件](/api/constructor-on)
 
 ### off
 

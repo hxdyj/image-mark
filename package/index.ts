@@ -1201,8 +1201,7 @@ export class ImageMark extends EventBindingThis {
 	removePlugin(plugin: typeof Plugin) {
 		const pluginInstance = this.plugin[plugin.pluginName]
 		if (pluginInstance) {
-			pluginInstance.beforePluginRemove()
-			delete this.plugin[plugin.pluginName]
+			pluginInstance.destroy()
 		}
 		return this
 	}

@@ -4,13 +4,13 @@ import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 import { cloneDeep, last } from "lodash-es";
 import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
-import { ImageMarkRect } from "#/shape/Rect";
-import { ImageMarkCircle } from "#/shape/Circle";
-import { ImageMarkPathLine } from "#/shape/PathLine";
-import { ImageMarkLine } from "#/shape/Line";
-import { ImageMarkImage } from "#/shape/Image";
-import { ImageMarkPolyLine } from "#/shape/PolyLine";
-import { ImageMarkPolygon } from "#/shape/Polygon";
+import { ImageMarkRect } from "../shape/Rect";
+import { ImageMarkCircle } from "../shape/Circle";
+import { ImageMarkPathLine } from "../shape/PathLine";
+import { ImageMarkLine } from "../shape/Line";
+import { ImageMarkImage } from "../shape/Image";
+import { ImageMarkPolyLine } from "../shape/PolyLine";
+import { ImageMarkPolygon } from "../shape/Polygon";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
@@ -101,11 +101,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	destroy(): void {
-		super.destroy()
 		this.clear()
 		this.disableActionList.clear()
 		this.clearMap()
 		this.unbindEvent()
+		super.destroy()
 	}
 
 	onAdd(data: T, emit = true) {

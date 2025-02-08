@@ -11,7 +11,7 @@ footer: false
 
 ```javascript
 import ImageMark from 'mark-img'
-const imageMark = new ImageMark('#image-mark', {
+const imageMark = new ImageMark({
 	// options
 })
 ```

@@ -7,6 +7,5 @@ export declare class Plugin extends EventBindingThis {
     bindEvent(): void;
     unbindEvent(): void;
     onInit(): void;
-    beforePluginRemove(): void;
     destroy(): void;
 }

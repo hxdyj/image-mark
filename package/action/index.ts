@@ -13,7 +13,20 @@ export class Action extends EventBindingThis {
 		super()
 	}
 
-	destroy() { }
+	destroy() {
+		const shapePlugin = this.getShapePlugin()
+		const data = shapePlugin?.data || []
+		//@ts-ignore
+		const actionName = this.constructor.actionName
+
+		data.forEach(shapeData => {
+			const shapeInstance = shapePlugin?.getInstanceByData(shapeData)
+			if (shapeInstance) {
+				delete shapeInstance.action[actionName]
+			}
+		})
+
+	}
 
 	protected getShapePlugin(): ShapePlugin | undefined {
 		const shapeInstance = this.imageMark.plugin[ShapePlugin.pluginName] as ShapePlugin

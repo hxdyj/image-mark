@@ -29,13 +29,11 @@ export class Plugin extends EventBindingThis {
 
 	}
 
-	//插件被移除之前触发
-	beforePluginRemove() {
-
-	}
-
 	// ImageMark实例被销毁时触发
 	destroy() {
 		this.unbindEvent()
+		//@ts-ignore
+		const pluginName = this.constructor.pluginName
+		delete this.imageMark.plugin[pluginName]
 	}
 }

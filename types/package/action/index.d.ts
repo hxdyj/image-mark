@@ -11,7 +11,6 @@ export declare class Action extends EventBindingThis {
         [key: string]: any;
     };
     constructor(imageMark: ImageMark, shape: ImageMarkShape, options?: any);
-    beforeActionRemove(): void;
     destroy(): void;
     protected getShapePlugin(): ShapePlugin | undefined;
 }

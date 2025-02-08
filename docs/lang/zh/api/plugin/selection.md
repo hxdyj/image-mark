@@ -30,3 +30,42 @@ export type SelectionType = 'single' | 'multiple'
 参数：`(newMode?: SelectionType)`
 
 切换多选单选模式
+
+### getSelectionAction
+
+参数：`(shape: ImageMarkShape)`
+返回：`SelectionAction | undefined`
+
+获取某个 shape 的 selection action
+
+### selectShape
+
+参数：`(shape: ImageMarkShape)`
+
+选中某个 shape
+
+### selectShapes
+
+参数：`(shapeList: ImageMarkShape[])`
+
+选中多个 shape
+
+### unselectShape
+
+参数：`(shape: ImageMarkShape)`
+
+取消选中某个 shape
+
+### unselectShapes
+
+参数：`(shapeList: ImageMarkShape[])`
+
+取消选中多个 shape
+
+### clear
+
+清除所有选中
+
+### destroy
+
+销毁插件

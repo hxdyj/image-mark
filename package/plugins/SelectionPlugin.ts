@@ -3,7 +3,7 @@ import { Plugin } from ".";
 import { ImageMarkShape } from "../shape/Shape";
 import { SelectionAction } from "../action/SelectionAction";
 import { EventBusEventName } from "../event/const";
-import { cloneDeep, forEach } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 
 export type SelectionPluginOptions = {
 }
@@ -66,7 +66,7 @@ export class SelectionPlugin extends Plugin {
 	selectShapes(shapeList: ImageMarkShape[]) {
 		shapeList.forEach(shape => {
 			const selectionActoin = this.getSelectionAction(shape)
-			if (!selectionActoin) throw new Error('shape has no selection action')
+			if (!selectionActoin) return console.error('shape has no selection action')
 
 			if (!selectionActoin.selected) {
 				this.selectShapeList.push(shape)
@@ -84,7 +84,7 @@ export class SelectionPlugin extends Plugin {
 	unselectShapes(shapeList: ImageMarkShape[]) {
 		shapeList.slice().forEach(shape => {
 			const selectionActoin = this.getSelectionAction(shape)
-			if (!selectionActoin) throw new Error('shape has no selection action')
+			if (!selectionActoin) return console.error('shape has no selection action')
 
 			if (selectionActoin.selected) {
 				this.selectShapeList.splice(this.selectShapeList.indexOf(shape), 1)
@@ -111,8 +111,7 @@ export class SelectionPlugin extends Plugin {
 	}
 
 	destroy(): void {
-		super.destroy()
-		this.clear()
 		this.unbindEvent()
+		super.destroy()
 	}
 }

@@ -360,7 +360,7 @@ export function ShapePluginDemo() {
 							if (!shapePlugin) return
 							console.log(shapePlugin.data)
 						}}>Console Shape Data List</Button>
-						<Button onClick={() => {
+						{/* <Button onClick={() => {
 							const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 							if (!shapePlugin) return
 							const rectData = shapeList.current[0]
@@ -368,7 +368,7 @@ export function ShapePluginDemo() {
 							const rectInstance = shapePlugin.getInstanceByData(rectData)
 							if (!rectInstance) return
 							rectInstance.rotate(45)
-						}}>Rotate Rect</Button>
+						}}>Rotate Rect</Button> */}
 					</Button.Group>
 					<Button.Group>
 						<Button onClick={() => {
@@ -382,7 +382,18 @@ export function ShapePluginDemo() {
 							plugin.mode('multiple')
 						}}>Selection Multiple</Button>
 					</Button.Group>
+					<OperateGroup desc="plugin">
+						<Button.Group>
 
+							<Button onClick={() => {
+								const plugin = getPlugin<SelectionPlugin>(SelectionPlugin.pluginName)
+								if (plugin) plugin.destroy()
+							}}>Remove Selection Plugin</Button>
+							<Button onClick={() => {
+								imgMark.current?.addPlugin(SelectionPlugin)
+							}}>Add Selection Plugin</Button>
+						</Button.Group>
+					</OperateGroup>
 				</Space>
 			</div>
 			<div className="image-mark-container">

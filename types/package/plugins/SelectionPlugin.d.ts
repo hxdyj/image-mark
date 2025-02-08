@@ -6,9 +6,10 @@ export type SelectionPluginOptions = {};
 export type SelectionType = 'single' | 'multiple';
 export declare class SelectionPlugin extends Plugin {
     static pluginName: string;
-    protected selectShapeList: ImageMarkShape[];
+    selectShapeList: ImageMarkShape[];
     private _mode;
     constructor(imageMarkInstance: ImageMark);
+    onShapeAfterRender(shapeInstance: ImageMarkShape): void;
     mode(newMode?: SelectionType): SelectionType;
     onSelectionActionClick(shape: ImageMarkShape): void;
     getSelectionAction(shape: ImageMarkShape): SelectionAction | undefined;

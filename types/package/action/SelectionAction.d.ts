@@ -1,7 +1,6 @@
 import { default as ImageMark } from '..';
 import { Action } from '.';
 import { ImageMarkShape } from '../shape/Shape';
-import { SelectionPlugin } from '../plugins/SelectionPlugin';
 import { Rect } from '@svgdotjs/svg.js';
 export type SelectionDrawFunc = (selection: SelectionAction) => void;
 export type SelectionActionOptions = {
@@ -17,7 +16,6 @@ export declare class SelectionAction extends Action {
     constructor(imageMark: ImageMark, shape: ImageMarkShape, options?: SelectionActionOptions | undefined);
     protected bindEvents(): void;
     protected unbindEvent(): void;
-    getSelectionPlugin(): SelectionPlugin;
     getSelectionShape(): Rect | undefined;
     getSelectionId(): string;
     disableSelection(): void;
