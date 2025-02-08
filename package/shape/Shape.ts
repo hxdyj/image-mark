@@ -1,6 +1,6 @@
 import { G, Shape, Svg } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
-import { Action } from "../action";
+import { Action } from "../action/action";
 import { uid } from "uid";
 import { DeepPartial } from "@arco-design/web-react/es/Form/store";
 import { defaultsDeep } from "lodash-es";

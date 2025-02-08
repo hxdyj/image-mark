@@ -1,5 +1,5 @@
 import { ImageMark } from "..";
-import { Plugin } from ".";
+import { Plugin } from "./plugin";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 import { cloneDeep, last } from "lodash-es";

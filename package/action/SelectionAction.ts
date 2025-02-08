@@ -1,5 +1,5 @@
 import ImageMark from "..";
-import { Action } from ".";
+import { Action } from "./action";
 import { ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
 import { Rect } from "@svgdotjs/svg.js";

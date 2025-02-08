@@ -13,13 +13,12 @@ export const zh = defineConfig({
 				items: [
 					{ text: '简介', link: '/introduction' },
 					{ text: '开始', link: '/start' },
-				]
-			},
-			'/guide/': {
-				base: '/guide',
-				items: [
-					{ text: '基本使用', link: '/base' },
-					{ text: '多实例', link: '/multiple-instance' },
+					{ text: '如何使用插件', link: '/use-plugin' },
+					{ text: '如何使用Action', link: '/use-action' },
+					{ text: '怎么用鼠标绘制图形', link: '/draw-shape' },
+					{ text: '更改selection插件选中时候颜色', link: '/custom-selection-action' },
+					// { text: '编写自己的插件', link: '/extend-plugin' },
+					// { text: '编写自己的Action', link: '/extend-action' },
 				]
 			},
 			'/api/': {
@@ -67,7 +66,7 @@ export const zh = defineConfig({
 		// },
 
 		footer: {
-			message: '基于<a href="https://github.com/hxdyj/image-mark-demo/blob/main/LICENSE">MIT 许可</a>',
+			message: '基于<a href="https://github.com/hxdyj/image-mark/blob/main/LICENSE">MIT 许可</a>',
 			copyright: `Copyright © 2025-present <a href="https://github.com/hxdyj">hxdyj</a>`
 		},
 
@@ -116,15 +115,15 @@ function nav(): DefaultTheme.NavItem[] {
 		},
 		{
 			text: '赞助',
-			link: '/zh/guide/what-is-vitepress',
-			activeMatch: '/zh/guide/'
+			link: '/zh/sponsor',
+			activeMatch: '/sponsor'
 		},
 		{
 			text: pkg.version,
 			items: [
 				{
 					text: '更新日志',
-					link: 'https://github.com/hxdyj/image-mark-demo/blob/main/CHANGELOG.md'
+					link: 'https://github.com/hxdyj/image-mark/blob/main/CHANGELOG.md'
 				}
 			]
 		}

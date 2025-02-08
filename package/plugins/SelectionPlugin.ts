@@ -1,5 +1,5 @@
 import { ImageMark } from "..";
-import { Plugin } from ".";
+import { Plugin } from "./plugin";
 import { ImageMarkShape } from "../shape/Shape";
 import { SelectionAction } from "../action/SelectionAction";
 import { EventBusEventName } from "../event/const";

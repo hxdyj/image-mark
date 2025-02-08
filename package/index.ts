@@ -3,8 +3,8 @@ import { getContainerInfo, getElement } from "./utils/dom";
 import { debounce, defaultsDeep, difference, forEach, throttle } from "lodash-es";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
-import { Plugin } from "./plugins";
-import { EventBindingThis } from "./event";
+import { Plugin } from "./plugins/plugin";
+import { EventBindingThis } from "./event/event";
 import { EventBusEventName } from "./event/const";
 import { CssNameKey } from "./const/const";
 import { uid } from 'uid'
@@ -1256,3 +1256,8 @@ export type FunctionKeys<T> = {
 ImageMark.useDefaultPlugin()
 
 export default ImageMark
+
+export * from './action'
+export * from './event'
+export * from './plugins'
+export * from './shape'

@@ -4,21 +4,21 @@ layout: home
 
 hero:
   name: 'ImageMark'
-  text: 'A mark tools for image.'
-  tagline: My great project tagline
+  text: 'Web Image Annotation Tool'
+  tagline: A framework-agnostic JS image annotation library that supports multiple annotation methods, including rectangles, circles, polygons, lines, images, and Path.
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /en/markdown-examples
+      text: Demo
+      link: http://localhost:5173/
     - theme: alt
-      text: API Examples
-      link: /en/api-examples
+      text: Qiuck Start
+      link: /en/start/start
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Framework-Agnostic
+    details: Can be integrated with any Web framework
+  - title: Easy to Use
+    details: Out of the box, easy to get started, rich configuration, clear documentation.
+  - title: Plugin-Based
+    details: Except for core features, all other capabilities are provided as plugins, allowing you to choose only what you need and reduce unnecessary code.
 ---

@@ -17,6 +17,14 @@ footer: false
 
 检查是否使用了插件
 
+### useDefaultPlugin
+
+使用默认插件，包含内置的 [`shape`](/api/plugin/shape) 和 [`selection`](/api/plugin/selection) 插件
+
+### unuseDefaultPlugin
+
+取消使用默认插件
+
 ## 实例方法
 
 ### resize

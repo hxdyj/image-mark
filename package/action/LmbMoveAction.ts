@@ -1,6 +1,6 @@
 import { G, MatrixExtract, Point, Shape } from "@svgdotjs/svg.js";
 import ImageMark, { ArrayPoint } from "..";
-import { Action } from ".";
+import { Action } from "./action";
 import { getDefaultTransform, ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
 import { cloneDeep } from "lodash-es";

@@ -22,6 +22,44 @@ export type ShapeOptions = {
 }
 ```
 
+## Options
+
+```ts
+export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
+	shapeList: T[]
+}
+```
+
+在 `ImageMark` 实例上注册 `shape` 插件时，可以传入 `shapeList` 数组，用来初始化插件实例。
+此插件可以使用内置的多个 `Shape`，也可以通过 `useShape` 方法使用自定义的 `Shape`。
+
+## 使用 Shape 示例
+
+### class 方式
+
+```ts
+import { ShapePlugin, ImageMarkRect } from 'mark-img'
+ShapePlugin.useShape(ImageMarkRect, {
+	// shape options
+})
+```
+
+### 实例方式
+
+```ts
+const imgMark = new ImageMark({
+	el: '#container',
+	src: './example.jpg',
+})
+
+imgMark.addPlugin(imageMarkInstance => {
+	const shapePluginInstance = new ShapePlugin(imageMarkInstance)
+	shapePluginInstance.addShape(ImageMarkRect, {
+		// shape options
+	})
+})
+```
+
 ## 静态属性
 
 ### pluginName

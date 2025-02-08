@@ -3,6 +3,7 @@
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
+	"description": "This JS library is a framework-agnostic image annotation tool that supports customization through a plugin system. It allows developers to integrate and extend functionality easily without altering the core library code.",
 	"scripts": {
 		"dev": "vite --mode development --force",
 		"build": "vite build -c vite.lib.config.ts",
@@ -14,6 +15,9 @@
 		"docs:build": "vitepress build docs --outDir web-dist/docs",
 		"docs:preview": "vitepress preview docs"
 	},
+	"repository": "https://github.com/hxdyj/image-mark",
+	"author": "hxdyj",
+	"license": "MIT",
 	"devDependencies": {
 		"@arco-design/web-react": "^2.64.1",
 		"@arco-plugins/vite-react": "^1.3.3",
@@ -56,7 +60,6 @@
 	"files": [
 		"dist",
 		"types",
-		"package",
 		"README.md"
 	],
 	"dependencies": {

@@ -3,7 +3,9 @@ layout: doc
 footer: false
 ---
 
-# 多边形
+# Polygon
+
+Polygon is a closed shape composed of multiple connected line segments.
 
 ## Data
 
