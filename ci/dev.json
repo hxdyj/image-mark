@@ -1,0 +1,7 @@
+{
+	"path": "/web/image-mark",
+	"host": "192.168.1.32",
+	"port": 22,
+	"rsync": "assets",
+	"output": "web-dist"
+}

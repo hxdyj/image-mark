@@ -1,0 +1,12 @@
+.page-shape-plugin-demo {
+	--operate-bar-height: 160px;
+	height: 100vh;
+
+	.operate-bar {
+		height: var(--operate-bar-height);
+		padding: 16px;
+	}
+	.image-mark-container {
+		height: calc(100vh - var(--operate-bar-height));
+	}
+}

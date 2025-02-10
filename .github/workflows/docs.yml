@@ -1,0 +1,37 @@
+name: docs
+
+on:
+  # 每当 push 到 main 分支时触发部署
+  push:
+    branches: [main]
+  # 手动触发部署
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - uses: pnpm/action-setup@v3 # Uncomment this block if you're using pnpm
+        with:
+          version: 9 # Not needed if you've set "packageManager" in package.json
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm # or pnpm / yarn
+      - name: Install dependencies
+        run: pnpm install # 安装项目依赖
+      - name: Build documentation
+        run: pnpm docs:build # 构建文档
+      - name: vuepress-deploy
+        uses: jenkey2011/vuepress-deploy@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          TARGET_REPO: hxdyj/image-mark-docs
+          TARGET_BRANCH: main
+          # BUILD_SCRIPT: pnpm install && pnpm docs:build
+          BUILD_DIR: docs/dist
+          CNAME: https://image-mark.docs.wingblog.top
