@@ -17,7 +17,7 @@
 
 ## Documentation
 
-- [Link](https://image-mark.docs.wingblog.top/)
+- [Link](https://image-mark.docs.wingblog.top/en/)
 
 ## License
 
