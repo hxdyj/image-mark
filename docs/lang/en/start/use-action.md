@@ -3,14 +3,15 @@ layout: doc
 footer: false
 ---
 
-# 如何使用 Action
+# How to Use Action
 
-- [`selection action`](/api/action/selection) 是 [`selection plugin`](/api/plugin/selection) 配套使用的，在使用`selection plugin`的时候，所有`shape`会被`selection plugin`自动添加上`selection action`。
-- [`lmb-move action`](/api/action/lmb-move)使用后可以用鼠标来拖动 shape
+- [`selection action`](/en/api/action/selection) is used in conjunction with the [`selection plugin`](/en/api/plugin/selection) . When the `selection plugin` is used, all shapes will automatically have `selection action` added by the selection plugin.
 
-## 示例
+- [`lmb-move action`](/en/api/action/lmb-move) allows you to drag shapes with the mouse after it is used.
 
-### class 方式
+## Example
+
+### Class Method
 
 ```ts
 import { Shape, LmbMoveAction } from 'mark-img'
@@ -19,7 +20,7 @@ Shape.useAction(LmbMoveAction, {
 })
 ```
 
-### 实例方式
+### Instance Method
 
 ```ts
 import ImageMark, { ShapePlugin, LmbMoveAction, ImageMarkRect } from 'mark-img'

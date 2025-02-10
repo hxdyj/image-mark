@@ -3,32 +3,32 @@ layout: doc
 footer: false
 ---
 
-# Plugin 类
+# Plugin Class
 
-各种插件的基类，可以继承该类实现自定义插件。
+The base class for various plugins, which can be inherited to implement custom plugins.
 
-## 构造函数
+## Constructor
 
 ### constructor
 
-参数：(imageMark: ImageMark)
+params: (imageMark: ImageMark)
 
-构造函数，传入 ImageMark 实例
+an ImageMark instance as a parameter.
 
-## 静态属性
+## Static Properties
 
 ### pluginName
 
-插件名称，字符串类型，必填项
+The name of the plugin, string type, required.
 
-## 实例属性
+## Instance Properties
 
 ### imageMark
 
-插件所属的 ImageMark 实例
+The ImageMark instance to which the plugin belongs.
 
-## 方法
+## Methods
 
 ### destroy
 
-销毁插件实例
+Destroys the plugin instance.

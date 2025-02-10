@@ -3,11 +3,11 @@ layout: doc
 footer: false
 ---
 
-# 更改 selection 插件选中时候颜色
+# Change the Color When the Selection Plugin is Selected
 
-## 示例
+## Example
 
-### class 方式
+### Class Method
 
 ```ts
 import { Shape, SelectionAction } from 'mark-img'
@@ -23,7 +23,7 @@ Shape.useAction(SelectionAction, {
 })
 ```
 
-### 实例方式
+### Instance Method
 
 ```ts
 import ImageMark, {

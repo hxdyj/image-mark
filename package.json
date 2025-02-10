@@ -12,7 +12,7 @@
 		"preview": "vite preview",
 		"deploy:dev": "pnpm run build-demo && node ./node_modules/bbl-scripts/scripts/deploy.js dev",
 		"docs:dev": "vitepress dev docs --port 6003",
-		"docs:build": "vitepress build docs --outDir web-dist/docs",
+		"docs:build": "vitepress build docs --outDir docs-dist",
 		"docs:preview": "vitepress preview docs"
 	},
 	"repository": "https://github.com/hxdyj/image-mark",

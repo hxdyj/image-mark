@@ -1,4 +1,4 @@
-import { createBrowserRouter, resolvePath } from 'react-router-dom'
+import { createHashRouter, resolvePath } from 'react-router-dom'
 import { Layout } from '../components/Layout/Layout'
 import type { IndexRouteObject, NonIndexRouteObject } from 'react-router-dom'
 import App from '../App'
@@ -231,6 +231,6 @@ export function getRouteIndexPath(route: IRoute) {
 	}, '/')
 }
 
-const router = createBrowserRouter(routes)
+const router = createHashRouter(routes)
 
 export default router

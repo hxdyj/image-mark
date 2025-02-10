@@ -3,15 +3,15 @@ layout: doc
 footer: false
 ---
 
-# 开始
+# Start
 
-## 安装
+## Install
 
 ```shell
 npm i mark-img
 ```
 
-## 使用
+## Usage
 
 ### UMD
 

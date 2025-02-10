@@ -3,13 +3,13 @@ layout: doc
 footer: false
 ---
 
-# 如何使用插件
+# How to Use Plugins
 
-ImageMark 会在导入的时候自动使用内置的 [`shape`](/api/plugin/shape) 和 [`selection`](/api/plugin/selection) 插件。如果不希望自动使用,可以使用[`useDefaultPlugin`](/api/constructor-methods#usedefaultplugin)方法取消。
+ImageMark will automatically use the built-in [`shape`](/en/api/plugin/shape) and [`selection`](/en/api/plugin/selection) plugins when importing. If you do not wish to use them automatically, you can use the [`useDefaultPlugin`](/en/api/constructor-methods#usedefaultplugin) method to disable.
 
-## 示例
+## Example
 
-### class 方式
+### Class Method
 
 ```ts
 import ImageMark, { SelectionPlugin } from 'mark-img'
@@ -24,7 +24,7 @@ imgMark.addPlugin(SelectionPlugin, {
 })
 ```
 
-### 函数方式
+### Function Method
 
 ```ts
 import ImageMark, { SelectionPlugin } from 'mark-img'

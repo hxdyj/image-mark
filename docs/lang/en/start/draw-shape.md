@@ -3,11 +3,11 @@ layout: doc
 footer: false
 ---
 
-# 怎么用鼠标绘制图形
+# How to Draw Shapes with a Mouse
 
-### 示例
+### Example
 
-使用鼠标画一个 Rect。
+Draw a Rect using a mouse.
 
 ```html
 <div>
@@ -44,7 +44,7 @@ footer: false
 			// shape options
 		})
 
-		shapePlugin.startDrawing(rectInstance) // 开始绘制
+		shapePlugin.startDrawing(rectInstance) //  start drawing
 	}
 </script>
 ```

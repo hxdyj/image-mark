@@ -18,7 +18,6 @@ export const shared = defineConfig({
 	// 	}
 	// },
 	themeConfig: {
-
 		search: {
 			provider: 'local',
 			options: {

@@ -101,21 +101,21 @@ function nav(): DefaultTheme.NavItem[] {
 	return [
 		{
 			text: 'Demo',
-			link: 'http://localhost:5173/',
+			link: 'https://image-mark.demo.wingblog.top',
 		},
 		{
 			text: '开始',
-			link: '/zh/start/start',
+			link: '/start/start',
 			activeMatch: '/start'
 		},
 		{
 			text: 'API',
-			link: '/zh/api/constructor-options',
+			link: '/api/constructor-options',
 			activeMatch: '/api'
 		},
 		{
 			text: '赞助',
-			link: '/zh/sponsor',
+			link: '/sponsor',
 			activeMatch: '/sponsor'
 		},
 		{
@@ -123,7 +123,7 @@ function nav(): DefaultTheme.NavItem[] {
 			items: [
 				{
 					text: '更新日志',
-					link: 'https://github.com/hxdyj/image-mark/blob/main/CHANGELOG.md'
+					link: 'https://github.com/hxdyj/image-mark/releases'
 				}
 			]
 		}

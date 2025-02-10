@@ -3,21 +3,21 @@ layout: doc
 footer: false
 ---
 
-# Shape 类
+# Shape Class
 
-Shape 类是所有形状的基类，它提供了一些基本的属性和方法。可以继承此类来实现自己的形状。
+The Shape class is the base class for all shapes, providing some basic properties and methods. You can inherit this class to implement your own shapes.
 
-## 类名
+## Class Name
 
 `ImageMarkShape`
 
-::: danger 注意
+::: danger Note
 
-类名不是 Shape，而是 ImageMarkShape，这是因为 Shape 在 `Svg.js` 里有同名的类
+The class name is not Shape, but ImageMarkShape. This is because there is a class named Shape in `Svg.js`.
 
 :::
 
-## 构造函数
+## Constructor
 
 ### constructor
 
@@ -25,66 +25,66 @@ Shape 类是所有形状的基类，它提供了一些基本的属性和方法�
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 
 export type ShapeOptions = {
-	afterRender?: (shapeInstance: ImageMarkShape) => void // 绘制完成后添加到画布后调用，也就是dom已经渲染完成
-	initDrawFunc?: ShapeDrawFunc // 初始自定义绘制函数
+	afterRender?: (shapeInstance: ImageMarkShape) => void //  Called after the shape is added to the canvas, i.e., the DOM is already rendered
+	initDrawFunc?: ShapeDrawFunc // Custom initial drawing function
 }
 ```
 
-参数：(
+params: (
 
-- public data: T, `形状的数据，可以是任意类型，具体的类型由子类实现`
-- imageMarkInstance: ImageMark, `形状所属的 ImageMark 实例`
-- public options: ShapeOptions `形状的选项，具体的选项由子类实现`
+- public data: T, `The data of the shape, can be any type, the specific type is implemented by subclasses`
+- imageMarkInstance: ImageMark, `The ImageMark instance to which the shape belongs`
+- public options: ShapeOptions `The options of the shape, the specific options are implemented by subclasses`
 
 )
 
-Shape 类的构造函数
+The constructor of the Shape class
 
-## 静态属性
+## Static Properties
 
 ### shapeName
 
-shape 的名称
+shape The name of the shape
 
 ### actionList
 
-shape 的动作列表
+The action list of the shape
 
-## 静态方法
+## Static Methods
 
 ### useAction
 
-参数：`(action: typeof Action, actionOptions: any = {})`
+params: `(action: typeof Action, actionOptions: any = {})`
 
-使用指定的动作
+Use the specified action
 
 ### unuseAction
 
-参数：`(action: typeof Action)`
+params: `(action: typeof Action)`
 
-取消使用指定的动作
+Cancel the use of the specified action
 
 ### hasAction
 
-参数：`(action: typeof Action)`
+params: `(action: typeof Action)`
 
-判断是否有指定的动作
+Determine if there is the specified action
 
 ### useDefaultAction
 
-使用默认的动作
+Use the default action
 
 ### unuseDefaultAction
 
-取消使用默认的动作
+Cancel the use of the default action
 
-## 抽象方法
+## Abstract Methods
 
 ### draw
 
-刻画形状
+Draw the shape
 
-## 实例属性
+## Instance Properties
 
 ### mouseDrawType
 
@@ -94,27 +94,27 @@ shape 的动作列表
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
 ```
 
-鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
+The type of mouse drawing, oneTouch: draw with one touch, multiPress: draw with multiple clicks
 
 ### uid
 
-形状的唯一标识符
+The unique identifier of the shape
 
 ### shapeInstance
 
-形状的 `Svg.js` `G` 实例
+The `Svg.js` `G` instance of the shape
 
 ### isRendered
 
-是否已经渲染过
+Whether it has been rendered
 
 ### isBindActions
 
-是否已经绑定动作
+Whether actions have been bound
 
 ### imageMark
 
-形状所属的 `ImageMark` 实例
+The `ImageMark` instance to which the shape belongs
 
 ### action
 
@@ -124,49 +124,49 @@ action:{
 }
 ```
 
-形状的动作
+The actions of the shape
 
-## 实例方法
+## Instance Methods
 
 ### addDrawFunc
 
-参数：`(func: ShapeDrawFunc)`
+params: `(func: ShapeDrawFunc)`
 
-添加绘制函数，用于自定义绘制，在每次`draw`时都会调用，比如自定义 fillColor，strokeWidth 等,或者 select fillColor 等等
+Add a drawing function, used for custom drawing, called every time `draw` is called, such as customizing fillColor, strokeWidth, etc., or selecting fillColor, etc.
 
 ### removeDrawFunc
 
-参数：`(func: ShapeDrawFunc)`
+params: `(func: ShapeDrawFunc)`
 
-移除绘制函数
+Remove the drawing function
 
 ### getMainShape
 
-获取主形状
+Get the main shape
 
 ### getMainId
 
-获取主形状的 id
+Get the id of the main shape
 
 ### updateData
 
-参数：`(data: T)`
+params: `(data: T)`
 
-更新形状的数据
+Update the data of the shape
 
 ### getMouseMoveThreshold
 
-获取鼠标移动绘制形状时候的阈值，默认为 0
+Get the threshold for mouse movement when drawing the shape, the default is 0
 
 ### setMouseMoveThreshold
 
-参数：`(threshold: number)`
+params: `(threshold: number)`
 
-设置鼠标移动绘制形状时候的阈值
+Set the threshold for mouse movement when drawing the shape
 
 ### destroy
 
-销毁形状并从画布中移除
+Destroy the shape and remove it from the canvas
 
 ### render
 
@@ -174,22 +174,22 @@ action:{
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 ```
 
-参数：`(stage: AddToShape)`
+params: `(stage: AddToShape)`
 
-渲染形状到画布上，如果已经渲染过，则不再渲染
+Render the shape to the canvas, if it has already been rendered, it will not be rendered again
 
 ### addAction
 
-参数：`(action: typeof Action, actionOptions: any = {})`
+params: `(action: typeof Action, actionOptions: any = {})`
 
-添加实例动作
+Add an instance action
 
 ### removeAction
 
-参数：`(action: typeof Action)`
+params: `(action: typeof Action)`
 
-移除实例动作
+Remove an instance action
 
 ### initAction
 
-初始化实例动作，如果已经绑定动作，则不再绑定
+Initialize instance actions, if actions have already been bound, they will not be bound again

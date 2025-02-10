@@ -147,13 +147,13 @@ Set maximum scaling ratio
 
 ### on
 
-params: (...rest: any) `参考 eventemitter3 的 on 方法`
+params: (...rest: any) `Reference the on method of eventemitter3`
 
 Bind instance events, currently refer to the [events](/en/api/constructor-on) documentation for events that can be listened to by the instance
 
 ### off
 
-params: (...rest: any) `参考 eventemitter3 的 off 方法`
+params: (...rest: any) `Reference the off method of eventemitter3`
 
 Unbind instance events
 
