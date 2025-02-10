@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install # 安装项目依赖
       - name: Build documentation
-        run: pnpm docs:build # 构建文档
+        run: pnpm build-web # 构建文档
       - name: vuepress-deploy
         uses: jenkey2011/vuepress-deploy@master
         env:
@@ -35,3 +35,12 @@ jobs:
           # BUILD_SCRIPT: pnpm install && pnpm docs:build
           BUILD_DIR: docs-dist
           CNAME: https://image-mark.docs.wingblog.top
+      - name: vuepress-deploy
+        uses: jenkey2011/vuepress-deploy@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          TARGET_REPO: hxdyj/image-mark-demo
+          TARGET_BRANCH: main
+          # BUILD_SCRIPT: pnpm install && pnpm docs:build
+          BUILD_DIR: web-dist
+          CNAME: https://image-mark.demo.wingblog.top
