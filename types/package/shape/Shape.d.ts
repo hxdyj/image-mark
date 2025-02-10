@@ -1,6 +1,6 @@
 import { G, Shape } from '@svgdotjs/svg.js';
 import { ImageMark } from '../index';
-import { Action } from '../action';
+import { Action } from '../action/action';
 import { DeepPartial } from '@arco-design/web-react/es/Form/store';
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0];
 export type MouseEvent2DataOptions = {

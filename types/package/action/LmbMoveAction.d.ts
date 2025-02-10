@@ -1,6 +1,6 @@
 import { MatrixExtract, Point } from '@svgdotjs/svg.js';
 import { default as ImageMark, ArrayPoint } from '..';
-import { Action } from '.';
+import { Action } from './action';
 import { ImageMarkShape } from '../shape/Shape';
 export type LmbMoveActionOptions = {
     onStart?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void;
