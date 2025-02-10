@@ -12,7 +12,7 @@ hero:
   actions:
     - theme: brand
       text: Demo
-      link: http://localhost:5173/
+      link: https://image-mark.demo.wingblog.top
     - theme: alt
       text: 快速使用
       link: /start/start
