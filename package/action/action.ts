@@ -1,6 +1,6 @@
 import { Shape } from "@svgdotjs/svg.js";
 import { EventBindingThis } from "../event/event";
-import { ImageMarkShape } from "../shape/Shape";
+import { ImageMarkShape, ShapeData } from "../shape/Shape";
 import ImageMark from "..";
 import { ShapePlugin } from "../plugins/ShapePlugin";
 
@@ -15,17 +15,12 @@ export class Action extends EventBindingThis {
 
 	destroy() {
 		const shapePlugin = this.getShapePlugin()
-		const data = shapePlugin?.data || []
 		//@ts-ignore
 		const actionName = this.constructor.actionName
-
-		data.forEach(shapeData => {
-			const shapeInstance = shapePlugin?.getInstanceByData(shapeData)
-			if (shapeInstance) {
-				delete shapeInstance.action[actionName]
-			}
-		})
-
+		const shapeInstance = shapePlugin?.getInstanceByData(this.shape.data)
+		if (shapeInstance) {
+			delete shapeInstance.action[actionName]
+		}
 	}
 
 	protected getShapePlugin(): ShapePlugin | undefined {

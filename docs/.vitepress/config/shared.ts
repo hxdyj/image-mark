@@ -11,6 +11,7 @@ export const shared = defineConfig({
 	rewrites: {
 		"zh/:rest*": ":rest*",
 	},
+	appearance: "force-dark",
 	// sitemap: {
 	// 	hostname: 'https://vitepress.dev',
 	// 	transformItems(items) {

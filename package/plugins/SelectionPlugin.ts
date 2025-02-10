@@ -44,7 +44,7 @@ export class SelectionPlugin extends Plugin {
 				this.clear()
 			} else {
 				this.clear()
-				this.selectShape(shape,)
+				this.selectShape(shape)
 			}
 		} else {
 			if (selectionActoin?.selected) {
