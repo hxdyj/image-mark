@@ -15,7 +15,9 @@
 		"docs:build": "vitepress build docs --outDir docs-dist",
 		"docs:preview": "vitepress preview docs"
 	},
-	"repository": "https://github.com/hxdyj/image-mark",
+	"repository": {
+		"url": "git+https://github.com/hxdyj/image-mark.git"
+	},
 	"author": "hxdyj",
 	"license": "MIT",
 	"devDependencies": {
