@@ -1,6 +1,5 @@
 {
 	"name": "mark-img",
-	"private": true,
 	"version": "0.0.1",
 	"type": "module",
 	"description": "This JS library is a framework-agnostic image annotation tool that supports customization through a plugin system. It allows developers to integrate and extend functionality easily without altering the core library code.",
