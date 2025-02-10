@@ -2,8 +2,8 @@
 
 ## 语言 Languages
 
-1. [中文](README.md)
-2. [English](README-en.md)
+1. [English](README-en.md)
+2. [中文](README.md)
 
 ## 简介
 
@@ -17,7 +17,7 @@
 
 ## 文档
 
-TODO
+- [传送门](https://image-mark.docs.wingblog.top/)
 
 ## License
 
