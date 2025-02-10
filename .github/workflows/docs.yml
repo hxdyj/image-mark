@@ -33,5 +33,5 @@ jobs:
           TARGET_REPO: hxdyj/image-mark-docs
           TARGET_BRANCH: main
           # BUILD_SCRIPT: pnpm install && pnpm docs:build
-          BUILD_DIR: docs/dist
+          BUILD_DIR: docs-dist
           CNAME: https://image-mark.docs.wingblog.top
