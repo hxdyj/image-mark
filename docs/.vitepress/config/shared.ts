@@ -18,6 +18,9 @@ export const shared = defineConfig({
 	// 	}
 	// },
 	themeConfig: {
+		socialLinks: [
+			{ icon: 'github', link: 'https://github.com/hxdyj/image-mark' }
+		],
 		search: {
 			provider: 'local',
 			options: {
