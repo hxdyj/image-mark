@@ -29,6 +29,8 @@ export class LmbMoveAction extends Action {
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: LmbMoveActionOptions) {
 		super(imageMark, shape, options)
 		this.uid = shape.uid + '_' + uid(6)
+
+		//TODO(songle): 去掉__args模式, 改用事件代理，不要在每个shape上添加整体的事件
 		const __args = {
 			uid: this.uid
 		}
