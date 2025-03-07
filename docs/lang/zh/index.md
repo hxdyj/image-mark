@@ -7,7 +7,7 @@ hero:
   text: 'Web图片标注工具'
   tagline: 一个框架无关的JS图片标注库，支持多种标注方式，包括矩形、圆、多边形、直线、图片、Path等
   image:
-    src: /logo.svg
+    src: /banner.png
     alt: Image Mark
   actions:
     - theme: brand

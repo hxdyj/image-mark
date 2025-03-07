@@ -19,6 +19,7 @@ export const shared = defineConfig({
 	// 	}
 	// },
 	themeConfig: {
+		logo: '/logo.svg',
 		socialLinks: [
 			{ icon: 'github', link: 'https://github.com/hxdyj/image-mark' }
 		],
