@@ -16,6 +16,7 @@ export const zh = defineConfig({
 					{ text: '如何使用插件', link: '/use-plugin' },
 					{ text: '如何使用Action', link: '/use-action' },
 					{ text: '怎么用鼠标绘制图形', link: '/draw-shape' },
+					{ text: '如何监听事件', link: '/event-listener' },
 					{ text: '更改selection插件选中时候颜色', link: '/custom-selection-action' },
 					// { text: '编写自己的插件', link: '/extend-plugin' },
 					// { text: '编写自己的Action', link: '/extend-action' },

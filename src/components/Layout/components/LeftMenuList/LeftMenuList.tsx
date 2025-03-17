@@ -123,7 +123,7 @@ export function LeftMenuList(props: {
 
 						<img src={logo} alt='logo' className='logo-img w-[100px]' />
 						<div className='logo-text mt-[8px]'>
-							Image Mark
+							IMAGE MARK
 							{/* SIX PIXEL */}
 						</div>
 					</div>

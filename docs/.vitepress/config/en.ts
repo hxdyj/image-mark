@@ -15,6 +15,7 @@ export const en = defineConfig({
 					{ text: 'How to Use the Plugin', link: '/use-plugin' },
 					{ text: 'How to Use Action', link: '/use-action' },
 					{ text: 'How to Draw Shapes with the Mouse', link: '/draw-shape' },
+					{ text: 'How to Listen Events', link: '/event-listener' },
 					{ text: 'Customize Selection Plugin Color on Selection', link: '/custom-selection-action' },
 					// { text: 'Write Your Own Plugin', link: '/extend-plugin' },
 					// { text: 'Write Your Own Action', link: '/extend-action' },
