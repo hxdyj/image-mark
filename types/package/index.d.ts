@@ -88,6 +88,7 @@ export declare class ImageMark extends EventBindingThis {
     protected initBindAllEventsThis(): void;
     protected init(action?: 'rerender'): void;
     protected initVariable(): void;
+    getCurrentScale(): number;
     resize(): void;
     rerender(): void;
     destroy(): void;
