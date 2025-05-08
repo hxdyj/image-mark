@@ -16,6 +16,16 @@ import { ImageMarkPathLine, PathLineData } from "#/shape/PathLine"
 import { ImageMarkShape, ShapeData } from "#/shape/Shape"
 import { SelectionAction } from "#/action/SelectionAction"
 import { SelectionPlugin } from "#/plugins/SelectionPlugin"
+
+
+// ImageMarkShape.useAction(SelectionAction, {
+// 	initDrawFunc(selection: SelectionAction) {
+// 		const shape = selection.getSelectionShape()
+// 		shape?.stroke('blue')
+// 	}
+// })
+// ImageMark.usePlugin(SelectionPlugin)
+
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)

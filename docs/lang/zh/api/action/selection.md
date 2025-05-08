@@ -10,6 +10,7 @@ footer: false
 ## Options
 
 ```ts
+export type SelectionDrawFunc = (selection: SelectionAction) => void
 export type SelectionActionOptions = {
 	initDrawFunc?: SelectionDrawFunc
 }

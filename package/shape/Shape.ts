@@ -184,19 +184,19 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		}
 	}
 
-	initAction(action: typeof Action, actionOptions: any = {}) {
+	initAction(action: typeof Action, actionOptions: any = null) {
 		const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T>
 		if (this.action[action.actionName]) {
 			this.removeAction(action)
 		}
-		this.action[action.actionName] = new action(this.imageMark, this, actionOptions || action.actionOptions[constructor.shapeName])
+		this.action[action.actionName] = new action(this.imageMark, this, actionOptions || action.actionOptions[constructor.shapeName] || action.actionOptions['static'] || {})
 	}
 
 	static actionList: Array<typeof Action> = []
 
 	static useAction(action: typeof Action, actionOptions: any = {}) {
 		if (ImageMarkShape.hasAction(action)) return ImageMarkShape
-		action.actionOptions[this.shapeName] = actionOptions
+		action.actionOptions[this.shapeName || 'static'] = actionOptions
 		ImageMarkShape.actionList.push(action)
 		return ImageMarkShape
 	}

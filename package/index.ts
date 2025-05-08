@@ -216,6 +216,11 @@ export class ImageMark extends EventBindingThis {
 		this.imageDom = document.createElement('img')
 	}
 
+	//TODO(): docs
+	getCurrentScale() {
+		const { scaleX = 1 } = this.stageGroup.transform()
+		return scaleX
+	}
 
 	resize() {
 		this.containerRectInfo = getContainerInfo(this.container)

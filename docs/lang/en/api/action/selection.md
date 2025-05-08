@@ -10,6 +10,7 @@ Action for selecting a Shape with the mouse. When using the selection plugin, th
 ## Options
 
 ```ts
+export type SelectionDrawFunc = (selection: SelectionAction) => void
 export type SelectionActionOptions = {
 	initDrawFunc?: SelectionDrawFunc
 }
