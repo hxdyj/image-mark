@@ -16,8 +16,9 @@ import { ImageMarkPathLine, PathLineData } from "#/shape/PathLine"
 import { ImageMarkShape, ShapeData } from "#/shape/Shape"
 import { SelectionAction } from "#/action/SelectionAction"
 import { SelectionPlugin } from "#/plugins/SelectionPlugin"
-
-
+// ShapePlugin.useDefaultShape()
+// ImageMarkShape.useAction(LmbMoveAction)
+// ImageMark.usePlugin(ShapePlugin)
 // ImageMarkShape.useAction(SelectionAction, {
 // 	initDrawFunc(selection: SelectionAction) {
 // 		const shape = selection.getSelectionShape()
@@ -25,6 +26,15 @@ import { SelectionPlugin } from "#/plugins/SelectionPlugin"
 // 	}
 // })
 // ImageMark.usePlugin(SelectionPlugin)
+
+const shapeOptions = {
+	initDrawFunc(shape: ImageMarkShape) {
+		const ele = shape.getMainShape()
+		ele.stroke({
+			color: 'red'
+		})
+	}
+}
 
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
@@ -111,7 +121,8 @@ export function ShapePluginDemo() {
 			src: '/img/demo-parking.jpg',
 			pluginOptions: {
 				[ShapePlugin.pluginName]: {
-					shapeList: shapeList.current
+					shapeList: shapeList.current,
+					shapeOptions
 				}
 			}
 		})
@@ -139,6 +150,11 @@ export function ShapePluginDemo() {
 					.addShape(ImageMarkCircle, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
+						},
+						initDrawFunc(shape: ImageMarkShape) {
+							shape.getMainShape().stroke({
+								color: 'red'
+							})
 						}
 					})
 					.addShape(ImageMarkLine, {
@@ -270,7 +286,7 @@ export function ShapePluginDemo() {
 									width: 0,
 									height: 0,
 								}
-								const rectInstance = new ImageMarkRect(rectData.current, imgMark.current!, {})
+								const rectInstance = new ImageMarkRect(rectData.current, imgMark.current!, shapeOptions)
 								shapePlugin.startDrawing(rectInstance)
 							}}>
 								Rect

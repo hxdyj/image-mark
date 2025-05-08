@@ -14,6 +14,7 @@ import { ImageMarkPolygon } from "../shape/Polygon";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
+	shapeOptions?: ShapeOptions
 }
 
 export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
@@ -27,10 +28,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		super(imageMarkInstance);
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
-		this.data = imageMarkInstance.options.pluginOptions?.[pluginName]?.shapeList || []
+		const thisPlugin = imageMarkInstance.options.pluginOptions?.[pluginName] as ShapePluginOptions<T>
+
+		this.data = thisPlugin?.shapeList || []
+
 		ShapePlugin.shapeList.forEach(shape => {
-			this.initShape(shape.shape, shape.shapeOptions)
+			this.initShape(shape.shape, shape.shapeOptions || thisPlugin?.shapeOptions)
 		})
+
 		this.bindEventThis(['onRerender', 'onDraw', 'onDelete', 'onResize', 'onDrawingMouseDown', 'onDrawingDocumentMouseMove', 'onDrawingDocumentMouseUp', 'onDrawingMouseMove'])
 		this.bindEvent()
 	}
