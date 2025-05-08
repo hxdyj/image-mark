@@ -79,7 +79,8 @@ export class ImageMarkManager {
 		this.imageMarkEleInstanceWeakMap.delete(instance.container)
 	}
 	unusePlugin(plugin: typeof Plugin) {
-		forEach(this.idInstanceMap.values(), (instance: ImageMark) => {
+		forEach(this.idInstanceMap.values(), (_instance: any) => {
+			const instance = _instance as ImageMark
 			instance.removePlugin(plugin)
 		})
 	}
