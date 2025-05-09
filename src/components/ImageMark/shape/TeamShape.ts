@@ -121,8 +121,7 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 
 		if (!closeIcon.hasClass('.team-shape-close-icon')) {
 			closeIcon.on('click', (e) => {
-				this.shapeInstance.remove()
-				this.imageMark.eventBus.emit(EventBusEventName.shape_delete, this.data, this, this.imageMark)
+				this.imageMark.eventBus.emit(EventBusEventName.shape_delete, this.data)
 			})
 			closeIcon.on('mousedown', (e) => {
 				e.stopPropagation()

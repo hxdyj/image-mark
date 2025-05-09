@@ -154,6 +154,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			list.splice(index, 1)
 			this.node2ShapeInstanceWeakMap.delete(data)
 			this.shapeInstance2NodeWeakMap.delete(shapeInstance!)
+			shapeInstance?.destroy()
 		}
 	}
 
