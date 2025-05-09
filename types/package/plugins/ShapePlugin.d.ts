@@ -27,7 +27,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     onInit(): void;
     clearMap(): void;
     protected onRerender(): void;
-    redrawLabel(): void;
+    redrawNodes(): void;
     protected onResize(): void;
     protected renderNode(node: T): void;
     protected onDraw(): void;

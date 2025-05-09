@@ -161,11 +161,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	onScale() {
-		this.redrawLabel()
+		this.redrawNodes()
 	}
 
 	onFirstRender() {
-		this.redrawLabel()
+		this.redrawNodes()
 	}
 
 	onInit() {
@@ -184,11 +184,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.onDraw()
 	}
 
-	redrawLabel() {
+	redrawNodes() {
 		this.data.forEach(node => {
 			const shape = this.node2ShapeInstanceWeakMap.get(node)
 			if (shape) {
-				shape.drawLabel()
+				shape.draw()
 			}
 		})
 	}

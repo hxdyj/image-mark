@@ -1,6 +1,6 @@
 {
 	"name": "mark-img",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"type": "module",
 	"keywords": [
 		"图片标注",
@@ -88,7 +88,8 @@
 		"hotkeys-js": "^3.13.7",
 		"mathjs": "^14.0.0",
 		"react-router": "^6.28.0",
-		"uid": "^2.0.2"
+		"uid": "^2.0.2",
+		"vite-plugin-clean": "^2.0.1"
 	},
 	"pnpm": {}
 }
