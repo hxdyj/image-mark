@@ -3,6 +3,7 @@ import { Plugin } from './plugin';
 import { ImageMarkShape, ShapeData, ShapeOptions } from '../shape/Shape';
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
     shapeList: T[];
+    shapeOptions?: ShapeOptions;
 };
 export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
     static pluginName: string;
@@ -21,9 +22,12 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     onAdd(data: T, emit?: boolean): void;
     onDelete(_data: T, shapeInstance: ImageMarkShape): void;
     clear(): void;
+    onScale(): void;
+    onFirstRender(): void;
     onInit(): void;
     clearMap(): void;
     protected onRerender(): void;
+    redrawLabel(): void;
     protected onResize(): void;
     protected renderNode(node: T): void;
     protected onDraw(): void;

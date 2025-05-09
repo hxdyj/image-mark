@@ -40,9 +40,12 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 
 		rect.addTo(this.shapeInstance)
 
+
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
+
+		this.drawLabel()
 
 		this.options?.initDrawFunc?.(this)
 

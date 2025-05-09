@@ -39,9 +39,12 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
     constructor(data: T, imageMarkInstance: ImageMark, options: ShapeOptions);
     abstract draw(): G;
     protected drawFuncList: ShapeDrawFunc[];
+    drawLabel(): void;
     addDrawFunc(func: ShapeDrawFunc): void;
     removeDrawFunc(func: ShapeDrawFunc): void;
     getMainShape<T = Shape>(): T;
+    getLabelShape<T = Shape>(): T;
+    getLabelId(): string;
     getMainId(): string;
     updateData(data: T): G;
     readonly mouseDrawType: ShapeMouseDrawType;
@@ -68,5 +71,6 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 export interface ShapeData {
     shapeName: string;
     transform?: ShapeTransform;
+    label?: string;
     [x: string]: any;
 }

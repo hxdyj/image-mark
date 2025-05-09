@@ -36,7 +36,20 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			this.initShape(shape.shape, shape.shapeOptions || thisPlugin?.shapeOptions)
 		})
 
-		this.bindEventThis(['onRerender', 'onDraw', 'onDelete', 'onResize', 'onDrawingMouseDown', 'onDrawingDocumentMouseMove', 'onDrawingDocumentMouseUp', 'onDrawingMouseMove'])
+		this.bindEventThis(
+			[
+				'onRerender',
+				'onDraw',
+				'onDelete',
+				'onResize',
+				'onDrawingMouseDown',
+				'onDrawingDocumentMouseMove',
+				'onDrawingDocumentMouseUp',
+				'onDrawingMouseMove',
+				'onFirstRender',
+				'onScale',
+			]
+		)
 		this.bindEvent()
 	}
 
@@ -86,6 +99,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.on(EventBusEventName.draw, this.onDraw)
 		this.imageMark.on(EventBusEventName.shape_delete, this.onDelete)
 		this.imageMark.on(EventBusEventName.resize, this.onResize)
+		this.imageMark.on(EventBusEventName.first_render, this.onFirstRender)
+		this.imageMark.on(EventBusEventName.scale, this.onScale)
 		this.imageMark.container.addEventListener('mousedown', this.onDrawingMouseDown)
 		this.imageMark.container.addEventListener('mousemove', this.onDrawingMouseMove)
 		document.addEventListener('mousemove', this.onDrawingDocumentMouseMove)
@@ -98,6 +113,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.off(EventBusEventName.draw, this.onDraw)
 		this.imageMark.off(EventBusEventName.shape_delete, this.onDelete)
 		this.imageMark.off(EventBusEventName.resize, this.onResize)
+		this.imageMark.off(EventBusEventName.first_render, this.onFirstRender)
+		this.imageMark.off(EventBusEventName.scale, this.onScale)
 
 		this.imageMark.container.removeEventListener('mousedown', this.onDrawingMouseDown)
 		this.imageMark.container.removeEventListener('mousemove', this.onDrawingMouseMove)
@@ -143,6 +160,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
+	onScale() {
+		this.redrawLabel()
+	}
+
+	onFirstRender() {
+		this.redrawLabel()
+	}
+
 	onInit() {
 		super.onInit()
 		this.createShape()
@@ -157,6 +182,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.clearMap()
 		this.createShape()
 		this.onDraw()
+	}
+
+	redrawLabel() {
+		this.data.forEach(node => {
+			const shape = this.node2ShapeInstanceWeakMap.get(node)
+			if (shape) {
+				shape.drawLabel()
+			}
+		})
 	}
 
 	protected onResize() {

@@ -32,6 +32,8 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 			func(this)
 		})
 
+		this.drawLabel()
+
 		this.options?.initDrawFunc?.(this)
 
 

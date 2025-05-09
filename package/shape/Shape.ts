@@ -1,4 +1,4 @@
-import { G, Shape, Svg } from "@svgdotjs/svg.js";
+import { G, Rect, Shape, Svg, Text } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action/action";
 import { uid } from "uid";
@@ -75,6 +75,44 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 
 	protected drawFuncList: ShapeDrawFunc[] = []
 
+	drawLabel() {
+		if (!this.data.label) return
+		const mainShape = this.getMainShape()
+		const bbox = mainShape.bbox()
+		const labelGroup = this.getLabelShape<G>() || new G()
+		labelGroup.id(this.getLabelId())
+
+
+
+		const text = labelGroup.find('text')[0] as Text || new Text()
+		text.text(this.data.label)
+		//TODO(hxdyj): init scale and bgBox to relative
+		const scale = this.imageMark.getCurrentScale()
+		text.font({
+			fill: 'red',
+			size: 14 / scale
+		})
+		text.move(5, 0)
+		// 获取文本的边界框
+		let textBbox = text.bbox();
+
+		labelGroup.transform({
+			translate: [bbox.x, bbox.y - textBbox.height - 4.5]
+		}, false)
+
+		// 创建一个矩形元素作为背景
+		const bgBox = labelGroup.find('rect')[0] as Rect || new Rect()
+
+		bgBox.size(textBbox.width + 10 + 10, textBbox.height) // 矩形的宽度和高度比文本稍大一点
+			.fill('#FADC19') // 设置背景颜色
+			.move(-5, 0)
+			.addTo(labelGroup) // 将矩形移动到文本的后面
+
+		text.addTo(labelGroup)
+
+		labelGroup.addTo(this.shapeInstance)
+	}
+
 	addDrawFunc(func: ShapeDrawFunc) {
 		if (this.drawFuncList.indexOf(func) > -1) return
 		this.drawFuncList.push(func)
@@ -89,6 +127,14 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 
 	getMainShape<T = Shape>() {
 		return this.shapeInstance.find(`#${this.getMainId()}`)[0] as T
+	}
+
+	getLabelShape<T = Shape>() {
+		return this.shapeInstance.find(`#${this.getLabelId()}`)[0] as T
+	}
+
+	getLabelId() {
+		return `label_${this.uid}`
 	}
 
 	getMainId() {
@@ -253,6 +299,7 @@ ImageMarkShape.useDefaultAction()
 export interface ShapeData {
 	shapeName: string
 	transform?: ShapeTransform
+	label?: string
 	[x: string]: any
 }
 

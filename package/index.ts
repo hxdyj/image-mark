@@ -202,7 +202,6 @@ export class ImageMark extends EventBindingThis {
 			if (action) {
 				this.eventBus.emit(EventBusEventName.rerender, this)
 			}
-
 			this.draw()
 		})
 	}

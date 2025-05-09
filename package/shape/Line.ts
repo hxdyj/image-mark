@@ -30,6 +30,8 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 			func(this)
 		})
 
+		this.drawLabel()
+
 		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance

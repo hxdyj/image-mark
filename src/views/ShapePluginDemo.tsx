@@ -46,6 +46,7 @@ export function ShapePluginDemo() {
 			height: 200,
 			x: 100,
 			y: 100,
+			label: '#1',
 			transform: {
 				matrix: {
 					a: 1,
@@ -99,6 +100,7 @@ export function ShapePluginDemo() {
 		},
 		{
 			shapeName: 'line',
+			label: '#2',
 			x: 500,
 			y: 500,
 			x2: 600,
