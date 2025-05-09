@@ -1,5 +1,5 @@
 import { Box, Circle, G, Line, MatrixExtract, Rect, Svg, Text } from "@svgdotjs/svg.js";
-import { BoundingBox, ImageMark } from "../../../../package";
+import { BoundingBox, ImageMark, ShapePlugin } from "../../../../package";
 import { ShapeData, ImageMarkShape, ShapeOptions, getDefaultTransform } from "#/shape/Shape";
 import { EventBusEventName } from "#/event/const";
 import { curryRight } from "lodash-es";
@@ -121,7 +121,9 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 
 		if (!closeIcon.hasClass('.team-shape-close-icon')) {
 			closeIcon.on('click', (e) => {
-				this.imageMark.eventBus.emit(EventBusEventName.shape_delete, this.data)
+				// this.imageMark.eventBus.emit(EventBusEventName.shape_delete, this.data)
+				const shapePlugin = this.imageMark.plugin['teamMark'] as ShapePlugin
+				shapePlugin.removeNode(this.data)
 			})
 			closeIcon.on('mousedown', (e) => {
 				e.stopPropagation()

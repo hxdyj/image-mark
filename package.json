@@ -1,6 +1,6 @@
 {
 	"name": "mark-img",
-	"version": "0.0.15",
+	"version": "0.0.16",
 	"type": "module",
 	"keywords": [
 		"图片标注",

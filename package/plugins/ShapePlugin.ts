@@ -144,7 +144,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	onDelete(_data: T, shapeInstance?: ImageMarkShape) {
+	protected onDelete(_data: T, shapeInstance?: ImageMarkShape) {
 		const data = shapeInstance ? this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data : _data
 		const list = this.tempData || this.data
 		if (data) {
@@ -156,6 +156,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			this.shapeInstance2NodeWeakMap.delete(shapeInstance!)
 			shapeInstance?.destroy()
 		}
+	}
+
+	removeNode(data: T) {
+		this.onDelete(data)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data, this.node2ShapeInstanceWeakMap.get(data), this.imageMark)
 	}
 
 	protected tempData: T[] | null = null
