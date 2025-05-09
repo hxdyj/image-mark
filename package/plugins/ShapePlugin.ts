@@ -151,13 +151,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	clear() {
-		this.data = this.data.slice()
-		while (this.data?.length) {
-			let item = this.data[0]
+		const oldData = this.data.slice()
+		while (oldData?.length) {
+			let item = oldData[0]
 			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)
 			nodeInstance?.destroy()
 			this.onDelete(item, nodeInstance!)
 		}
+		this.data = []
 		this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all)
 	}
 
