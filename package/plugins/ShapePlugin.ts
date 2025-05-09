@@ -158,6 +158,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			nodeInstance?.destroy()
 			this.onDelete(item, nodeInstance!)
 		}
+		this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all)
 	}
 
 	onScale() {
