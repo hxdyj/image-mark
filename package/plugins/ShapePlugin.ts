@@ -144,15 +144,16 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	onDelete(_data: T, shapeInstance: ImageMarkShape) {
-		const data = this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data
+	onDelete(_data: T, shapeInstance?: ImageMarkShape) {
+		const data = shapeInstance ? this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data : _data
 		const list = this.tempData || this.data
 		if (data) {
 			const index = list.findIndex(item => item === data)
 			if (index == -1 || index == undefined) return
+			const shapeInstance = this.node2ShapeInstanceWeakMap.get(data)
 			list.splice(index, 1)
 			this.node2ShapeInstanceWeakMap.delete(data)
-			this.shapeInstance2NodeWeakMap.delete(shapeInstance)
+			this.shapeInstance2NodeWeakMap.delete(shapeInstance!)
 		}
 	}
 
