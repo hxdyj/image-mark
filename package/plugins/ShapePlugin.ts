@@ -26,9 +26,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);
-		// @ts-ignore
-		let pluginName = this.constructor['pluginName']
-		const thisPlugin = imageMarkInstance.options.pluginOptions?.[pluginName] as ShapePluginOptions<T>
+
+		const thisPlugin = this.getThisPlugin()
 
 		this.data = thisPlugin?.shapeList || []
 
@@ -51,6 +50,12 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			]
 		)
 		this.bindEvent()
+	}
+
+	getThisPlugin() {
+		// @ts-ignore
+		let pluginName = this.constructor['pluginName']
+		return this.imageMark.options.pluginOptions?.[pluginName] as ShapePluginOptions<T>
 	}
 
 	disableAction(action: string | string[]) {
@@ -151,14 +156,21 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	clear() {
-		const oldData = this.data.slice()
-		while (oldData?.length) {
-			let item = oldData[0]
+		this.data = this.data.slice()
+		while (this.data?.length) {
+			let item = this.data[0]
 			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)
 			nodeInstance?.destroy()
 			this.onDelete(item, nodeInstance!)
 		}
-		this.data = []
+	}
+
+	removeAllNodes() {
+		this.clear()
+		const thisPlugin = this.getThisPlugin()
+		if (thisPlugin) {
+			thisPlugin.shapeList.splice(0, thisPlugin.shapeList.length)
+		}
 		this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all)
 	}
 

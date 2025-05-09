@@ -12,6 +12,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     data: T[];
     disableActionList: Set<string>;
     constructor(imageMarkInstance: ImageMark);
+    getThisPlugin(): ShapePluginOptions<T>;
     disableAction(action: string | string[]): void;
     enableAction(action: string | string[]): void;
     protected addNode(node: T): void;
@@ -22,6 +23,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     onAdd(data: T, emit?: boolean): void;
     onDelete(_data: T, shapeInstance: ImageMarkShape): void;
     clear(): void;
+    removeAllNodes(): void;
     onScale(): void;
     onFirstRender(): void;
     onInit(): void;
