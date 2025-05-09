@@ -146,23 +146,27 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	onDelete(_data: T, shapeInstance: ImageMarkShape) {
 		const data = this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data
+		const list = this.tempData || this.data
 		if (data) {
-			const index = this.data?.findIndex(item => item === data)
+			const index = list.findIndex(item => item === data)
 			if (index == -1 || index == undefined) return
-			this.data.splice(index, 1)
+			list.splice(index, 1)
 			this.node2ShapeInstanceWeakMap.delete(data)
 			this.shapeInstance2NodeWeakMap.delete(shapeInstance)
 		}
 	}
 
+	protected tempData: T[] | null = null
+
 	clear() {
-		this.data = this.data.slice()
-		while (this.data?.length) {
-			let item = this.data[0]
+		this.tempData = this.tempData || this.data.slice()
+		while (this.tempData?.length) {
+			let item = this.tempData[0]
 			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)
 			nodeInstance?.destroy()
 			this.onDelete(item, nodeInstance!)
 		}
+		this.tempData = null
 	}
 
 	removeAllNodes() {

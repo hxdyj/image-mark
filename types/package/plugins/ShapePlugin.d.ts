@@ -22,6 +22,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     destroy(): void;
     onAdd(data: T, emit?: boolean): void;
     onDelete(_data: T, shapeInstance: ImageMarkShape): void;
+    protected tempData: T[] | null;
     clear(): void;
     removeAllNodes(): void;
     onScale(): void;
