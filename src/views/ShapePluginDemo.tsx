@@ -409,6 +409,12 @@ export function ShapePluginDemo() {
 							if (!plugin) return
 							plugin.mode('multiple')
 						}}>Selection Multiple</Button>
+						<Button onClick={() => {
+							const plugin = getPlugin<SelectionPlugin>(SelectionPlugin.pluginName)
+							if (!plugin) return
+							const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
+							plugin.onSelectionActionClick(shapePlugin?.getInstanceByData(shapeList.current[6]))
+						}}>Select Triangle</Button>
 					</Button.Group>
 					<OperateGroup desc="plugin">
 						<Button.Group>

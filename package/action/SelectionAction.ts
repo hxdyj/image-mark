@@ -51,11 +51,13 @@ export class SelectionAction extends Action {
 		this.getSelectionShape()?.remove()
 		this.shape.removeDrawFunc(this.draw)
 		this.selected = false
+		this.shape.draw()
 	}
 
 	enableSelection() {
 		this.shape.addDrawFunc(this.draw)
 		this.selected = true
+		this.shape.draw()
 	}
 
 
