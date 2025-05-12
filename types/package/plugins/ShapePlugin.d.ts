@@ -17,6 +17,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     enableAction(action: string | string[]): void;
     protected addNode(node: T): void;
     protected createShape(): void;
+    setData(data: T[]): void;
     bindEvent(): void;
     unbindEvent(): void;
     destroy(): void;
@@ -25,7 +26,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     removeNode(data: T): void;
     protected tempData: T[] | null;
     clear(): void;
-    removeAllNodes(): void;
+    removeAllNodes(emit?: boolean): void;
     onScale(): void;
     onFirstRender(): void;
     onInit(): void;

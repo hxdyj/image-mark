@@ -13,6 +13,7 @@ export declare class EventBusEventName {
     static shape_delete_all: string;
     static shape_add: string;
     static shape_after_render: string;
+    static shape_plugin_set_data: string;
     static selection_select_list_change: string;
     static selection_action_click: string;
 }

@@ -388,6 +388,16 @@ export function ShapePluginDemo() {
 							if (!shapePlugin) return
 							console.log(shapePlugin.data)
 						}}>Console Shape Data List</Button>
+						<Button onClick={() => {
+							const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
+							if (!shapePlugin) return
+							shapePlugin.setData([
+								{
+									shapeName: 'polygon',
+									points: [1000, 1000, 1400, 1400, 1000, 1400]
+								},
+							])
+						}}>Set Data</Button>
 						{/* <Button onClick={() => {
 							const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 							if (!shapePlugin) return

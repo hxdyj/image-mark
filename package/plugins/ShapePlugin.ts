@@ -98,6 +98,18 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		})
 	}
 
+	setData(data: T[]) {
+		this.removeAllNodes(false)
+		const thisPlugin = this.getThisPlugin()
+		if (thisPlugin) {
+			thisPlugin.shapeList.push(...data)
+			this.data = thisPlugin.shapeList
+		}
+		this.createShape()
+		this.onDraw()
+		this.imageMark.eventBus.emit(EventBusEventName.shape_plugin_set_data, data, this.imageMark)
+	}
+
 	bindEvent() {
 		super.bindEvent()
 		this.imageMark.on(EventBusEventName.rerender, this.onRerender)
@@ -176,13 +188,16 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.tempData = null
 	}
 
-	removeAllNodes() {
+	removeAllNodes(emit = true) {
 		this.clear()
 		const thisPlugin = this.getThisPlugin()
 		if (thisPlugin) {
 			thisPlugin.shapeList.splice(0, thisPlugin.shapeList.length)
 		}
-		this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all)
+		this.clearMap()
+		if (emit) {
+			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all)
+		}
 	}
 
 	onScale() {
