@@ -451,7 +451,7 @@ export class ImageMark extends EventBindingThis {
 		}
 		this.checkInitOutOfContainerAndReset()
 		this.image.size(this.imageDom.naturalWidth, this.imageDom.naturalHeight)
-		addTo && this.image.addTo(this.stageGroup)
+		addTo && this.image.addTo(this.stageGroup, 0)
 	}
 
 
