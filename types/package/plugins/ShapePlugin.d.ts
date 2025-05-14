@@ -6,13 +6,14 @@ export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
     shapeOptions?: ShapeOptions;
 };
 export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
+    shapeOptions?: ShapeOptions | undefined;
     static pluginName: string;
     protected node2ShapeInstanceWeakMap: WeakMap<T, ImageMarkShape<ShapeData>>;
     protected shapeInstance2NodeWeakMap: WeakMap<ImageMarkShape<ShapeData>, T>;
     data: T[];
     disableActionList: Set<string>;
-    constructor(imageMarkInstance: ImageMark);
-    getThisPlugin(): ShapePluginOptions<T>;
+    constructor(imageMarkInstance: ImageMark, shapeOptions?: ShapeOptions | undefined);
+    getShapeOptions(shapeOptions?: ShapeOptions): any;
     disableAction(action: string | string[]): void;
     enableAction(action: string | string[]): void;
     protected addNode(node: T): void;
@@ -62,7 +63,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
         shapeOptions?: ShapeOptions;
     }>;
     static useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): {
-        new (imageMarkInstance: ImageMark): ShapePlugin<T>;
+        new (imageMarkInstance: ImageMark, shapeOptions?: ShapeOptions | undefined): ShapePlugin<T>;
         pluginName: string;
         shapeList: Array<{
             shape: typeof ImageMarkShape;

@@ -13,7 +13,7 @@ import { ImageMarkLine, LineData } from "#/shape/Line"
 import { ImageMarkPolyLine, PolyLineData } from "#/shape/PolyLine"
 import { ImageMarkPolygon, PolygonData } from "#/shape/Polygon"
 import { ImageMarkPathLine, PathLineData } from "#/shape/PathLine"
-import { ImageMarkShape, ShapeData } from "#/shape/Shape"
+import { ImageMarkShape, ShapeData, ShapeOptions } from "#/shape/Shape"
 import { SelectionAction } from "#/action/SelectionAction"
 import { SelectionPlugin } from "#/plugins/SelectionPlugin"
 // ShapePlugin.useDefaultShape()
@@ -27,12 +27,19 @@ import { SelectionPlugin } from "#/plugins/SelectionPlugin"
 // })
 // ImageMark.usePlugin(SelectionPlugin)
 
-const shapeOptions = {
+const shapeOptions: ShapeOptions = {
+	setAttr(shapeInstance: ImageMarkShape) {
+		return {
+			stroke: {
+				color: 'green',
+			}
+		}
+	},
 	initDrawFunc(shape: ImageMarkShape) {
-		const ele = shape.getMainShape()
-		ele.stroke({
-			color: 'red'
-		})
+		// const ele = shape.getMainShape()
+		// ele.stroke({
+		// 	color: 'red'
+		// })
 	}
 }
 
@@ -129,17 +136,30 @@ export function ShapePluginDemo() {
 			}
 		})
 			.addPlugin((imageMarkInstance) => {
-				const shapePluginInstance = new ShapePlugin(imageMarkInstance)
+				const shapePluginInstance = new ShapePlugin(imageMarkInstance, {
+					setAttr() {
+						return {
+							stroke: {
+								color: 'green'
+							},
+							label: {
+								font: {
+									fill: 'black'
+								}
+							}
+						}
+					},
+				})
 				shapePluginInstance
 					.addShape(ImageMarkRect, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
 							shapeInstance.addAction(SelectionAction, {
 								initDrawFunc(selection: SelectionAction) {
-									const shape = selection.getSelectionShape()
-									shape?.stroke({
-										color: '#165DFF'
-									})
+									// const shape = selection.getSelectionShape()
+									// shape?.stroke({
+									// 	color: '#165DFF'
+									// })
 								}
 							})
 						}
@@ -181,7 +201,21 @@ export function ShapePluginDemo() {
 					})
 				return shapePluginInstance
 			})
-			.addPlugin(SelectionPlugin)
+			// .addPlugin(SelectionPlugin)
+			.addPlugin(imageMarkInstance => {
+				const selectionPluginInstance = new SelectionPlugin(imageMarkInstance, {
+					selectionActionOptions: {
+						setAttr() {
+							return {
+								stroke: {
+									color: 'pink'
+								}
+							}
+						}
+					}
+				})
+				return selectionPluginInstance
+			})
 		return () => {
 			imgMark.current?.destroy()
 		}
@@ -423,7 +457,7 @@ export function ShapePluginDemo() {
 							const plugin = getPlugin<SelectionPlugin>(SelectionPlugin.pluginName)
 							if (!plugin) return
 							const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
-							plugin.onSelectionActionClick(shapePlugin?.getInstanceByData(shapeList.current[6]))
+							plugin.onSelectionActionClick(shapePlugin?.getInstanceByData(shapeList.current[6])!)
 						}}>Select Triangle</Button>
 					</Button.Group>
 					<OperateGroup desc="plugin">

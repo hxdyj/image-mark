@@ -35,7 +35,7 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		const rect = this.getMainShape<Polygon>() || new Polygon()
 		rect.id(this.getMainId())
 
-		rect.plot([x, y, x + width, y, x + width, y + height, x, y + height]).size(width, height).fill('transparent').stroke({ width: 10, color: '#FADC19' }).fill('transparent')
+		rect.plot([x, y, x + width, y, x + width, y + height, x, y + height]).size(width, height).fill(this.attr?.fill || 'transparent').stroke(this.attr?.stroke || {})
 		this.shapeInstance.transform(transform.matrix)
 
 		rect.addTo(this.shapeInstance)

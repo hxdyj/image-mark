@@ -1,4 +1,4 @@
-import { G, Rect, Shape, Svg, Text } from "@svgdotjs/svg.js";
+import { G, Rect, Shape, StrokeData, Svg, Text } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action/action";
 import { uid } from "uid";
@@ -12,7 +12,25 @@ export type MouseEvent2DataOptions = {
 	eventList?: MouseEvent[]
 	auxiliaryEvent?: MouseEvent
 }
+
+
+export type ShapeAttr = {
+	stroke?: StrokeData
+	fill?: string
+	auxiliary?: {
+		stroke?: StrokeData
+	}
+	label?: {
+		font?: {
+			fill?: string,
+			size?: number
+		},
+		fill?: string
+	}
+} | undefined
+
 export type ShapeOptions = {
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 	initDrawFunc?: ShapeDrawFunc
 }
@@ -57,6 +75,24 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		[key: string]: Action
 	} = {}
 
+	attr: ShapeAttr = {
+		stroke: {
+			width: 10,
+			color: '#FADC19'
+		},
+		auxiliary: {
+			stroke: {
+				dasharray: `20,20`
+			}
+		},
+		label: {
+			font: {
+				fill: 'red',
+				size: 14
+			}
+		}
+	}
+
 	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions) {
 		const constructor = this.constructor
 		// @ts-ignore
@@ -68,6 +104,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		const group = new G()
 		group.id(this.uid)
 		this.shapeInstance = group
+		this.attr = defaultsDeep(this.options.setAttr?.(this) || {}, this.attr)
 		this.draw()
 	}
 
@@ -82,17 +119,18 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		const labelGroup = this.getLabelShape<G>() || new G()
 		labelGroup.id(this.getLabelId())
 
-
-
 		const text = labelGroup.find('text')[0] as Text || new Text()
 		text.text(this.data.label)
-		//TODO(hxdyj): init scale and bgBox to relative
 		const scale = this.imageMark.getCurrentScale()
 		text.font({
-			fill: 'red',
-			size: 14 / scale
+			fill: this.attr?.label?.font?.fill,
+			size: (this.attr?.label?.font?.size ?? 14) / scale
 		})
-		text.move(5, 0)
+
+		const strokeWidth = mainShape.attr('stroke-width')
+		const halfStrokeWidth = strokeWidth / 2
+
+		text.move(halfStrokeWidth, 0)
 		// 获取文本的边界框
 		let textBbox = text.bbox();
 
@@ -103,9 +141,9 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		// 创建一个矩形元素作为背景
 		const bgBox = labelGroup.find('rect')[0] as Rect || new Rect()
 
-		bgBox.size(textBbox.width + 10 + 10, textBbox.height) // 矩形的宽度和高度比文本稍大一点
-			.fill('#FADC19') // 设置背景颜色
-			.move(-5, 0)
+		bgBox.size(textBbox.width + strokeWidth + 10, textBbox.height) // 矩形的宽度和高度比文本稍大一点
+			.fill(this.attr?.label?.fill ?? this.attr?.stroke?.color ?? '#FADC19') // 设置背景颜色
+			.move(-halfStrokeWidth, 0)
 			.addTo(labelGroup) // 将矩形移动到文本的后面
 
 		text.addTo(labelGroup)

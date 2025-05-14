@@ -2,7 +2,7 @@ import { ImageMark } from "..";
 import { Plugin } from "./plugin";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
-import { cloneDeep, last } from "lodash-es";
+import { cloneDeep, defaultsDeep, last } from "lodash-es";
 import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
 import { ImageMarkRect } from "../shape/Rect";
 import { ImageMarkCircle } from "../shape/Circle";
@@ -24,15 +24,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	data: T[] = []
 	disableActionList: Set<string> = new Set()
 
-	constructor(imageMarkInstance: ImageMark) {
+	constructor(imageMarkInstance: ImageMark, public shapeOptions?: ShapeOptions) {
 		super(imageMarkInstance);
 
-		const thisPlugin = this.getThisPlugin()
+		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions<T>>()
 
 		this.data = thisPlugin?.shapeList || []
 
 		ShapePlugin.shapeList.forEach(shape => {
-			this.initShape(shape.shape, shape.shapeOptions || thisPlugin?.shapeOptions)
+			this.initShape(shape.shape, this.getShapeOptions(shape.shapeOptions))
 		})
 
 		this.bindEventThis(
@@ -52,10 +52,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.bindEvent()
 	}
 
-	getThisPlugin() {
-		// @ts-ignore
-		let pluginName = this.constructor['pluginName']
-		return this.imageMark.options.pluginOptions?.[pluginName] as ShapePluginOptions<T>
+
+	getShapeOptions(shapeOptions?: ShapeOptions) {
+		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions>()
+		return defaultsDeep(shapeOptions, this.shapeOptions, thisPlugin?.shapeOptions)
 	}
 
 	disableAction(action: string | string[]) {
@@ -83,7 +83,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 					throw new Error(`Shape ${Reflect.get(shapeInfo.ShapeClass, 'shapeName')} must be a subclass of ImageMarkShape`)
 				}
 				// @ts-ignore
-				shape = new shapeInfo.ShapeClass(node, this.imageMark, shapeInfo.shapeOptions)
+				shape = new shapeInfo.ShapeClass(node, this.imageMark, this.getShapeOptions(shapeInfo.shapeOptions))
 				if (shape) {
 					this.node2ShapeInstanceWeakMap.set(node, shape)
 					this.shapeInstance2NodeWeakMap.set(shape, node)
@@ -100,7 +100,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	setData(data: T[]) {
 		this.removeAllNodes(false)
-		const thisPlugin = this.getThisPlugin()
+		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions<T>>()
 		if (thisPlugin) {
 			thisPlugin.shapeList.push(...data)
 			this.data = thisPlugin.shapeList
@@ -190,7 +190,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	removeAllNodes(emit = true) {
 		this.clear()
-		const thisPlugin = this.getThisPlugin()
+		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions<T>>()
 		if (thisPlugin) {
 			thisPlugin.shapeList.splice(0, thisPlugin.shapeList.length)
 		}
@@ -262,7 +262,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	} = {}
 
 	addShape(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions) {
-		this.initShape(shape, shapeOptions)
+		this.initShape(shape, this.getShapeOptions(shapeOptions))
 		return this
 	}
 

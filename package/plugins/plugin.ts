@@ -29,6 +29,13 @@ export class Plugin extends EventBindingThis {
 
 	}
 
+	getThisPluginOptions<T>() {
+		// @ts-ignore
+		let pluginName = this.constructor['pluginName']
+		return this.imageMark.options.pluginOptions?.[pluginName] as T
+	}
+
+
 	// ImageMark实例被销毁时触发
 	destroy() {
 		this.unbindEvent()

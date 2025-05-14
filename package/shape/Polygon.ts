@@ -1,6 +1,7 @@
 import { G, Line, Polygon, Polyline } from "@svgdotjs/svg.js";
 import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark from "..";
+import { defaultsDeep } from "lodash-es";
 
 export interface PolygonData extends ShapeData {
 	shapeName: "polygon",
@@ -31,7 +32,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 				this.shapeInstance.add(polyline)
 			}
 
-			polyline.plot(points.concat(this.data.auxiliaryPoint || [])).stroke({ width: 10, color: '#FADC19' }).fill('none')
+			polyline.plot(points.concat(this.data.auxiliaryPoint || [])).stroke(this.attr?.stroke || {}).fill(this.attr?.fill || 'none')
 
 			let dashLine = this.shapeInstance.findOne('line') as Line
 			if (points.length > 2) {
@@ -45,7 +46,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 					y1: auxiliaryPoint[1],
 					x2: points[0],
 					y2: points[1],
-				}).stroke({ width: 10, color: '#FADC19', dasharray: `20,20` })
+				}).stroke(defaultsDeep(this.attr?.auxiliary?.stroke || {}, this.attr?.stroke || {}))
 
 			} else {
 				if (dashLine) {
@@ -55,7 +56,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 		} else {
 			polygon.attr({
 				points: points.join(',')
-			}).stroke({ width: 10, color: '#FADC19' }).fill('transparent')
+			}).stroke(this.attr?.stroke || {}).fill(this.attr?.fill || 'transparent')
 		}
 		this.shapeInstance.transform(transform.matrix)
 

@@ -1,4 +1,4 @@
-import { G, Shape } from '@svgdotjs/svg.js';
+import { G, Shape, StrokeData } from '@svgdotjs/svg.js';
 import { ImageMark } from '../index';
 import { Action } from '../action/action';
 import { DeepPartial } from '@arco-design/web-react/es/Form/store';
@@ -7,7 +7,22 @@ export type MouseEvent2DataOptions = {
     eventList?: MouseEvent[];
     auxiliaryEvent?: MouseEvent;
 };
+export type ShapeAttr = {
+    stroke?: StrokeData;
+    fill?: string;
+    auxiliary?: {
+        stroke?: StrokeData;
+    };
+    label?: {
+        font?: {
+            fill?: string;
+            size?: number;
+        };
+        fill?: string;
+    };
+} | undefined;
 export type ShapeOptions = {
+    setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr;
     afterRender?: (shapeInstance: ImageMarkShape) => void;
     initDrawFunc?: ShapeDrawFunc;
 };
@@ -36,6 +51,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
     action: {
         [key: string]: Action;
     };
+    attr: ShapeAttr;
     constructor(data: T, imageMarkInstance: ImageMark, options: ShapeOptions);
     abstract draw(): G;
     protected drawFuncList: ShapeDrawFunc[];

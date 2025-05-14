@@ -21,7 +21,7 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		const line = this.getMainShape<Line>() || new Line()
 		line.id(this.getMainId())
 
-		line.plot([x, y, x2, y2]).stroke({ width: 10, color: '#FADC19' })
+		line.plot([x, y, x2, y2]).stroke(this.attr?.stroke || {})
 		this.shapeInstance.transform(transform.matrix)
 
 		line.addTo(this.shapeInstance)

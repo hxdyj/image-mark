@@ -1,11 +1,12 @@
 import { ImageMark } from "..";
 import { Plugin } from "./plugin";
 import { ImageMarkShape } from "../shape/Shape";
-import { SelectionAction } from "../action/SelectionAction";
+import { SelectionAction, SelectionActionOptions } from "../action/SelectionAction";
 import { EventBusEventName } from "../event/const";
 import { cloneDeep } from 'lodash-es';
 
 export type SelectionPluginOptions = {
+	selectionActionOptions?: SelectionActionOptions
 }
 
 export type SelectionType = 'single' | 'multiple'
@@ -15,7 +16,7 @@ export class SelectionPlugin extends Plugin {
 	selectShapeList: ImageMarkShape[] = []
 	private _mode: SelectionType = 'single'
 
-	constructor(imageMarkInstance: ImageMark) {
+	constructor(imageMarkInstance: ImageMark, public selectionPluginOptions?: SelectionPluginOptions) {
 		super(imageMarkInstance);
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
@@ -23,13 +24,11 @@ export class SelectionPlugin extends Plugin {
 		this.bindEvent()
 	}
 
-
 	onShapeAfterRender(shapeInstance: ImageMarkShape) {
 		if (!shapeInstance.action[SelectionAction.actionName]) {
-			shapeInstance.addAction(SelectionAction)
+			shapeInstance.addAction(SelectionAction, this.selectionPluginOptions?.selectionActionOptions)
 		}
 	}
-
 
 	mode(newMode?: SelectionType) {
 		if (!newMode) return this._mode

@@ -2,20 +2,35 @@ import ImageMark from "..";
 import { Action } from "./action";
 import { ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
-import { Rect } from "@svgdotjs/svg.js";
+import { Rect, StrokeData } from "@svgdotjs/svg.js";
 import { EventBusEventName } from "../event/const";
+import { defaultsDeep } from "lodash-es";
 
 
 export type SelectionDrawFunc = (selection: SelectionAction) => void
+
+export type SelectionActionAttr = {
+	stroke?: StrokeData
+	fill?: string
+	padding?: number
+}
+
 export type SelectionActionOptions = {
 	initDrawFunc?: SelectionDrawFunc
+	setAttr?: (action: SelectionAction) => SelectionActionAttr
 }
 
 export class SelectionAction extends Action {
 	static actionName = "selection"
 	protected uid: string
 	selected: boolean = false
-
+	attr: SelectionActionAttr = {
+		stroke: {
+			color: '#F53F3F',
+		},
+		fill: 'none',
+		padding: 20,
+	}
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: SelectionActionOptions) {
 		super(imageMark, shape, options)
 		this.uid = shape.uid + '_' + uid(6)
@@ -27,6 +42,7 @@ export class SelectionAction extends Action {
 			onMouseUp: __args
 		})
 		this.bindEvents()
+		this.attr = defaultsDeep(this.options?.setAttr?.(this) || {}, this.attr)
 	}
 
 	protected bindEvents() {
@@ -67,13 +83,10 @@ export class SelectionAction extends Action {
 
 		const selectionShape = this.getSelectionShape() || new Rect()
 		selectionShape.id(this.getSelectionId())
-		const padding = 20
+		const padding = this.attr.padding ?? 20
 		selectionShape.move(bbox.x - padding, bbox.y - padding)
 		selectionShape.size(bbox.width + padding * 2, bbox.height + padding * 2)
-		selectionShape.stroke({
-			color: '#F53F3F',
-			width: 10,
-		}).fill('none')
+		selectionShape.stroke(defaultsDeep(this.attr.stroke, this.shape.attr?.stroke || {})).fill(this.attr.fill || 'none')
 
 		selectionShape.addTo(this.shape.shapeInstance)
 

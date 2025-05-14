@@ -32,7 +32,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 
 		circle.center(x, y).attr({
 			r
-		}).fill('transparent').stroke({ width: 10, color: '#FADC19' })
+		}).fill(this.attr?.fill || 'transparent').stroke(this.attr?.stroke || {})
 		this.shapeInstance.transform(transform.matrix)
 
 		circle.addTo(this.shapeInstance)
