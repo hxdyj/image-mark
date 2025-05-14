@@ -135,7 +135,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		let textBbox = text.bbox();
 
 		labelGroup.transform({
-			translate: [bbox.x, bbox.y - textBbox.height - 4.5]
+			translate: [bbox.x, bbox.y - textBbox.height - halfStrokeWidth + 0.5]
 		}, false)
 
 		// 创建一个矩形元素作为背景
@@ -273,7 +273,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		if (this.action[action.actionName]) {
 			this.removeAction(action)
 		}
-		this.action[action.actionName] = new action(this.imageMark, this, actionOptions || action.actionOptions[constructor.shapeName] || action.actionOptions['static'] || {})
+		this.action[action.actionName] = new action(this.imageMark, this, defaultsDeep(actionOptions, action.actionOptions[constructor.shapeName], action.actionOptions['static']))
 	}
 
 	static actionList: Array<typeof Action> = []
