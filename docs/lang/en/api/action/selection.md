@@ -11,8 +11,16 @@ Action for selecting a Shape with the mouse. When using the selection plugin, th
 
 ```ts
 export type SelectionDrawFunc = (selection: SelectionAction) => void
+
+export type SelectionActionAttr = {
+	stroke?: StrokeData
+	fill?: string
+	padding?: number
+}
+
 export type SelectionActionOptions = {
 	initDrawFunc?: SelectionDrawFunc
+	setAttr?: (action: SelectionAction) => SelectionActionAttr //customize the selection action's attributes
 }
 ```
 

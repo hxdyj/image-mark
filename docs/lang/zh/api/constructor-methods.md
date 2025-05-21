@@ -145,6 +145,10 @@ export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 
 设置最大缩放比例
 
+### getCurrentScale
+
+获取当前缩放比例
+
 ### on
 
 参数：(...rest: any) `参考 eventemitter3 的 on 方法`

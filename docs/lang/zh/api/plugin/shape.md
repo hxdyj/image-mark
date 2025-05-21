@@ -13,10 +13,30 @@ footer: false
 export interface ShapeData {
 	shapeName: string
 	transform?: ShapeTransform
+	label?: string
 	[x: string]: any
 }
 
+export type ShapeAttr =
+	| {
+			stroke?: StrokeData
+			fill?: string
+			//辅助线
+			auxiliary?: {
+				stroke?: StrokeData
+			}
+			label?: {
+				font?: {
+					fill?: string
+					size?: number
+				}
+				fill?: string
+			}
+	  }
+	| undefined
+
 export type ShapeOptions = {
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // 自定义 shape 的属性
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 	initDrawFunc?: ShapeDrawFunc
 }
@@ -27,6 +47,7 @@ export type ShapeOptions = {
 ```ts
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
+	shapeOptions?: ShapeOptions
 }
 ```
 
@@ -50,10 +71,20 @@ ShapePlugin.useShape(ImageMarkRect, {
 const imgMark = new ImageMark({
 	el: '#container',
 	src: './example.jpg',
+	pluginOptions: {
+		shape: {
+			shapeList: [],
+			shapeOptions: {
+				// shape options
+			},
+		},
+	},
 })
 
 imgMark.addPlugin(imageMarkInstance => {
-	const shapePluginInstance = new ShapePlugin(imageMarkInstance)
+	const shapePluginInstance = new ShapePlugin(imageMarkInstance, {
+		// shape options
+	})
 	shapePluginInstance.addShape(ImageMarkRect, {
 		// shape options
 	})
@@ -141,6 +172,42 @@ shape: {
 鼠标绘制过程中鼠标事件记录
 
 ## 实例方法
+
+### getLabelShape
+
+获取 Label 的 shape 实例
+
+### getLabelId
+
+获取 Label shape 的 id
+
+### setData
+
+参数：`(data: T[])`
+
+设置 shape 数据
+
+### removeNode
+
+参数：`(data: T)`
+
+移除某个 shape
+
+### removeAllNodes
+
+参数：`(emit = true)`
+
+移除所有 shape
+
+### getShapeOptions
+
+参数：`(shapeOptions?: ShapeOptions)`
+
+获取 shape options
+
+### redrawNodes
+
+重新渲染所有 shape
 
 ### disableAction
 

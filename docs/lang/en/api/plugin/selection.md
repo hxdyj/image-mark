@@ -7,6 +7,18 @@ footer: false
 
 Selection plugin, used in conjunction with the selection action. When used individually, the plugin registers the selection action for each shape.
 
+## Types
+
+```typescript
+export type SelectionPluginOptions = {
+	selectionActionOptions?: SelectionActionOptions // This property can be passed in pluginOptions['selection'].selectionActionOptions or Selection Plugin instantiation constructor parameters when ImageMark constructs the instance
+}
+```
+
+## constructor
+
+params: `(imageMarkInstance: ImageMark, public selectionPluginOptions?: SelectionPluginOptions)`
+
 ## Static Properties
 
 ### pluginName

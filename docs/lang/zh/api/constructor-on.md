@@ -90,3 +90,9 @@ shape 实例渲染完成时触发
 回调参数：`(shapeInstance:ImageMarkShape)`
 
 选中插件操作按钮点击时触发
+
+### shape_delete_all
+
+回调参数：`(shapeInstance:ImageMarkShape)`
+
+删除所有 shape 时触发

@@ -196,7 +196,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 		this.clearMap()
 		if (emit) {
-			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all)
+			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all, this.imageMark)
 		}
 	}
 

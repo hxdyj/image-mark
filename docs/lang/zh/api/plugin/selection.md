@@ -7,6 +7,18 @@ footer: false
 
 选中插件，配套 selection action 一起使用，单独使用插件的时候，插件会给每个 shape 上边注册 selection action。
 
+## Types
+
+```typescript
+export type SelectionPluginOptions = {
+	selectionActionOptions?: SelectionActionOptions //这个属性可以在 ImageMark 构造实例时候 pluginOptions['selection'].selectionActionOptions 或者 Selection Plugin 实例化constructor 的参数中传入
+}
+```
+
+## constructor
+
+参数：`(imageMarkInstance: ImageMark, public selectionPluginOptions?: SelectionPluginOptions)`
+
 ## 静态属性
 
 ### pluginName

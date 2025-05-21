@@ -25,6 +25,7 @@ Shape 类是所有形状的基类，它提供了一些基本的属性和方法�
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 
 export type ShapeOptions = {
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // 自定义 shape 的属性
 	afterRender?: (shapeInstance: ImageMarkShape) => void // 绘制完成后添加到画布后调用，也就是dom已经渲染完成
 	initDrawFunc?: ShapeDrawFunc // 初始自定义绘制函数
 }

@@ -13,10 +13,30 @@ This plugin is the most basic plugin, primarily used for managing `Shape` data a
 export interface ShapeData {
 	shapeName: string
 	transform?: ShapeTransform
+	label?: string
 	[x: string]: any
 }
 
+export type ShapeAttr =
+	| {
+			stroke?: StrokeData
+			fill?: string
+			//辅助线
+			auxiliary?: {
+				stroke?: StrokeData
+			}
+			label?: {
+				font?: {
+					fill?: string
+					size?: number
+				}
+				fill?: string
+			}
+	  }
+	| undefined
+
 export type ShapeOptions = {
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // Customize the properties of shape
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 	initDrawFunc?: ShapeDrawFunc
 }
@@ -27,6 +47,7 @@ export type ShapeOptions = {
 ```ts
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
+	shapeOptions?: ShapeOptions
 }
 ```
 
@@ -49,10 +70,20 @@ ShapePlugin.useShape(ImageMarkRect, {
 const imgMark = new ImageMark({
 	el: '#container',
 	src: './example.jpg',
+	pluginOptions: {
+		shape: {
+			shapeList: [],
+			shapeOptions: {
+				// shape options
+			},
+		},
+	},
 })
 
 imgMark.addPlugin(imageMarkInstance => {
-	const shapePluginInstance = new ShapePlugin(imageMarkInstance)
+	const shapePluginInstance = new ShapePlugin(imageMarkInstance, {
+		// shape options
+	})
 	shapePluginInstance.addShape(ImageMarkRect, {
 		// shape options
 	})
@@ -140,6 +171,42 @@ Type: `Array<MouseEvent>`
 Records mouse events during the drawing process
 
 ## Instance Methods
+
+### getLabelShape
+
+Get the Label shape instance
+
+### getLabelId
+
+Get the id of the Label shape
+
+### setData
+
+params: `(data: T[])`
+
+Set shape plugin data
+
+### removeNode
+
+params: `(data: T)`
+
+Remove a specific shape
+
+### removeAllNodes
+
+params: `(emit = true)`
+
+Remove all shapes
+
+### getShapeOptions
+
+params: `(shapeOptions?: ShapeOptions)`
+
+Get shape options
+
+### redrawNodes
+
+Redraw all shapes
 
 ### disableAction
 

@@ -5,6 +5,10 @@ export const en = defineConfig({
 	description: 'Vite & Vue powered static site generator.',
 
 	themeConfig: {
+		outline: {
+			label: 'Outline',
+			level: 'deep'
+		},
 		nav: nav(),
 		sidebar: {
 			'/en/start/': {

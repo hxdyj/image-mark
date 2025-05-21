@@ -11,8 +11,16 @@ footer: false
 
 ```ts
 export type SelectionDrawFunc = (selection: SelectionAction) => void
+
+export type SelectionActionAttr = {
+	stroke?: StrokeData
+	fill?: string
+	padding?: number
+}
+
 export type SelectionActionOptions = {
 	initDrawFunc?: SelectionDrawFunc
+	setAttr?: (action: SelectionAction) => SelectionActionAttr //自定义 selection action 的属性
 }
 ```
 

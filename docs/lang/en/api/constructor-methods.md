@@ -145,6 +145,10 @@ params: `(minScale: number|InitialScaleSize)`
 
 Set maximum scaling ratio
 
+### getCurrentScale
+
+Get the current scale ratio
+
 ### on
 
 params: (...rest: any) `Reference the on method of eventemitter3`

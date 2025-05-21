@@ -25,6 +25,7 @@ The class name is not Shape, but ImageMarkShape. This is because there is a clas
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 
 export type ShapeOptions = {
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // Customize the properties of shape
 	afterRender?: (shapeInstance: ImageMarkShape) => void //  Called after the shape is added to the canvas, i.e., the DOM is already rendered
 	initDrawFunc?: ShapeDrawFunc // Custom initial drawing function
 }

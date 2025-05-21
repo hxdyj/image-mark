@@ -90,3 +90,9 @@ Triggered when the selection plugin's selected list changes
 Callback parameters: `(shapeInstance:ImageMarkShape)`
 
 Triggered when the selection plugin's action button is clicked
+
+### shape_delete_all
+
+Callback parameters: `(shapeInstance:ImageMarkShape)`
+
+Triggered when all shapes are deleted
