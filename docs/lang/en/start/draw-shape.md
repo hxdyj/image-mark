@@ -15,7 +15,7 @@ Draw a Rect using a mouse.
 	<button id="drawing-rect">Draw Rect</button>
 </div>
 
-<script module>
+<script type="module">
 	import ImageMark, { ShapePlugin } from 'mark-img'
 
 	const imgMark = new ImageMark({
