@@ -8,6 +8,7 @@ export const shared = defineConfig({
 	cleanUrls: true,
 	metaChunk: true,
 	srcDir: 'lang',
+	head: [['link', { rel: 'icon', href: '/logo.svg' }]],
 	rewrites: {
 		"zh/:rest*": ":rest*",
 	},
