@@ -19,7 +19,7 @@
 		"img mark",
 		"img-mark"
 	],
-	"description": "This JS library is a framework-agnostic image annotation tool that supports customization through a plugin system. It allows developers to integrate and extend functionality easily without altering the core library code.",
+	"description": "一个框架无关的JS图片标注库，支持多种标注方式，包括矩形、圆、多边形、直线、图片、Path等。This JS library is a framework-agnostic image annotation tool that supports customization through a plugin system. It allows developers to integrate and extend functionality easily without altering the core library code.",
 	"scripts": {
 		"dev": "vite --mode development --force",
 		"build": "vite build -c vite.lib.config.ts",
