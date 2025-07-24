@@ -75,7 +75,7 @@ Triggered when a shape is added, such as a shape added by mouse drawing
 
 ### shape_end_drawing
 
-Callback parameters: `(shapeInstance:ShapeInstance)`
+Callback parameters: `(isCancelAdd:boolean,shapeInstance:ShapeInstance)`
 
 Triggered when a shape end drawing
 
