@@ -47,6 +47,7 @@ export const en = defineConfig({
 							{ text: 'Line', link: '/shape/line' },
 							{ text: 'Rect', link: '/shape/rect' },
 							{ text: 'Image', link: '/shape/image' },
+							{ text: 'Dot', link: '/shape/dot' },
 							{ text: 'Circle', link: '/shape/circle' },
 							{ text: 'Polygon', link: '/shape/polygon' },
 							{ text: 'PolyLine', link: '/shape/poly-line' },

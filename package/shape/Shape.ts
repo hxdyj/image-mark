@@ -27,6 +27,9 @@ export type ShapeAttr = {
 		},
 		fill?: string
 	}
+	dot?: {
+		r?: number
+	}
 } | undefined
 
 export type ShapeOptions = {

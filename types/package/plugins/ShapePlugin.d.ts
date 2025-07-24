@@ -1,4 +1,4 @@
-import { ImageMark } from '..';
+import { ImageMark } from '../index';
 import { Plugin } from './plugin';
 import { ImageMarkShape, ShapeData, ShapeOptions } from '../shape/Shape';
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {

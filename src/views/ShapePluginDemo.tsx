@@ -16,6 +16,7 @@ import { ImageMarkPathLine, PathLineData } from "#/shape/PathLine"
 import { ImageMarkShape, ShapeData, ShapeOptions } from "#/shape/Shape"
 import { SelectionAction } from "#/action/SelectionAction"
 import { SelectionPlugin } from "#/plugins/SelectionPlugin"
+import { DotData, ImageMarkDot } from "#/shape/Dot"
 // ShapePlugin.useDefaultShape()
 // ImageMarkShape.useAction(LmbMoveAction)
 // ImageMark.usePlugin(ShapePlugin)
@@ -66,7 +67,7 @@ export function ShapePluginDemo() {
 			},
 		},
 		{
-			shapeName: 'circle',
+			shapeName: 'dot',
 			transform: {
 				matrix: {
 					a: 1,
@@ -195,6 +196,11 @@ export function ShapePluginDemo() {
 						}
 					})
 					.addShape(ImageMarkPathLine, {
+						afterRender(shapeInstance) {
+							shapeInstance.addAction(LmbMoveAction)
+						}
+					})
+					.addShape(ImageMarkDot, {
 						afterRender(shapeInstance) {
 							shapeInstance.addAction(LmbMoveAction)
 						}
@@ -342,6 +348,20 @@ export function ShapePluginDemo() {
 								shapePlugin.startDrawing(imgInstance)
 							}}>
 								Image
+							</Button>
+							<Button onClick={() => {
+								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
+								if (!shapePlugin) return
+								const dotData: DotData = {
+									shapeName: 'dot',
+									x: 0,
+									y: 0,
+									r: 0
+								}
+								const dotInstance = new ImageMarkDot(dotData, imgMark.current!, {})
+								shapePlugin.startDrawing(dotInstance)
+							}}>
+								Dot
 							</Button>
 							<Button onClick={() => {
 								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)

@@ -1,4 +1,4 @@
-import { ImageMark } from "..";
+import { ImageMark } from "../index";
 import { Plugin } from "./plugin";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
@@ -11,6 +11,7 @@ import { ImageMarkLine } from "../shape/Line";
 import { ImageMarkImage } from "../shape/Image";
 import { ImageMarkPolyLine } from "../shape/PolyLine";
 import { ImageMarkPolygon } from "../shape/Polygon";
+import { ImageMarkDot } from "../shape/Dot";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
@@ -401,6 +402,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
+		if (!this.drawingMouseTrace?.length) return
+
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
 			this.drawingMouseTrace.push(event)
 			const newData = this.drawingShape.mouseEvent2Data({
@@ -438,6 +441,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	static useDefaultShape() {
 		ShapePlugin.useShape(ImageMarkRect)
+		ShapePlugin.useShape(ImageMarkDot)
 		ShapePlugin.useShape(ImageMarkCircle)
 		ShapePlugin.useShape(ImageMarkPathLine)
 		ShapePlugin.useShape(ImageMarkLine)
@@ -448,6 +452,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	static unuseDefaultShape() {
 		ShapePlugin.unuseShape(ImageMarkRect)
+		ShapePlugin.unuseShape(ImageMarkDot)
 		ShapePlugin.unuseShape(ImageMarkCircle)
 		ShapePlugin.unuseShape(ImageMarkPathLine)
 		ShapePlugin.unuseShape(ImageMarkLine)

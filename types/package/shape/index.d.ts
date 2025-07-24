@@ -6,3 +6,4 @@ export { ImageMarkPolygon } from './Polygon';
 export { ImageMarkPolyLine } from './PolyLine';
 export { ImageMarkImage } from './Image';
 export { ImageMarkPathLine } from './PathLine';
+export { ImageMarkDot } from './Dot';

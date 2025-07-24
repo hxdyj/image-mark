@@ -3,36 +3,28 @@ import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData,
 import ImageMark from "..";
 import { cloneDeep } from "lodash-es";
 
-
-function calculateDistance(point1: { x: number; y: number }, point2: { x: number; y: number }): number {
-	const dx = point2.x - point1.x;
-	const dy = point2.y - point1.y;
-	return Math.sqrt(dx * dx + dy * dy);
-}
-
-
-export interface CircleData extends ShapeData {
-	shapeName: "circle",
+export interface DotData extends ShapeData {
+	shapeName: "dot",
 	x: number,
 	y: number,
 	r: number
 }
 
-export class ImageMarkCircle extends ImageMarkShape<CircleData> {
-	static shapeName = "circle"
-	constructor(data: CircleData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+export class ImageMarkDot extends ImageMarkShape<DotData> {
+	static shapeName = "dot"
+	constructor(data: DotData, imageMarkInstance: ImageMark, options: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
 
 	draw(): G {
 		const { x, y, r, transform = getDefaultTransform() } = this.data
-		console.log('draw circle', cloneDeep(transform), x, y, r)
+		console.log('draw dot', cloneDeep(transform), x, y, r)
 		const circle = this.getMainShape<Circle>() || new Circle()
 		circle.id(this.getMainId())
 
 		circle.center(x, y).attr({
 			r
-		}).fill(this.attr?.fill || 'transparent').stroke(this.attr?.stroke || {})
+		}).fill(this.attr?.fill || this.attr?.stroke?.color || 'transparent').stroke(this.attr?.stroke || {})
 		this.shapeInstance.transform(transform.matrix)
 
 		circle.addTo(this.shapeInstance)
@@ -48,15 +40,11 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		return this.shapeInstance
 	}
 
-
-	mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null {
+	mouseEvent2Data(options: MouseEvent2DataOptions): DotData | null {
 		const { eventList = [] } = options
-		if (eventList.length < 2) return null
 		const startPoint = this.imageMark.image.point(eventList[0])
-		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
-		const r = calculateDistance(startPoint, endPoint)
-
-		const newCircle: CircleData = {
+		const r = this.attr?.dot?.r || 10
+		const newCircle: DotData = {
 			...this.data,
 			x: startPoint.x,
 			y: startPoint.y,
