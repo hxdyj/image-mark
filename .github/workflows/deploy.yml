@@ -27,7 +27,7 @@ jobs:
       - name: Build documentation
         run: pnpm build-web # 构建文档
       - name: vuepress-deploy
-        uses: jenkey2011/vuepress-deploy@master
+        uses: hxdyj/vuepress-deploy@master
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           TARGET_REPO: hxdyj/image-mark-docs
@@ -36,7 +36,7 @@ jobs:
           BUILD_DIR: docs-dist
           CNAME: https://image-mark.docs.wingblog.top
       - name: vuepress-deploy
-        uses: jenkey2011/vuepress-deploy@master
+        uses: hxdyj/vuepress-deploy@master
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           TARGET_REPO: hxdyj/image-mark-demo
