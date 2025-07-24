@@ -14,6 +14,7 @@ export class EventBusEventName {
 	static shape_delete = 'shape_delete'
 	static shape_delete_all = 'shape_delete_all'
 	static shape_add = 'shape_add'
+	static shape_end_drawing = 'shape_end_drawing'
 	static shape_after_render = 'shape_after_render'
 	static shape_plugin_set_data = 'shape_plugin_set_data'
 

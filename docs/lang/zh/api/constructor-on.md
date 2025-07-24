@@ -73,6 +73,12 @@ drag drop 时触发
 
 shape 添加时触发，比如通过鼠标绘制添加的 shape
 
+### shape_end_drawing
+
+回调参数：`(shapeInstance:ShapeInstance)`
+
+shape 结束绘制时触发
+
 ### shape_after_render
 
 回调参数：`(shapeInstance:ImageMarkShape)`

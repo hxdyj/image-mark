@@ -73,6 +73,12 @@ Callback parameters: `(data:ShapeData,shapeInstance:ShapeInstance)`
 
 Triggered when a shape is added, such as a shape added by mouse drawing
 
+### shape_end_drawing
+
+Callback parameters: `(shapeInstance:ShapeInstance)`
+
+Triggered when a shape end drawing
+
 ### shape_after_render
 
 Callback parameters: `(shapeInstance:ImageMarkShape)`

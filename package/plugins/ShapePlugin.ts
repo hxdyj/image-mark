@@ -320,6 +320,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.status.drawing = false
 		this.programmaticDrawing = false
 		this.drawingMouseTrace = []
+		this.imageMark.eventBus.emit(EventBusEventName.shape_end_drawing, this.imageMark)
 		return this
 	}
 
