@@ -21,7 +21,7 @@ export type ShapeAttr =
 	| {
 			stroke?: StrokeData
 			fill?: string
-			//辅助线
+			//auxiliary line
 			auxiliary?: {
 				stroke?: StrokeData
 			}
@@ -31,6 +31,10 @@ export type ShapeAttr =
 					size?: number
 				}
 				fill?: string
+			}
+			dot?: {
+				//dot shape radius
+				r?: number
 			}
 	  }
 	| undefined

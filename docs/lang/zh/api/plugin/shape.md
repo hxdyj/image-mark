@@ -32,6 +32,10 @@ export type ShapeAttr =
 				}
 				fill?: string
 			}
+			dot?: {
+				//点的半径
+				r?: number
+			}
 	  }
 	| undefined
 
