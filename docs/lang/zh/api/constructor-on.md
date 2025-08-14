@@ -102,3 +102,9 @@ shape 实例渲染完成时触发
 回调参数：`(shapeInstance:ImageMarkShape)`
 
 删除所有 shape 时触发
+
+### load_image_error
+
+回调参数： `(event:Event, shapeInstance:ImageMarkShape)`
+
+图片加载失败时触发

@@ -155,14 +155,7 @@ export class ImageMark extends EventBindingThis {
 		this.stageGroup = new G()
 		this.image = new Image()
 		this.imageDom = document.createElement('img')
-		this.initBindAllEventsThis()
-		ImageMark.pluginList.forEach(plugin => {
-			this.initPlugin(plugin)
-		})
-		this.init()
-	}
 
-	protected initBindAllEventsThis() {
 		this.bindEventThis([
 			'onContainerWheel',
 			'onComtainerLmbDownMoveingMouseDownEvent',
@@ -172,11 +165,21 @@ export class ImageMark extends EventBindingThis {
 			'onContainerDragEnterEvent',
 			'onContainerDragLeaveEvent',
 			'onContainerDragOverEvent',
-			'onContainerDropEvent'
+			'onContainerDropEvent',
+
+			'onLoadImageError'
 		])
+
 		this.addDefaultAction()
-		this.addContainerEvent()
+
+		this.bindEvent()
+
+		ImageMark.pluginList.forEach(plugin => {
+			this.initPlugin(plugin)
+		})
+		this.init()
 	}
+
 
 	protected init(action?: 'rerender') {
 		if (this.destroyed) return
@@ -204,6 +207,7 @@ export class ImageMark extends EventBindingThis {
 			}
 			this.draw()
 		})
+
 	}
 
 	protected initVariable() {
@@ -215,7 +219,6 @@ export class ImageMark extends EventBindingThis {
 		this.imageDom = document.createElement('img')
 	}
 
-	//TODO(): docs
 	getCurrentScale() {
 		const { scaleX = 1 } = this.stageGroup.transform()
 		return scaleX
@@ -245,7 +248,7 @@ export class ImageMark extends EventBindingThis {
 	destroy() {
 		this.destroyed = true
 		this.eventBus.removeAllListeners()
-		this.removeContainerEvent()
+		this.unbindEvent()
 		this.removeDefaultAction()
 		Object.values(this.plugin).forEach(plugin => {
 			plugin.destroy()
@@ -503,9 +506,13 @@ export class ImageMark extends EventBindingThis {
 		}
 	}
 
+	protected onLoadImageError(e: Event) {
+		this.eventBus.emit(EventBusEventName.load_image_error, e, this)
+	}
+
 	protected containerResizeObserver = new ResizeObserver(this.containerResizeObserverCallback)
 
-	protected addContainerEvent() {
+	protected bindEvent() {
 		this.container.addEventListener('wheel', this.onContainerWheel)
 		this.container.addEventListener('dragenter', this.onContainerDragEnterEvent)
 		this.container.addEventListener('dragover', this.onContainerDragOverEvent)
@@ -514,10 +521,12 @@ export class ImageMark extends EventBindingThis {
 
 		this.containerResizeObserver.observe(this.container)
 
+		this.image.on('error', this.onLoadImageError)
+
 		return this
 	}
 
-	protected removeContainerEvent() {
+	protected unbindEvent() {
 		this.container.removeEventListener('wheel', this.onContainerWheel)
 		this.container.removeEventListener('dragenter', this.onContainerDragEnterEvent)
 		this.container.removeEventListener('dragover', this.onContainerDragOverEvent)
@@ -525,6 +534,8 @@ export class ImageMark extends EventBindingThis {
 		this.container.removeEventListener('drop', this.onContainerDropEvent)
 
 		this.containerResizeObserver.disconnect()
+
+		this.image.off('error', this.onLoadImageError)
 
 		return this
 	}

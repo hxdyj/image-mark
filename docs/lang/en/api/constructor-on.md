@@ -102,3 +102,9 @@ Triggered when the selection plugin's action button is clicked
 Callback parameters: `(shapeInstance:ImageMarkShape)`
 
 Triggered when all shapes are deleted
+
+### load_image_error
+
+Callback parameters: `(event:Event, shapeInstance:ImageMarkShape)`
+
+Triggered when the image loading fails

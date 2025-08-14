@@ -17,4 +17,5 @@ export declare class EventBusEventName {
     static shape_plugin_set_data: string;
     static selection_select_list_change: string;
     static selection_action_click: string;
+    static load_image_error: string;
 }

@@ -85,7 +85,6 @@ export declare class ImageMark extends EventBindingThis {
     private destroyed;
     createTime: number;
     constructor(options: ImageMarkOptions);
-    protected initBindAllEventsThis(): void;
     protected init(action?: 'rerender'): void;
     protected initVariable(): void;
     getCurrentScale(): number;
@@ -112,9 +111,10 @@ export declare class ImageMark extends EventBindingThis {
     protected onContainerDragEnterEvent(e: DragEvent): void;
     protected onContainerDragOverEvent(e: DragEvent): void;
     protected containerResizeObserverCallback: ResizeObserverCallback;
+    protected onLoadImageError(e: Event): void;
     protected containerResizeObserver: ResizeObserver;
-    protected addContainerEvent(): this;
-    protected removeContainerEvent(): this;
+    protected bindEvent(): this;
+    protected unbindEvent(): this;
     protected onComtainerLmbDownMoveingMouseDownEvent(e: Event): void;
     protected onComtainerLmbDownMoveingMouseMoveEvent: import('lodash').DebouncedFuncLeading<(e: Event) => void>;
     protected onComtainerLmbDownMoveingMouseUpEvent(e: Event): void;

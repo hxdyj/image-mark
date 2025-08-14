@@ -12,7 +12,7 @@ export function Base() {
 		if (!containerRef.current) throw new Error("containerRef is null")
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
-			src: '/img/demo-base.jpg',
+			src: '/img/demo-base1.jpg',
 			moveConfig: {},
 			initScaleConfig: {
 				startPosition: 'center',
@@ -39,6 +39,8 @@ export function Base() {
 			// imgMark?.removeStageLmbDownMoveing()
 		}).on(EventBusEventName.scale, (scale: number) => {
 			console.log('onScale', scale);
+		}).on(EventBusEventName.load_image_error, (e: any) => {
+			console.log('loadImageError', e);
 		})
 			.setMaxScale(100000)
 			.setMinScale(0.01)
