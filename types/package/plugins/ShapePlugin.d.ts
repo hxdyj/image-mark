@@ -1,4 +1,4 @@
-import { ImageMark } from '../index';
+import { Action, ImageMark } from '../index';
 import { Plugin } from './plugin';
 import { ImageMarkShape, ShapeData, ShapeOptions } from '../shape/Shape';
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
@@ -14,6 +14,8 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     disableActionList: Set<string>;
     constructor(imageMarkInstance: ImageMark, shapeOptions?: ShapeOptions | undefined);
     getShapeOptions(shapeOptions?: ShapeOptions): any;
+    addAction(action: typeof Action, actionOptions?: any): void;
+    removeAction(action: typeof Action): void;
     disableAction(action: string | string[]): void;
     enableAction(action: string | string[]): void;
     protected addNode(node: T): void;

@@ -286,3 +286,15 @@ Finish drawing, add to `data` if not cancelled
 ### dropLastMouseTrace
 
 Remove the last mouse event from the trace, used for undoing in the drawing process
+
+### addAction
+
+params: `(action: typeof Action, actionOptions: any = {})`
+
+Add an instance action
+
+### removeAction
+
+params: `(action: typeof Action)`
+
+Remove an instance action

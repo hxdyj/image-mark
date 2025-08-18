@@ -24,6 +24,12 @@ export type SelectionActionOptions = {
 }
 ```
 
+## 静态属性
+
+### actionName
+
+`selection`
+
 ## 实例属性
 
 ### selected

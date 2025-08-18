@@ -34,6 +34,12 @@ export type LmbMoveActionOptions = {
 }
 ```
 
+## Static Properties
+
+### actionName
+
+`lmbMove`
+
 ## Methods
 
 ### disableMove

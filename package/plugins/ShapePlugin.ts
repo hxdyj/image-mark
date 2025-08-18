@@ -1,4 +1,4 @@
-import { ImageMark } from "../index";
+import { Action, ImageMark } from "../index";
 import { Plugin } from "./plugin";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
@@ -57,6 +57,24 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	getShapeOptions(shapeOptions?: ShapeOptions) {
 		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions>()
 		return defaultsDeep(shapeOptions, this.shapeOptions, thisPlugin?.shapeOptions)
+	}
+
+	addAction(action: typeof Action, actionOptions: any = {}) {
+		this.data?.forEach(node => {
+			const shape = this.node2ShapeInstanceWeakMap.get(node)
+			if (shape) {
+				shape.addAction(action, actionOptions)
+			}
+		})
+	}
+
+	removeAction(action: typeof Action) {
+		this.data?.forEach(node => {
+			const shape = this.node2ShapeInstanceWeakMap.get(node)
+			if (shape) {
+				shape.removeAction(action)
+			}
+		})
 	}
 
 	disableAction(action: string | string[]) {

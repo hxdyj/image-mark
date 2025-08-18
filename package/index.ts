@@ -541,7 +541,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 
-	protected onComtainerLmbDownMoveingMouseDownEvent(e: Event) {
+	onComtainerLmbDownMoveingMouseDownEvent(e: Event) {
 		e.preventDefault()
 		let ev = e as MouseEvent
 		if (ev.button === 0) {

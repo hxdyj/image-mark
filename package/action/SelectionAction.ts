@@ -101,7 +101,18 @@ export class SelectionAction extends Action {
 
 	private downTime: number | null = null
 
+
+	getEnableSelection() {
+		const shapePlugin = this.getShapePlugin()
+		return !shapePlugin?.disableActionList.has(SelectionAction.actionName)
+	}
+
+
 	protected onMouseDown(event: Event) {
+		if (!this.getEnableSelection()) {
+			this.imageMark.onComtainerLmbDownMoveingMouseDownEvent(event)
+			return
+		}
 		if (this.imageMark.status.drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return

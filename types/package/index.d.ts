@@ -115,7 +115,7 @@ export declare class ImageMark extends EventBindingThis {
     protected containerResizeObserver: ResizeObserver;
     protected bindEvent(): this;
     protected unbindEvent(): this;
-    protected onComtainerLmbDownMoveingMouseDownEvent(e: Event): void;
+    onComtainerLmbDownMoveingMouseDownEvent(e: Event): void;
     protected onComtainerLmbDownMoveingMouseMoveEvent: import('lodash').DebouncedFuncLeading<(e: Event) => void>;
     protected onComtainerLmbDownMoveingMouseUpEvent(e: Event): void;
     addStageLmbDownMoveing(): this;

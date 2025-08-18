@@ -34,6 +34,12 @@ export type LmbMoveActionOptions = {
 }
 ```
 
+## 静态属性
+
+### actionName
+
+`lmbMove`
+
 ## 方法
 
 ### disableMove

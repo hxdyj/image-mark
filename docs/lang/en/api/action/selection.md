@@ -24,6 +24,12 @@ export type SelectionActionOptions = {
 }
 ```
 
+## Static Properties
+
+### actionName
+
+`selection`
+
 ## Instance Properties
 
 ### selected

@@ -287,3 +287,15 @@ shape: {
 ### dropLastMouseTrace
 
 删除鼠标最后一个的事件，绘制过程中回退使用
+
+### addAction
+
+参数：`(action: typeof Action, actionOptions: any = {})`
+
+添加实例动作
+
+### removeAction
+
+参数：`(action: typeof Action)`
+
+移除实例动作

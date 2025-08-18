@@ -30,6 +30,7 @@ export declare class SelectionAction extends Action {
     private draw;
     destroy(): void;
     private downTime;
+    getEnableSelection(): boolean;
     protected onMouseDown(event: Event): void;
     protected onMouseUp(event: Event): void;
 }

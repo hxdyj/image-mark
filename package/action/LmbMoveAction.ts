@@ -3,8 +3,6 @@ import ImageMark, { ArrayPoint } from "..";
 import { Action } from "./action";
 import { getDefaultTransform, ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
-import { cloneDeep } from "lodash-es";
-
 
 export type LmbMoveActionOptions = {
 	onStart?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
@@ -72,8 +70,11 @@ export class LmbMoveAction extends Action {
 	}
 
 	protected onMouseDown(event: Event) {
+		if (!this.getEnableMove()) {
+			this.imageMark.onComtainerLmbDownMoveingMouseDownEvent(event)
+			return
+		}
 		if (this.imageMark.status.drawing) return
-		if (!this.getEnableMove()) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
 		event.stopPropagation()
