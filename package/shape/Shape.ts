@@ -273,7 +273,6 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		return ImageMarkShape.actionList.includes(action)
 	}
 
-	//TODO(songle):
 	abstract translate(x: number, y: number): void
 
 	//TODO(songle): 开启编辑功能

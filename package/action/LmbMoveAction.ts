@@ -101,23 +101,70 @@ export class LmbMoveAction extends Action {
 		}, true)
 
 		const nextTransform = cloneShape.transform()
+		const enableMoveShapeOutOfImg = this.imageMark.options.action?.enableMoveShapeOutOfImg
+		if (!enableMoveShapeOutOfImg && !this.options?.limit) {
+			if (!this.options) {
+				this.options = {}
+			}
+			this.options.limit = (imageMark, shape, nextTransform) => {
+				//TODO(songle):
+				const { x, y } = shape.data
+				let { translateX = 0, translateY = 0 } = nextTransform
+				translateX += x
+				translateY += y
+				let { naturalHeight, naturalWidth } = imageMark.imageDom
+				let isOutOfBounds = false
+				const fixTranslate: ArrayPoint = [0, 0]
+				if (translateX < 0) {
+					isOutOfBounds = true
+					fixTranslate[0] = -translateX
+				}
 
+				if (translateX > naturalWidth) {
 
+					isOutOfBounds = true
+					fixTranslate[0] = naturalWidth - translateX
+				}
+
+				if (translateY < 0) {
+
+					isOutOfBounds = true
+					fixTranslate[1] = -translateY
+				}
+
+				if (translateY > naturalHeight) {
+
+					isOutOfBounds = true
+					fixTranslate[1] = naturalHeight - translateY
+				}
+				return fixTranslate
+			}
+
+			// const shapeRect = this.shape.shapeInstance.rbox()
+			// const points = {
+			// 	x: shapeRect.x + diffPoint[0],
+			// 	y: shapeRect.y + diffPoint[1],
+			// 	x2: shapeRect.x2 + diffPoint[0],
+			// 	y2: shapeRect.y2 + diffPoint[1]
+			// }
+			// console.log('hahaha', points, diffPoint)
+			// if (points.x < 0) {
+			// }
+
+			//TODO(songle):
+			//  this.shape.shapeInstance.translate
+		}
 		const limitFlag = this.options?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
 
 		this.shape.shapeInstance.transform(this.startTransform)
 
 		const movePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)
 
+
+
 		let diffPoint: ArrayPoint = [movePoint.x - this.startPoint.x + limitFlag[0], movePoint.y - this.startPoint.y + limitFlag[1]]
 
 
-		const enableMoveShapeOutOfImg = this.imageMark.options.action?.enableMoveShapeOutOfImg
-
-		if (!enableMoveShapeOutOfImg) {
-			//TODO(songle):
-			//  this.shape.shapeInstance.translate
-		}
 
 		this.shape.shapeInstance.transform({
 			translate: diffPoint
@@ -139,17 +186,6 @@ export class LmbMoveAction extends Action {
 		this.startPoint = null
 		const { e = 0, f = 0 } = this.shape.shapeInstance.transform()
 		this.shape.translate?.(e, f)
-		// this.shape.data.transform = {
-		// 	matrix: {
-		// 		a: currentMatrix.a!,
-		// 		b: currentMatrix.b!,
-		// 		c: currentMatrix.c!,
-		// 		d: currentMatrix.d!,
-		// 		e: currentMatrix.e!,
-		// 		f: currentMatrix.f!
-		// 	}
-		// }
-
 		this.shape.updateData(this.shape.data)
 		this.startTransform = null
 
