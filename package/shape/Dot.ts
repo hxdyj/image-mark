@@ -39,6 +39,14 @@ export class ImageMarkDot extends ImageMarkShape<DotData> {
 		return this.shapeInstance
 	}
 
+	translate(x: number, y: number): void {
+		this.data.x += x
+		this.data.y += y
+		this.shapeInstance.transform({
+			translate: [0, 0]
+		}, false)
+	}
+
 	mouseEvent2Data(options: MouseEvent2DataOptions): DotData | null {
 		const { eventList = [] } = options
 		const startPoint = this.imageMark.image.point(eventList[0])

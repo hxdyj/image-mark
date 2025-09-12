@@ -39,6 +39,18 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		return this.shapeInstance
 	}
 
+	translate(x: number, y: number): void {
+		this.data.points = this.data.points.map((point, index) => {
+			if (index % 2 === 0) {
+				return point + x
+			}
+			return point + y
+		})
+		this.shapeInstance.transform({
+			translate: [0, 0]
+		}, false)
+	}
+
 	mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null {
 		const { eventList = [], auxiliaryEvent } = options
 		if (!eventList.length) return null

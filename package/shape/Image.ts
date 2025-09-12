@@ -64,6 +64,14 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		this.shapeInstance.move(this.data.x - width / 2, this.data.y - height / 2)
 	}
 
+	translate(x: number, y: number): void {
+		this.data.x += x
+		this.data.y += y
+		this.shapeInstance.transform({
+			translate: [0, 0]
+		}, false)
+	}
+
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): ImageData | null {
 		const { eventList = [] } = options

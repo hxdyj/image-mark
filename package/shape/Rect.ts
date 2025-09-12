@@ -30,6 +30,7 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		super(data, imageMarkInstance, options)
 	}
 
+
 	draw(): G {
 		const { x, y, width, height } = this.data
 		const rect = this.getMainShape<Polygon>() || new Polygon()
@@ -50,6 +51,15 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 
 		return this.shapeInstance
 	}
+
+	translate(x: number, y: number): void {
+		this.data.x += x
+		this.data.y += y
+		this.shapeInstance.transform({
+			translate: [0, 0]
+		}, false)
+	}
+
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): RectData | null {
 		const { eventList = [] } = options

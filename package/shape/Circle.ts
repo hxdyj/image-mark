@@ -47,6 +47,13 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		return this.shapeInstance
 	}
 
+	translate(x: number, y: number): void {
+		this.data.x += x
+		this.data.y += y
+		this.shapeInstance.transform({
+			translate: [0, 0]
+		}, false)
+	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null {
 		const { eventList = [] } = options
