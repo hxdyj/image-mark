@@ -1,5 +1,5 @@
 import { G, Line, Polyline, } from "@svgdotjs/svg.js";
-import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 
 export interface PolyLineData extends ShapeData {
@@ -18,12 +18,11 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 	}
 
 	draw(): G {
-		const { points, transform = getDefaultTransform() } = this.data
+		const { points } = this.data
 		const polyline = this.getMainShape<Polyline>() || new Polyline()
 		polyline.id(this.getMainId())
 
 		polyline.plot(points.concat(this.data.auxiliaryPoint || [])).stroke(this.attr?.stroke || {}).fill(this.attr?.fill || 'none')
-		this.shapeInstance.transform(transform.matrix)
 
 		polyline.addTo(this.shapeInstance)
 

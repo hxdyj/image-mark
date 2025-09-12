@@ -1,5 +1,5 @@
 import { Circle, G, } from "@svgdotjs/svg.js";
-import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 import { cloneDeep } from "lodash-es";
 
@@ -17,15 +17,14 @@ export class ImageMarkDot extends ImageMarkShape<DotData> {
 	}
 
 	draw(): G {
-		const { x, y, r, transform = getDefaultTransform() } = this.data
-		console.log('draw dot', cloneDeep(transform), x, y, r)
+		const { x, y, r } = this.data
+		console.log('draw dot', x, y, r)
 		const circle = this.getMainShape<Circle>() || new Circle()
 		circle.id(this.getMainId())
 
 		circle.center(x, y).attr({
 			r
 		}).fill(this.attr?.fill || this.attr?.stroke?.color || 'transparent').stroke(this.attr?.stroke || {})
-		this.shapeInstance.transform(transform.matrix)
 
 		circle.addTo(this.shapeInstance)
 

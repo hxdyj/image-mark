@@ -344,6 +344,18 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	drawingMouseTrace: Array<MouseEvent> = []
 
+	drawingMouseTracePush(event: MouseEvent): boolean {
+		const enableDrawShapeOutOfImg = this.imageMark.options.action?.enableDrawShapeOutOfImg
+		if (!enableDrawShapeOutOfImg) {
+			const point = this.imageMark.image.point(event.clientX, event.clientY)
+			if (point.x < 0 || point.y < 0 || point.x > this.imageMark.imageDom.naturalWidth || point.y > this.imageMark.imageDom.naturalHeight) {
+				return false
+			}
+		}
+		this.drawingMouseTrace.push(event)
+		return true
+	}
+
 	dropLastMouseTrace() {
 		if (!this.imageMark.status.drawing) return
 		if (this.programmaticDrawing) return
@@ -367,11 +379,12 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (this.programmaticDrawing) return
 
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
-			this.drawingMouseTrace.push(event)
+			this.drawingMouseTracePush(event)
 		}
 
 		if (this.drawingShape?.mouseDrawType == 'multiPress') {
-			this.drawingMouseTrace.push(event)
+			const valid = this.drawingMouseTracePush(event)
+			if (!valid) return
 			const newData = this.drawingShape.mouseEvent2Data({
 				eventList: this.drawingMouseTrace
 			})
@@ -409,7 +422,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 				console.log(distance)
 				if (distance < threshold) return
 			}
-			this.drawingMouseTrace.push(event)
+			const valid = this.drawingMouseTracePush(event)
+			if (!valid) return
 			const newData = this.drawingShape.mouseEvent2Data({
 				eventList: this.drawingMouseTrace
 			})
@@ -424,12 +438,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (!this.drawingMouseTrace?.length) return
 
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
-			this.drawingMouseTrace.push(event)
-			const newData = this.drawingShape.mouseEvent2Data({
-				eventList: this.drawingMouseTrace
-			})
-			newData && this.drawing(newData)
-
+			const valid = this.drawingMouseTracePush(event)
+			if (valid) {
+				const newData = this.drawingShape.mouseEvent2Data({
+					eventList: this.drawingMouseTrace
+				})
+				newData && this.drawing(newData)
+			}
 			this.endDrawing()
 		}
 	}

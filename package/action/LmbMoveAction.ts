@@ -1,7 +1,7 @@
 import { G, MatrixExtract, Point, Shape } from "@svgdotjs/svg.js";
 import ImageMark, { ArrayPoint } from "..";
 import { Action } from "./action";
-import { getDefaultTransform, ImageMarkShape } from "../shape/Shape";
+import { ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
 
 export type LmbMoveActionOptions = {
@@ -101,6 +101,8 @@ export class LmbMoveAction extends Action {
 		}, true)
 
 		const nextTransform = cloneShape.transform()
+
+
 		const limitFlag = this.options?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
 
 		this.shape.shapeInstance.transform(this.startTransform)
@@ -108,6 +110,14 @@ export class LmbMoveAction extends Action {
 		const movePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)
 
 		let diffPoint: ArrayPoint = [movePoint.x - this.startPoint.x + limitFlag[0], movePoint.y - this.startPoint.y + limitFlag[1]]
+
+
+		const enableMoveShapeOutOfImg = this.imageMark.options.action?.enableMoveShapeOutOfImg
+
+		if (!enableMoveShapeOutOfImg) {
+			//TODO(songle):
+			//  this.shape.shapeInstance.translate
+		}
 
 		this.shape.shapeInstance.transform({
 			translate: diffPoint
@@ -127,19 +137,19 @@ export class LmbMoveAction extends Action {
 		this.onDoucmentMouseMoving(event)
 		this.status.mouseDown = false
 		this.startPoint = null
+		const { e = 0, f = 0 } = this.shape.shapeInstance.transform()
+		this.shape.translate?.(e, f)
+		// this.shape.data.transform = {
+		// 	matrix: {
+		// 		a: currentMatrix.a!,
+		// 		b: currentMatrix.b!,
+		// 		c: currentMatrix.c!,
+		// 		d: currentMatrix.d!,
+		// 		e: currentMatrix.e!,
+		// 		f: currentMatrix.f!
+		// 	}
+		// }
 
-		const currentMatrix = Object.assign(getDefaultTransform(), this.shape.shapeInstance.transform())
-
-		this.shape.data.transform = {
-			matrix: {
-				a: currentMatrix.a!,
-				b: currentMatrix.b!,
-				c: currentMatrix.c!,
-				d: currentMatrix.d!,
-				e: currentMatrix.e!,
-				f: currentMatrix.f!
-			}
-		}
 		this.shape.updateData(this.shape.data)
 		this.startTransform = null
 

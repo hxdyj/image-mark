@@ -1,5 +1,5 @@
 import { G, Point, Polygon, Rect } from "@svgdotjs/svg.js";
-import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark, { BoundingBox } from "..";
 
 
@@ -31,12 +31,11 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 	}
 
 	draw(): G {
-		const { x, y, width, height, transform = getDefaultTransform() } = this.data
+		const { x, y, width, height } = this.data
 		const rect = this.getMainShape<Polygon>() || new Polygon()
 		rect.id(this.getMainId())
 
 		rect.plot([x, y, x + width, y, x + width, y + height, x, y + height]).size(width, height).fill(this.attr?.fill || 'transparent').stroke(this.attr?.stroke || {})
-		this.shapeInstance.transform(transform.matrix)
 
 		rect.addTo(this.shapeInstance)
 

@@ -2,7 +2,6 @@ import { G, Rect, Shape, StrokeData, Svg, Text } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
 import { Action } from "../action/action";
 import { uid } from "uid";
-import { DeepPartial } from "@arco-design/web-react/es/Form/store";
 import { defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "../action/LmbMoveAction";
 import { EventBusEventName } from "../event/const";
@@ -40,32 +39,6 @@ export type ShapeOptions = {
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
 
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
-
-export type ShapeTransform = {
-	matrix: {
-		a: number,
-		b: number,
-		c: number,
-		d: number,
-		e: number,
-		f: number,
-	},
-	// origin: [number, number]
-}
-
-export function getDefaultTransform(option?: DeepPartial<ShapeTransform>): ShapeTransform {
-	return defaultsDeep(option, {
-		matrix: {
-			a: 1,
-			b: 0,
-			c: 0,
-			d: 1,
-			e: 0,
-			f: 0,
-		},
-		// origin: [0, 0]
-	})
-}
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	shapeInstance: G;
@@ -300,30 +273,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		return ImageMarkShape.actionList.includes(action)
 	}
 
+	//TODO(songle):
+	abstract translate(x: number, y: number): void
 
-	rotate(angle: number) {
-		// 1. 获取当前的变换信息
-		const currentTransform = this.shapeInstance.transform();
-		const currentTranslate = {
-			x: currentTransform.translateX || 0,
-			y: currentTransform.translateY || 0
-		};
-
-		// 2. 获取innerGroup的边界盒，计算中心点
-		const bbox = this.shapeInstance.bbox();
-		const center = {
-			x: bbox.x + bbox.width / 2,
-			y: bbox.y + bbox.height / 2
-		};
-
-		this.shapeInstance.transform({
-			rotate: angle,
-			origin: [center.x, center.y] // 补偿平移带来的影响
-		}, true);
-
-		return this;
-	}
-
+	//TODO(songle): 开启编辑功能
 
 	static useDefaultAction() {
 		ImageMarkShape.useAction(LmbMoveAction)
@@ -339,7 +292,7 @@ ImageMarkShape.useDefaultAction()
 
 export interface ShapeData {
 	shapeName: string
-	transform?: ShapeTransform
+	// transform?: ShapeTransform
 	label?: string
 	[x: string]: any
 }

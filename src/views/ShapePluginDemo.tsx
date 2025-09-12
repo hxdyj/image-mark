@@ -55,29 +55,9 @@ export function ShapePluginDemo() {
 			x: 100,
 			y: 100,
 			label: '#1',
-			transform: {
-				matrix: {
-					a: 1,
-					b: 0,
-					c: 0,
-					d: 1,
-					e: 0,
-					f: 0,
-				}
-			},
 		},
 		{
 			shapeName: 'dot',
-			transform: {
-				matrix: {
-					a: 1,
-					b: 0,
-					c: 0,
-					d: 1,
-					e: 50,
-					f: 100,
-				}
-			},
 			x: 0,
 			y: 0,
 			r: 5
@@ -92,16 +72,6 @@ export function ShapePluginDemo() {
 		},
 		{
 			shapeName: 'circle',
-			transform: {
-				matrix: {
-					a: 0.5,
-					b: 0,
-					c: 0,
-					d: 0.5,
-					e: 0,
-					f: 0,
-				}
-			},
 			r: 50,
 			x: 300,
 			y: 300
@@ -120,7 +90,7 @@ export function ShapePluginDemo() {
 		},
 		{
 			shapeName: 'polygon',
-			points: [1000, 1000, 1400, 1400, 1000, 1400]
+			points: [1000, 1000, 1400, 1400, 1000, 1400],
 		},
 	])
 	useEffect(() => {

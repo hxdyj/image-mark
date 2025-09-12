@@ -1,5 +1,5 @@
 import { G, Line, Polygon, Polyline } from "@svgdotjs/svg.js";
-import { getDefaultTransform, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 import { defaultsDeep } from "lodash-es";
 
@@ -19,7 +19,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 	}
 
 	draw(): G {
-		const { points, auxiliaryPoint, transform = getDefaultTransform() } = this.data
+		const { points, auxiliaryPoint } = this.data
 		const polygon = this.getMainShape<Polygon>() || new Polygon()
 		polygon.id(this.getMainId())
 
@@ -58,7 +58,6 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 				points: points.join(',')
 			}).stroke(this.attr?.stroke || {}).fill(this.attr?.fill || 'transparent')
 		}
-		this.shapeInstance.transform(transform.matrix)
 
 		polygon.addTo(this.shapeInstance)
 

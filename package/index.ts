@@ -55,9 +55,11 @@ export type ImageMarkOptions = {
 		padding?: number
 		paddingUnit?: 'px' | '%'
 	}
-	moveConfig?: {
-	},
-	enableImageOutOfContainer?: boolean
+	action?: {
+		enableDrawShapeOutOfImg?: boolean
+		enableMoveShapeOutOfImg?: boolean
+		enableImageOutOfContainer?: boolean
+	}
 	pluginOptions?: {
 		[key: string]: any // [插件名称]：[插件配置]
 	}
@@ -141,9 +143,11 @@ export class ImageMark extends EventBindingThis {
 			padding: 0.1
 		})
 
-		this.options.moveConfig = defaultsDeep(this.options.moveConfig, {})
-
-		this.options.enableImageOutOfContainer = this.options.enableImageOutOfContainer ?? true
+		this.options.action = defaultsDeep(this.options.action, {
+			enableDrawShapeOutOfImg: false,
+			enableMoveShapeOutOfImg: false,
+			enableImageOutOfContainer: true
+		})
 
 		this.stage = SVG()
 
@@ -228,7 +232,7 @@ export class ImageMark extends EventBindingThis {
 		this.containerRectInfo = getContainerInfo(this.container)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 		let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
-		if (this.options.enableImageOutOfContainer) {
+		if (this.options.action?.enableImageOutOfContainer) {
 			drawSize = 'reserve'
 		}
 
@@ -280,7 +284,7 @@ export class ImageMark extends EventBindingThis {
 		let containerWidth = this.containerRectInfo.width
 		let containerHeight = this.containerRectInfo.height
 		let { padding = 0, size = 'fit', to = 'image', startPosition = 'center', paddingUnit = '%' } = options!
-		if (!this.options.enableImageOutOfContainer) {
+		if (!this.options.action?.enableImageOutOfContainer) {
 			padding = 0
 			size = 'cover'
 		}
@@ -415,7 +419,7 @@ export class ImageMark extends EventBindingThis {
 
 
 	protected checkMinScaleValidate() {
-		if (!this.options.enableImageOutOfContainer) {
+		if (!this.options?.action?.enableImageOutOfContainer) {
 			let { scale: minScale } = this.getInitialScaleAndTranslate({ 'size': 'cover' })
 
 			/* 图片没加载出来的时候有可能图片宽高获取都为0，导致这里scale计算为Infinity，无法缩小 */
@@ -598,7 +602,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected limitMovePoint(movePoint: ArrayPoint): ArrayPoint {
-		if (this.options.enableImageOutOfContainer) return [0, 0]
+		if (this.options.action?.enableImageOutOfContainer) return [0, 0]
 		let currentTransform = this.stageGroup.transform()
 
 		let fixPoint: ArrayPoint = [0, 0]
@@ -827,7 +831,7 @@ export class ImageMark extends EventBindingThis {
 		}
 
 
-		if (direction == -1 && !this.options.enableImageOutOfContainer) {
+		if (direction == -1 && !this.options.action?.enableImageOutOfContainer) {
 			const { scale } = this.getInitialScaleAndTranslate({
 				size: 'cover'
 			})
@@ -869,7 +873,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	setMinScale(minScale: number | InitialScaleSize) {
-		if (!this.options.enableImageOutOfContainer) return this
+		if (!this.options.action?.enableImageOutOfContainer) return this
 
 		let minScaleValue: number = this.minScale
 		if (typeof minScale === 'string') {
@@ -920,11 +924,12 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	setEnableImageOutOfContainer(enable: boolean) {
-		if (this.options.moveConfig) {
-			this.options.enableImageOutOfContainer = enable
-			if (!enable) {
-				this.checkInitOutOfContainerAndReset()
-			}
+		if (!this.options.action) {
+			this.options.action = {}
+		}
+		this.options.action.enableImageOutOfContainer = enable
+		if (!enable) {
+			this.checkInitOutOfContainerAndReset()
 		}
 		return this
 	}

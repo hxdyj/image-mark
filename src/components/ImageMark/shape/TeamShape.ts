@@ -1,6 +1,6 @@
 import { Box, Circle, G, Line, MatrixExtract, Rect, Svg, Text } from "@svgdotjs/svg.js";
 import { BoundingBox, ImageMark, ShapePlugin } from "../../../../package";
-import { ShapeData, ImageMarkShape, ShapeOptions, getDefaultTransform } from "#/shape/Shape";
+import { ShapeData, ImageMarkShape, ShapeOptions } from "#/shape/Shape";
 import { EventBusEventName } from "#/event/const";
 import { curryRight } from "lodash-es";
 
@@ -57,14 +57,14 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 		}, false)
 	}
 
+	translate(x: number, y: number): void {
+		this.data.x = x
+		this.data.y = y
+		this.draw()
+	}
+
 	draw(): G {
-		let { prefixName, x, y, transform } = this.data
-		transform = transform || getDefaultTransform({
-			matrix: {
-				e: x,
-				f: y,
-			}
-		})
+		let { prefixName, x, y } = this.data
 
 		const { _width, _height, width, height, getNum } = this.getStageGroupScaleInfo()
 		const innerGroup = this.shapeInstance.findOne('.team-shape-inner-group') as G || new G()
@@ -131,8 +131,10 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 		}
 		closeIcon.size(closeSize, closeSize).center(_width - closePad, closePad).addClass('team-shape-close-icon')
 		closeIcon.addTo(innerGroup)
-
-		this.shapeInstance.transform(transform.matrix, false)
+		this.shapeInstance.transform({
+			e: x,
+			f: y
+		}, false)
 		innerGroup.addTo(this.shapeInstance)
 
 		if (this.isRendered) {
