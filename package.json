@@ -96,5 +96,6 @@
 		"patchedDependencies": {
 			"@svgdotjs/svg.js": "patches/@svgdotjs__svg.js.patch"
 		}
-	}
+	},
+	"packageManager": "pnpm@10.6.4"
 }
