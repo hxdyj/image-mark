@@ -15,12 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
       - uses: pnpm/action-setup@v3 # Uncomment this block if you're using pnpm
-        with:
-          version: 9 # Not needed if you've set "packageManager" in package.json
+        #with:
+        #version: 9 # Not needed if you've set "packageManager" in package.json
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm # or pnpm / yarn
       - name: Install dependencies
         run: pnpm install # 安装项目依赖
