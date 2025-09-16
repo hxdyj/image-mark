@@ -13,11 +13,20 @@ footer: false
 export type SelectionPluginOptions = {
 	selectionActionOptions?: SelectionActionOptions //这个属性可以在 ImageMark 构造实例时候 pluginOptions['selection'].selectionActionOptions 或者 Selection Plugin 实例化constructor 的参数中传入
 }
+
+// 选择模式类型
+export type SelectionType = 'single' | 'multiple'
 ```
 
 ## constructor
 
-参数：`(imageMarkInstance: ImageMark, public selectionPluginOptions?: SelectionPluginOptions)`
+```ts
+// 创建 SelectionPlugin 实例
+constructor(
+	imageMarkInstance: ImageMark,
+	public selectionPluginOptions?: SelectionPluginOptions
+): SelectionPlugin
+```
 
 ## 静态属性
 
@@ -36,48 +45,55 @@ export type SelectionPluginOptions = {
 ### mode
 
 ```ts
-export type SelectionType = 'single' | 'multiple'
+// 切换多选单选模式
+mode(newMode?: SelectionType): void
 ```
-
-参数：`(newMode?: SelectionType)`
-
-切换多选单选模式
 
 ### getSelectionAction
 
-参数：`(shape: ImageMarkShape)`
-返回：`SelectionAction | undefined`
-
-获取某个 shape 的 selection action
+```ts
+// 获取某个 shape 的 selection action
+getSelectionAction(shape: ImageMarkShape): SelectionAction | undefined
+```
 
 ### selectShape
 
-参数：`(shape: ImageMarkShape)`
-
-选中某个 shape
+```ts
+// 选中某个 shape
+selectShape(shape: ImageMarkShape): void
+```
 
 ### selectShapes
 
-参数：`(shapeList: ImageMarkShape[])`
-
-选中多个 shape
+```ts
+// 选中多个 shape
+selectShapes(shapeList: ImageMarkShape[]): void
+```
 
 ### unselectShape
 
-参数：`(shape: ImageMarkShape)`
-
-取消选中某个 shape
+```ts
+// 取消选中某个 shape
+unselectShape(shape: ImageMarkShape): void
+```
 
 ### unselectShapes
 
-参数：`(shapeList: ImageMarkShape[])`
-
-取消选中多个 shape
+```ts
+// 取消选中多个 shape
+unselectShapes(shapeList: ImageMarkShape[]): void
+```
 
 ### clear
 
-清除所有选中
+```ts
+// 清除所有选中
+clear(): void
+```
 
 ### destroy
 
-销毁插件
+```ts
+// 销毁插件
+destroy(): void
+```

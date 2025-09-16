@@ -44,16 +44,28 @@ export type LmbMoveActionOptions = {
 
 ### disableMove
 
-禁用鼠标左键移动 Shape 的动作。
+```ts
+// 禁用鼠标左键移动 Shape 的动作
+disableMove(): void
+```
 
 ### enableMove
 
-启用鼠标左键移动 Shape 的动作。
+```ts
+// 启用鼠标左键移动 Shape 的动作
+enableMove(): void
+```
 
 ### getEnableMove
 
-获取当前是否允许鼠标左键移动 Shape 的动作。
+```ts
+// 获取当前是否允许鼠标左键移动 Shape 的动作
+getEnableMove(): boolean
+```
 
 ### destroy
 
-销毁当前实例时候调用
+```ts
+// 销毁当前实例时候调用
+destroy(): void
+```

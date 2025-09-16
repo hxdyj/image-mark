@@ -139,7 +139,7 @@ export class TeamMarkPlugin extends ShapePlugin<TeamData> {
 		}
 	}
 
-	onScale(scale: number) {
+	onScale() {
 		Promise.resolve().then(() => {
 			this.data.forEach(item => {
 				let instance = this.getInstanceByData(item) as TeamShape | null

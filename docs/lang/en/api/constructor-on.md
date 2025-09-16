@@ -9,102 +9,119 @@ Events that an ImageMark instance can listen to
 
 ### init
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered when the instance initialization is complete
+```ts
+// Triggered when the instance initialization is complete
+(imgMark:ImageMark): void
+```
 
 ### first_render
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered when the instance first rendering is complete
+```ts
+// Triggered when the instance first rendering is complete
+(imgMark:ImageMark): void
+```
 
 ### rerender
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered when the instance re-renders, except for the first rendering
+```ts
+// Triggered when the instance re-renders, except for the first rendering
+(imgMark:ImageMark): void
+```
 
 ### draw
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered every time the instance renders
+```ts
+// Triggered every time the instance renders
+(imgMark:ImageMark): void
+```
 
 ### resize
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered after the container size changes
+```ts
+// Triggered after the container size changes
+(imgMark:ImageMark): void
+```
 
 ### scale
 
-Callback parameters: `(scale:number,imgMark:ImageMark)`
-
-Triggered when scaling occurs
+```ts
+// Triggered when scaling occurs
+(scale:number,imgMark:ImageMark): void
+```
 
 ### container_drag_enter
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered when drag enter occurs
+```ts
+// Triggered when drag enter occurs
+(imgMark:ImageMark): void
+```
 
 ### container_drag_over
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered when drag over occurs
+```ts
+// Triggered when drag over occurs
+(imgMark:ImageMark): void
+```
 
 ### container_drag_leave
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered when drag leave occurs
+```ts
+// Triggered when drag leave occurs
+(imgMark:ImageMark): void
+```
 
 ### container_drop
 
-Callback parameters: `(imgMark:ImageMark)`
-
-Triggered when drag drop occurs
+```ts
+// Triggered when drag drop occurs
+(imgMark:ImageMark): void
+```
 
 ### shape_add
 
-Callback parameters: `(data:ShapeData,shapeInstance:ShapeInstance)`
-
-Triggered when a shape is added, such as a shape added by mouse drawing
+```ts
+// Triggered when a shape is added, such as a shape added by mouse drawing
+(data:ShapeData,shapeInstance:ShapeInstance): void
+```
 
 ### shape_end_drawing
 
-Callback parameters: `(isCancelAdd:boolean,shapeInstance:ShapeInstance)`
-
-Triggered when a shape end drawing
+```ts
+// Triggered when a shape end drawing
+(isCancelAdd:boolean,shapeInstance:ShapeInstance): void
+```
 
 ### shape_after_render
 
-Callback parameters: `(shapeInstance:ImageMarkShape)`
-
-Triggered when the shape instance rendering is complete
+```ts
+// Triggered when the shape instance rendering is complete
+(shapeInstance:ImageMarkShape): void
+```
 
 ### selection_select_list_change
 
-Callback parameters: `(selectList:ImageMarkShape[])`
-
-Triggered when the selection plugin's selected list changes
+```ts
+// Triggered when the selection plugin's selected list changes
+(selectList:ImageMarkShape[]): void
+```
 
 ### selection_action_click
 
-Callback parameters: `(shapeInstance:ImageMarkShape)`
-
-Triggered when the selection plugin's action button is clicked
+```ts
+// Triggered when the selection plugin's action button is clicked
+(shapeInstance:ImageMarkShape): void
+```
 
 ### shape_delete_all
 
-Callback parameters: `(shapeInstance:ImageMarkShape)`
-
-Triggered when all shapes are deleted
+```ts
+// Triggered when all shapes are deleted
+(shapeInstance:ImageMarkShape): void
+```
 
 ### load_image_error
 
-Callback parameters: `(event:Event, shapeInstance:ImageMarkShape)`
-
-Triggered when the image loading fails
+```ts
+// Triggered when the image loading fails
+(event:Event, shapeInstance:ImageMarkShape): void
+```

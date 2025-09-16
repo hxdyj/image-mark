@@ -107,11 +107,11 @@ export class LmbMoveAction extends Action {
 				this.options = {}
 			}
 			this.options.limit = (imageMark, shape, nextTransform) => {
-				//TODO(songle):
-				const { x, y } = shape.data
+				const { x, y, width, height } = shape.getMainShape().bbox()
 				let { translateX = 0, translateY = 0 } = nextTransform
 				translateX += x
 				translateY += y
+
 				let { naturalHeight, naturalWidth } = imageMark.imageDom
 				let isOutOfBounds = false
 				const fixTranslate: ArrayPoint = [0, 0]
@@ -120,10 +120,10 @@ export class LmbMoveAction extends Action {
 					fixTranslate[0] = -translateX
 				}
 
-				if (translateX > naturalWidth) {
+				if (translateX > (naturalWidth - width)) {
 
 					isOutOfBounds = true
-					fixTranslate[0] = naturalWidth - translateX
+					fixTranslate[0] = naturalWidth - width - translateX
 				}
 
 				if (translateY < 0) {
@@ -132,27 +132,13 @@ export class LmbMoveAction extends Action {
 					fixTranslate[1] = -translateY
 				}
 
-				if (translateY > naturalHeight) {
+				if (translateY > (naturalHeight - height)) {
 
 					isOutOfBounds = true
-					fixTranslate[1] = naturalHeight - translateY
+					fixTranslate[1] = naturalHeight - height - translateY
 				}
 				return fixTranslate
 			}
-
-			// const shapeRect = this.shape.shapeInstance.rbox()
-			// const points = {
-			// 	x: shapeRect.x + diffPoint[0],
-			// 	y: shapeRect.y + diffPoint[1],
-			// 	x2: shapeRect.x2 + diffPoint[0],
-			// 	y2: shapeRect.y2 + diffPoint[1]
-			// }
-			// console.log('hahaha', points, diffPoint)
-			// if (points.x < 0) {
-			// }
-
-			//TODO(songle):
-			//  this.shape.shapeInstance.translate
 		}
 		const limitFlag = this.options?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
 
@@ -160,11 +146,7 @@ export class LmbMoveAction extends Action {
 
 		const movePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)
 
-
-
 		let diffPoint: ArrayPoint = [movePoint.x - this.startPoint.x + limitFlag[0], movePoint.y - this.startPoint.y + limitFlag[1]]
-
-
 
 		this.shape.shapeInstance.transform({
 			translate: diffPoint

@@ -11,9 +11,10 @@ footer: false
 
 ### constructor
 
-参数：(imageMark: ImageMark)
-
-构造函数，传入 ImageMark 实例
+```ts
+//构造函数，传入 ImageMark 实例
+constructor(imageMark: ImageMark): void
+```
 
 ## 静态属性
 
@@ -31,4 +32,7 @@ footer: false
 
 ### destroy
 
-销毁插件实例
+```ts
+//销毁插件实例
+destroy():void
+```

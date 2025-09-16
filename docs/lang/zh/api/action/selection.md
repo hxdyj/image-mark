@@ -40,24 +40,42 @@ export type SelectionActionOptions = {
 
 ### getSelectionPlugin
 
-获取当前`Selection`插件实例
+```ts
+// 获取当前`Selection`插件实例
+getSelectionPlugin(): SelectionPlugin | undefined
+```
 
 ### getSelectionShape
 
-获取当前选中的`Shape`的 selection 的`Svg.js`的 shape 实例
+```ts
+// 获取当前选中的`Shape`的 selection 的`Svg.js`的 shape 实例
+getSelectionShape(): Shape | undefined
+```
 
 ### getSelectionId
 
-获取当前选中的`Shape`的 selection 的 `id`
+```ts
+// 获取当前选中的`Shape`的 selection 的 `id`
+getSelectionId(): string
+```
 
 ### disableSelection
 
-禁用当前`Selection`插件
+```ts
+// 禁用当前`Selection`插件
+disableSelection(): void
+```
 
 ### enableSelection
 
-启用当前`Selection`插件
+```ts
+// 启用当前`Selection`插件
+enableSelection(): void
+```
 
 ### destroy
 
-ImageMark 销毁时或者 unuseAction 时候调用
+```ts
+// ImageMark 销毁时或者 unuseAction 时候调用
+destroy(): void
+```

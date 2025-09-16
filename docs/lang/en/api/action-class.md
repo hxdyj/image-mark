@@ -16,15 +16,17 @@ The name of the action, a string type.
 ### actionOptions
 
 ```ts
+// Action options
 actionOptions: {
 	[key: string]: any
 } = {}
 ```
 
-Action options.
-
 ## Methods
 
 ### destroy
 
-The method called when the action is destroyed.
+```ts
+// The method called when the action is destroyed
+destroy(): void
+```

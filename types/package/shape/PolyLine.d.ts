@@ -11,5 +11,6 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
     readonly mouseDrawType: ShapeMouseDrawType;
     constructor(data: PolyLineData, imageMarkInstance: ImageMark, options: ShapeOptions);
     draw(): G;
+    translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null;
 }

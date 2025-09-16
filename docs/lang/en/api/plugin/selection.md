@@ -13,11 +13,20 @@ Selection plugin, used in conjunction with the selection action. When used indiv
 export type SelectionPluginOptions = {
 	selectionActionOptions?: SelectionActionOptions // This property can be passed in pluginOptions['selection'].selectionActionOptions or Selection Plugin instantiation constructor parameters when ImageMark constructs the instance
 }
+
+// Selection mode type
+export type SelectionType = 'single' | 'multiple'
 ```
 
 ## constructor
 
-params: `(imageMarkInstance: ImageMark, public selectionPluginOptions?: SelectionPluginOptions)`
+```ts
+// Create a SelectionPlugin instance
+constructor(
+	imageMarkInstance: ImageMark,
+	public selectionPluginOptions?: SelectionPluginOptions
+): SelectionPlugin
+```
 
 ## Static Properties
 
@@ -36,48 +45,55 @@ List of selected shapes
 ### mode
 
 ```ts
-export type SelectionType = 'single' | 'multiple'
+// Switch between single and multiple selection modes
+mode(newMode?: SelectionType): void
 ```
-
-params: `(newMode?: SelectionType)`
-
-Switch between single and multiple selection modes
 
 ### getSelectionAction
 
-params: `(shape: ImageMarkShape)`
-return: `SelectionAction | undefined`
-
-Get the selection action for a specific shape
+```ts
+// Get the selection action for a specific shape
+getSelectionAction(shape: ImageMarkShape): SelectionAction | undefined
+```
 
 ### selectShape
 
-params: `(shape: ImageMarkShape)`
-
-Select a specific shape
+```ts
+// Select a specific shape
+selectShape(shape: ImageMarkShape): void
+```
 
 ### selectShapes
 
-params: `(shapeList: ImageMarkShape[])`
-
-Select multiple shapes
+```ts
+// Select multiple shapes
+selectShapes(shapeList: ImageMarkShape[]): void
+```
 
 ### unselectShape
 
-params: `(shape: ImageMarkShape)`
-
-Unselect a specific shape
+```ts
+// Unselect a specific shape
+unselectShape(shape: ImageMarkShape): void
+```
 
 ### unselectShapes
 
-params: `(shapeList: ImageMarkShape[])`
-
-Unselect multiple shapes
+```ts
+// Unselect multiple shapes
+unselectShapes(shapeList: ImageMarkShape[]): void
+```
 
 ### clear
 
-Clear all selections
+```ts
+// Clear all selections
+clear(): void
+```
 
 ### destroy
 
-Destroy the plugin
+```ts
+// Destroy the plugin
+destroy(): void
+```

@@ -7,68 +7,109 @@ footer: false
 
 ### usePlugin
 
-Use a plugin
+```ts
+// Use a plugin
+usePlugin(plugin: typeof Plugin): ImageMark
+```
 
 ### unusePlugin
 
-Unuse a plugin
+```ts
+// Unuse a plugin
+unusePlugin(plugin: typeof Plugin): ImageMark
+```
 
 ### hasPlugin
 
-Check if a plugin is in use
+```ts
+// Check if a plugin is in use
+hasPlugin(plugin: typeof Plugin): boolean
+```
 
 ### useDefaultPlugin
 
 Use default plugins, which include the built-in [`shape`](/en/api/plugin/shape) and [`selection`](/en/api/plugin/selection) plugins
 
+```ts
+useDefaultPlugin(): void
+```
+
 ### unuseDefaultPlugin
 
-Unuse default plugins
+```ts
+// Unuse default plugins
+unuseDefaultPlugin(): void
+```
 
 ## Instance Methods
 
 ### resize
 
-Triggered when the container size changes
+```ts
+// Triggered when the container size changes
+resize(): void
+```
 
 ### rerender
 
-Triggered when re-rendering
+```ts
+// Triggered when re-rendering
+rerender(): void
+```
 
 ### destroy
 
-Destroy the instance
+```ts
+// Destroy the instance
+destroy(): void
+```
 
 ### addDefaultAction
 
-Add default actions to the instance, currently including canvas zooming and moving
+```ts
+// Add default actions to the instance, currently including canvas zooming and moving
+addDefaultAction(): ImageMark
+```
 
 ### removeDefaultAction
 
-Remove default actions from the instance
+```ts
+// Remove default actions from the instance
+removeDefaultAction(): ImageMark
+```
 
 ### addStageLmbDownMoveing
 
-Add canvas moving
+```ts
+// Add canvas moving
+addStageLmbDownMoveing(): ImageMark
+```
 
 ### removeStageLmbDownMoveing
 
-Remove canvas moving
+```ts
+// Remove canvas moving
+removeStageLmbDownMoveing(): ImageMark
+```
 
 ### addStageMouseScale
 
-Add canvas zooming
+```ts
+// Add canvas zooming
+addStageMouseScale(): ImageMark
+```
 
 ### removeStageMouseScale
 
-Remove canvas zooming
+```ts
+// Remove canvas zooming
+removeStageMouseScale(): ImageMark
+```
 
 ### moveTo
 
-params: `(position: Position)`
-
 ```ts
-type Position =
+export type Position =
 	| 'left-top'
 	| 'right-top'
 	| 'left-bottom'
@@ -78,121 +119,163 @@ type Position =
 	| 'left'
 	| 'right'
 	| 'center'
-```
 
-Move to a specified position
+// Move to a specified position
+moveTo(position: Position): ImageMark
+```
 
 ### move
 
-params: `(point: ArrayPoint)`
-
 ```ts
 export type ArrayPoint = [number, number]
-```
 
-Move to specified coordinates
+// Move to specified coordinates
+move(point: ArrayPoint): ImageMark
+```
 
 ### startSuccessiveMove
 
-params: `(point: ArrayPoint)`
-
-Start successive moving
+```ts
+// Start successive moving
+startSuccessiveMove(point: ArrayPoint): ImageMark
+```
 
 ### moveSuccessive
 
-params: `(point: ArrayPoint)`
+```ts
+// Successive moving
+moveSuccessive(point: ArrayPoint): ImageMark
+```
 
-Successive moving
+### endSuccessiveMove
 
-### endSuccessiveMove()
-
-Stop successive moving
+```ts
+// Stop successive moving
+endSuccessiveMove(): ImageMark
+```
 
 ### scale
 
-params: (
-
-- direction: 1 | -1, `1 for zoom-in, -1 for zoom-out`
-- point: ArrayPoint | 'left-top' | 'center', `zoom-in point`
-- reletiveTo: 'container' | 'image' = 'container', `relative to whom`
-- newScale?: number `new scaling ratio, if provided, scale directly to this ratio`
-
-  )
+```ts
+// Scale the canvas
+scale(
+  direction: 1 | -1, // 1 for zoom-in, -1 for zoom-out
+  point: ArrayPoint | 'left-top' | 'center', // zoom-in point
+  reletiveTo: 'container' | 'image' = 'container', // relative to whom
+  newScale?: number // new scaling ratio, if provided, scale directly to this ratio
+): ImageMark
+```
 
 ### scaleTo
 
-params: (
-
-- options: [ImageMarkOptions['initScaleConfig']](/en/api/constructor-options#initscaleconfig),
-- point: ArrayPoint | 'left-top' | 'center', `zoom-in point`
-- reletiveTo: 'container' | 'image' = 'container' `relative to whom`
-
-)
+```ts
+// Scale to a specific ratio
+scaleTo(
+  options: ImageMarkOptions['initScaleConfig'],
+  point: ArrayPoint | 'left-top' | 'center', // zoom-in point
+  reletiveTo: 'container' | 'image' = 'container' // relative to whom
+): ImageMark
+```
 
 ### setMinScale
 
 ```ts
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
+
+// Set minimum scaling ratio
+setMinScale(minScale: number|InitialScaleSize): ImageMark
 ```
-
-params: `(minScale: number|InitialScaleSize)`
-
-Set minimum scaling ratio
 
 ### setMaxScale
 
-params: `(minScale: number|InitialScaleSize)`
-
-Set maximum scaling ratio
+```ts
+// Set maximum scaling ratio
+setMaxScale(maxScale: number|InitialScaleSize): ImageMark
+```
 
 ### getCurrentScale
 
-Get the current scale ratio
+```ts
+// Get the current scale ratio
+getCurrentScale(): number
+```
 
 ### on
 
-params: (...rest: any) `Reference the on method of eventemitter3`
-
 Bind instance events, currently refer to the [events](/en/api/constructor-on) documentation for events that can be listened to by the instance
+
+```ts
+on(...rest: any): void // Reference the on method of eventemitter3
+```
 
 ### off
 
-params: (...rest: any) `Reference the off method of eventemitter3`
-
-Unbind instance events
+```ts
+// Unbind instance events
+off(...rest: any): void // Reference the off method of eventemitter3
+```
 
 ### setEnableImageOutOfContainer
 
-params: `(enable: boolean)`
+```ts
+// Set whether the image can be out of the container
+setEnableImageOutOfContainer(enable: boolean): ImageMark
+```
 
-Set whether the image can be out of the container
+### setEnableDrawShapeOutOfImg
+
+```ts
+// Set whether the shape can be out of the image when drawing
+setEnableDrawShapeOutOfImg(enable: boolean): ImageMark
+```
+
+### setEnableMoveShapeOutOfImg
+
+```ts
+// Set whether the shape can be out of the image when moving
+setEnableMoveShapeOutOfImg(enable: boolean): ImageMark
+```
+
+### setEnableShapeOutOfImg
+
+```ts
+// Set whether the shape can be out of the image, including all actions, such as moving and drawing
+setEnableShapeOutOfImg(enable: boolean): ImageMark
+```
 
 ### initPlugin
 
 ```ts
 export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin
+
+// Initialize a plugin
+initPlugin(plugin: typeof Plugin|PluginNewCall): ImageMark
 ```
-
-params: `(plugin: typeof Plugin|PluginNewCall)`
-
-Initialize a plugin
 
 ### addPlugin
 
-params: `(plugin: typeof Plugin|PluginNewCall)`
-
-Add a plugin to the instance, currently has the same effect as `initPlugin`
+```ts
+// Add a plugin
+addPlugin(plugin: typeof Plugin|PluginNewCall): ImageMark
+```
 
 ### removePlugin
 
-params: `(plugin: typeof Plugin)`
-
-Remove a plugin from the instance
+```ts
+//Remove a plugin from the instance
+(plugin: typeof Plugin): ImageMark
+```
 
 ### getShapePlugin
 
-Get the `shape plugin` instance on the instance
+```ts
+//Get the `shape plugin` instance on the instance
+getShapePlugin(): ShapePlugin | null
+```
 
 ### getSelectionPlugin
 
-Get the `selection plugin` instance on the instance
+```ts
+//Get the `selection plugin` instance on the instance
+getSelectionPlugin(): SelectionPlugin | null
+```

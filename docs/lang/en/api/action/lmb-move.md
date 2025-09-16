@@ -44,16 +44,28 @@ export type LmbMoveActionOptions = {
 
 ### disableMove
 
-Disable the action of moving a Shape with the left mouse button.
+```ts
+// Disable the action of moving a Shape with the left mouse button
+disableMove(): void
+```
 
 ### enableMove
 
-Enable the action of moving a Shape with the left mouse button.
+```ts
+// Enable the action of moving a Shape with the left mouse button
+enableMove(): void
+```
 
 ### getEnableMove
 
-Get whether the left mouse button movement of the Shape is currently allowed.
+```ts
+// Get whether the left mouse button movement of the Shape is currently allowed
+getEnableMove(): boolean
+```
 
 ### destroy
 
-Called when destroying the current instance.
+```ts
+// Called when destroying the current instance
+destroy(): void
+```

@@ -17,29 +17,52 @@ Shape 类是所有形状的基类，它提供了一些基本的属性和方法�
 
 :::
 
+## Types
+
+```ts
+export type ShapeAttr =
+	| {
+			stroke?: StrokeData
+			fill?: string
+			auxiliary?: {
+				stroke?: StrokeData
+			}
+			label?: {
+				font?: {
+					fill?: string
+					size?: number
+				}
+				fill?: string
+			}
+			dot?: {
+				r?: number
+			}
+	  }
+	| undefined
+
+export type ShapeOptions = {
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr //自定义 shape 的属性
+	afterRender?: (shapeInstance: ImageMarkShape) => void // 绘制完成后添加画布后调用，也就是 dom 已经渲染完成
+	initDrawFunc?: ShapeDrawFunc // 自定义初始绘制函数
+}
+
+export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
+
+export type ShapeDrawFunc = (shape: ImageMarkShape) => void
+```
+
 ## 构造函数
 
 ### constructor
 
 ```ts
-export type ShapeDrawFunc = (shape: ImageMarkShape) => void
+constructor(
+	public data: T, //形状的数据，可以是任意类型，具体的类型由子类实现
+	imageMarkInstance: ImageMark, //形状所属的 ImageMark 实例
+	public options: ShapeOptions //形状的选项，具体的选项由子类实现
+): ImageMarkShape<T extends ShapeData = ShapeData>
 
-export type ShapeOptions = {
-	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // 自定义 shape 的属性
-	afterRender?: (shapeInstance: ImageMarkShape) => void // 绘制完成后添加到画布后调用，也就是dom已经渲染完成
-	initDrawFunc?: ShapeDrawFunc // 初始自定义绘制函数
-}
 ```
-
-参数：(
-
-- public data: T, `形状的数据，可以是任意类型，具体的类型由子类实现`
-- imageMarkInstance: ImageMark, `形状所属的 ImageMark 实例`
-- public options: ShapeOptions `形状的选项，具体的选项由子类实现`
-
-)
-
-Shape 类的构造函数
 
 ## 静态属性
 
@@ -55,35 +78,54 @@ shape 的动作列表
 
 ### useAction
 
-参数：`(action: typeof Action, actionOptions: any = {})`
-
-使用指定的动作
+```ts
+//使用指定的动作
+useAction(action: typeof Action, actionOptions: any = {}): void
+```
 
 ### unuseAction
 
-参数：`(action: typeof Action)`
-
-取消使用指定的动作
+```ts
+//取消使用指定的动作
+unuseAction(action: typeof Action): void
+```
 
 ### hasAction
 
-参数：`(action: typeof Action)`
-
-判断是否有指定的动作
+```ts
+//判断是否有指定的动作
+hasAction(action: typeof Action): boolean
+```
 
 ### useDefaultAction
 
-使用默认的动作
+```ts
+//使用默认的动作
+useDefaultAction(): void
+```
 
 ### unuseDefaultAction
 
-取消使用默认的动作
+```ts
+//取消使用默认的动作
+unuseDefaultAction(): void
+```
 
 ## 抽象方法
 
 ### draw
 
-刻画形状
+```ts
+//刻画形状
+draw(): void
+```
+
+### translate
+
+```typescript
+// 移动图形
+translate(x: number, y: number): void
+```
 
 ## 实例属性
 
@@ -131,66 +173,99 @@ action:{
 
 ### addDrawFunc
 
-参数：`(func: ShapeDrawFunc)`
-
-添加绘制函数，用于自定义绘制，在每次`draw`时都会调用，比如自定义 fillColor，strokeWidth 等,或者 select fillColor 等等
+```ts
+//添加绘制函数，用于自定义绘制，在每次`draw`时都会调用，比如自定义 fillColor，strokeWidth 等,或者 select fillColor 等等
+addDrawFunc(func: ShapeDrawFunc): void
+```
 
 ### removeDrawFunc
 
-参数：`(func: ShapeDrawFunc)`
+```ts
+//移除绘制函数
+removeDrawFunc(func: ShapeDrawFunc): void
+```
 
-移除绘制函数
+### getLabelShape
+
+```ts
+//获取标签形状
+getLabelShape<T = Shape>(): T
+```
 
 ### getMainShape
 
-获取主形状
+```ts
+//获取主形状
+getMainShape<T = Shape>(): T
+```
+
+### getLabelId
+
+```ts
+//获取标签形状的 id
+getLabelId(): string
+```
 
 ### getMainId
 
-获取主形状的 id
+```ts
+//获取主形状的 id
+getMainId(): string
+```
 
 ### updateData
 
-参数：`(data: T)`
-
-更新形状的数据
+```ts
+//更新形状的数据
+updateData(data: T): G
+```
 
 ### getMouseMoveThreshold
 
-获取鼠标移动绘制形状时候的阈值，默认为 0
+```ts
+//获取鼠标移动绘制形状时候的阈值，默认为 0
+getMouseMoveThreshold(): number
+```
 
 ### setMouseMoveThreshold
 
-参数：`(threshold: number)`
-
-设置鼠标移动绘制形状时候的阈值
+```ts
+//设置鼠标移动绘制形状时候的阈值
+setMouseMoveThreshold(threshold: number)
+```
 
 ### destroy
 
-销毁形状并从画布中移除
+```ts
+//销毁形状并从画布中移除
+destroy(): void
+```
 
 ### render
 
 ```ts
-export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
+//渲染形状到画布上，如果已经渲染过，则不再渲染
+export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0] //Svg.js 的Shape的addTo方法的参数
+render(stage: AddToShape): void
 ```
-
-参数：`(stage: AddToShape)`
-
-渲染形状到画布上，如果已经渲染过，则不再渲染
 
 ### addAction
 
-参数：`(action: typeof Action, actionOptions: any = {})`
-
-添加实例动作
+```typescript
+//添加实例动作
+addAction(action: typeof Action, actionOptions: any = {}): void
+```
 
 ### removeAction
 
-参数：`(action: typeof Action)`
-
-移除实例动作
+```typescript
+//移除实例动作
+removeAction(action: typeof Action): void
+```
 
 ### initAction
 
-初始化实例动作，如果已经绑定动作，则不再绑定
+```typescript
+//初始化实例动作，如果已经绑定动作，则不再绑定
+initAction(action: typeof Action, actionOptions: any = null): void
+```

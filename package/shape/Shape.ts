@@ -291,7 +291,6 @@ ImageMarkShape.useDefaultAction()
 
 export interface ShapeData {
 	shapeName: string
-	// transform?: ShapeTransform
 	label?: string
 	[x: string]: any
 }

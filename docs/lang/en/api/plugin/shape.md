@@ -12,7 +12,6 @@ This plugin is the most basic plugin, primarily used for managing `Shape` data a
 ```typescript
 export interface ShapeData {
 	shapeName: string
-	transform?: ShapeTransform
 	label?: string
 	[x: string]: any
 }
@@ -108,34 +107,38 @@ Array of `shape` on the class
 
 ### useShape
 
-params: (
-
-- shape: `typeof ImageMarkShape<T>`,
-- shapeOptions?: ShapeOptions
-
-)
-
-Use Shape
+```ts
+// Use Shape
+useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): ShapePlugin<T>
+```
 
 ### unuseShape
 
-params: `(shape: typeof ImageMarkShape<T>)`
-
-Unuse Shape
+```ts
+// Unuse Shape
+unuseShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>): ShapePlugin<T>
+```
 
 ### hasShape
 
-params: `(shape: typeof ImageMarkShape<T>)`
-
-Check if a Shape is being used
+```ts
+// Check if a Shape is being used
+hasShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>): boolean
+```
 
 ### useDefaultShape
 
-Use all built-in Shapes
+```ts
+// Use all built-in Shapes
+useDefaultShape(): void
+```
 
 ### unuseDefaultShape
 
-Unuse all built-in Shapes
+```ts
+// Unuse all built-in Shapes
+unuseDefaultShape(): void
+```
 
 ## Instance Properties
 
@@ -176,125 +179,135 @@ Records mouse events during the drawing process
 
 ## Instance Methods
 
-### getLabelShape
-
-Get the Label shape instance
-
-### getLabelId
-
-Get the id of the Label shape
-
 ### setData
 
-params: `(data: T[])`
-
-Set shape plugin data
+```ts
+// Set shape plugin data
+setData(data: T[]): void
+```
 
 ### removeNode
 
-params: `(data: T)`
-
-Remove a specific shape
+```ts
+// Remove a specific shape
+removeNode(data: T): void
+```
 
 ### removeAllNodes
 
-params: `(emit = true)`
-
-Remove all shapes
+```ts
+// Remove all shapes
+removeAllNodes(emit = true): void
+```
 
 ### getShapeOptions
 
-params: `(shapeOptions?: ShapeOptions)`
-
-Get shape options
+```ts
+// Get shape options
+getShapeOptions(shapeOptions?: ShapeOptions): ShapeOptions
+```
 
 ### redrawNodes
 
-Redraw all shapes
+```ts
+// Redraw all shapes
+redrawNodes(): void
+```
 
 ### disableAction
 
-params: `(action: string | string[])`
-
-Disable action
+```ts
+// Disable action
+disableAction(action: string | string[]): void
+```
 
 ### enableAction
 
-params: `(action: string | string[])`
-
-Enable action
+```ts
+// Enable action
+enableAction(action: string | string[]): void
+```
 
 ### destroy
 
-Destroy plugin instance
+```ts
+// Destroy plugin instance
+destroy(): void
+```
 
 ### onAdd
 
-params: `(data: T, emit = true)`
-
-Add shape
-
-### onDelete
-
-params: `(data: T, shapeInstance: ImageMarkShape)`
-
-Delete shape
+```ts
+// Add shape
+onAdd(data: T, emit = true): void
+```
 
 ### clear
 
-Clear all shapes
+```ts
+// Clear all shapes
+clear(): void
+```
 
 ### getInstanceByData
 
-params: `(data: T)`
-
-Get shape instance by data
+```ts
+// Get shape instance by data
+getInstanceByData(data: T): ImageMarkShape | undefined
+```
 
 ### addShape
 
-params: (
-
-- shape: `typeof ImageMarkShape<T>`,
-- shapeOptions?: ShapeOptions
-
-)
-
-Add shape to instance
+```ts
+// Add shape to instance
+addShape(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): ShapePlugin<T>
+```
 
 ### removeShape
 
-Remove shape from instance
+```ts
+// Remove shape from instance
+removeShape(shape: typeof ImageMarkShape<T>): ShapePlugin<T>
+```
 
 ### startDrawing
 
-params: `(shape: ImageMarkShape<T>, programmaticDrawing = false)`
-
-Start drawing shape
+```ts
+// Start drawing shape
+startDrawing(shape: ImageMarkShape<T>, programmaticDrawing = false): ShapePlugin<T>
+```
 
 ### drawing
 
-params: `(shapeData: T)`
-
-Continue drawing the shape that is being drawn
+```ts
+// Continue drawing the shape that is being drawn
+drawing(shapeData: T): ShapePlugin<T>
+```
 
 ### endDrawing
 
-params: `(cancel = false)`
-
-Finish drawing, add to `data` if not cancelled
+```ts
+// Finish drawing, add to `data` if not cancelled
+endDrawing(cancel = false): ShapePlugin<T>
+```
 
 ### dropLastMouseTrace
 
-Remove the last mouse event from the trace, used for undoing in the drawing process
+```ts
+// Remove the last mouse event from the trace, used for undoing in the drawing process
+dropLastMouseTrace(): void
+```
 
 ### addAction
 
-params: `(action: typeof Action, actionOptions: any = {})`
-
-Add an instance action
+```ts
+// Add instance action
+addAction(action: typeof Action, actionOptions: any = {}): void
+```
 
 ### removeAction
 
-params: `(action: typeof Action)`
-
-Remove an instance action
+```ts
+// Remove instance action
+removeAction(action: typeof Action): void
+```

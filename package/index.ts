@@ -473,11 +473,13 @@ export class ImageMark extends EventBindingThis {
 	addDefaultAction() {
 		this.addStageMouseScale()
 		this.addStageLmbDownMoveing()
+		return this
 	}
 
 	removeDefaultAction() {
 		this.removeStageMouseScale()
 		this.removeStageLmbDownMoveing()
+		return this
 	}
 
 	protected onContainerWheel(e: Event) {
@@ -690,7 +692,7 @@ export class ImageMark extends EventBindingThis {
 
 			this.stageGroup.translate(-translateX + newPosition[0], -translateY + newPosition[1])
 		}
-
+		return this
 	}
 
 	move(point: ArrayPoint) {
@@ -921,6 +923,7 @@ export class ImageMark extends EventBindingThis {
 	scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container') {
 		const { scale } = this.getInitialScaleAndTranslate(options)
 		this.scale(-1, point, reletiveTo, scale)
+		return this
 	}
 
 	setEnableImageOutOfContainer(enable: boolean) {
@@ -934,6 +937,26 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
+	setEnableDrawShapeOutOfImg(enable: boolean) {
+		if (!this.options.action) {
+			this.options.action = {}
+		}
+		this.options.action.enableDrawShapeOutOfImg = enable
+		return this
+	}
+
+	setEnableMoveShapeOutOfImg(enable: boolean) {
+		if (!this.options.action) {
+			this.options.action = {}
+		}
+		this.options.action.enableMoveShapeOutOfImg = enable
+		return this
+	}
+
+	setEnableShapeOutOfImg(enable: boolean) {
+		this.setEnableDrawShapeOutOfImg(enable)
+		this.setEnableMoveShapeOutOfImg(enable)
+	}
 
 	protected cloneGroup(transform?: MatrixExtract): G {
 		const cloneGroup = new G()

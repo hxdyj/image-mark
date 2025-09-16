@@ -9,5 +9,6 @@ export declare class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
     static shapeName: string;
     constructor(data: PathLineData, imageMarkInstance: ImageMark, options: ShapeOptions);
     draw(): G;
+    translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PathLineData | null;
 }

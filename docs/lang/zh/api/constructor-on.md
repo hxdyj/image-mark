@@ -9,102 +9,119 @@ ImageMark 实例可以监听的事件
 
 ### init
 
-回调参数：`(imgMark:ImageMark)`
-
-实例初始化完成
+```ts
+// 实例初始化完成
+(imgMark:ImageMark): void
+```
 
 ### first_render
 
-回调参数：`(imgMark:ImageMark)`
-
-实例第一次渲染完成
+```ts
+// 实例第一次渲染完成
+(imgMark:ImageMark): void
+```
 
 ### rerender
 
-回调参数：`(imgMark:ImageMark)`
-
-实例重新渲染，除了第一次渲染外触发
+```ts
+// 实例重新渲染，除了第一次渲染外触发
+(imgMark:ImageMark): void
+```
 
 ### draw
 
-回调参数：`(imgMark:ImageMark)`
-
-每次实例渲染时触发
+```ts
+// 每次实例渲染时触发
+(imgMark:ImageMark): void
+```
 
 ### resize
 
-回调参数：`(imgMark:ImageMark)`
-
-容器大小改变后触发
+```ts
+// 容器大小改变后触发
+(imgMark:ImageMark): void
+```
 
 ### scale
 
-回调参数：`(scale:number,imgMark:ImageMark)`
-
-发生缩放时触发
+```ts
+// 发生缩放时触发
+(scale:number,imgMark:ImageMark): void
+```
 
 ### container_drag_enter
 
-回调参数：`(imgMark:ImageMark)`
-
-drag enter 时触发
+```ts
+// drag enter 时触发
+(imgMark:ImageMark): void
+```
 
 ### container_drag_over
 
-回调参数：`(imgMark:ImageMark)`
-
-drag over 时触发
+```ts
+// drag over 时触发
+(imgMark:ImageMark): void
+```
 
 ### container_drag_leave
 
-回调参数：`(imgMark:ImageMark)`
-
-drag leave 时触发
+```ts
+// drag leave 时触发
+(imgMark:ImageMark): void
+```
 
 ### container_drop
 
-回调参数：`(imgMark:ImageMark)`
-
-drag drop 时触发
+```ts
+// drag drop 时触发
+(imgMark:ImageMark): void
+```
 
 ### shape_add
 
-回调参数：`(data:ShapeData,shapeInstance:ShapeInstance)`
-
-shape 添加时触发，比如通过鼠标绘制添加的 shape
+```ts
+// shape 添加时触发，比如通过鼠标绘制添加的 shape
+(data:ShapeData,shapeInstance:ShapeInstance): void
+```
 
 ### shape_end_drawing
 
-回调参数：`(isCancelAdd:boolean,shapeInstance:ShapeInstance)`
-
-shape 结束绘制时触发
+```ts
+// shape 结束绘制时触发
+(isCancelAdd:boolean,shapeInstance:ShapeInstance): void
+```
 
 ### shape_after_render
 
-回调参数：`(shapeInstance:ImageMarkShape)`
-
-shape 实例渲染完成时触发
+```ts
+// shape 实例渲染完成时触发
+(shapeInstance:ImageMarkShape): void
+```
 
 ### selection_select_list_change
 
-回调参数：`(selectList:ImageMarkShape[])`
-
-选中插件选中列表改变时触发
+```ts
+// 选中插件选中列表改变时触发
+(selectList:ImageMarkShape[]): void
+```
 
 ### selection_action_click
 
-回调参数：`(shapeInstance:ImageMarkShape)`
-
-选中插件操作按钮点击时触发
+```ts
+// 选中插件操作按钮点击时触发
+(shapeInstance:ImageMarkShape): void
+```
 
 ### shape_delete_all
 
-回调参数：`(shapeInstance:ImageMarkShape)`
-
-删除所有 shape 时触发
+```ts
+// 删除所有 shape 时触发
+(shapeInstance:ImageMarkShape): void
+```
 
 ### load_image_error
 
-回调参数： `(event:Event, shapeInstance:ImageMarkShape)`
-
-图片加载失败时触发
+```ts
+// 图片加载失败时触发
+(event:Event, shapeInstance:ImageMarkShape): void
+```

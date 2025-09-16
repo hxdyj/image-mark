@@ -1,6 +1,6 @@
 {
 	"name": "mark-img",
-	"version": "0.0.25",
+	"version": "0.0.26",
 	"type": "module",
 	"keywords": [
 		"图片标注",
@@ -92,5 +92,9 @@
 		"uid": "^2.0.2",
 		"vite-plugin-clean": "^2.0.1"
 	},
-	"pnpm": {}
+	"pnpm": {
+		"patchedDependencies": {
+			"@svgdotjs/svg.js": "patches/@svgdotjs__svg.js.patch"
+		}
+	}
 }

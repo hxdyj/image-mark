@@ -13,7 +13,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     data: T[];
     disableActionList: Set<string>;
     constructor(imageMarkInstance: ImageMark, shapeOptions?: ShapeOptions | undefined);
-    getShapeOptions(shapeOptions?: ShapeOptions): any;
+    getShapeOptions(shapeOptions?: ShapeOptions): ShapeOptions;
     addAction(action: typeof Action, actionOptions?: any): void;
     removeAction(action: typeof Action): void;
     disableAction(action: string | string[]): void;
@@ -55,6 +55,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     drawing(shapeData: T): this;
     endDrawing(cancel?: boolean): this;
     drawingMouseTrace: Array<MouseEvent>;
+    drawingMouseTracePush(event: MouseEvent): boolean;
     dropLastMouseTrace(): void;
     onDrawingMouseDown(event: MouseEvent): void;
     onDrawingMouseMove(event: MouseEvent): void;

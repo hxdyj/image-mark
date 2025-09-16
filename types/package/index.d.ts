@@ -46,8 +46,11 @@ export type ImageMarkOptions = {
         padding?: number;
         paddingUnit?: 'px' | '%';
     };
-    moveConfig?: {};
-    enableImageOutOfContainer?: boolean;
+    action?: {
+        enableDrawShapeOutOfImg?: boolean;
+        enableMoveShapeOutOfImg?: boolean;
+        enableImageOutOfContainer?: boolean;
+    };
     pluginOptions?: {
         [key: string]: any;
     };
@@ -103,8 +106,8 @@ export declare class ImageMark extends EventBindingThis {
     protected drawImage(ev: Event | null, size?: 'initial' | 'reserve', addTo?: boolean): void;
     static useDefaultPlugin(): void;
     static unuseDefaultPlugin(): void;
-    addDefaultAction(): void;
-    removeDefaultAction(): void;
+    addDefaultAction(): this;
+    removeDefaultAction(): this;
     protected onContainerWheel(e: Event): void;
     protected onContainerDragLeaveEvent(e: DragEvent): void;
     protected onContainerDropEvent(e: DragEvent): void;
@@ -125,7 +128,7 @@ export declare class ImageMark extends EventBindingThis {
     removeStageMouseScale(): this;
     protected limitMovePoint(movePoint: ArrayPoint): ArrayPoint;
     protected fixPoint(point: ArrayPoint, fixPoint: ArrayPoint): ArrayPoint;
-    moveTo(position: Position): void;
+    moveTo(position: Position): this | undefined;
     move(point: ArrayPoint): this | undefined;
     movingStartTransform: MatrixExtract | null;
     startSuccessiveMove(point: ArrayPoint): this | undefined;
@@ -138,8 +141,11 @@ export declare class ImageMark extends EventBindingThis {
     setMaxScale(maxScale: number | InitialScaleSize): this;
     on(...rest: any): this;
     off(...rest: any): this;
-    scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image'): void;
+    scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image'): this;
     setEnableImageOutOfContainer(enable: boolean): this;
+    setEnableDrawShapeOutOfImg(enable: boolean): this;
+    setEnableMoveShapeOutOfImg(enable: boolean): this;
+    setEnableShapeOutOfImg(enable: boolean): void;
     protected cloneGroup(transform?: MatrixExtract): G;
     protected getImageBoundingBoxByTransform(transform: MatrixExtract): EnhanceBoundingBox;
     protected getScaleLimitImageInContainerInfo(scaleOrigin: ArrayPoint, currentTransform: MatrixExtract, nextStepTransform: MatrixExtract): Array<[MatrixAlias, boolean]> | null | false;

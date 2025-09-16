@@ -15,5 +15,6 @@ export declare class ImageMarkImage extends ImageMarkShape<ImageData> {
     protected loadUrl: string;
     draw(): G;
     protected drawInfo(): void;
+    translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): ImageData | null;
 }

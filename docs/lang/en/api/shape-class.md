@@ -17,35 +17,39 @@ The class name is not Shape, but ImageMarkShape. This is because there is a clas
 
 :::
 
-## Constructor
-
-### constructor
+## Types
 
 ```ts
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 
 export type ShapeOptions = {
-	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // Customize the properties of shape
-	afterRender?: (shapeInstance: ImageMarkShape) => void //  Called after the shape is added to the canvas, i.e., the DOM is already rendered
-	initDrawFunc?: ShapeDrawFunc // Custom initial drawing function
+	// Customize the properties of shape
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr
+	// Called after the shape is added to the canvas, i.e., the DOM is already rendered
+	afterRender?: (shapeInstance: ImageMarkShape) => void
+	// Custom initial drawing function
+	initDrawFunc?: ShapeDrawFunc
 }
 ```
 
-params: (
+## Constructor
 
-- public data: T, `The data of the shape, can be any type, the specific type is implemented by subclasses`
-- imageMarkInstance: ImageMark, `The ImageMark instance to which the shape belongs`
-- public options: ShapeOptions `The options of the shape, the specific options are implemented by subclasses`
+### constructor
 
-)
+```ts
+constructor(
+	public data: T, //The data of the shape, can be any type, the specific type is implemented by subclasses
+	imageMarkInstance: ImageMark, //The ImageMark instance to which the shape belongs
+	public options: ShapeOptions //The options of the shape, the specific options are implemented by subclasses
+): ImageMarkShape<T extends ShapeData = ShapeData>
 
-The constructor of the Shape class
+```
 
 ## Static Properties
 
 ### shapeName
 
-shape The name of the shape
+The name of the shape
 
 ### actionList
 
@@ -55,35 +59,54 @@ The action list of the shape
 
 ### useAction
 
-params: `(action: typeof Action, actionOptions: any = {})`
-
-Use the specified action
+```ts
+// Use the specified action
+useAction(action: typeof Action, actionOptions: any = {}): void
+```
 
 ### unuseAction
 
-params: `(action: typeof Action)`
-
-Cancel the use of the specified action
+```ts
+// Cancel the use of the specified action
+unuseAction(action: typeof Action): void
+```
 
 ### hasAction
 
-params: `(action: typeof Action)`
-
-Determine if there is the specified action
+```ts
+// Determine if there is the specified action
+hasAction(action: typeof Action): boolean
+```
 
 ### useDefaultAction
 
-Use the default action
+```ts
+// Use the default action
+useDefaultAction(): void
+```
 
 ### unuseDefaultAction
 
-Cancel the use of the default action
+```ts
+// Cancel the use of the default action
+unuseDefaultAction(): void
+```
 
 ## Abstract Methods
 
 ### draw
 
-Draw the shape
+```ts
+// Draw the shape
+draw(): void
+```
+
+### translate
+
+```typescript
+// Move the shape
+translate(x: number, y: number): void
+```
 
 ## Instance Properties
 
@@ -131,66 +154,99 @@ The actions of the shape
 
 ### addDrawFunc
 
-params: `(func: ShapeDrawFunc)`
-
-Add a drawing function, used for custom drawing, called every time `draw` is called, such as customizing fillColor, strokeWidth, etc., or selecting fillColor, etc.
+```ts
+// Add a drawing function, used for custom drawing, called every time `draw` is called, such as customizing fillColor, strokeWidth, etc., or selecting fillColor, etc.
+addDrawFunc(func: ShapeDrawFunc): void
+```
 
 ### removeDrawFunc
 
-params: `(func: ShapeDrawFunc)`
+```ts
+// Remove the drawing function
+removeDrawFunc(func: ShapeDrawFunc): void
+```
 
-Remove the drawing function
+### getLabelShape
+
+```ts
+// Get the label shape
+getLabelShape<T = Shape>(): T
+```
 
 ### getMainShape
 
-Get the main shape
+```ts
+// Get the main shape
+getMainShape<T = Shape>(): T
+```
+
+### getLabelId
+
+```ts
+// Get the id of the label shape
+getLabelId(): string
+```
 
 ### getMainId
 
-Get the id of the main shape
+```ts
+// Get the id of the main shape
+getMainId(): string
+```
 
 ### updateData
 
-params: `(data: T)`
-
-Update the data of the shape
+```ts
+// Update the data of the shape
+updateData(data: T): G
+```
 
 ### getMouseMoveThreshold
 
-Get the threshold for mouse movement when drawing the shape, the default is 0
+```ts
+// Get the threshold for mouse movement when drawing the shape, the default is 0
+getMouseMoveThreshold(): number
+```
 
 ### setMouseMoveThreshold
 
-params: `(threshold: number)`
-
-Set the threshold for mouse movement when drawing the shape
+```ts
+// Set the threshold for mouse movement when drawing the shape
+setMouseMoveThreshold(threshold: number)
+```
 
 ### destroy
 
-Destroy the shape and remove it from the canvas
+```ts
+// Destroy the shape and remove it from the canvas
+destroy(): void
+```
 
 ### render
 
 ```ts
-export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
+// Render the shape to the canvas, if it has already been rendered, it will not be rendered again
+export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0] // The parameter of Svg.js's Shape addTo method
+render(stage: AddToShape): void
 ```
-
-params: `(stage: AddToShape)`
-
-Render the shape to the canvas, if it has already been rendered, it will not be rendered again
 
 ### addAction
 
-params: `(action: typeof Action, actionOptions: any = {})`
-
-Add an instance action
+```typescript
+// Add an instance action
+addAction(action: typeof Action, actionOptions: any = {}): void
+```
 
 ### removeAction
 
-params: `(action: typeof Action)`
-
-Remove an instance action
+```typescript
+// Remove an instance action
+removeAction(action: typeof Action): void
+```
 
 ### initAction
 
-Initialize instance actions, if actions have already been bound, they will not be bound again
+```typescript
+// Initialize instance actions, if actions have already been bound, they will not be bound again
+initAction(action: typeof Action, actionOptions: any = null): void
+```

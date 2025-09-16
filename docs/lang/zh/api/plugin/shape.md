@@ -12,7 +12,6 @@ footer: false
 ```typescript
 export interface ShapeData {
 	shapeName: string
-	transform?: ShapeTransform
 	label?: string
 	[x: string]: any
 }
@@ -109,34 +108,38 @@ imgMark.addPlugin(imageMarkInstance => {
 
 ### useShape
 
-参数：(
-
-- shape: `typeof ImageMarkShape<T>`,
-- shapeOptions?: ShapeOptions
-
-)
-
-使用 Shape
+```ts
+// 使用 Shape
+useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): ShapePlugin<T>
+```
 
 ### unuseShape
 
-参数：`(shape: typeof ImageMarkShape<T>)`
-
-移除 Shape
+```ts
+// 移除 Shape
+unuseShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>): ShapePlugin<T>
+```
 
 ### hasShape
 
-参数：`(shape: typeof ImageMarkShape<T>)`
-
-是否使用了某个 Shape
+```ts
+// 是否使用了某个 Shape
+hasShape(shape: typeof ImageMarkShape<T>): boolean
+```
 
 ### useDefaultShape
 
-使用所有内置的 Shape
+```ts
+// 使用所有内置的 Shape
+useDefaultShape(): void
+```
 
 ### unuseDefaultShape
 
-移除所有内置的 Shape
+```ts
+// 移除所有内置的 Shape
+unuseDefaultShape(): void
+```
 
 ## 实例属性
 
@@ -177,125 +180,135 @@ shape: {
 
 ## 实例方法
 
-### getLabelShape
-
-获取 Label 的 shape 实例
-
-### getLabelId
-
-获取 Label shape 的 id
-
 ### setData
 
-参数：`(data: T[])`
-
-设置 shape 数据
+```ts
+// 设置 shape 数据
+setData(data: T[]): void
+```
 
 ### removeNode
 
-参数：`(data: T)`
-
-移除某个 shape
+```ts
+// 移除某个 shape
+removeNode(data: T): void
+```
 
 ### removeAllNodes
 
-参数：`(emit = true)`
-
-移除所有 shape
+```ts
+// 移除所有 shape
+removeAllNodes(emit = true): void
+```
 
 ### getShapeOptions
 
-参数：`(shapeOptions?: ShapeOptions)`
-
-获取 shape options
+```ts
+// 获取 shape options
+getShapeOptions(shapeOptions?: ShapeOptions): ShapeOptions
+```
 
 ### redrawNodes
 
-重新渲染所有 shape
+```ts
+// 重新渲染所有 shape
+redrawNodes(): void
+```
 
 ### disableAction
 
-参数：`(action: string | string[])`
-
-禁用某些 action
+```ts
+// 禁用某些 action
+disableAction(action: string | string[]): void
+```
 
 ### enableAction
 
-参数：`(action: string | string[])`
-
-不禁用某些 action
+```ts
+// 不禁用某些 action
+enableAction(action: string | string[]): void
+```
 
 ### destroy
 
-销毁插件实例
+```ts
+// 销毁插件实例
+destroy(): void
+```
 
 ### onAdd
 
-参数：`(data: T, emit = true)`
-
-添加 shape
-
-### onDelete
-
-参数：`(data: T, shapeInstance: ImageMarkShape)`
-
-删除 shape
+```ts
+// 添加 shape
+onAdd(data: T, emit = true): void
+```
 
 ### clear
 
-清除所有 shape
+```ts
+// 清除所有 shape
+clear(): void
+```
 
 ### getInstanceByData
 
-参数：`(data: T)`
-
-通过 data 获取 shape instance
+```ts
+// 通过 data 获取 shape instance
+getInstanceByData(data: T): ImageMarkShape | undefined
+```
 
 ### addShape
 
-参数：(
-
-- shape: `typeof ImageMarkShape<T>`,
-- shapeOptions?: ShapeOptions
-
-)
-
-实例上添加 shape
+```ts
+// 实例上添加 shape
+addShape(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): ShapePlugin<T>
+```
 
 ### removeShape
 
-实例上删除 shape
+```ts
+// 实例上删除 shape
+removeShape(shape: typeof ImageMarkShape<T>): ShapePlugin<T>
+```
 
 ### startDrawing
 
-参数：`(shape: ImageMarkShape<T>, programmaticDrawing = false)`
-
-开始绘制 shape
+```ts
+// 开始绘制 shape
+startDrawing(shape: ImageMarkShape<T>, programmaticDrawing = false): ShapePlugin<T>
+```
 
 ### drawing
 
-参数： `(shapeData: T)`
-
-绘制绘制中的 shape
+```ts
+// 绘制绘制中的 shape
+drawing(shapeData: T): ShapePlugin<T>
+```
 
 ### endDrawing
 
-参数: `(cancel = false)`
-
-完成绘制，cancel 为 `true` 时不添加到 `data`
+```ts
+// 完成绘制，cancel 为 `true` 时不添加到 `data`
+endDrawing(cancel = false): ShapePlugin<T>
+```
 
 ### dropLastMouseTrace
 
-删除鼠标最后一个的事件，绘制过程中回退使用
+```ts
+// 删除鼠标最后一个的事件，绘制过程中回退使用
+dropLastMouseTrace(): void
+```
 
 ### addAction
 
-参数：`(action: typeof Action, actionOptions: any = {})`
-
-添加实例动作
+```ts
+// 添加实例动作
+addAction(action: typeof Action, actionOptions: any = {}): void
+```
 
 ### removeAction
 
-参数：`(action: typeof Action)`
-
-移除实例动作
+```ts
+// 移除实例动作
+removeAction(action: typeof Action): void
+```

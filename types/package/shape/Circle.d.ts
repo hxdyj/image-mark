@@ -11,5 +11,6 @@ export declare class ImageMarkCircle extends ImageMarkShape<CircleData> {
     static shapeName: string;
     constructor(data: CircleData, imageMarkInstance: ImageMark, options: ShapeOptions);
     draw(): G;
+    translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null;
 }

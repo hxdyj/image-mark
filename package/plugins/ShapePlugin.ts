@@ -2,7 +2,7 @@ import { Action, ImageMark } from "../index";
 import { Plugin } from "./plugin";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
-import { cloneDeep, defaultsDeep, last } from "lodash-es";
+import { clamp, cloneDeep, defaultsDeep, last } from "lodash-es";
 import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
 import { ImageMarkRect } from "../shape/Rect";
 import { ImageMarkCircle } from "../shape/Circle";
@@ -54,7 +54,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 
-	getShapeOptions(shapeOptions?: ShapeOptions) {
+	getShapeOptions(shapeOptions?: ShapeOptions): ShapeOptions {
 		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions>()
 		return defaultsDeep(shapeOptions, this.shapeOptions, thisPlugin?.shapeOptions)
 	}
@@ -348,8 +348,16 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		const enableDrawShapeOutOfImg = this.imageMark.options.action?.enableDrawShapeOutOfImg
 		if (!enableDrawShapeOutOfImg) {
 			const point = this.imageMark.image.point(event.clientX, event.clientY)
+
 			if (point.x < 0 || point.y < 0 || point.x > this.imageMark.imageDom.naturalWidth || point.y > this.imageMark.imageDom.naturalHeight) {
-				return false
+				const newPoint = this.imageMark.image.unpoint(clamp(point.x, 0, this.imageMark.imageDom.naturalWidth), clamp(point.y, 0, this.imageMark.imageDom.naturalHeight))
+				const limitEvent = new MouseEvent(event.type, {
+					clientX: newPoint.x,
+					clientY: newPoint.y
+				})
+
+				this.drawingMouseTrace.push(limitEvent)
+				return true
 			}
 		}
 		this.drawingMouseTrace.push(event)

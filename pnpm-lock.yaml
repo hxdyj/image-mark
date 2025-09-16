@@ -4,13 +4,18 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@svgdotjs/svg.js':
+    hash: 43d8d7ecfcf8215452f307680017faf9edffebe5998607c30e329332807aa4b5
+    path: patches/@svgdotjs__svg.js.patch
+
 importers:
 
   .:
     dependencies:
       '@svgdotjs/svg.js':
         specifier: ^3.2.4
-        version: 3.2.4
+        version: 3.2.4(patch_hash=43d8d7ecfcf8215452f307680017faf9edffebe5998607c30e329332807aa4b5)
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -3743,7 +3748,7 @@ snapshots:
 
   '@shikijs/vscode-textmate@10.0.1': {}
 
-  '@svgdotjs/svg.js@3.2.4': {}
+  '@svgdotjs/svg.js@3.2.4(patch_hash=43d8d7ecfcf8215452f307680017faf9edffebe5998607c30e329332807aa4b5)': {}
 
   '@types/argparse@1.0.38': {}
 

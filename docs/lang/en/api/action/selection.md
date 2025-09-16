@@ -40,24 +40,42 @@ Indicates whether the current `Shape` is selected.
 
 ### getSelectionPlugin
 
-Get the `Selection` plugin instance.
+```ts
+// Get the `Selection` plugin instance
+getSelectionPlugin(): SelectionPlugin | undefined
+```
 
 ### getSelectionShape
 
-Get the `Svg.js` shape instance of the selected `Shape`.
+```ts
+// Get the `Svg.js` shape instance of the selected `Shape`
+getSelectionShape(): Shape | undefined
+```
 
 ### getSelectionId
 
-Get the `id` of the selection for the currently selected `Shape`.
+```ts
+// Get the `id` of the selection for the currently selected `Shape`
+getSelectionId(): string
+```
 
 ### disableSelection
 
-Disable the `Selection` plugin.
+```ts
+// Disable the `Selection` plugin
+disableSelection(): void
+```
 
 ### enableSelection
 
-Enable the `Selection` plugin.
+```ts
+// Enable the `Selection` plugin
+enableSelection(): void
+```
 
 ### destroy
 
-alled when the `ImageMark` is `destroyed` or when `unuseAction` is invoked.
+```ts
+// Called when the `ImageMark` is `destroyed` or when `unuseAction` is invoked
+destroy(): void
+```

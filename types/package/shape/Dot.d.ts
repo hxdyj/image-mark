@@ -11,5 +11,6 @@ export declare class ImageMarkDot extends ImageMarkShape<DotData> {
     static shapeName: string;
     constructor(data: DotData, imageMarkInstance: ImageMark, options: ShapeOptions);
     draw(): G;
+    translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): DotData | null;
 }

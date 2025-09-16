@@ -13,5 +13,6 @@ export declare class ImageMarkRect extends ImageMarkShape<RectData> {
     static shapeName: string;
     constructor(data: RectData, imageMarkInstance: ImageMark, options: ShapeOptions);
     draw(): G;
+    translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): RectData | null;
 }
