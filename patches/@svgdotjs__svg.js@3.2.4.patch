@@ -25,7 +25,7 @@ index e3a42113918cc749f47753c37c906404afe64286..be9bd4beeb4166e13d89a5f82e8a55f9
  import Dom from './Dom.js'
 @@ -16,167 +16,168 @@ import List from '../types/List.js'
  import SVGNumber from '../types/SVGNumber.js'
- 
+
  export default class Element extends Dom {
 -  constructor(node, attrs) {
 -    super(node, attrs)
@@ -332,7 +332,7 @@ index e3a42113918cc749f47753c37c906404afe64286..be9bd4beeb4166e13d89a5f82e8a55f9
 +		return this.attr('y', y)
 +	}
  }
- 
+
  extend(Element, {
 -  bbox,
 -  rbox,
@@ -348,7 +348,7 @@ index e3a42113918cc749f47753c37c906404afe64286..be9bd4beeb4166e13d89a5f82e8a55f9
 +	ctm,
 +	screenCTM
  })
- 
+
  register(Element, 'Element')
 diff --git a/src/types/Point.js b/src/types/Point.js
 index cfd204e2e02f3a2a312f0f54b9a908edab2c6ff0..55921f88f6e38488c51acbdb9af2dde51eb89aaf 100644
@@ -356,7 +356,7 @@ index cfd204e2e02f3a2a312f0f54b9a908edab2c6ff0..55921f88f6e38488c51acbdb9af2dde5
 +++ b/src/types/Point.js
 @@ -1,57 +1,61 @@
  import Matrix from './Matrix.js'
- 
+
  export default class Point {
 -  // Initialize
 -  constructor(...args) {
@@ -457,7 +457,7 @@ index cfd204e2e02f3a2a312f0f54b9a908edab2c6ff0..55921f88f6e38488c51acbdb9af2dde5
 +		return this
 +	}
  }
- 
+
  export function point(x, y) {
 -  return new Point(x, y).transformO(this.screenCTM().inverseO())
 +	return new Point(x, y).transformO(this.screenCTM().inverseO())
@@ -472,11 +472,11 @@ index 5fd0513e3c7f11812da8dfb47d248262a6a3e827..827cd4042b22f8d18e4db57102f9b947
 +++ b/svg.js.d.ts
 @@ -2,1981 +2,1982 @@
  // Project: @svgdotjs/svg.js
- 
+
  // trick to keep reference to Array build-in type
 -declare class BuiltInArray<T> extends Array<T> {}
 +declare class BuiltInArray<T> extends Array<T> { }
- 
+
  // trick to have nice attribute list for CSS
  declare type CSSStyleName = Exclude<
 -  keyof CSSStyleDeclaration,
@@ -484,13 +484,13 @@ index 5fd0513e3c7f11812da8dfb47d248262a6a3e827..827cd4042b22f8d18e4db57102f9b947
 +	keyof CSSStyleDeclaration,
 +	'parentRule' | 'length'
  >
- 
+
  // create our own style declaration that includes css vars
  interface CSSStyleDeclarationWithVars extends CSSStyleDeclaration {
 -  [key: `--${string}`]: string
 +	[key: `--${string}`]: string
  }
- 
+
  declare module '@svgdotjs/svg.js' {
 -  function SVG(): Svg
 -  /**
