@@ -24,6 +24,8 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		super(data, imageMarkInstance, options)
 	}
 
+	readonly drawType = 'centerScale'
+
 	draw(): G {
 		const { x, y, r } = this.data
 		console.log('draw circle', x, y, r)
@@ -36,14 +38,10 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 
 		circle.addTo(this.shapeInstance)
 
+		this.drawLabel()
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
-
-		this.drawLabel()
-
-		this.options?.initDrawFunc?.(this)
-
 		return this.shapeInstance
 	}
 
@@ -68,6 +66,9 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 			y: startPoint.y,
 			r,
 		}
+
+		console.log('end', eventList[eventList.length - 1], endPoint, newCircle)
+
 		return newCircle
 	}
 }

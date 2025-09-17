@@ -1,6 +1,6 @@
 import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
-import { debounce, defaultsDeep, difference, forEach, throttle } from "lodash-es";
+import { defaultsDeep, difference, forEach, throttle } from "lodash-es";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
 import { Plugin } from "./plugins/plugin";
@@ -10,6 +10,7 @@ import { CssNameKey } from "./const/const";
 import { uid } from 'uid'
 import { ShapePlugin } from './plugins/ShapePlugin';
 import { SelectionPlugin } from "./plugins/SelectionPlugin";
+import './style.scss'
 export type TransformStep = [MatrixAlias, boolean]
 
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
@@ -157,6 +158,7 @@ export class ImageMark extends EventBindingThis {
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 
 		this.stageGroup = new G()
+		this.stageGroup.addClass('image-mark-stage-group')
 		this.image = new Image()
 		this.imageDom = document.createElement('img')
 

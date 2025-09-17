@@ -62,13 +62,10 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 		polygon.addTo(this.shapeInstance)
 
 
+		this.drawLabel()
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
-
-		this.drawLabel()
-
-		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

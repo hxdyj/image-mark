@@ -84,6 +84,7 @@
 	],
 	"dependencies": {
 		"@svgdotjs/svg.js": "3.2.4",
+		"color": "^5.0.2",
 		"eventemitter3": "^5.0.1",
 		"gl-matrix": "^3.4.3",
 		"hotkeys-js": "^3.13.7",

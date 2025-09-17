@@ -24,14 +24,11 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		line.plot([x, y, x2, y2]).stroke(this.attr?.stroke || {})
 
 		line.addTo(this.shapeInstance)
+		this.drawLabel()
 
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
-
-		this.drawLabel()
-
-		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}

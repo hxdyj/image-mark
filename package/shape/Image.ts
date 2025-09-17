@@ -11,6 +11,7 @@ export interface ImageData extends ShapeData {
 	height?: number
 	src: string
 	shapeName: 'image'
+	//todo 保持比例
 }
 
 export class ImageMarkImage extends ImageMarkShape<ImageData> {
@@ -20,6 +21,7 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	}
 
 	protected loadUrl: string = ''
+	readonly drawType = 'centerScale'
 
 	draw(): G {
 		const { src, x, y, width, height } = this.data
@@ -44,15 +46,11 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 
 
 		image.addTo(this.shapeInstance)
+		this.drawLabel()
 
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
-
-		this.drawLabel()
-
-		this.options?.initDrawFunc?.(this)
-
 		return this.shapeInstance
 	}
 

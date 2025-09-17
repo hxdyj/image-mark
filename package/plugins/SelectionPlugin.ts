@@ -71,7 +71,6 @@ export class SelectionPlugin extends Plugin {
 				this.selectShapeList.push(shape)
 			}
 			selectionActoin.enableSelection()
-
 		})
 		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList)
 	}

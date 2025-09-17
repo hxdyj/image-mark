@@ -25,17 +25,10 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		polyline.plot(points.concat(this.data.auxiliaryPoint || [])).stroke(this.attr?.stroke || {}).fill(this.attr?.fill || 'none')
 
 		polyline.addTo(this.shapeInstance)
-
-
+		this.drawLabel()
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
-
-		this.drawLabel()
-
-		this.options?.initDrawFunc?.(this)
-
-
 		return this.shapeInstance
 	}
 

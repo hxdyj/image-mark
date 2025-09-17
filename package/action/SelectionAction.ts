@@ -5,6 +5,7 @@ import { uid } from "uid";
 import { Rect, StrokeData } from "@svgdotjs/svg.js";
 import { EventBusEventName } from "../event/const";
 import { defaultsDeep } from "lodash-es";
+import Color from "color";
 
 
 export type SelectionDrawFunc = (selection: SelectionAction) => void
@@ -13,6 +14,7 @@ export type SelectionActionAttr = {
 	stroke?: StrokeData
 	fill?: string
 	padding?: number
+	whileSelectedEditShape?: boolean
 }
 
 export type SelectionActionOptions = {
@@ -26,10 +28,11 @@ export class SelectionAction extends Action {
 	selected: boolean = false
 	attr: SelectionActionAttr = {
 		stroke: {
-			color: '#F53F3F',
+			// color: '#F53F3F',
 		},
 		fill: 'none',
 		padding: 20,
+		whileSelectedEditShape: true
 	}
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: SelectionActionOptions) {
 		super(imageMark, shape, options)
@@ -67,12 +70,14 @@ export class SelectionAction extends Action {
 		this.getSelectionShape()?.remove()
 		this.shape.removeDrawFunc(this.draw)
 		this.selected = false
+		this.attr?.whileSelectedEditShape && this.shape.edit(false, false)
 		this.shape.draw()
 	}
 
 	enableSelection() {
 		this.shape.addDrawFunc(this.draw)
 		this.selected = true
+		this.attr?.whileSelectedEditShape && this.shape.edit(true, false)
 		this.shape.draw()
 	}
 
@@ -86,9 +91,16 @@ export class SelectionAction extends Action {
 		const padding = this.attr.padding ?? 20
 		selectionShape.move(bbox.x - padding, bbox.y - padding)
 		selectionShape.size(bbox.width + padding * 2, bbox.height + padding * 2)
-		selectionShape.stroke(defaultsDeep(this.attr.stroke, this.shape.attr?.stroke || {})).fill(this.attr.fill || 'none')
+		const mainStrokeColor = this.shape.getMainShape().attr('stroke')
 
-		selectionShape.addTo(this.shape.shapeInstance)
+		const stroke = defaultsDeep(this.attr.stroke, {
+			...this.shape.attr?.stroke,
+			color: Color(mainStrokeColor).rotate(-180).toString()
+		}) as StrokeData
+
+		selectionShape.stroke(stroke).fill(this.attr.fill || 'none')
+
+		selectionShape.addTo(this.shape.shapeInstance, 0)
 
 		this.options?.initDrawFunc?.(this)
 	}

@@ -12,6 +12,7 @@ import { ImageMarkImage } from "../shape/Image";
 import { ImageMarkPolyLine } from "../shape/PolyLine";
 import { ImageMarkPolygon } from "../shape/Polygon";
 import { ImageMarkDot } from "../shape/Dot";
+import { Point } from "@svgdotjs/svg.js";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
@@ -344,23 +345,90 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	drawingMouseTrace: Array<MouseEvent> = []
 
-	drawingMouseTracePush(event: MouseEvent): boolean {
+
+	shiftMouseEvent2LimitMouseEvent(evt: Event | MouseEvent) {
+		let limit = false
+		let event = evt as MouseEvent
 		const enableDrawShapeOutOfImg = this.imageMark.options.action?.enableDrawShapeOutOfImg
 		if (!enableDrawShapeOutOfImg) {
 			const point = this.imageMark.image.point(event.clientX, event.clientY)
+			if (this.drawingShape?.drawType == 'point') {
+				if (point.x < 0 || point.y < 0 || point.x > this.imageMark.imageDom.naturalWidth || point.y > this.imageMark.imageDom.naturalHeight) {
+					const newPoint = this.imageMark.image.unpoint(clamp(point.x, 0, this.imageMark.imageDom.naturalWidth), clamp(point.y, 0, this.imageMark.imageDom.naturalHeight))
+					const limitEvent = new MouseEvent(event.type, {
+						clientX: newPoint.x,
+						clientY: newPoint.y
+					})
+					limit = true
+					event = limitEvent
+				}
+			} else if (this.drawingShape?.drawType == 'centerScale') {
+				//TODO(songle):
+				const bbox = this.drawingShape?.shapeInstance?.bbox()
+				const strokeWidth = this.drawingShape?.shapeInstance.attr('stroke-width')
+				const strokeWidthHalf = strokeWidth / 2
+				bbox.x -= strokeWidthHalf
+				bbox.y -= strokeWidthHalf
+				bbox.x2 -= strokeWidthHalf
+				bbox.y2 -= strokeWidthHalf
+				if (bbox) {
+					console.log(111, bbox)
+					if (bbox.x < 0 || bbox.y < 0 || bbox.x2 > this.imageMark.imageDom.naturalWidth || bbox.y2 > this.imageMark.imageDom.naturalHeight) {
+						const newPoint = new Point(event.clientX, event.clientY)
+						// let offset = [0, 0]
+						if (bbox.x < 0) {
+							const limitPoint = this.imageMark.image.unpoint(0, point.y)
+							newPoint.x = Math.round(limitPoint.x)
+						}
+						if (bbox.x2 > this.imageMark.imageDom.naturalWidth) {
+							const limitPoint = this.imageMark.image.unpoint(this.imageMark.imageDom.naturalWidth, point.y)
+							newPoint.x = Math.floor(limitPoint.x)
+						}
+						if (bbox.y < 0) {
+							const limitPoint = this.imageMark.image.unpoint(point.x, 0)
+							newPoint.y = Math.round(limitPoint.y)
+						}
+						if (bbox.y2 > this.imageMark.imageDom.naturalHeight) {
+							const limitPoint = this.imageMark.image.unpoint(point.x, this.imageMark.imageDom.naturalHeight)
+							newPoint.y = Math.floor(limitPoint.y)
+						}
+						// if (bbox.x2 > this.imageMark.imageDom.naturalWidth) offset[0] = bbox.x2 - this.imageMark.imageDom.naturalWidth
+						// if (bbox.y < 0) offset[1] = bbox.y
+						// if (bbox.y2 > this.imageMark.imageDom.naturalHeight) offset[1] = bbox.y2 - this.imageMark.imageDom.naturalHeight
 
-			if (point.x < 0 || point.y < 0 || point.x > this.imageMark.imageDom.naturalWidth || point.y > this.imageMark.imageDom.naturalHeight) {
-				const newPoint = this.imageMark.image.unpoint(clamp(point.x, 0, this.imageMark.imageDom.naturalWidth), clamp(point.y, 0, this.imageMark.imageDom.naturalHeight))
-				const limitEvent = new MouseEvent(event.type, {
-					clientX: newPoint.x,
-					clientY: newPoint.y
-				})
+						// let offsetPoint = this.imageMark.image.unpoint(offset[0], offset[1])
 
-				this.drawingMouseTrace.push(limitEvent)
-				return true
+						// let offsetArr = [offset[0] ? offsetPoint.x - event.clientX : 0, offset[1] ? offsetPoint.y - event.clientY : 0]
+
+						// const { x, y } = this.drawingShape.data
+						// const point = new Point(clamp(bbox.x, 0, this.imageMark.imageDom.naturalWidth), clamp(bbox.y, 0, this.imageMark.imageDom.naturalHeight))
+						// point.x -= x
+						// point.y -= y
+						// const newPoint = this.imageMark.image.unpoint(point.x, point.y)
+						console.log(newPoint, bbox, [this.imageMark.imageDom.naturalWidth, this.imageMark.imageDom.naturalHeight], [event.clientX, event.clientY])
+						// console.log(offsetPoint, offsetArr, bbox, [this.imageMark.imageDom.naturalWidth, this.imageMark.imageDom.naturalHeight], [event.clientX, event.clientY])
+						const limitEvent = new MouseEvent(event.type, {
+							// clientX: event.clientX + offsetArr[0],
+							// clientY: event.clientY + offsetArr[1],
+							clientX: newPoint.x,
+							clientY: newPoint.y
+						})
+						limit = true
+						event = limitEvent
+					}
+				}
 			}
 		}
-		this.drawingMouseTrace.push(event)
+		return {
+			event,
+			limit
+		}
+	}
+
+	drawingMouseTracePush(event: MouseEvent): boolean {
+		const { event: finalEvent, limit } = this.shiftMouseEvent2LimitMouseEvent(event)
+		if (limit && this.drawingShape?.data.shapeName == 'dot') return false
+		this.drawingMouseTrace.push(finalEvent)
 		return true
 	}
 
@@ -405,14 +473,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (this.programmaticDrawing) return
 
 		if (this.drawingShape?.mouseDrawType == 'multiPress') {
+
+			const { event: finalEvent } = this.shiftMouseEvent2LimitMouseEvent(event)
 			const newData = this.drawingShape.mouseEvent2Data({
 				eventList: this.drawingMouseTrace,
-				auxiliaryEvent: event
+				auxiliaryEvent: finalEvent
 			})
 			newData && this.drawing(newData)
 		}
 	}
-
 
 	onDrawingDocumentMouseMove(event: MouseEvent) {
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
@@ -434,6 +503,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			if (!valid) return
 			const newData = this.drawingShape.mouseEvent2Data({
 				eventList: this.drawingMouseTrace
+			})
+			newData && this.drawing(newData)
+		}
+
+		if (this.drawingShape?.mouseDrawType == 'multiPress') {
+			const newData = this.drawingShape.mouseEvent2Data({
+				eventList: this.drawingMouseTrace,
+				auxiliaryEvent: event
 			})
 			newData && this.drawing(newData)
 		}

@@ -1,0 +1,28 @@
+.image-mark-stage-group {
+	.shape-rect {
+		.tl,
+		.br {
+			&:hover {
+				cursor: nw-resize;
+			}
+		}
+		.tr,
+		.bl {
+			&:hover {
+				cursor: ne-resize;
+			}
+		}
+		.t,
+		.b {
+			&:hover {
+				cursor: n-resize;
+			}
+		}
+		.l,
+		.r {
+			&:hover {
+				cursor: e-resize;
+			}
+		}
+	}
+}

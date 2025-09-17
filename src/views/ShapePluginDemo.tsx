@@ -111,11 +111,12 @@ export function ShapePluginDemo() {
 					setAttr() {
 						return {
 							stroke: {
-								color: 'green'
+								// color: 'green',
+
 							},
 							label: {
 								font: {
-									fill: 'black'
+									// fill: 'black'
 								}
 							}
 						}

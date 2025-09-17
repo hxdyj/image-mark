@@ -1,10 +1,12 @@
 import { G, Rect, Shape, StrokeData, Svg, Text } from "@svgdotjs/svg.js";
 import { ImageMark } from "../index";
+import { EventBindingThis } from '../event/event'
 import { Action } from "../action/action";
 import { uid } from "uid";
 import { defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "../action/LmbMoveAction";
 import { EventBusEventName } from "../event/const";
+import { getOptimalTextColor } from "../../src/utils/color.util";
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
@@ -36,11 +38,13 @@ export type ShapeOptions = {
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 	initDrawFunc?: ShapeDrawFunc
 }
+//鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
-
+//绘制类型，point:点绘制，centerScale:中心缩放绘制
+export type ShapeDrawType = 'point' | 'centerScale'
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 
-export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
+export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends EventBindingThis {
 	shapeInstance: G;
 	isRendered = false
 	isBindActions = false
@@ -63,13 +67,14 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		},
 		label: {
 			font: {
-				fill: 'red',
+				// fill: 'red',
 				size: 14
 			}
 		}
 	}
 
 	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions) {
+		super()
 		const constructor = this.constructor
 		// @ts-ignore
 		if (!constructor.shapeName) {
@@ -79,8 +84,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		this.imageMark = imageMarkInstance;
 		const group = new G()
 		group.id(this.uid)
+		group.addClass(`shape-${this.data.shapeName}`)
 		this.shapeInstance = group
 		this.attr = defaultsDeep(this.options.setAttr?.(this) || {}, this.attr)
+		this.options.initDrawFunc && this.addDrawFunc(this.options.initDrawFunc)
 		this.draw()
 	}
 
@@ -98,8 +105,9 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		const text = labelGroup.find('text')[0] as Text || new Text()
 		text.text(this.data.label)
 		const scale = this.imageMark.getCurrentScale()
+		const mainStrokeColor = this.getMainShape().attr('stroke')
 		text.font({
-			fill: this.attr?.label?.font?.fill,
+			fill: this.attr?.label?.font?.fill || getOptimalTextColor(mainStrokeColor),
 			size: (this.attr?.label?.font?.size ?? 14) / scale
 		})
 
@@ -124,7 +132,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 
 		text.addTo(labelGroup)
 
-		labelGroup.addTo(this.shapeInstance)
+		labelGroup.addTo(this.shapeInstance, 10000)
 	}
 
 	addDrawFunc(func: ShapeDrawFunc) {
@@ -147,6 +155,14 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 		return this.shapeInstance.find(`#${this.getLabelId()}`)[0] as T
 	}
 
+	getEditGroup<T = G>() {
+		return this.shapeInstance.find(`#${this.getEditGroupId()}`)[0] as T
+	}
+
+	getEditGroupId() {
+		return `edit_${this.uid}`
+	}
+
 	getLabelId() {
 		return `label_${this.uid}`
 	}
@@ -162,8 +178,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	}
 
 
-	//鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制，paint:作画模式绘制，相当于多笔绘制
 	readonly mouseDrawType: ShapeMouseDrawType = 'oneTouch'
+	readonly drawType: ShapeDrawType = 'point'
 
 	private mouseMoveThreshold = 0
 
@@ -275,7 +291,22 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 
 	abstract translate(x: number, y: number): void
 
-	//TODO(songle): 开启编辑功能
+	protected editOn: boolean = false
+
+	abstract drawEdit(): void
+
+	removeEdit() {
+		this.getEditGroup()?.remove()
+	}
+
+	edit(on?: boolean, needDraw = true): boolean {
+		if (on === undefined) {
+			return this.editOn
+		}
+		this.editOn = on
+		needDraw && this.draw()
+		return this.editOn
+	}
 
 	static useDefaultAction() {
 		ImageMarkShape.useAction(LmbMoveAction)
@@ -284,7 +315,6 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> {
 	static unuseDefaultAction() {
 		ImageMarkShape.unuseAction(LmbMoveAction)
 	}
-
 }
 
 ImageMarkShape.useDefaultAction()

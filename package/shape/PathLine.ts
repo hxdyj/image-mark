@@ -27,16 +27,11 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 			return pre + append
 		}, points?.length ? 'M' : '')
 		path.plot(d).stroke(this.attr?.stroke || {}).fill(this.attr?.fill || 'none')
-
 		path.addTo(this.shapeInstance)
-
+		this.drawLabel()
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
-
-		this.drawLabel()
-
-		this.options?.initDrawFunc?.(this)
 
 		return this.shapeInstance
 	}
