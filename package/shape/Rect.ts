@@ -38,9 +38,9 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		])
 	}
 
-	getEditEventPointType(event: Event) {
+	getEditEventPointType() {
 		//@ts-ignore
-		const point = event.currentTarget.instance as Circle
+		const point = this.editMouseDownEvent?.target.instance as Circle
 		const className = point.classes()[0] as unknown as EditPointType
 		return className
 	}
@@ -48,10 +48,10 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 	editMouseDownEvent: Event | null = null
 	tmpData: RectData | null = null
 	getEditPoint(event: Event): [Point, Point] {
-		const className = this.getEditEventPointType(this.editMouseDownEvent!)
+		const className = this.getEditEventPointType()
 		const currentEvent = event as MouseEvent
 		const startEvent = this.editMouseDownEvent as MouseEvent
-		const offset = [startEvent.clientX - currentEvent.clientX, startEvent.clientY - startEvent.clientY]
+		const offset = [currentEvent.clientX - startEvent.clientX, currentEvent.clientY - startEvent.clientY]
 		const { x = 0, y = 0, width = 0, height = 0 } = this.tmpData || {}
 		const handle = {
 			'l': () => {
@@ -158,33 +158,34 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		event.stopPropagation()
 		this.editMouseDownEvent = event
 		this.tmpData = cloneDeep(this.data)
+		this.imageMark.getShapePlugin()?.setHoldShape(this)
 	}
-
-	// onDocumentMouseUp(event: Event) {
-	// 	const evt = event as MouseEvent
-	// 	if (evt.button === 0 && this.editMouseDownEvent) {
-	// 		event.stopPropagation()
-	// 		const list = this.getEditPoint(event)
-	// 		const newData = getBoundingBoxByTwoPoints(...list)
-	// 		console.log('compare', this.tmpData, newData)
-	// 		// this.updateData(newData as RectData)
-	// 		// this.data = newData as RectData
-	// 		// this.draw()
-	// 	}
-	// }
 
 	onDocumentMouseMove(event: MouseEvent) {
 		super.onDocumentMouseMove(event)
+		const evt = event as MouseEvent
+		if (evt.button === 0 && this.editMouseDownEvent) {
+			event.stopPropagation()
+			const list = this.getEditPoint(event)
+			const newData = getBoundingBoxByTwoPoints(...list)
+			this.updateData(newData as RectData)
+
+			//TODO(songle): 这里需要更新label的位置 而且编辑完以后再移动，label位置也不对
+		}
 	}
 	onDocumentMouseUp(event: MouseEvent) {
 		super.onDocumentMouseUp(event)
+		const evt = event as MouseEvent
+		if (evt.button === 0 && this.editMouseDownEvent) {
+			event.stopPropagation()
+			const list = this.getEditPoint(event)
+			const newData = getBoundingBoxByTwoPoints(...list)
+			this.updateData(newData as RectData)
+			this.editMouseDownEvent = null
+			this.tmpData = null
+			this.imageMark.getShapePlugin()?.setHoldShape(null)
+		}
 	}
-
-	// onEditPointMouseUp(event: Event) {
-	// 	event.stopPropagation()
-	// 	this.editMouseDownEvent = null
-	// 	this.tmpData = null
-	// }
 
 	draw(): G {
 		const { x, y, width, height } = this.data
