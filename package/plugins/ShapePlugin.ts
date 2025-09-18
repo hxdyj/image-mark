@@ -43,10 +43,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 				'onDraw',
 				'onDelete',
 				'onResize',
-				'onDrawingMouseDown',
-				'onDrawingDocumentMouseMove',
-				'onDrawingDocumentMouseUp',
-				'onDrawingMouseMove',
+				'onContainerMouseDown',
+				'onDocumentMouseMove',
+				'onDocumentMouseUp',
+				'onContainerMouseMove',
 				'onFirstRender',
 				'onScale',
 			]
@@ -138,10 +138,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.on(EventBusEventName.resize, this.onResize)
 		this.imageMark.on(EventBusEventName.first_render, this.onFirstRender)
 		this.imageMark.on(EventBusEventName.scale, this.onScale)
-		this.imageMark.container.addEventListener('mousedown', this.onDrawingMouseDown)
-		this.imageMark.container.addEventListener('mousemove', this.onDrawingMouseMove)
-		document.addEventListener('mousemove', this.onDrawingDocumentMouseMove)
-		document.addEventListener('mouseup', this.onDrawingDocumentMouseUp)
+		this.imageMark.container.addEventListener('mousedown', this.onContainerMouseDown)
+		this.imageMark.container.addEventListener('mousemove', this.onContainerMouseMove)
+		document.addEventListener('mousemove', this.onDocumentMouseMove)
+		document.addEventListener('mouseup', this.onDocumentMouseUp)
 	}
 
 	unbindEvent() {
@@ -153,10 +153,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.off(EventBusEventName.first_render, this.onFirstRender)
 		this.imageMark.off(EventBusEventName.scale, this.onScale)
 
-		this.imageMark.container.removeEventListener('mousedown', this.onDrawingMouseDown)
-		this.imageMark.container.removeEventListener('mousemove', this.onDrawingMouseMove)
-		document.removeEventListener('mousemove', this.onDrawingDocumentMouseMove)
-		document.removeEventListener('mouseup', this.onDrawingDocumentMouseUp)
+		this.imageMark.container.removeEventListener('mousedown', this.onContainerMouseDown)
+		this.imageMark.container.removeEventListener('mousemove', this.onContainerMouseMove)
+		document.removeEventListener('mousemove', this.onDocumentMouseMove)
+		document.removeEventListener('mouseup', this.onDocumentMouseUp)
 	}
 
 	destroy(): void {
@@ -477,7 +477,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		newData && this.drawing(newData)
 	}
 
-	onDrawingMouseDown(event: MouseEvent) {
+	// 当前正在编辑或移动等这种选中的shape，为了document或者container事件分发找到对应的shape
+	holdShape: ImageMarkShape | null = null
+
+	setHoldShape(shape: ImageMarkShape | null) {
+		this.holdShape = shape
+	}
+
+	onContainerMouseDown(event: MouseEvent) {
 		if (!this.imageMark.status.drawing) return
 		if (this.programmaticDrawing) return
 
@@ -495,7 +502,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	onDrawingMouseMove(event: MouseEvent) {
+	onContainerMouseMove(event: MouseEvent) {
+		this.holdShape?.onContainerMouseMove(event)
+
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
@@ -510,7 +519,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	onDrawingDocumentMouseMove(event: MouseEvent) {
+	onDocumentMouseMove(event: MouseEvent) {
+		this.holdShape?.onDocumentMouseMove(event)
+
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
@@ -543,7 +554,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	onDrawingDocumentMouseUp(event: MouseEvent) {
+	onDocumentMouseUp(event: MouseEvent) {
+		this.holdShape?.onDocumentMouseUp(event)
+
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 

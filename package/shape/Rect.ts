@@ -160,17 +160,24 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		this.tmpData = cloneDeep(this.data)
 	}
 
-	onDocumentMouseUp(event: Event) {
-		const evt = event as MouseEvent
-		if (evt.button === 0 && this.editMouseDownEvent) {
-			event.stopPropagation()
-			const list = this.getEditPoint(event)
-			const newData = getBoundingBoxByTwoPoints(...list)
-			console.log('compare', this.tmpData, newData)
-			// this.updateData(newData as RectData)
-			// this.data = newData as RectData
-			// this.draw()
-		}
+	// onDocumentMouseUp(event: Event) {
+	// 	const evt = event as MouseEvent
+	// 	if (evt.button === 0 && this.editMouseDownEvent) {
+	// 		event.stopPropagation()
+	// 		const list = this.getEditPoint(event)
+	// 		const newData = getBoundingBoxByTwoPoints(...list)
+	// 		console.log('compare', this.tmpData, newData)
+	// 		// this.updateData(newData as RectData)
+	// 		// this.data = newData as RectData
+	// 		// this.draw()
+	// 	}
+	// }
+
+	onDocumentMouseMove(event: MouseEvent) {
+		super.onDocumentMouseMove(event)
+	}
+	onDocumentMouseUp(event: MouseEvent) {
+		super.onDocumentMouseUp(event)
 	}
 
 	// onEditPointMouseUp(event: Event) {

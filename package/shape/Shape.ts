@@ -143,8 +143,25 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		labelGroup.addTo(this.shapeInstance, 10000)
 	}
 
+
+	//当一个shape绘制完成时有 ShapePlugin 调用
 	onEndDrawing() {
 
+	}
+
+	actionListForEach(callback: (action: Action) => void) {
+		Object.values(this.action).forEach(action => callback(action))
+	}
+
+	onContainerMouseMove(event: MouseEvent) {
+		this.actionListForEach(action => action.onContainerMouseMove(event))
+	}
+
+	onDocumentMouseMove(event: MouseEvent) {
+		this.actionListForEach(action => action.onDocumentMouseMove(event))
+	}
+	onDocumentMouseUp(event: MouseEvent) {
+		this.actionListForEach(action => action.onDocumentMouseUp(event))
 	}
 
 	addDrawFunc(func: ShapeDrawFunc) {

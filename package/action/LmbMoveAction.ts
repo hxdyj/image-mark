@@ -28,27 +28,16 @@ export class LmbMoveAction extends Action {
 		super(imageMark, shape, options)
 		this.uid = shape.uid + '_' + uid(6)
 
-		//TODO(songle): 去掉__args模式, 改用事件代理，不要在每个shape上添加整体的事件
-		const __args = {
-			uid: this.uid
-		}
-		this.bindEventThis(['onMouseDown', 'onDoucmentMouseMoving', 'onDocumentMouseUp'], {
-			onDoucmentMouseMoving: __args,
-			onDocumentMouseUp: __args
-		})
+		this.bindEventThis(['onMouseDown'])
 		this.bindEvents()
 	}
 
 	protected bindEvents() {
 		this.shape.shapeInstance.on('mousedown', this.onMouseDown)
-		document.addEventListener('mousemove', this.onDoucmentMouseMoving)
-		document.addEventListener('mouseup', this.onDocumentMouseUp)
 
 	}
 	protected unbindEvent() {
 		this.shape.shapeInstance.off('mousedown', this.onMouseDown)
-		document.removeEventListener('mousemove', this.onDoucmentMouseMoving)
-		document.removeEventListener('mouseup', this.onDocumentMouseUp)
 	}
 
 	public disableMove() {
@@ -74,6 +63,7 @@ export class LmbMoveAction extends Action {
 			this.imageMark.onComtainerLmbDownMoveingMouseDownEvent(event)
 			return
 		}
+		this.imageMark.getShapePlugin()?.setHoldShape(this.shape)
 		if (this.imageMark.status.drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
@@ -85,9 +75,7 @@ export class LmbMoveAction extends Action {
 		this.options?.onStart?.(this.imageMark, this.shape, evt)
 	}
 
-	protected onDoucmentMouseMoving(event: MouseEvent) {
-		const { uid } = Reflect.get(event, '__args') || {}
-		if (uid !== this.uid) return
+	onContainerMouseMove(event: MouseEvent) {
 		if (event.button !== 0) return
 		if (!this.status.mouseDown || !this.startTransform || !this.startPoint) return
 		event.stopPropagation()
@@ -156,14 +144,13 @@ export class LmbMoveAction extends Action {
 		return diffPoint
 	}
 
-	protected onDocumentMouseUp(event: MouseEvent) {
-		const { uid } = Reflect.get(event, '__args') || {}
 
-		if (uid !== this.uid) return
+
+	onDocumentMouseUp(event: MouseEvent) {
 		if (event.button !== 0 || !this.status.mouseDown) return
 		event.stopPropagation()
 		event.preventDefault()
-		this.onDoucmentMouseMoving(event)
+		this.onContainerMouseMove(event)
 		this.status.mouseDown = false
 		this.startPoint = null
 		const { e = 0, f = 0 } = this.shape.shapeInstance.transform()
@@ -172,6 +159,7 @@ export class LmbMoveAction extends Action {
 		this.startTransform = null
 
 		this.options?.onEnd?.(this.imageMark, this.shape, event)
+		this.imageMark.getShapePlugin()?.setHoldShape(null)
 	}
 
 }

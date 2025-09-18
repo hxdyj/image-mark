@@ -27,4 +27,8 @@ export class Action extends EventBindingThis {
 		const shapeInstance = this.imageMark.plugin[ShapePlugin.pluginName] as ShapePlugin
 		return shapeInstance
 	}
+
+	onContainerMouseMove(event: MouseEvent) { }
+	onDocumentMouseMove(event: MouseEvent) { }
+	onDocumentMouseUp(event: MouseEvent) { }
 }
