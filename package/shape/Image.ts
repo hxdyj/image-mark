@@ -1,8 +1,6 @@
 import { G, Image } from "@svgdotjs/svg.js";
 import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeDrawType, ShapeOptions } from "./Shape";
 import { ImageMark } from "..";
-import { getBoundingBoxByTwoPoints } from "./Rect";
-
 
 export interface ImageData extends ShapeData {
 	x: number
@@ -11,7 +9,6 @@ export interface ImageData extends ShapeData {
 	height: number
 	src: string
 	shapeName: 'image'
-	//todo 保持比例
 }
 
 export class ImageMarkImage extends ImageMarkShape<ImageData> {
