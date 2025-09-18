@@ -51,7 +51,10 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		const className = this.getEditEventPointType()
 		const currentEvent = event as MouseEvent
 		const startEvent = this.editMouseDownEvent as MouseEvent
-		const offset = [currentEvent.clientX - startEvent.clientX, currentEvent.clientY - startEvent.clientY]
+
+		const currentPoint = this.imageMark.image.point(currentEvent.clientX, currentEvent.clientY)
+		const startPoint = this.imageMark.image.point(startEvent.clientX, startEvent.clientY)
+		const offset = [currentPoint.x - startPoint.x, currentPoint.y - startPoint.y]
 		const { x = 0, y = 0, width = 0, height = 0 } = this.tmpData || {}
 		const handle = {
 			'l': () => {
@@ -168,9 +171,10 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 			event.stopPropagation()
 			const list = this.getEditPoint(event)
 			const newData = getBoundingBoxByTwoPoints(...list)
-			this.updateData(newData as RectData)
-
-			//TODO(songle): 这里需要更新label的位置 而且编辑完以后再移动，label位置也不对
+			this.updateData({
+				...this.data,
+				...newData
+			})
 		}
 	}
 	onDocumentMouseUp(event: MouseEvent) {
@@ -180,7 +184,10 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 			event.stopPropagation()
 			const list = this.getEditPoint(event)
 			const newData = getBoundingBoxByTwoPoints(...list)
-			this.updateData(newData as RectData)
+			this.updateData({
+				...this.data,
+				...newData
+			})
 			this.editMouseDownEvent = null
 			this.tmpData = null
 			this.imageMark.getShapePlugin()?.setHoldShape(null)
@@ -193,7 +200,6 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		rect.id(this.getMainId())
 		rect.plot([x, y, x + width, y, x + width, y + height, x, y + height]).size(width, height).fill(this.attr?.fill || 'transparent').stroke(this.attr?.stroke || {})
 		rect.addTo(this.shapeInstance)
-
 		if (this.editOn) {
 			this?.drawEdit()
 		} else {
