@@ -3,7 +3,7 @@ import { Plugin } from "./plugin";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
 import { clamp, cloneDeep, defaultsDeep, last } from "lodash-es";
-import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
+import { twoPointsDistance, unitVector } from "../utils/cartesianCoordinateSystem";
 import { ImageMarkRect } from "../shape/Rect";
 import { ImageMarkCircle } from "../shape/Circle";
 import { ImageMarkPathLine } from "../shape/PathLine";
@@ -330,6 +330,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	endDrawing(cancel = false) {
 		if (!this.drawingShape) throw new Error('drawingShape is null')
+		this.drawingShape.onEndDrawing()
 		const shapeData = cloneDeep(this.drawingShape.data)
 		this.drawingShape.destroy()
 		if (!cancel) {
@@ -362,60 +363,86 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 					limit = true
 					event = limitEvent
 				}
-			} else if (this.drawingShape?.drawType == 'centerScale') {
-				//TODO(songle):
-				const bbox = this.drawingShape?.shapeInstance?.bbox()
-				const strokeWidth = this.drawingShape?.shapeInstance.attr('stroke-width')
-				const strokeWidthHalf = strokeWidth / 2
-				bbox.x -= strokeWidthHalf
-				bbox.y -= strokeWidthHalf
-				bbox.x2 -= strokeWidthHalf
-				bbox.y2 -= strokeWidthHalf
-				if (bbox) {
-					console.log(111, bbox)
-					if (bbox.x < 0 || bbox.y < 0 || bbox.x2 > this.imageMark.imageDom.naturalWidth || bbox.y2 > this.imageMark.imageDom.naturalHeight) {
-						const newPoint = new Point(event.clientX, event.clientY)
-						// let offset = [0, 0]
-						if (bbox.x < 0) {
-							const limitPoint = this.imageMark.image.unpoint(0, point.y)
-							newPoint.x = Math.round(limitPoint.x)
-						}
-						if (bbox.x2 > this.imageMark.imageDom.naturalWidth) {
-							const limitPoint = this.imageMark.image.unpoint(this.imageMark.imageDom.naturalWidth, point.y)
-							newPoint.x = Math.floor(limitPoint.x)
-						}
-						if (bbox.y < 0) {
-							const limitPoint = this.imageMark.image.unpoint(point.x, 0)
-							newPoint.y = Math.round(limitPoint.y)
-						}
-						if (bbox.y2 > this.imageMark.imageDom.naturalHeight) {
-							const limitPoint = this.imageMark.image.unpoint(point.x, this.imageMark.imageDom.naturalHeight)
-							newPoint.y = Math.floor(limitPoint.y)
-						}
-						// if (bbox.x2 > this.imageMark.imageDom.naturalWidth) offset[0] = bbox.x2 - this.imageMark.imageDom.naturalWidth
-						// if (bbox.y < 0) offset[1] = bbox.y
-						// if (bbox.y2 > this.imageMark.imageDom.naturalHeight) offset[1] = bbox.y2 - this.imageMark.imageDom.naturalHeight
-
-						// let offsetPoint = this.imageMark.image.unpoint(offset[0], offset[1])
-
-						// let offsetArr = [offset[0] ? offsetPoint.x - event.clientX : 0, offset[1] ? offsetPoint.y - event.clientY : 0]
-
-						// const { x, y } = this.drawingShape.data
-						// const point = new Point(clamp(bbox.x, 0, this.imageMark.imageDom.naturalWidth), clamp(bbox.y, 0, this.imageMark.imageDom.naturalHeight))
-						// point.x -= x
-						// point.y -= y
-						// const newPoint = this.imageMark.image.unpoint(point.x, point.y)
-						console.log(newPoint, bbox, [this.imageMark.imageDom.naturalWidth, this.imageMark.imageDom.naturalHeight], [event.clientX, event.clientY])
-						// console.log(offsetPoint, offsetArr, bbox, [this.imageMark.imageDom.naturalWidth, this.imageMark.imageDom.naturalHeight], [event.clientX, event.clientY])
+			} else if (this.drawingShape?.drawType == 'centerR') {
+				if (this.drawingMouseTrace?.length > 1) {
+					const startPoint = this.imageMark.image.point(this.drawingMouseTrace[0])
+					const minR = Math.min(
+						startPoint.x,
+						this.imageMark.imageDom.naturalWidth - startPoint.x,
+						startPoint.y,
+						this.imageMark.imageDom.naturalHeight - startPoint.y,
+					)
+					const endPoint = point
+					const distance = twoPointsDistance([startPoint.x, startPoint.y], [endPoint.x, endPoint.y])
+					if (distance > minR) {
+						const unit = unitVector(startPoint, endPoint)
+						const rPoint = new Point(startPoint.x + unit.x * minR, startPoint.y + unit.y * minR)
+						const fixEventPoint = this.imageMark.image.unpoint(rPoint.x, rPoint.y)
 						const limitEvent = new MouseEvent(event.type, {
-							// clientX: event.clientX + offsetArr[0],
-							// clientY: event.clientY + offsetArr[1],
-							clientX: newPoint.x,
-							clientY: newPoint.y
+							clientX: fixEventPoint.x,
+							clientY: fixEventPoint.y
 						})
 						limit = true
 						event = limitEvent
 					}
+				}
+			} else if (this.drawingShape?.drawType == 'centerRxy') {
+				if (this.drawingMouseTrace?.length > 1) {
+					const startPoint = this.imageMark.image.point(this.drawingMouseTrace[0])
+					const minRx = Math.min(
+						startPoint.x,
+						this.imageMark.imageDom.naturalWidth - startPoint.x,
+
+					)
+					const minRy = Math.min(
+						startPoint.y,
+						this.imageMark.imageDom.naturalHeight - startPoint.y,
+					)
+
+					// console.log(111, startPoint, [minRx, minRy])
+
+					const endPoint = point
+
+					const distanceX = Math.abs(endPoint.x - startPoint.x)
+					const distanceY = Math.abs(endPoint.y - startPoint.y)
+
+					const rPoint = new Point(endPoint.x, endPoint.y)
+
+					if (distanceX > minRx) {
+						rPoint.x = startPoint.x + minRx
+					}
+					if (distanceY > minRy) {
+						rPoint.y = startPoint.y + minRy
+					}
+
+					if (rPoint.x != endPoint.x || rPoint.y != endPoint.y) {
+						const fixEventPoint = this.imageMark.image.unpoint(rPoint.x, rPoint.y)
+						const limitEvent = new MouseEvent(event.type, {
+							clientX: fixEventPoint.x,
+							clientY: fixEventPoint.y
+						})
+						limit = true
+						event = limitEvent
+					}
+
+					// if (distanceX > minRx || distanceY > minRy) {
+					// 	const unitX = unitVector(startPoint, new Point({
+					// 		x: endPoint.x,
+					// 		y: startPoint.y
+					// 	})).x
+					// 	const unitY = unitVector(startPoint, new Point({
+					// 		x: startPoint.x,
+					// 		y: endPoint.y
+					// 	})).y
+					// 	const rPoint = new Point(startPoint.x + unitX * minRx, startPoint.y + unitY * minRy)
+					// 	const fixEventPoint = this.imageMark.image.unpoint(rPoint.x, rPoint.y)
+					// 	const limitEvent = new MouseEvent(event.type, {
+					// 		clientX: fixEventPoint.x,
+					// 		clientY: fixEventPoint.y
+					// 	})
+					// 	limit = true
+					// 	event = limitEvent
+					// }
 				}
 			}
 		}

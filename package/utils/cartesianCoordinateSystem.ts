@@ -1,3 +1,4 @@
+import { Point } from "@svgdotjs/svg.js";
 import { ArrayPoint, BoundingBox, EdgeName } from "..";
 import { areNumberEqual } from "./number";
 
@@ -55,4 +56,10 @@ export function sortEdgeNames(edges: EdgeName[]): EdgeName[] {
 		bottom: 3
 	};
 	return edges.sort((a, b) => priority[a] - priority[b]);
+}
+
+
+export function unitVector(point1: Point, point2: Point) {
+	const d = twoPointsDistance([point1.x, point1.y], [point2.x, point2.y])
+	return new Point((point2.x - point1.x) / d, (point2.y - point1.y) / d)
 }

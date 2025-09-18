@@ -30,6 +30,10 @@ export type ShapeAttr = {
 	}
 	dot?: {
 		r?: number
+	},
+	image?: {
+		opacity?: number
+		preserveAspectRatio?: 'xMidYMid' | 'none'
 	}
 } | undefined
 
@@ -40,8 +44,8 @@ export type ShapeOptions = {
 }
 //鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
-//绘制类型，point:点绘制，centerScale:中心缩放绘制
-export type ShapeDrawType = 'point' | 'centerScale'
+//绘制类型，point:所有划过的点绘制，centerR:起点为中心点，起止点距离为半径r绘制，centerRxy:起点为中心点，起止点x1，x2差值为Rx,y1,y2差值为Ry绘制
+export type ShapeDrawType = 'point' | 'centerR' | 'centerRxy'
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends EventBindingThis {
@@ -70,6 +74,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 				// fill: 'red',
 				size: 14
 			}
+		},
+		image: {
+			opacity: 0.8,
+			preserveAspectRatio: 'xMidYMid'
 		}
 	}
 
@@ -133,6 +141,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		text.addTo(labelGroup)
 
 		labelGroup.addTo(this.shapeInstance, 10000)
+	}
+
+	onEndDrawing() {
+
 	}
 
 	addDrawFunc(func: ShapeDrawFunc) {

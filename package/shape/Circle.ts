@@ -2,15 +2,7 @@ import { Circle, G, } from "@svgdotjs/svg.js";
 import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 import { cloneDeep } from "lodash-es";
-
-
-function calculateDistance(point1: { x: number; y: number }, point2: { x: number; y: number }): number {
-	const dx = point2.x - point1.x;
-	const dy = point2.y - point1.y;
-	return Math.sqrt(dx * dx + dy * dy);
-}
-
-
+import { twoPointsDistance } from "#/utils/cartesianCoordinateSystem";
 export interface CircleData extends ShapeData {
 	shapeName: "circle",
 	x: number,
@@ -24,7 +16,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		super(data, imageMarkInstance, options)
 	}
 
-	readonly drawType = 'centerScale'
+	readonly drawType = 'centerR'
 
 	draw(): G {
 		const { x, y, r } = this.data
@@ -58,7 +50,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		if (eventList.length < 2) return null
 		const startPoint = this.imageMark.image.point(eventList[0])
 		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
-		const r = calculateDistance(startPoint, endPoint)
+		const r = twoPointsDistance([startPoint.x, startPoint.y], [endPoint.x, endPoint.y])
 
 		const newCircle: CircleData = {
 			...this.data,
@@ -67,7 +59,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 			r,
 		}
 
-		console.log('end', eventList[eventList.length - 1], endPoint, newCircle)
+		// console.log('end', eventList[eventList.length - 1], endPoint, newCircle)
 
 		return newCircle
 	}
