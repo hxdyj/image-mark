@@ -142,7 +142,7 @@ export declare class ImageMark extends EventBindingThis {
     on(...rest: any): this;
     off(...rest: any): this;
     scaleTo(options: ImageMarkOptions['initScaleConfig'], point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image'): this;
-    setEnableImageOutOfContainer(enable: boolean): this;
+    setImageFullOfContainer(enable: boolean): this;
     setEnableDrawShapeOutOfImg(enable: boolean): this;
     setEnableMoveShapeOutOfImg(enable: boolean): this;
     setEnableShapeOutOfImg(enable: boolean): void;

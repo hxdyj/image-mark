@@ -215,11 +215,11 @@ on(...rest: any): void // Reference the on method of eventemitter3
 off(...rest: any): void // Reference the off method of eventemitter3
 ```
 
-### setEnableImageOutOfContainer
+### setImageFullOfContainer
 
 ```ts
-// Set whether the image can be out of the container
-setEnableImageOutOfContainer(enable: boolean): ImageMark
+// Set whether the image can be full of the container
+setImageFullOfContainer(enable: boolean): ImageMark
 ```
 
 ### setEnableDrawShapeOutOfImg

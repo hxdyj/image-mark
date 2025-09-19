@@ -215,11 +215,11 @@ on(...rest: any): void // 参考 eventemitter3 的 on 方法
 off(...rest: any): void // 参考 eventemitter3 的 off 方法
 ```
 
-### setEnableImageOutOfContainer
+### setImageFullOfContainer
 
 ```ts
-// 设置图片是否可以超出容器
-setEnableImageOutOfContainer(enable: boolean): ImageMark
+// 设置图片覆盖容器
+setImageFullOfContainer(enable: boolean): ImageMark
 ```
 
 ### setEnableDrawShapeOutOfImg

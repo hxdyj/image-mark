@@ -7,6 +7,8 @@ import { ImageMarkEventKey, TeamData, TeamShape } from "../components/ImageMark/
 import { LmbMoveAction } from "#/action/LmbMoveAction"
 import { Circle, MatrixExtract } from "@svgdotjs/svg.js"
 import { ImageMarkShape } from "#/shape/Shape"
+
+//TODO(songle): bug shape不能移动
 export function TeamMarkPluginDemo() {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const imgMark = useRef<ImageMark | null>(null)
@@ -111,8 +113,10 @@ export function TeamMarkPluginDemo() {
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
 			src: '/img/demo-parking.jpg',
+			setting: {
+				imageFullOfContainer: true
+			},
 			action: {
-				enableImageOutOfContainer: false,
 				enableDrawShapeOutOfImg: true,
 				enableMoveShapeOutOfImg: true,
 				enableEditShapeOutOfImg: true,

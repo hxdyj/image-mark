@@ -30,10 +30,12 @@ const imageMark = new ImageMark({
 		padding?: number // 缩放的边距, 默认`0.1`
 		paddingUnit?: 'px' | '%' // 边距的单位 默认`%`
 	}
+	setting?:{
+		imageFullOfContainer?: boolean // 是否图片覆盖容器, 默认`false`。如果为true，图片会覆盖整个容器，移动操作这些都不会超出边界，会有图片内容始终覆盖整个容器
+	}
 	action?: {
 		enableDrawShapeOutOfImg?: boolean // 是否允许绘制时超出图片, 默认`false`
 		enableMoveShapeOutOfImg?: boolean // 是否允许移动时超出图片, 默认`false`
-		enableImageOutOfContainer?: boolean // 是否允许图片超出容器, 默认`true`
 	}
 	pluginOptions?: {
 		[key: string]: any // [插件名称]：[插件配置] 插件的配置项，具体请参考插件文档

@@ -11,6 +11,7 @@ import { uid } from 'uid'
 import { ShapePlugin } from './plugins/ShapePlugin';
 import { SelectionPlugin } from "./plugins/SelectionPlugin";
 import './style.scss'
+import { DeepPartial } from "@arco-design/web-react/es/Form/store";
 export type TransformStep = [MatrixAlias, boolean]
 
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
@@ -55,12 +56,15 @@ export type ImageMarkOptions = {
 		 *  */
 		padding?: number
 		paddingUnit?: 'px' | '%'
-	}
+	},
+	setting?: {
+		//如果为true，图片会覆盖整个容器，移动操作这些都不会超出边界，会有图片内容始终覆盖整个容器
+		imageFullOfContainer?: boolean
+	},
 	action?: {
 		enableDrawShapeOutOfImg?: boolean
 		enableEditShapeOutOfImg?: boolean
 		enableMoveShapeOutOfImg?: boolean
-		enableImageOutOfContainer?: boolean
 	}
 	pluginOptions?: {
 		[key: string]: any // [插件名称]：[插件配置]
@@ -98,6 +102,22 @@ export type ImageMarkStatus = {
 	drawing: boolean | string  //string的时候为shapeName
 }
 
+
+const defaultOptions: DeepPartial<ImageMarkOptions> = {
+	initScaleConfig: {
+		to: 'image',
+		size: 'fit',
+		padding: 0.1
+	},
+	setting: {
+		imageFullOfContainer: false,
+	},
+	action: {
+		enableDrawShapeOutOfImg: false,
+		enableMoveShapeOutOfImg: false,
+		enableEditShapeOutOfImg: false,
+	}
+}
 export class ImageMark extends EventBindingThis {
 	id: string;
 	container: HTMLElement;
@@ -139,18 +159,8 @@ export class ImageMark extends EventBindingThis {
 
 		console.log('init containerRectInfo', this.id, this.containerRectInfo)
 
-		this.options.initScaleConfig = defaultsDeep(this.options.initScaleConfig, {
-			to: 'image',
-			size: 'fit',
-			padding: 0.1
-		})
 
-		this.options.action = defaultsDeep(this.options.action, {
-			enableDrawShapeOutOfImg: false,
-			enableMoveShapeOutOfImg: false,
-			enableEditShapeOutOfImg: false,
-			enableImageOutOfContainer: true,
-		})
+		this.options = defaultsDeep(this.options, defaultOptions)
 
 		this.stage = SVG()
 
@@ -236,7 +246,7 @@ export class ImageMark extends EventBindingThis {
 		this.containerRectInfo = getContainerInfo(this.container)
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 		let drawSize: Parameters<typeof this.drawImage>[1] = 'initial'
-		if (this.options.action?.enableImageOutOfContainer) {
+		if (!this.options.setting?.imageFullOfContainer) {
 			drawSize = 'reserve'
 		}
 
@@ -288,7 +298,7 @@ export class ImageMark extends EventBindingThis {
 		let containerWidth = this.containerRectInfo.width
 		let containerHeight = this.containerRectInfo.height
 		let { padding = 0, size = 'fit', to = 'image', startPosition = 'center', paddingUnit = '%' } = options!
-		if (!this.options.action?.enableImageOutOfContainer) {
+		if (this.options.setting?.imageFullOfContainer) {
 			padding = 0
 			size = 'cover'
 		}
@@ -423,7 +433,7 @@ export class ImageMark extends EventBindingThis {
 
 
 	protected checkMinScaleValidate() {
-		if (!this.options?.action?.enableImageOutOfContainer) {
+		if (this.options.setting?.imageFullOfContainer) {
 			let { scale: minScale } = this.getInitialScaleAndTranslate({ 'size': 'cover' })
 
 			/* 图片没加载出来的时候有可能图片宽高获取都为0，导致这里scale计算为Infinity，无法缩小 */
@@ -608,7 +618,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	protected limitMovePoint(movePoint: ArrayPoint): ArrayPoint {
-		if (this.options.action?.enableImageOutOfContainer) return [0, 0]
+		if (!this.options.setting?.imageFullOfContainer) return [0, 0]
 		let currentTransform = this.stageGroup.transform()
 
 		let fixPoint: ArrayPoint = [0, 0]
@@ -836,7 +846,7 @@ export class ImageMark extends EventBindingThis {
 		}
 
 
-		if (direction == -1 && !this.options.action?.enableImageOutOfContainer) {
+		if (direction == -1 && this.options.setting?.imageFullOfContainer) {
 			const { scale } = this.getInitialScaleAndTranslate({
 				size: 'cover'
 			})
@@ -879,7 +889,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	setMinScale(minScale: number | InitialScaleSize) {
-		if (!this.options.action?.enableImageOutOfContainer) return this
+		if (this.options.setting?.imageFullOfContainer) return this
 
 		let minScaleValue: number = this.minScale
 		if (typeof minScale === 'string') {
@@ -930,12 +940,12 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
-	setEnableImageOutOfContainer(enable: boolean) {
-		if (!this.options.action) {
-			this.options.action = {}
+	setImageFullOfContainer(enable: boolean) {
+		if (!this.options.setting) {
+			this.options.setting = {}
 		}
-		this.options.action.enableImageOutOfContainer = enable
-		if (!enable) {
+		this.options.setting.imageFullOfContainer = enable
+		if (enable) {
 			this.checkInitOutOfContainerAndReset()
 		}
 		return this

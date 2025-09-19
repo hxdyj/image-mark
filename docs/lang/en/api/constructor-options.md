@@ -27,10 +27,12 @@ const imageMark = new ImageMark({
 		padding?: number // The padding for scaling, defaults is `0.1`
 		paddingUnit?: 'px' | '%' // The unit for padding, defaults is `%`
 	}
+	setting?:{
+		imageFullOfContainer?: boolean // Whether the image fills the container, default is `false`. If set to true, the image will cover the entire container, movement operations will not exceed the boundaries, and the image content will always cover the entire container
+	},
 	action?: {
 		enableDrawShapeOutOfImg?: boolean // Whether to allow drawing shapes to exceed the image, default is `false`
 		enableMoveShapeOutOfImg?: boolean // Whether to allow moving shapes to exceed the image, default is `false`
-		enableImageOutOfContainer?: boolean // Whether to allow the image to exceed the container's range, default is `true`
 	}
 	pluginOptions?: {
 		[key: string]: any // [pluginName]: [pluginOptions] plugin's configuration, see more at plugin document
@@ -53,5 +55,4 @@ export type BoundingBox = {
 export type StartPosition = 'center' | 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom'
 
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
-
 ```
