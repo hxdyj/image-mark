@@ -32,7 +32,7 @@ export function Base() {
 				// },
 				// padding: 50,
 				paddingUnit: 'px'
-			}
+			},
 		}).on(EventBusEventName.first_render, () => {
 			// imgMark?.setMinScale('cover')
 			// imgMark?.removeStageLmbDownMoveing()
