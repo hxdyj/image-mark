@@ -58,6 +58,7 @@ export type ImageMarkOptions = {
 	}
 	action?: {
 		enableDrawShapeOutOfImg?: boolean
+		enableEditShapeOutOfImg?: boolean
 		enableMoveShapeOutOfImg?: boolean
 		enableImageOutOfContainer?: boolean
 	}
@@ -147,7 +148,8 @@ export class ImageMark extends EventBindingThis {
 		this.options.action = defaultsDeep(this.options.action, {
 			enableDrawShapeOutOfImg: false,
 			enableMoveShapeOutOfImg: false,
-			enableImageOutOfContainer: true
+			enableEditShapeOutOfImg: false,
+			enableImageOutOfContainer: true,
 		})
 
 		this.stage = SVG()
@@ -955,9 +957,18 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
+	setEnableEditShapeOutOfImg(enable: boolean) {
+		if (!this.options.action) {
+			this.options.action = {}
+		}
+		this.options.action.enableEditShapeOutOfImg = enable
+		return this
+	}
+
 	setEnableShapeOutOfImg(enable: boolean) {
 		this.setEnableDrawShapeOutOfImg(enable)
 		this.setEnableMoveShapeOutOfImg(enable)
+		this.setEnableEditShapeOutOfImg(enable)
 	}
 
 	protected cloneGroup(transform?: MatrixExtract): G {

@@ -112,6 +112,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 		const text = labelGroup.find('text')[0] as Text || new Text()
 		text.text(this.data.label)
+		text.addClass('shape-label')
 		const scale = this.imageMark.getCurrentScale()
 		const mainStrokeColor = this.getMainShape().attr('stroke')
 		text.font({

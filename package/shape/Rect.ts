@@ -2,7 +2,7 @@ import { Circle, G, Point, Polygon, Rect } from "@svgdotjs/svg.js";
 import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark, { BoundingBox } from "..";
 import { getOptimalTextColor } from "../../src/utils/color.util";
-import { cloneDeep } from "lodash-es";
+import { clamp, cloneDeep } from "lodash-es";
 
 
 export interface RectData extends BoundingBox, ShapeData {
@@ -72,89 +72,97 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 			'tl': () => {
 				return [
 					new Point({
-						x: 0,
-						y: 0
+						x: x + width,
+						y: y + height
 					}),
 					new Point({
-						x: 0,
-						y: 0
+						x: x + offset[0],
+						y: y + offset[1]
 					})
 				]
 			},
 			'tr': () => {
 				return [
 					new Point({
-						x: 0,
-						y: 0
+						x: x,
+						y: y + height
 					}),
 					new Point({
-						x: 0,
-						y: 0
+						x: x + width + offset[0],
+						y: y + offset[1]
 					})
 				]
 			},
 			't': () => {
 				return [
 					new Point({
-						x: 0,
-						y: 0
+						x: x + width,
+						y: y + height
 					}),
 					new Point({
-						x: 0,
-						y: 0
+						x: x,
+						y: y + offset[1]
 					})
 				]
 			},
 			'r': () => {
 				return [
 					new Point({
-						x: 0,
-						y: 0
+						x: x,
+						y: y
 					}),
 					new Point({
-						x: 0,
-						y: 0
+						x: x + width + offset[0],
+						y: y + height
 					})
 				]
 			},
 			'br': () => {
 				return [
 					new Point({
-						x: 0,
-						y: 0
+						x: x,
+						y: y
 					}),
 					new Point({
-						x: 0,
-						y: 0
+						x: x + width + offset[0],
+						y: y + height + offset[1]
 					})
 				]
 			},
 			'bl': () => {
 				return [
 					new Point({
-						x: 0,
-						y: 0
+						x: x + width,
+						y: y
 					}),
 					new Point({
-						x: 0,
-						y: 0
+						x: x + offset[0],
+						y: y + height + offset[1],
 					})
 				]
 			},
 			'b': () => {
 				return [
 					new Point({
-						x: 0,
-						y: 0
+						x: x,
+						y: y
 					}),
 					new Point({
-						x: 0,
-						y: 0
+						x: x + width,
+						y: y + height + offset[1]
 					})
 				]
 			},
 		}[className]
-		return handle() as [Point, Point]
+		const list = handle() as [Point, Point]
+
+		if (!this.imageMark.options.action?.enableEditShapeOutOfImg) {
+			list.forEach(point => {
+				point.x = clamp(point.x, 0, this.imageMark.imageDom.naturalWidth)
+				point.y = clamp(point.y, 0, this.imageMark.imageDom.naturalHeight)
+			})
+		}
+		return list
 	}
 
 	onEditPointMouseDown(event: Event) {
@@ -237,7 +245,6 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		return newRect
 	}
 
-	//TODO(songle):
 	drawEdit() {
 		const { x, y, width, height } = this.data
 		const g = this.getEditGroup<G>() || new G().id(this.getEditGroupId())
