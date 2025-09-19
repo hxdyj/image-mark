@@ -1,7 +1,8 @@
-import { G, Line, Polygon, Polyline } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { Circle, G, Line, Point, Polygon, Polyline } from "@svgdotjs/svg.js";
+import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark from "..";
-import { defaultsDeep } from "lodash-es";
+import { chunk, clamp, defaultsDeep } from "lodash-es";
+import { getOptimalTextColor } from "../../src/utils/color.util";
 
 export interface PolygonData extends ShapeData {
 	shapeName: "polygon",
@@ -61,8 +62,14 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 
 		polygon.addTo(this.shapeInstance)
 
+		if (this.editOn) {
+			this?.drawEdit()
+		} else {
+			this.removeEdit()
+		}
 
 		this.drawLabel()
+
 		this.drawFuncList.forEach(func => {
 			func(this)
 		})
@@ -100,5 +107,91 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 			newLine.auxiliaryPoint = [auxiliaryPoint.x, auxiliaryPoint.y]
 		}
 		return newLine
+	}
+
+
+	getEditPointClassName(className: number) {
+		return `edit-point-${className}`
+	}
+
+	drawEdit() {
+		const g = this.getEditGroup<G>() || new G().id(this.getEditGroupId())
+		const editPointList: EditPointItem<number>[] = chunk(this.data.points, 2).map((item, index) => {
+			return {
+				x: item[0],
+				y: item[1],
+				className: index
+			}
+		})
+
+		editPointList.forEach(point => {
+			const className = this.getEditPointClassName(point.className)
+			const findCircle = g.find(`.${className}`)[0]
+			const circle = findCircle || new Circle().addClass(className).addClass('edit-move-point').attr('data-index', point.className) as Circle
+			const mainStrokeWidth = this.getMainShape().attr('stroke-width')
+			const mainStrokeColor = this.getMainShape().attr('stroke')
+			circle.center(point.x, point.y).attr({
+				r: (mainStrokeWidth || 6) / 2
+			}).fill(getOptimalTextColor(mainStrokeColor))
+			circle.addTo(g)
+			if (!findCircle) {
+				circle.on('mousedown', this.startEditShape)
+			}
+		})
+		g.addTo(this.shapeInstance)
+	}
+
+
+	getEditShape() {
+		//@ts-ignore
+		return this.editMouseDownEvent?.target.instance as Circle
+	}
+
+	getEditEventPointIndex() {
+		//@ts-ignore
+		const point = this.getEditShape()
+		const index = point.attr('data-index')
+		return index
+	}
+
+
+
+	getEditPoint(event: MouseEvent): {
+		index: number,
+		point: Point
+	} {
+		const index = this.getEditEventPointIndex()
+		const currentEvent = event
+		const point = this.imageMark.image.point(currentEvent.clientX, currentEvent.clientY)
+
+		if (!this.imageMark.options.action?.enableEditShapeOutOfImg) {
+			point.x = clamp(point.x, 0, this.imageMark.imageDom.naturalWidth)
+			point.y = clamp(point.y, 0, this.imageMark.imageDom.naturalHeight)
+		}
+
+		return {
+			index,
+			point
+		}
+	}
+
+	onDocumentMouseMove(event: MouseEvent) {
+		super.onDocumentMouseMove(event)
+		const evt = event as MouseEvent
+		if (evt.button === 0 && this.editMouseDownEvent) {
+			event.stopPropagation()
+			const { index, point } = this.getEditPoint(event)
+			const startIndex = index * 2
+			this.data.points.splice(startIndex, 2, point.x, point.y)
+			this.updateData(this.data)
+		}
+		this.getEditShape()?.addClass('edit-moving-point')
+	}
+
+	onDocumentMouseUp(event: MouseEvent) {
+		super.onDocumentMouseUp(event)
+		this.onDocumentMouseMove(event)
+		this.getEditShape()?.removeClass('edit-moving-point')
+		this.endEditShape()
 	}
 }

@@ -9,7 +9,7 @@ export interface CircleData extends ShapeData {
 	y: number,
 	r: number
 }
-
+//TODO(songle): drawEdit
 export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	static shapeName = "circle"
 	constructor(data: CircleData, imageMarkInstance: ImageMark, options: ShapeOptions) {

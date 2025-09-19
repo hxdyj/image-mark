@@ -2,31 +2,35 @@
 	.shape-rect {
 		.tl,
 		.br {
-			&:hover {
-				cursor: nw-resize;
-			}
+			cursor: nw-resize;
 		}
 		.tr,
 		.bl {
-			&:hover {
-				cursor: ne-resize;
-			}
+			cursor: ne-resize;
 		}
 		.t,
 		.b {
-			&:hover {
-				cursor: n-resize;
-			}
+			cursor: n-resize;
 		}
 		.l,
 		.r {
-			&:hover {
-				cursor: e-resize;
-			}
+			cursor: e-resize;
 		}
 	}
 
 	.shape-label {
 		user-select: none;
+	}
+
+	.edit-move-point {
+		cursor: grab;
+	}
+
+	.edit-moving-point {
+		cursor: grabbing;
+	}
+
+	.shape-enable-move {
+		cursor: move;
 	}
 }

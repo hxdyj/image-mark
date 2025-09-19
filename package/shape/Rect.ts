@@ -1,5 +1,5 @@
 import { Circle, G, Point, Polygon, Rect } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark, { BoundingBox } from "..";
 import { getOptimalTextColor } from "../../src/utils/color.util";
 import { clamp, cloneDeep } from "lodash-es";
@@ -26,36 +26,141 @@ export function getBoundingBoxByTwoPoints(point1: Point, point2: Point): Boundin
 	};
 }
 
-export type EditPointType = 'tl' | 't' | 'tr' | 'b' | 'bl' | 'br' | 'l' | 'r'
+export type RectEditPointClassName = 'tl' | 't' | 'tr' | 'b' | 'bl' | 'br' | 'l' | 'r'
+export type RectEditPointItem = EditPointItem<RectEditPointClassName>
 
 
 export class ImageMarkRect extends ImageMarkShape<RectData> {
 	static shapeName = "rect"
 	constructor(data: RectData, imageMarkInstance: ImageMark, options: ShapeOptions) {
 		super(data, imageMarkInstance, options)
-		this.bindEventThis([
-			'onEditPointMouseDown',
-		])
+	}
+
+
+
+	draw(): G {
+		const { x, y, width, height } = this.data
+		const rect = this.getMainShape<Polygon>() || new Polygon()
+		rect.id(this.getMainId())
+		rect.plot([x, y, x + width, y, x + width, y + height, x, y + height]).size(width, height).fill(this.attr?.fill || 'transparent').stroke(this.attr?.stroke || {})
+		rect.addTo(this.shapeInstance)
+
+		if (this.editOn) {
+			this?.drawEdit()
+		} else {
+			this.removeEdit()
+		}
+
+		this.drawLabel()
+
+		this.drawFuncList.forEach(func => {
+			func(this)
+		})
+
+
+		return this.shapeInstance
+	}
+
+	translate(x: number, y: number): void {
+		this.data.x += x
+		this.data.y += y
+		this.shapeInstance.transform({
+			translate: [0, 0]
+		}, false)
+	}
+
+
+	mouseEvent2Data(options: MouseEvent2DataOptions): RectData | null {
+		const { eventList = [] } = options
+		if (eventList.length < 2) return null
+		const startPoint = this.imageMark.image.point(eventList[0])
+		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
+		const newRect: RectData = {
+			...this.data,
+			...getBoundingBoxByTwoPoints(startPoint, endPoint),
+		}
+		return newRect
+	}
+
+	drawEdit() {
+		const { x, y, width, height } = this.data
+		const g = this.getEditGroup<G>() || new G().id(this.getEditGroupId())
+		const editPointList: RectEditPointItem[] = [
+			{
+				x,
+				y,
+				className: 'tl'
+			},
+			{
+				x: x + width / 2,
+				y,
+				className: 't'
+			},
+			{
+				x: x + width,
+				y,
+				className: 'tr'
+			},
+			{
+				x: x + width / 2,
+				y: y + height,
+				className: 'b'
+			},
+			{
+				x,
+				y: y + height,
+				className: 'bl'
+			},
+			{
+				x: x + width,
+				y: y + height,
+				className: 'br'
+			},
+			{
+				x,
+				y: y + height / 2,
+				className: 'l'
+			},
+			{
+				x: x + width,
+				y: y + height / 2,
+				className: 'r'
+			},
+		]
+
+		editPointList.forEach(point => {
+			const findCircle = g.find(`.${point.className}`)[0]
+			const circle = findCircle || new Circle().addClass(point.className) as Circle
+			const mainStrokeWidth = this.getMainShape().attr('stroke-width')
+			const mainStrokeColor = this.getMainShape().attr('stroke')
+			circle.center(point.x, point.y).attr({
+				r: (mainStrokeWidth || 6) / 2
+			}).fill(getOptimalTextColor(mainStrokeColor))
+			circle.addTo(g)
+			if (!findCircle) {
+				circle.on('mousedown', this.startEditShape)
+			}
+		})
+
+		g.addTo(this.shapeInstance)
 	}
 
 	getEditEventPointType() {
 		//@ts-ignore
 		const point = this.editMouseDownEvent?.target.instance as Circle
-		const className = point.classes()[0] as unknown as EditPointType
+		const className = point.classes()[0] as unknown as RectEditPointClassName
 		return className
 	}
 
-	editMouseDownEvent: Event | null = null
-	tmpData: RectData | null = null
-	getEditPoint(event: Event): [Point, Point] {
+	getEditPoint(event: MouseEvent): [Point, Point] {
 		const className = this.getEditEventPointType()
-		const currentEvent = event as MouseEvent
-		const startEvent = this.editMouseDownEvent as MouseEvent
+		const currentEvent = event
+		const startEvent = this.editMouseDownEvent!
 
 		const currentPoint = this.imageMark.image.point(currentEvent.clientX, currentEvent.clientY)
 		const startPoint = this.imageMark.image.point(startEvent.clientX, startEvent.clientY)
 		const offset = [currentPoint.x - startPoint.x, currentPoint.y - startPoint.y]
-		const { x = 0, y = 0, width = 0, height = 0 } = this.tmpData || {}
+		const { x = 0, y = 0, width = 0, height = 0 } = this.editOriginData || {}
 		const handle = {
 			'l': () => {
 				return [
@@ -165,13 +270,6 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		return list
 	}
 
-	onEditPointMouseDown(event: Event) {
-		event.stopPropagation()
-		this.editMouseDownEvent = event
-		this.tmpData = cloneDeep(this.data)
-		this.imageMark.getShapePlugin()?.setHoldShape(this)
-	}
-
 	onDocumentMouseMove(event: MouseEvent) {
 		super.onDocumentMouseMove(event)
 		const evt = event as MouseEvent
@@ -187,129 +285,7 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 	}
 	onDocumentMouseUp(event: MouseEvent) {
 		super.onDocumentMouseUp(event)
-		const evt = event as MouseEvent
-		if (evt.button === 0 && this.editMouseDownEvent) {
-			event.stopPropagation()
-			const list = this.getEditPoint(event)
-			const newData = getBoundingBoxByTwoPoints(...list)
-			this.updateData({
-				...this.data,
-				...newData
-			})
-			this.editMouseDownEvent = null
-			this.tmpData = null
-			this.imageMark.getShapePlugin()?.setHoldShape(null)
-		}
-	}
-
-	draw(): G {
-		const { x, y, width, height } = this.data
-		const rect = this.getMainShape<Polygon>() || new Polygon()
-		rect.id(this.getMainId())
-		rect.plot([x, y, x + width, y, x + width, y + height, x, y + height]).size(width, height).fill(this.attr?.fill || 'transparent').stroke(this.attr?.stroke || {})
-		rect.addTo(this.shapeInstance)
-		if (this.editOn) {
-			this?.drawEdit()
-		} else {
-			this.removeEdit()
-		}
-
-		this.drawLabel()
-
-		this.drawFuncList.forEach(func => {
-			func(this)
-		})
-
-
-		return this.shapeInstance
-	}
-
-	translate(x: number, y: number): void {
-		this.data.x += x
-		this.data.y += y
-		this.shapeInstance.transform({
-			translate: [0, 0]
-		}, false)
-	}
-
-
-	mouseEvent2Data(options: MouseEvent2DataOptions): RectData | null {
-		const { eventList = [] } = options
-		if (eventList.length < 2) return null
-		const startPoint = this.imageMark.image.point(eventList[0])
-		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
-		const newRect: RectData = {
-			...this.data,
-			...getBoundingBoxByTwoPoints(startPoint, endPoint),
-		}
-		return newRect
-	}
-
-	drawEdit() {
-		const { x, y, width, height } = this.data
-		const g = this.getEditGroup<G>() || new G().id(this.getEditGroupId())
-		const editPointList: Array<{
-			x: number
-			y: number
-			type: EditPointType
-
-		}> = [
-				{
-					x,
-					y,
-					type: 'tl'
-				},
-				{
-					x: x + width / 2,
-					y,
-					type: 't'
-				},
-				{
-					x: x + width,
-					y,
-					type: 'tr'
-				},
-				{
-					x: x + width / 2,
-					y: y + height,
-					type: 'b'
-				},
-				{
-					x,
-					y: y + height,
-					type: 'bl'
-				},
-				{
-					x: x + width,
-					y: y + height,
-					type: 'br'
-				},
-				{
-					x,
-					y: y + height / 2,
-					type: 'l'
-				},
-				{
-					x: x + width,
-					y: y + height / 2,
-					type: 'r'
-				},
-			]
-
-		editPointList.forEach(point => {
-			const findCircle = g.find(`.${point.type}`)[0]
-			const circle = findCircle || new Circle().addClass(point.type) as Circle
-			const mainStrokeWidth = this.getMainShape().attr('stroke-width')
-			const mainStrokeColor = this.getMainShape().attr('stroke')
-			circle.center(point.x, point.y).attr({
-				r: (mainStrokeWidth || 6) / 2
-			}).fill(getOptimalTextColor(mainStrokeColor))
-			circle.addTo(g)
-			if (!findCircle) {
-				circle.on('mousedown', this.onEditPointMouseDown)
-			}
-		})
-
-		g.addTo(this.shapeInstance)
+		this.onDocumentMouseMove(event)
+		this.endEditShape()
 	}
 }

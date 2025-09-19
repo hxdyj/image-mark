@@ -117,7 +117,7 @@ export function LeftMenuList(props: {
 			style={{ userSelect: 'none' }}
 		>
 			{
-				props.collapse ? <div className='logo-small p-1 rounded-[3px]'> <img src={logo} alt='logo' className='logo-img w-full' /></div> :
+				props.collapse ? <div className='logo-small p-1 rounded-[3px]'> <img src={'/logo.svg'} alt='logo' className='logo-img w-full' /></div> :
 					<div className='logo-panel flex-col'>
 
 						<img src="/logo.svg" alt='logo' className='logo-img w-[100px]' />

@@ -30,6 +30,7 @@ export class LmbMoveAction extends Action {
 
 		this.bindEventThis(['onMouseDown'])
 		this.bindEvents()
+		this.addClassName()
 	}
 
 	protected bindEvents() {
@@ -40,11 +41,21 @@ export class LmbMoveAction extends Action {
 		this.shape.shapeInstance.off('mousedown', this.onMouseDown)
 	}
 
+	addClassName() {
+		this.shape.shapeInstance.addClass('shape-enable-move')
+	}
+
+	removeClassName() {
+		this.shape.shapeInstance.removeClass('shape-enable-move')
+	}
+
 	public disableMove() {
 		this.moveable = false
+		this.removeClassName()
 	}
 	public enableMove() {
 		this.moveable = true
+		this.addClassName()
 	}
 
 	getEnableMove() {

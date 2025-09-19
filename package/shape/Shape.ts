@@ -3,7 +3,7 @@ import { ImageMark } from "../index";
 import { EventBindingThis } from '../event/event'
 import { Action } from "../action/action";
 import { uid } from "uid";
-import { defaultsDeep } from "lodash-es";
+import { cloneDeep, defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "../action/LmbMoveAction";
 import { EventBusEventName } from "../event/const";
 import { getOptimalTextColor } from "../../src/utils/color.util";
@@ -47,6 +47,12 @@ export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
 //绘制类型，point:所有划过的点绘制，centerR:起点为中心点，起止点距离为半径r绘制，centerRxy:起点为中心点，起止点x1，x2差值为Rx,y1,y2差值为Ry绘制
 export type ShapeDrawType = 'point' | 'centerR' | 'centerRxy'
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
+
+export type EditPointItem<T extends string | number = string | number> = {
+	x: number
+	y: number
+	className: T
+}
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends EventBindingThis {
 	shapeInstance: G;
@@ -96,6 +102,11 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.shapeInstance = group
 		this.attr = defaultsDeep(this.options.setAttr?.(this) || {}, this.attr)
 		this.options.initDrawFunc && this.addDrawFunc(this.options.initDrawFunc)
+
+		this.bindEventThis([
+			'startEditShape',
+			'endEditShape'
+		])
 		this.draw()
 	}
 
@@ -324,6 +335,21 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	protected editOn: boolean = false
 
 	abstract drawEdit(): void
+	editMouseDownEvent: MouseEvent | null = null
+	editOriginData: T | null = null
+
+	startEditShape(event: Event) {
+		event.stopPropagation()
+		this.editMouseDownEvent = event as unknown as MouseEvent
+		this.editOriginData = cloneDeep(this.data)
+		this.imageMark.getShapePlugin()?.setHoldShape(this)
+	}
+
+	endEditShape() {
+		this.editMouseDownEvent = null
+		this.editOriginData = null
+		this.imageMark.getShapePlugin()?.setHoldShape(null)
+	}
 
 	removeEdit() {
 		this.getEditGroup()?.remove()

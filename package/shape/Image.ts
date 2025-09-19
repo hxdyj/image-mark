@@ -10,7 +10,7 @@ export interface ImageData extends ShapeData {
 	src: string
 	shapeName: 'image'
 }
-
+//TODO(songle): drawEdit
 export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	static shapeName = 'image'
 	constructor(data: ImageData, imageMarkInstance: ImageMark, options: ShapeOptions) {

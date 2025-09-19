@@ -62,4 +62,7 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 		}
 		return newLine
 	}
+
+	drawEdit() {
+	}
 }
