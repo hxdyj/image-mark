@@ -1,7 +1,6 @@
-import { Box, Circle, G, Line, MatrixExtract, Rect, Svg, Text } from "@svgdotjs/svg.js";
+import { Box, Circle, G, Line, Rect, Svg, Text } from "@svgdotjs/svg.js";
 import { BoundingBox, ImageMark, ShapePlugin } from "../../../../package";
 import { ShapeData, ImageMarkShape, ShapeOptions } from "#/shape/Shape";
-import { EventBusEventName } from "#/event/const";
 import { curryRight } from "lodash-es";
 
 export class ImageMarkEventKey {
@@ -45,6 +44,9 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 			x, y, prefixName,
 			getNum,
 		}
+	}
+
+	drawEdit(): void {
 	}
 
 

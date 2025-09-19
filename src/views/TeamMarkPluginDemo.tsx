@@ -113,6 +113,9 @@ export function TeamMarkPluginDemo() {
 			src: '/img/demo-parking.jpg',
 			action: {
 				enableImageOutOfContainer: false,
+				enableDrawShapeOutOfImg: true,
+				enableMoveShapeOutOfImg: true,
+				enableEditShapeOutOfImg: true,
 			},
 			initScaleConfig: {
 				startPosition: 'center',
@@ -123,7 +126,7 @@ export function TeamMarkPluginDemo() {
 				[TeamMarkPlugin.pluginName]: {
 					shapeList: []
 				}
-			}
+			},
 		}).addPlugin((instance) => {
 			const teamMarkPluginInstance = new TeamMarkPlugin(instance)
 			teamMarkPluginInstance.addShape(TeamShape, {

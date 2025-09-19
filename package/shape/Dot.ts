@@ -37,6 +37,8 @@ export class ImageMarkDot extends ImageMarkShape<DotData> {
 		return this.shapeInstance
 	}
 
+	drawEdit(): void { }
+
 	translate(x: number, y: number): void {
 		this.data.x += x
 		this.data.y += y

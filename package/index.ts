@@ -956,7 +956,6 @@ export class ImageMark extends EventBindingThis {
 		this.options.action.enableMoveShapeOutOfImg = enable
 		return this
 	}
-
 	setEnableEditShapeOutOfImg(enable: boolean) {
 		if (!this.options.action) {
 			this.options.action = {}
