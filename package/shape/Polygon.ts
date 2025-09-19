@@ -131,7 +131,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 			const mainStrokeWidth = this.getMainShape().attr('stroke-width')
 			const mainStrokeColor = this.getMainShape().attr('stroke')
 			circle.center(point.x, point.y).attr({
-				r: (mainStrokeWidth || 6) / 2
+				r: (mainStrokeWidth || 6)
 			}).fill(getOptimalTextColor(mainStrokeColor))
 			circle.addTo(g)
 			if (!findCircle) {
