@@ -89,7 +89,7 @@ export function createTeamDataByTreeNode(node: SchemaDTO.TreeNode): TeamData {
 }
 
 export class TeamMarkPlugin extends ShapePlugin<TeamData> {
-	static pluginName = "teamMark";
+	static pluginName = "shape";
 	constructor(imageMarkInstance: ImageMark) {
 		super(imageMarkInstance);
 		this.bindEventThis([

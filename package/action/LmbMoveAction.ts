@@ -63,7 +63,7 @@ export class LmbMoveAction extends Action {
 			this.imageMark.onComtainerLmbDownMoveingMouseDownEvent(event)
 			return
 		}
-		this.imageMark.getShapePlugin()?.setHoldShape(this.shape)
+		this.getShapePlugin()?.setHoldShape(this.shape)
 		if (this.imageMark.status.drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
@@ -144,6 +144,9 @@ export class LmbMoveAction extends Action {
 		return diffPoint
 	}
 
+	onDocumentMouseMove(event: MouseEvent): void {
+		this.onContainerMouseMove(event)
+	}
 
 
 	onDocumentMouseUp(event: MouseEvent) {

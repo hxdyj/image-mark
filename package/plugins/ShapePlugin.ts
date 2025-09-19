@@ -504,7 +504,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	onContainerMouseMove(event: MouseEvent) {
 		this.holdShape?.onContainerMouseMove(event)
-
 		if (!this.imageMark?.status.drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 

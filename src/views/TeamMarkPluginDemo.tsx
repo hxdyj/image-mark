@@ -8,7 +8,6 @@ import { LmbMoveAction } from "#/action/LmbMoveAction"
 import { Circle, MatrixExtract } from "@svgdotjs/svg.js"
 import { ImageMarkShape } from "#/shape/Shape"
 
-//TODO(songle): bug shape不能移动
 export function TeamMarkPluginDemo() {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const imgMark = useRef<ImageMark | null>(null)
