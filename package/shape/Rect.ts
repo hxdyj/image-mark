@@ -131,6 +131,7 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		editPointList.forEach(point => {
 			const findCircle = g.find(`.${point.className}`)[0]
 			const circle = findCircle || new Circle().addClass(point.className) as Circle
+			//todo 这两个抽象到shape里边，然后把相反的颜色也给了
 			const mainStrokeWidth = this.getMainShape().attr('stroke-width')
 			const mainStrokeColor = this.getMainShape().attr('stroke')
 			circle.center(point.x, point.y).attr({
