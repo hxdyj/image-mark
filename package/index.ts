@@ -762,11 +762,12 @@ export class ImageMark extends EventBindingThis {
 		let cloneGroup = this.cloneGroup()
 		callback?.(cloneGroup)
 		let nextStepTransform = cloneGroup.transform()
-
+		let outOfContainer = false
+		let scaleFixed = false
 		const scaleLimitResult = this.getScaleLimitImageInContainerInfo(point, this.stageGroup.transform(), nextStepTransform)
 		if (scaleLimitResult === false) {
 			console.warn('scale out of container')
-			return this
+			outOfContainer = true
 		}
 
 		if (scaleLimitResult) {
@@ -775,10 +776,13 @@ export class ImageMark extends EventBindingThis {
 				this.stageGroup.transform(...item)
 			})
 			this.status.scaling = false
-			return this
+			scaleFixed = true
 		}
 
-		return null
+		return {
+			outOfContainer,
+			scaleFixed
+		}
 	}
 
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
@@ -859,12 +863,16 @@ export class ImageMark extends EventBindingThis {
 				endScale()
 				return this
 			}
-			const flag = this.checkScaleLimitImageInContainer(point, (cloneGroup) => {
+			const { outOfContainer, scaleFixed } = this.checkScaleLimitImageInContainer(point, (cloneGroup) => {
 				transformScale(cloneGroup)
-
 			})
 
-			if (flag) {
+			if (outOfContainer) {
+				endScale()
+				return this
+			}
+
+			if (scaleFixed) {
 				return this
 			}
 		}
