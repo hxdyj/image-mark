@@ -1,5 +1,5 @@
 import { G, Rect, Shape, StrokeData, Svg, Text } from "@svgdotjs/svg.js";
-import { ImageMark } from "../index";
+import { ImageMark, SelectionAction } from "../index";
 import { EventBindingThis } from '../event/event'
 import { Action } from "../action/action";
 import { uid } from "uid";
@@ -82,7 +82,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 			}
 		},
 		image: {
-			opacity: 0.8,
+			opacity: 1,
 			preserveAspectRatio: 'xMidYMid'
 		}
 	}
@@ -125,13 +125,14 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		text.text(this.data.label)
 		text.addClass('shape-label')
 		const scale = this.imageMark.getCurrentScale()
-		const mainStrokeColor = this.getMainShape().attr('stroke')
+
+		const { optimalStrokeColor } = this.getMainShapeInfo()
 		text.font({
-			fill: this.attr?.label?.font?.fill || getOptimalTextColor(mainStrokeColor),
+			fill: this.attr?.label?.font?.fill || optimalStrokeColor,
 			size: (this.attr?.label?.font?.size ?? 14) / scale
 		})
 
-		const strokeWidth = mainShape.attr('stroke-width')
+		const strokeWidth = mainShape.attr('stroke-width') || 6
 		const halfStrokeWidth = strokeWidth / 2
 
 		text.move(halfStrokeWidth, 0)
@@ -378,8 +379,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 	getMainShapeInfo() {
 		const strokeWidth = this.getMainShape().attr('stroke-width') || 6
-		const strokeColor = this.getMainShape().attr('stroke')
-		const optimalStrokeColor = getOptimalTextColor(strokeColor)
+		const strokeColor = this.getMainShape().node.getAttribute('stroke') || this.attr?.stroke?.color || 'transparent'
+		const optimalStrokeColor = strokeColor === 'transparent' ? 'transparent' : getOptimalTextColor(strokeColor)
 		return {
 			strokeWidth,
 			strokeColor,

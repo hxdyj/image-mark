@@ -5,10 +5,12 @@ export function OperateGroup(props: ReactProps & {
 }) {
 	return (
 		<div className="comp-operate-group">
-			{
-				props.children
-			}
-			<div className='desc text-center'>{props.desc}</div>
+			<div className='desc'>{props.desc}</div>
+			<div className='flex flex-col gap-y-4'>
+				{
+					props.children
+				}
+			</div>
 		</div>
 	)
 }

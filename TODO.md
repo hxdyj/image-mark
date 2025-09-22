@@ -11,14 +11,12 @@
 - [x] shape rect、circle support
 - [x] shape line、polygon、polyline、pathline support
 - [x] Shape draw function call config
-- [ ] default use shape plugin
+- [x] default use shape plugin
+- [x] resize action
+- [x] rect select (delay)
+- [ ] readonly emit event
 - [ ] single/multiple select (delete can use del key)
 - [ ] context menu support
-- [ ] resize action
-- [ ] rect select (delay)
-- [ ] editPlugin editAction to resize shape or rotate shape
-- [ ] rotate action (all shape rotate by bbox center)
-- [ ] zIndex support
 - [ ] operate history and undo redo
 - [ ] mini map
 - [ ] move action add mode to holder and custom holder ui

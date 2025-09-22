@@ -9,7 +9,7 @@ import { TeamMarkPluginDemo } from '../views/TeamMarkPluginDemo'
 import { TwoInstance } from '../views/TwoInstance'
 import { SvgPointDemo } from '../views/test/SvgPointDemo'
 import { SvgMaskDemo } from '../views/test/SvgMaskDemo'
-import { ShapePluginDemo } from '../views/ShapePluginDemo'
+import { FullDemo } from '../views/FullDemo'
 import { SvgNestGroupTransform } from '../views/test/SvgNestGroupTransform'
 import { SvgNestDemo } from '../views/test/SvgNestDemo'
 
@@ -61,12 +61,21 @@ export const routes: IRoute[] = [
 						},
 						children: [
 							{
-								homeRoute: true,
 								childIndexRoute: true,
+								homeRoute: true,
+								path: '/demo/full',
+								element: <FullDemo />,
+								meta: {
+									title: 'Full',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
 								path: '/demo/base',
 								element: <Base />,
 								meta: {
-									title: 'base',
+									title: 'Base',
 									menuShow: true,
 									noLogin: false,
 								},
@@ -89,15 +98,7 @@ export const routes: IRoute[] = [
 									noLogin: false,
 								},
 							},
-							{
-								path: '/demo/shapePlugin',
-								element: <ShapePluginDemo />,
-								meta: {
-									title: 'ShapePlugin',
-									menuShow: true,
-									noLogin: false,
-								},
-							},
+
 						],
 					},
 					{

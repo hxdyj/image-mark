@@ -190,9 +190,16 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	removeNode(data: T) {
-		this.onDelete(data)
-		this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data, this.node2ShapeInstanceWeakMap.get(data), this.imageMark)
+	removeNode(data: T | ImageMarkShape<T>) {
+		const instance = data instanceof ImageMarkShape ? data : this.node2ShapeInstanceWeakMap.get(data) as ImageMarkShape<T>
+		if (!instance) return
+		this.onDelete(instance.data)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data, instance, this.imageMark)
+	}
+
+	removeNodes(dataList: T[] | ImageMarkShape<T>[]) {
+		dataList.forEach(item => this.removeNode(item instanceof ImageMarkShape ? item.data : item))
+		this.imageMark.eventBus.emit(EventBusEventName.shape_delete_patch, dataList, this.imageMark)
 	}
 
 	protected tempData: T[] | null = null

@@ -12,6 +12,7 @@ export class EventBusEventName {
 	static container_drop = 'container_drop'
 
 	static shape_delete = 'shape_delete'
+	static shape_delete_patch = 'shape_delete_patch'
 	static shape_delete_all = 'shape_delete_all'
 	static shape_add = 'shape_add'
 	static shape_end_drawing = 'shape_end_drawing'

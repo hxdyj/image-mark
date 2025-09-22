@@ -90,8 +90,8 @@ export class SelectionAction extends Action {
 		const padding = this.attr.padding ?? 20
 		selectionShape.move(bbox.x - padding, bbox.y - padding)
 		selectionShape.size(bbox.width + padding * 2, bbox.height + padding * 2)
-		const mainStrokeColor = this.shape.getMainShape().attr('stroke')
 
+		const mainStrokeColor = this.shape.getMainShape().node.getAttribute('stroke') || this.shape.attr?.stroke?.color
 		const stroke = defaultsDeep(this.attr.stroke, {
 			...this.shape.attr?.stroke,
 			color: Color(mainStrokeColor).rotate(-180).toString()

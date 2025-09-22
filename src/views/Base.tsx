@@ -54,128 +54,136 @@ export function Base() {
 	}
 
 	return (
-		<div className="page-base">
-			<div className="operate-panel h-[fit] py-[16px]">
-				<Space size={'large'} wrap>
-					<OperateGroup desc="Move">
-						<Button.Group>
-							<Button onClick={() => {
-								imgMark.current?.move([50, 0])
-							}}>x+</Button>
-							<Button onClick={() => {
-								imgMark.current?.move([-50, 0])
-							}}>x-</Button>
-							<Button onClick={() => {
-								imgMark.current?.move([0, 50])
-							}}>y+</Button>
-							<Button onClick={() => {
-								imgMark.current?.move([0, -50])
-							}}>y-</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('left')
-							}}>left</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('left-top')
-							}}>left-top</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('left-bottom')
-							}}>left-bottom</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('right')
-							}}>right</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('right-top')
-							}}>right-top</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('right-bottom')
-							}}>right-bottom</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('top')
-							}}>top</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('bottom')
-							}}>bottom</Button>
-							<Button onClick={() => {
-								imgMark.current?.moveTo('center')
-							}}>center</Button>
-						</Button.Group>
-					</OperateGroup>
-					<OperateGroup desc="Move Successive: like lmb dragging">
-						<Button.Group>
-							<Button onClick={() => {
-								moveSuccessive.current = [0, 0]
-								imgMark.current?.removeStageLmbDownMoveing()
-								imgMark.current?.startSuccessiveMove([0, 0])
-							}}>Move Start</Button>
-							<Button onClick={() => {
-								moveSuccessive.current[0] += 50
-								onMoveSuccessive()
-							}}>x+</Button>
-							<Button onClick={() => {
-								moveSuccessive.current[0] -= 50
-								onMoveSuccessive()
-							}}>x-</Button>
-							<Button onClick={() => {
-								moveSuccessive.current[1] += 50
-								onMoveSuccessive()
-							}}>y+</Button>
-							<Button onClick={() => {
-								moveSuccessive.current[1] -= 50
-								onMoveSuccessive()
-							}}>y-</Button>
-							<Button onClick={() => {
-								moveSuccessive.current = [0, 0]
-								imgMark.current?.endSuccessiveMove()
-								imgMark.current?.addStageLmbDownMoveing()
-							}}>Move End</Button>
-						</Button.Group>
-					</OperateGroup>
-					<OperateGroup desc="Scale">
-						<Button.Group >
-							<Button onClick={() => {
-								imgMark.current?.scale(-1, 'center', 'image')
-							}}>Img Center-</Button>
-							<Button onClick={() => {
-								imgMark.current?.scaleTo({
-									to: 'image',
-									size: 'cover'
-								}, 'center', 'image')
-							}}>To Cover</Button>
-							<Button onClick={() => {
-								imgMark.current?.scaleTo({
-									to: 'image',
-									size: 'fit'
-								}, 'center', 'image')
-							}}>To Fit</Button>
-							<Button onClick={() => {
-								imgMark.current?.scaleTo({
-									to: 'image',
-									size: 'width',
-									padding: 0.03,
-								}, 'center', 'image')
-							}}>To Width（Pad 3%）</Button>
-							<Button onClick={() => {
-								imgMark.current?.scaleTo({
-									to: 'box',
-									size: 'cover',
-									padding: 30,
-									paddingUnit: 'px',
-									box: {
-										x: 0,
-										y: 0,
-										width: 500,
-										height: 500,
-									}
-								}, 'left-top', 'image')
-							}}>To Box Cover（Pad 30px）</Button>
-						</Button.Group>
+		<div className="page-base flex">
+			<div className="left flex-grow min-w-0 overflow-hidden">
+				<div className="h-[20vh] bg-[#86909c]"></div>
+				<div className="h-[60vh]" ref={containerRef}>
+				</div>
+				<div className="h-[20vh] bg-[#86909c]"></div>
+			</div>
+			<div className="right w-[400px] flex-shrink-0 flex-grow-0 overflow-auto box-border p-4">
+				<div className="operate-panel h-[fit] ">
+					<Space size={'large'} direction="vertical">
+						<OperateGroup desc="Move">
+							<Button.Group>
+								<Button type="default" onClick={() => {
+									imgMark.current?.move([50, 0])
+								}}>x+</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.move([-50, 0])
+								}}>x-</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.move([0, 50])
+								}}>y+</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.move([0, -50])
+								}}>y-</Button>
 
-					</OperateGroup>
-				</Space>
+							</Button.Group>
+							<Button.Group>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('left')
+								}}>left</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('left-top')
+								}}>left-top</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('left-bottom')
+								}}>left-bottom</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('right')
+								}}>right</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('right-top')
+								}}>right-top</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('right-bottom')
+								}}>right-bottom</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('top')
+								}}>top</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('bottom')
+								}}>bottom</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.moveTo('center')
+								}}>center</Button>
+							</Button.Group>
+						</OperateGroup>
+						<OperateGroup desc="Move Successive: like lmb dragging">
+							<Button.Group>
+								<Button type="default" onClick={() => {
+									moveSuccessive.current = [0, 0]
+									imgMark.current?.removeStageLmbDownMoveing()
+									imgMark.current?.startSuccessiveMove([0, 0])
+								}}>Move Start</Button>
+								<Button type="default" onClick={() => {
+									moveSuccessive.current[0] += 50
+									onMoveSuccessive()
+								}}>x+</Button>
+								<Button type="default" onClick={() => {
+									moveSuccessive.current[0] -= 50
+									onMoveSuccessive()
+								}}>x-</Button>
+								<Button type="default" onClick={() => {
+									moveSuccessive.current[1] += 50
+									onMoveSuccessive()
+								}}>y+</Button>
+								<Button type="default" onClick={() => {
+									moveSuccessive.current[1] -= 50
+									onMoveSuccessive()
+								}}>y-</Button>
+								<Button type="default" onClick={() => {
+									moveSuccessive.current = [0, 0]
+									imgMark.current?.endSuccessiveMove()
+									imgMark.current?.addStageLmbDownMoveing()
+								}}>Move End</Button>
+							</Button.Group>
+						</OperateGroup>
+						<OperateGroup desc="Scale">
+							<Button.Group >
+								<Button type="default" onClick={() => {
+									imgMark.current?.scale(-1, 'center', 'image')
+								}}>Img Center-</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.scaleTo({
+										to: 'image',
+										size: 'cover'
+									}, 'center', 'image')
+								}}>To Cover</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.scaleTo({
+										to: 'image',
+										size: 'fit'
+									}, 'center', 'image')
+								}}>To Fit</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.scaleTo({
+										to: 'image',
+										size: 'width',
+										padding: 0.03,
+									}, 'center', 'image')
+								}}>To Width（Pad 3%）</Button>
+								<Button type="default" onClick={() => {
+									imgMark.current?.scaleTo({
+										to: 'box',
+										size: 'cover',
+										padding: 30,
+										paddingUnit: 'px',
+										box: {
+											x: 0,
+											y: 0,
+											width: 500,
+											height: 500,
+										}
+									}, 'left-top', 'image')
+								}}>To Box Cover（Pad 30px）</Button>
+							</Button.Group>
+
+						</OperateGroup>
+					</Space>
+				</div>
 			</div>
-			<div className="h-[60vh]" ref={containerRef}>
-			</div>
-			<div className="h-[80vh] bg-[#86909c]"></div>
 		</div>
 	)
 }

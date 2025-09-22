@@ -110,6 +110,15 @@ export class SelectionPlugin extends Plugin {
 
 	destroy(): void {
 		this.unbindEvent()
+		this.clear()
 		super.destroy()
 	}
+	static useDefaultAction() {
+		ImageMarkShape.useAction(SelectionAction)
+	}
+	static unuseDefaultAction() {
+		ImageMarkShape.unuseAction(SelectionAction)
+	}
 }
+
+SelectionPlugin.useDefaultAction()

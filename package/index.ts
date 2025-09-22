@@ -481,10 +481,12 @@ export class ImageMark extends EventBindingThis {
 
 	static useDefaultPlugin() {
 		ImageMark.usePlugin(ShapePlugin)
+		ImageMark.usePlugin(SelectionPlugin)
 	}
 
 	static unuseDefaultPlugin() {
 		ImageMark.unusePlugin(ShapePlugin)
+		ImageMark.unusePlugin(SelectionPlugin)
 	}
 
 	addDefaultAction() {
