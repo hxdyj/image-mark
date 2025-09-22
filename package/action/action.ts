@@ -31,4 +31,5 @@ export class Action extends EventBindingThis {
 	onContainerMouseMove(event: MouseEvent) { }
 	onDocumentMouseMove(event: MouseEvent) { }
 	onDocumentMouseUp(event: MouseEvent) { }
+	onReadonlyChange(readonly: boolean) { }
 }

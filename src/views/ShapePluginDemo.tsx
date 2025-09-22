@@ -47,6 +47,7 @@ const shapeOptions: ShapeOptions = {
 export function ShapePluginDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
+	const [readonly, setReadonly] = useState(false)
 	const shapeList = useRef<ShapeData[]>([
 		{
 			shapeName: 'rect',
@@ -99,6 +100,7 @@ export function ShapePluginDemo() {
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
 			src: '/img/demo-parking.jpg',
+			readonly,
 			pluginOptions: {
 				[ShapePlugin.pluginName]: {
 					shapeList: shapeList.current,
@@ -462,6 +464,12 @@ export function ShapePluginDemo() {
 								imgMark.current?.addPlugin(SelectionPlugin)
 							}}>Add Selection Plugin</Button>
 						</Button.Group>
+					</OperateGroup>
+					<OperateGroup desc="Readonly">
+						<Switch checked={readonly} onKeyDown={e => e.preventDefault()} onChange={(checked) => {
+							setReadonly(checked)
+							imgMark.current?.setReadonly(checked)
+						}}></Switch>
 					</OperateGroup>
 				</Space>
 			</div>

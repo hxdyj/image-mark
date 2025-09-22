@@ -70,7 +70,7 @@ export class LmbMoveAction extends Action {
 	}
 
 	protected onMouseDown(event: Event) {
-		if (!this.getEnableMove()) {
+		if (!this.getEnableMove() || this.imageMark?.options.readonly) {
 			this.imageMark.onComtainerLmbDownMoveingMouseDownEvent(event)
 			return
 		}

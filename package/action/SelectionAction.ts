@@ -75,8 +75,13 @@ export class SelectionAction extends Action {
 		this.shape.draw()
 	}
 
+	onReadonlyChange(readonly: boolean) {
+		if (!readonly && this.attr?.whileSelectedEditShape && this.selected) {
+			this.shape.edit(true, true)
+		}
+	}
 
-	private draw() {
+	draw() {
 		const mainShape = this.shape.getMainShape()
 		const bbox = mainShape.bbox()
 

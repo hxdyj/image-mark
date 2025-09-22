@@ -1,6 +1,37 @@
 .image-mark-render-item {
 	cursor: auto;
+
 	.image-mark-stage-group {
+		&.readonly {
+			.tl,
+			.br {
+				cursor: auto;
+			}
+			.tr,
+			.bl {
+				cursor: auto;
+			}
+			.t,
+			.b {
+				cursor: auto;
+			}
+			.l,
+			.r {
+				cursor: auto;
+			}
+
+			.edit-move-point {
+				cursor: auto;
+			}
+
+			.edit-moving-point {
+				cursor: auto;
+			}
+
+			.shape-enable-move {
+				cursor: auto;
+			}
+		}
 		.shape-circle,
 		.shape-rect,
 		.shape-image {

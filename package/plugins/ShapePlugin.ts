@@ -573,6 +573,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
+	onReadonlyChange(readonly: boolean) {
+		this.data.forEach(shapeData => {
+			const shapeInstance = this.node2ShapeInstanceWeakMap.get(shapeData)
+			shapeInstance?.onReadonlyChange?.(readonly)
+		})
+	}
+
 	static shapeList: Array<{
 		shape: typeof ImageMarkShape,
 		shapeOptions?: ShapeOptions

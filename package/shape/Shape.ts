@@ -356,12 +356,24 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 	edit(on?: boolean, needDraw = true): boolean {
+		if (this.imageMark.options?.readonly) {
+			on = false
+			needDraw = true
+		}
 		if (on === undefined) {
 			return this.editOn
 		}
 		this.editOn = on
 		needDraw && this.draw()
 		return this.editOn
+	}
+
+	onReadonlyChange(readonly: boolean) {
+		if (readonly) {
+			this.edit(false)
+		}
+		const action = Object.values(this.action || {}) as Action[]
+		action.forEach(action => action?.onReadonlyChange?.(readonly))
 	}
 
 	getMainShapeInfo() {

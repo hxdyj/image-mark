@@ -29,6 +29,10 @@ export class Plugin extends EventBindingThis {
 
 	}
 
+	onReadonlyChange(readonly: boolean) {
+
+	}
+
 	getThisPluginOptions<T>() {
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']

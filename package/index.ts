@@ -43,6 +43,7 @@ export type StartPosition = 'center' | 'left-top' | 'right-top' | 'left-bottom' 
 export type ImageMarkOptions = {
 	el: ContainerType
 	src: string
+	readonly?: boolean,
 	initScaleConfig?: ({
 		to?: 'image'
 	} | {
@@ -109,6 +110,7 @@ const defaultOptions: DeepPartial<ImageMarkOptions> = {
 		size: 'fit',
 		padding: 0.1
 	},
+	readonly: false,
 	setting: {
 		imageFullOfContainer: false,
 	},
@@ -170,7 +172,8 @@ export class ImageMark extends EventBindingThis {
 		this.stage.size(this.containerRectInfo.width, this.containerRectInfo.height)
 
 		this.stageGroup = new G()
-		this.stageGroup.addClass('image-mark-stage-group')
+		this.stageGroup.addClass(`image-mark-stage-group`)
+		this.autoSetReadonlyClassName()
 		this.image = new Image()
 		this.imageDom = document.createElement('img')
 
@@ -1257,6 +1260,23 @@ export class ImageMark extends EventBindingThis {
 		}
 	}
 
+	protected autoSetReadonlyClassName() {
+		let className = 'readonly'
+		if (this.options.readonly) {
+			this.stageGroup.addClass(className)
+		} else {
+			this.stageGroup.removeClass(className)
+		}
+	}
+
+
+	setReadonly(readonly: boolean) {
+		this.options.readonly = readonly
+		this.autoSetReadonlyClassName()
+		Object.values(this.plugin).forEach(plugin => {
+			plugin.onReadonlyChange?.(readonly)
+		})
+	}
 
 	getShapePlugin(): ShapePlugin | null {
 		return this.plugin[ShapePlugin.pluginName] as ShapePlugin || null
