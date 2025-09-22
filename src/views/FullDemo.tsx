@@ -625,7 +625,7 @@ export function FullDemo() {
 								if (!plugin) return
 								const shapePlugin = getPlugin<ShapePlugin>(ShapePlugin.pluginName)
 								plugin.onSelectionActionClick(shapePlugin?.getInstanceByData(shapeList.current[6])!)
-							}}>Select Triangle</Button>
+							}}>Select Polyline</Button>
 							<Button type="default" onClick={() => {
 								const plugin = getPlugin<SelectionPlugin>(SelectionPlugin.pluginName)
 								plugin?.clear()
