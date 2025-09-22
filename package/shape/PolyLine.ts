@@ -90,15 +90,15 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 			}
 		})
 
+		const { strokeWidth, optimalStrokeColor } = this.getMainShapeInfo()
+
 		editPointList.forEach(point => {
 			const className = this.getEditPointClassName(point.className)
 			const findCircle = g.find(`.${className}`)[0]
 			const circle = findCircle || new Circle().addClass(className).addClass('edit-move-point').attr('data-index', point.className) as Circle
-			const mainStrokeWidth = this.getMainShape().attr('stroke-width')
-			const mainStrokeColor = this.getMainShape().attr('stroke')
 			circle.center(point.x, point.y).attr({
-				r: (mainStrokeWidth || 6)
-			}).fill(getOptimalTextColor(mainStrokeColor))
+				r: (strokeWidth)
+			}).fill(optimalStrokeColor)
 			circle.addTo(g)
 			if (!findCircle) {
 				circle.on('mousedown', this.startEditShape)

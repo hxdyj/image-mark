@@ -1,37 +1,41 @@
-.image-mark-stage-group {
-	.shape-rect,
-	.shape-image {
-		.tl,
-		.br {
-			cursor: nw-resize;
+.image-mark-render-item {
+	cursor: auto;
+	.image-mark-stage-group {
+		.shape-circle,
+		.shape-rect,
+		.shape-image {
+			.tl,
+			.br {
+				cursor: nw-resize;
+			}
+			.tr,
+			.bl {
+				cursor: ne-resize;
+			}
+			.t,
+			.b {
+				cursor: n-resize;
+			}
+			.l,
+			.r {
+				cursor: e-resize;
+			}
 		}
-		.tr,
-		.bl {
-			cursor: ne-resize;
+
+		.shape-label {
+			user-select: none;
 		}
-		.t,
-		.b {
-			cursor: n-resize;
+
+		.edit-move-point {
+			cursor: grab;
 		}
-		.l,
-		.r {
-			cursor: e-resize;
+
+		.edit-moving-point {
+			cursor: grabbing;
 		}
-	}
 
-	.shape-label {
-		user-select: none;
-	}
-
-	.edit-move-point {
-		cursor: grab;
-	}
-
-	.edit-moving-point {
-		cursor: grabbing;
-	}
-
-	.shape-enable-move {
-		cursor: move;
+		.shape-enable-move {
+			cursor: move;
+		}
 	}
 }

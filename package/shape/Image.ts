@@ -3,7 +3,6 @@ import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeDrawType, Shape
 import { ImageMark } from "..";
 import { getBoundingBoxByTwoPoints, RectEditPointClassName, RectEditPointItem } from "./Rect";
 import { clamp } from "lodash-es";
-import { getOptimalTextColor } from "../../src/utils/color.util";
 
 export interface ImageData extends ShapeData {
 	x: number
@@ -169,14 +168,14 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 			editPointList = editPointList.filter(item => ['tl', 'tr', 'bl', 'br'].includes(item.className))
 		}
 
+		const { strokeWidth, optimalStrokeColor } = this.getMainShapeInfo()
+
 		editPointList.forEach(point => {
 			const findCircle = g.find(`.${point.className}`)[0]
 			const circle = findCircle || new Circle().addClass(point.className) as Circle
-			const mainStrokeWidth = this.getMainShape().attr('stroke-width')
-			const mainStrokeColor = this.getMainShape().attr('stroke')
 			circle.center(point.x, point.y).attr({
-				r: (mainStrokeWidth || 6)
-			}).fill(getOptimalTextColor(mainStrokeColor))
+				r: (strokeWidth)
+			}).fill(optimalStrokeColor)
 			circle.addTo(g)
 			if (!findCircle) {
 				circle.on('mousedown', this.startEditShape)

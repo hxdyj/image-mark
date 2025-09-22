@@ -364,6 +364,17 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		return this.editOn
 	}
 
+	getMainShapeInfo() {
+		const strokeWidth = this.getMainShape().attr('stroke-width') || 6
+		const strokeColor = this.getMainShape().attr('stroke')
+		const optimalStrokeColor = getOptimalTextColor(strokeColor)
+		return {
+			strokeWidth,
+			strokeColor,
+			optimalStrokeColor,
+		}
+	}
+
 	static useDefaultAction() {
 		ImageMarkShape.useAction(LmbMoveAction)
 	}
