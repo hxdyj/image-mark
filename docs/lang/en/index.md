@@ -7,7 +7,7 @@ hero:
   text: 'Web Image Annotation Tool'
   tagline: A framework-agnostic JS image annotation library that supports multiple annotation methods, including rectangles, circles, polygons, lines, images, and Path.
   image:
-    src: /logo.svg
+    src: /banner.png
     alt: Image Mark
   actions:
     - theme: brand
@@ -25,3 +25,6 @@ features:
   - title: Plugin-Based
     details: Except for core features, all other capabilities are provided as plugins, allowing you to choose only what you need and reduce unnecessary code.
 ---
+
+<iframe src="https://image-mark.demo.wingblog.top/#/full" frameborder="0"  width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe>
+<!-- <iframe src="http://localhost:5173/#/full" frameborder="0" width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe> -->

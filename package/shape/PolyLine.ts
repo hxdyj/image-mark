@@ -1,8 +1,7 @@
 import { Circle, G, Line, Point, Polyline, } from "@svgdotjs/svg.js";
 import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
-import ImageMark from "..";
+import ImageMark from "../index";
 import { chunk, clamp } from "lodash-es";
-import { getOptimalTextColor } from "../../src/utils/color.util";
 
 export interface PolyLineData extends ShapeData {
 	shapeName: "polyline",

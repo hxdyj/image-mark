@@ -1,8 +1,7 @@
 import { Circle, G, Line, Point, Polygon, Polyline } from "@svgdotjs/svg.js";
 import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
-import ImageMark from "..";
+import ImageMark from "../index";
 import { chunk, clamp, defaultsDeep } from "lodash-es";
-import { getOptimalTextColor } from "../../src/utils/color.util";
 
 export interface PolygonData extends ShapeData {
 	shapeName: "polygon",

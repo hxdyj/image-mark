@@ -1,6 +1,6 @@
 import { Circle, G, } from "@svgdotjs/svg.js";
 import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
-import ImageMark from "..";
+import ImageMark from "../index";
 
 export interface DotData extends ShapeData {
 	shapeName: "dot",

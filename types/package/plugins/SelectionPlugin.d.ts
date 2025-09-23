@@ -24,4 +24,6 @@ export declare class SelectionPlugin extends Plugin {
     bindEvent(): void;
     unbindEvent(): void;
     destroy(): void;
+    static useDefaultAction(): void;
+    static unuseDefaultAction(): void;
 }

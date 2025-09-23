@@ -5,11 +5,13 @@ export declare class EventBusEventName {
     static draw: string;
     static resize: string;
     static scale: string;
+    static readonly_change: string;
     static container_drag_enter: string;
     static container_drag_over: string;
     static container_drag_leave: string;
     static container_drop: string;
     static shape_delete: string;
+    static shape_delete_patch: string;
     static shape_delete_all: string;
     static shape_add: string;
     static shape_end_drawing: string;

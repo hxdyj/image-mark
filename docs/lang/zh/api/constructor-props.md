@@ -49,7 +49,8 @@ footer: false
 export type ImageMarkStatus = {
 	scaling: boolean
 	moving: boolean
-	drawing: boolean | string //string的时候为shapeName
+	drawing: null | ImageMarkShape
+	editing: null | ImageMarkShape
 }
 ```
 

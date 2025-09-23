@@ -1,6 +1,6 @@
 import { Circle, G, Image, Point } from "@svgdotjs/svg.js";
 import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeDrawType, ShapeOptions } from "./Shape";
-import { ImageMark } from "..";
+import { ImageMark } from "../index";
 import { getBoundingBoxByTwoPoints, RectEditPointClassName, RectEditPointItem } from "./Rect";
 import { clamp } from "lodash-es";
 

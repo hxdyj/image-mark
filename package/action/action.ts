@@ -1,4 +1,3 @@
-import { Shape } from "@svgdotjs/svg.js";
 import { EventBindingThis } from "../event/event";
 import { ImageMarkShape, ShapeData } from "../shape/Shape";
 import ImageMark from "..";

@@ -6,7 +6,7 @@ import { uid } from "uid";
 import { cloneDeep, defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "../action/LmbMoveAction";
 import { EventBusEventName } from "../event/const";
-import { getOptimalTextColor } from "../../src/utils/color.util";
+import { getOptimalTextColor } from "../utils/color.util";
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
@@ -344,12 +344,14 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.editMouseDownEvent = event as unknown as MouseEvent
 		this.editOriginData = cloneDeep(this.data)
 		this.imageMark.getShapePlugin()?.setHoldShape(this)
+		this.imageMark.status.editing = this
 	}
 
 	endEditShape() {
 		this.editMouseDownEvent = null
 		this.editOriginData = null
 		this.imageMark.getShapePlugin()?.setHoldShape(null)
+		this.imageMark.status.editing = null
 	}
 
 	removeEdit() {

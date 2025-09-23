@@ -1,6 +1,6 @@
 import { G, Line, Path, Polygon, Polyline } from "@svgdotjs/svg.js";
 import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
-import ImageMark from "..";
+import ImageMark from "../index";
 
 export interface PathLineData extends ShapeData {
 	shapeName: "pathline",

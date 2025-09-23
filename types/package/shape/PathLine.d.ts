@@ -1,6 +1,6 @@
 import { G } from '@svgdotjs/svg.js';
 import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
-import { default as ImageMark } from '..';
+import { default as ImageMark } from '../index';
 export interface PathLineData extends ShapeData {
     shapeName: "pathline";
     points: number[];
@@ -11,4 +11,5 @@ export declare class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
     draw(): G;
     translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PathLineData | null;
+    drawEdit(): void;
 }

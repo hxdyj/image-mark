@@ -5,6 +5,7 @@ import { Plugin } from './plugins/plugin';
 import { EventBindingThis } from './event/event';
 import { ShapePlugin } from './plugins/ShapePlugin';
 import { SelectionPlugin } from './plugins/SelectionPlugin';
+import { ImageMarkShape } from './shape';
 export type TransformStep = [MatrixAlias, boolean];
 export declare const POSITION_LIST: readonly ["left-top", "right-top", "left-bottom", "right-bottom", "top", "bottom", "left", "right", "center"];
 export type Position = typeof POSITION_LIST[number];
@@ -32,6 +33,7 @@ export type StartPosition = 'center' | 'left-top' | 'right-top' | 'left-bottom' 
 export type ImageMarkOptions = {
     el: ContainerType;
     src: string;
+    readonly?: boolean;
     initScaleConfig?: ({
         to?: 'image';
     } | {
@@ -46,10 +48,13 @@ export type ImageMarkOptions = {
         padding?: number;
         paddingUnit?: 'px' | '%';
     };
+    setting?: {
+        imageFullOfContainer?: boolean;
+    };
     action?: {
         enableDrawShapeOutOfImg?: boolean;
+        enableEditShapeOutOfImg?: boolean;
         enableMoveShapeOutOfImg?: boolean;
-        enableImageOutOfContainer?: boolean;
     };
     pluginOptions?: {
         [key: string]: any;
@@ -66,7 +71,8 @@ export declare const imageMarkManager: ImageMarkManager;
 export type ImageMarkStatus = {
     scaling: boolean;
     moving: boolean;
-    drawing: boolean | string;
+    drawing: null | ImageMarkShape;
+    editing: null | ImageMarkShape;
 };
 export declare class ImageMark extends EventBindingThis {
     options: ImageMarkOptions;
@@ -134,7 +140,10 @@ export declare class ImageMark extends EventBindingThis {
     startSuccessiveMove(point: ArrayPoint): this | undefined;
     moveSuccessive(point: ArrayPoint): this | undefined;
     endSuccessiveMove(): this;
-    protected checkScaleLimitImageInContainer(point: ArrayPoint, callback?: (nextGroup: G) => void): this | null;
+    protected checkScaleLimitImageInContainer(point: ArrayPoint, callback?: (nextGroup: G) => void): {
+        outOfContainer: boolean;
+        scaleFixed: boolean;
+    };
     scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo?: 'container' | 'image', newScale?: number): this | undefined;
     protected containerPoint2ImagePoint(point: ArrayPoint): ArrayPoint;
     setMinScale(minScale: number | InitialScaleSize): this;
@@ -145,6 +154,7 @@ export declare class ImageMark extends EventBindingThis {
     setImageFullOfContainer(enable: boolean): this;
     setEnableDrawShapeOutOfImg(enable: boolean): this;
     setEnableMoveShapeOutOfImg(enable: boolean): this;
+    setEnableEditShapeOutOfImg(enable: boolean): this;
     setEnableShapeOutOfImg(enable: boolean): void;
     protected cloneGroup(transform?: MatrixExtract): G;
     protected getImageBoundingBoxByTransform(transform: MatrixExtract): EnhanceBoundingBox;
@@ -154,6 +164,8 @@ export declare class ImageMark extends EventBindingThis {
         isOutOf: boolean;
         directionOutOfInfo: DirectionOutOfInfo;
     };
+    protected autoSetReadonlyClassName(): void;
+    setReadonly(readonly: boolean): void;
     getShapePlugin(): ShapePlugin | null;
     getSelectionPlugin(): SelectionPlugin | null;
     addPlugin(plugin: typeof Plugin | PluginNewCall): this;

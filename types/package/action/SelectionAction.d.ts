@@ -7,6 +7,7 @@ export type SelectionActionAttr = {
     stroke?: StrokeData;
     fill?: string;
     padding?: number;
+    whileSelectedEditShape?: boolean;
 };
 export type SelectionActionOptions = {
     initDrawFunc?: SelectionDrawFunc;
@@ -27,7 +28,8 @@ export declare class SelectionAction extends Action {
     getSelectionId(): string;
     disableSelection(): void;
     enableSelection(): void;
-    private draw;
+    onReadonlyChange(readonly: boolean): void;
+    draw(): void;
     destroy(): void;
     private downTime;
     getEnableSelection(): boolean;

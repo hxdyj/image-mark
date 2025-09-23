@@ -49,7 +49,8 @@ The plugin object of the current instance
 export type ImageMarkStatus = {
 	scaling: boolean
 	moving: boolean
-	drawing: boolean | string //string when it is shapeName
+	drawing: null | ImageMarkShape
+	editing: null | ImageMarkShape
 }
 ```
 

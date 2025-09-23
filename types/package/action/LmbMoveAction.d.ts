@@ -23,11 +23,14 @@ export declare class LmbMoveAction extends Action {
     constructor(imageMark: ImageMark, shape: ImageMarkShape, options?: LmbMoveActionOptions | undefined);
     protected bindEvents(): void;
     protected unbindEvent(): void;
+    addClassName(): void;
+    removeClassName(): void;
     disableMove(): void;
     enableMove(): void;
     getEnableMove(): boolean;
     destroy(): void;
     protected onMouseDown(event: Event): void;
-    protected onDoucmentMouseMoving(event: MouseEvent): ArrayPoint | undefined;
-    protected onDocumentMouseUp(event: MouseEvent): void;
+    onContainerMouseMove(event: MouseEvent): ArrayPoint | undefined;
+    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseUp(event: MouseEvent): void;
 }

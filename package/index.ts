@@ -12,6 +12,7 @@ import { ShapePlugin } from './plugins/ShapePlugin';
 import { SelectionPlugin } from "./plugins/SelectionPlugin";
 import './style.scss'
 import { DeepPartial } from "@arco-design/web-react/es/Form/store";
+import { ImageMarkShape } from "./shape";
 export type TransformStep = [MatrixAlias, boolean]
 
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
@@ -100,7 +101,8 @@ export const imageMarkManager = new ImageMarkManager()
 export type ImageMarkStatus = {
 	scaling: boolean
 	moving: boolean
-	drawing: boolean | string  //string的时候为shapeName
+	drawing: null | ImageMarkShape
+	editing: null | ImageMarkShape
 }
 
 
@@ -134,7 +136,8 @@ export class ImageMark extends EventBindingThis {
 	status: ImageMarkStatus = {
 		scaling: false,
 		moving: false,
-		drawing: false
+		drawing: null,
+		editing: null,
 	}
 	minScale = 0.1
 	maxScale = 10

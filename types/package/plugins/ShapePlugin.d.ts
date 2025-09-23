@@ -26,7 +26,8 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     destroy(): void;
     onAdd(data: T, emit?: boolean): void;
     protected onDelete(_data: T, shapeInstance?: ImageMarkShape): void;
-    removeNode(data: T): void;
+    removeNode(data: T | ImageMarkShape<T>): void;
+    removeNodes(dataList: T[] | ImageMarkShape<T>[]): void;
     protected tempData: T[] | null;
     clear(): void;
     removeAllNodes(emit?: boolean): void;
@@ -55,12 +56,19 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     drawing(shapeData: T): this;
     endDrawing(cancel?: boolean): this;
     drawingMouseTrace: Array<MouseEvent>;
+    shiftMouseEvent2LimitMouseEvent(evt: Event | MouseEvent): {
+        event: MouseEvent;
+        limit: boolean;
+    };
     drawingMouseTracePush(event: MouseEvent): boolean;
     dropLastMouseTrace(): void;
-    onDrawingMouseDown(event: MouseEvent): void;
-    onDrawingMouseMove(event: MouseEvent): void;
-    onDrawingDocumentMouseMove(event: MouseEvent): void;
-    onDrawingDocumentMouseUp(event: MouseEvent): void;
+    holdShape: ImageMarkShape | null;
+    setHoldShape(shape: ImageMarkShape | null): void;
+    onContainerMouseDown(event: MouseEvent): void;
+    onContainerMouseMove(event: MouseEvent): void;
+    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseUp(event: MouseEvent): void;
+    onReadonlyChange(readonly: boolean): void;
     static shapeList: Array<{
         shape: typeof ImageMarkShape;
         shapeOptions?: ShapeOptions;
@@ -72,7 +80,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
             shape: typeof ImageMarkShape;
             shapeOptions?: ShapeOptions;
         }>;
-        useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): any;
+        useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): /*elided*/ any;
         unuseShape<T_1 extends ShapeData>(shape: typeof ImageMarkShape<T_1>): typeof ShapePlugin;
         hasShape<T_1 extends ShapeData>(shape: typeof ImageMarkShape<T_1>): {
             shape: typeof ImageMarkShape;

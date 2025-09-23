@@ -1,7 +1,6 @@
 import { Circle, G, Line, Point, } from "@svgdotjs/svg.js";
 import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
-import { getOptimalTextColor } from "../../src/utils/color.util";
 import { clamp } from "lodash-es";
 
 export interface LineData extends ShapeData {

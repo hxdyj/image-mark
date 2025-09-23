@@ -1,9 +1,8 @@
-import { Circle, G, Point, } from "@svgdotjs/svg.js";
+import { Circle, G } from "@svgdotjs/svg.js";
 import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
-import ImageMark from "..";
-import { twoPointsDistance } from "#/utils/cartesianCoordinateSystem";
-import { getBoundingBoxByTwoPoints, RectEditPointClassName } from "./Rect";
-import { clamp } from "lodash-es";
+import ImageMark from "../index";
+import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
+import { RectEditPointClassName } from "./Rect";
 export interface CircleData extends ShapeData {
 	shapeName: "circle",
 	x: number,

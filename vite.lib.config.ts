@@ -11,8 +11,9 @@ export default defineConfig({
 			entry: path.resolve(__dirname, './package/index.ts'),
 			name: pkg.name,
 			fileName: format => `index.${format}.js`,
+			cssFileName: 'style'
 		},
-		minify: false
+		minify: false,
 	},
 	plugins: [
 		cleanPlugin({

@@ -79,19 +79,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	disableAction(action: string | string[]) {
-		if (typeof action === 'string') {
-			this.disableActionList.add(action)
-		} else {
-			action.forEach(item => this.disableActionList.add(item))
-		}
+		const actionNameList = typeof action === 'string' ? [action] : action
+		actionNameList.forEach(item => this.disableActionList.add(item))
 	}
 
 	enableAction(action: string | string[]) {
-		if (typeof action === 'string') {
-			this.disableActionList.delete(action)
-		} else {
-			action.forEach(item => this.disableActionList.delete(item))
-		}
+		const actionNameList = typeof action === 'string' ? [action] : action
+		actionNameList.forEach(item => this.disableActionList.delete(item))
 	}
 
 	protected addNode(node: T) {
@@ -316,8 +310,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	startDrawing(shape: ImageMarkShape<T>, programmaticDrawing = false) {
 		// const isClass = !(shape instanceof ImageMarkShape)
 		// const shapeName = isClass ? shape.shapeName : Object.getPrototypeOf(shape).constructor.shapeName
-		const shapeName = Object.getPrototypeOf(shape).constructor.shapeName
-		this.imageMark.status.drawing = shapeName
+		// const shapeName = Object.getPrototypeOf(shape).constructor.shapeName
+		this.imageMark.status.drawing = shape
 		this.drawingShape = shape
 		this.programmaticDrawing = programmaticDrawing
 		this.drawingMouseTrace = []
@@ -344,7 +338,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			this.onAdd(shapeData, true)
 		}
 		this.drawingShape = null
-		this.imageMark.status.drawing = false
+		this.imageMark.status.drawing = null
 		this.programmaticDrawing = false
 		this.drawingMouseTrace = []
 		this.imageMark.eventBus.emit(EventBusEventName.shape_end_drawing, cancel, this.imageMark)
