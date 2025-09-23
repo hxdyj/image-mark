@@ -55,7 +55,7 @@ npm i mark-img
 ```ts
 import ImageMark from 'mark-img'
 // import style
-import 'mark-img/style.css' // [!code highlight]
+import 'mark-img/dist/style.css' // [!code highlight]
 
 const imgMark = new ImageMark({
 	el: '#container',
