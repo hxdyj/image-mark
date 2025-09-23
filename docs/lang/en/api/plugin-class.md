@@ -30,6 +30,13 @@ The ImageMark instance to which the plugin belongs.
 
 ## Methods
 
+### onReadonlyChange
+
+```ts
+//Called when the readonly state of the ImageMark instance changes.
+onReadonlyChange(readonly: boolean): void
+```
+
 ### destroy
 
 ```ts

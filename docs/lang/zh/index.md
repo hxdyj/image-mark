@@ -27,4 +27,4 @@ features:
 ---
 
 <!-- <iframe src="https://image-mark.demo.wingblog.top/#/full" frameborder="0"  width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe> -->
-<!-- <iframe src="http://localhost:5173/#/full" frameborder="0" width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe> -->
+<iframe src="http://localhost:5173/#/full" frameborder="0" width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe>

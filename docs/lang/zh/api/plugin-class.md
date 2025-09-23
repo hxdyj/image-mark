@@ -30,6 +30,13 @@ constructor(imageMark: ImageMark): void
 
 ## 方法
 
+### onReadonlyChange
+
+```ts
+//只读状态改变时调用
+onReadonlyChange(readonly: boolean): void
+```
+
 ### destroy
 
 ```ts

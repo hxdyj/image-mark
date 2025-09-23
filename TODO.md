@@ -14,7 +14,9 @@
 - [x] default use shape plugin
 - [x] resize action
 - [x] rect select (delay)
-- [ ] readonly emit event
+- [x] readonly emit event
+- [ ] editing status
+- [ ] remove shape plugin disableActionList, change to Action class
 - [ ] single/multiple select (delete can use del key)
 - [ ] context menu support
 - [ ] operate history and undo redo

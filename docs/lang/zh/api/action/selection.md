@@ -16,6 +16,7 @@ export type SelectionActionAttr = {
 	stroke?: StrokeData
 	fill?: string
 	padding?: number
+	whileSelectedEditShape?: boolean // 选中时是否将当前`Shape`切换为编辑状态
 }
 
 export type SelectionActionOptions = {

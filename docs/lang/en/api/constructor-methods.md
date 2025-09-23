@@ -236,10 +236,17 @@ setEnableDrawShapeOutOfImg(enable: boolean): ImageMark
 setEnableMoveShapeOutOfImg(enable: boolean): ImageMark
 ```
 
+### setEnableEditShapeOutOfImg
+
+```ts
+// Set whether the shape can be out of the image when editing
+setEnableEditShapeOutOfImg(enable: boolean): ImageMark
+```
+
 ### setEnableShapeOutOfImg
 
 ```ts
-// Set whether the shape can be out of the image, including all actions, such as moving and drawing
+// Set whether the shape can be out of the image, including all actions, such as moving, drawing, and editing
 setEnableShapeOutOfImg(enable: boolean): ImageMark
 ```
 
@@ -278,4 +285,11 @@ getShapePlugin(): ShapePlugin | null
 ```ts
 //Get the `selection plugin` instance on the instance
 getSelectionPlugin(): SelectionPlugin | null
+```
+
+### setReadonly
+
+```ts
+// Set the readonly state of the instance
+setReadonly(readonly: boolean): ImageMark
 ```

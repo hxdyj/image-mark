@@ -30,3 +30,31 @@ actionOptions: {
 // 销毁时调用的方法
 destroy(): void
 ```
+
+### onContainerMouseMove
+
+```ts
+// 容器鼠标移动事件触发
+onContainerMouseMove(e: MouseEvent): void
+```
+
+### onDocumentMouseMove
+
+```ts
+// 文档鼠标移动事件触发
+onDocumentMouseMove(e: MouseEvent): void
+```
+
+### onDocumentMouseUp
+
+```ts
+// 文档鼠标抬起事件触发
+onDocumentMouseUp(e: MouseEvent): void
+```
+
+### onReadonlyChange
+
+```ts
+// 只读状态改变时触发
+onReadonlyChange(readonly: boolean): void
+```

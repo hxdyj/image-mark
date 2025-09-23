@@ -1278,6 +1278,7 @@ export class ImageMark extends EventBindingThis {
 		Object.values(this.plugin).forEach(plugin => {
 			plugin.onReadonlyChange?.(readonly)
 		})
+		this.eventBus.emit(EventBusEventName.readonly_change, readonly, this)
 	}
 
 	getShapePlugin(): ShapePlugin | null {

@@ -25,9 +25,11 @@ export type ShapeAttr =
 			stroke?: StrokeData
 			fill?: string
 			auxiliary?: {
+				// 辅助线的配置，比如polygon的辅助线
 				stroke?: StrokeData
 			}
 			label?: {
+				//标签相关配置
 				font?: {
 					fill?: string
 					size?: number
@@ -35,7 +37,11 @@ export type ShapeAttr =
 				fill?: string
 			}
 			dot?: {
-				r?: number
+				r?: number //点的半径
+			}
+			image?: {
+				opacity?: number //图片透明度
+				preserveAspectRatio?: 'xMidYMid' | 'none' //图片是否保持比例
 			}
 	  }
 	| undefined
@@ -46,8 +52,10 @@ export type ShapeOptions = {
 	initDrawFunc?: ShapeDrawFunc // 自定义初始绘制函数
 }
 
+//鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
-
+//绘制类型，point:所有划过的点绘制，centerR:起点为中心点，起止点距离为半径r绘制，centerRxy:起点为中心点，起止点x1，x2差值为Rx,y1,y2差值为Ry绘制
+export type ShapeDrawType = 'point' | 'centerR' | 'centerRxy'
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 ```
 
@@ -127,17 +135,28 @@ draw(): void
 translate(x: number, y: number): void
 ```
 
+### drawEdit
+
+```ts
+//绘制编辑组
+drawEdit(): void
+```
+
 ## 实例属性
 
 ### mouseDrawType
 
-`readonly`
-
-```ts
-export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
-```
+类型：ShapeMouseDrawType
 
 鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
+
+### drawType
+
+绘制类型，类型：ShapeDrawType
+
+- point:所有划过的点绘制
+- centerR:起点为中心点，起止点距离为半径 r 绘制
+- centerRxy:起点为中心点，起止点 x1，x2 差值为 Rx,y1,y2 差值为 Ry 绘制
 
 ### uid
 
@@ -169,6 +188,18 @@ action:{
 
 形状的动作
 
+### editMouseDownEvent
+
+类型：`MouseEvent | null `
+
+编辑时的鼠标按下事件
+
+### editOriginData
+
+类型：`T|null`
+
+编辑时原始的 Shape 数据
+
 ## 实例方法
 
 ### addDrawFunc
@@ -185,6 +216,14 @@ addDrawFunc(func: ShapeDrawFunc): void
 removeDrawFunc(func: ShapeDrawFunc): void
 ```
 
+### getEditGroup
+
+```ts
+//获取编辑组
+getEditGroup<T = G>(): T
+
+```
+
 ### getLabelShape
 
 ```ts
@@ -197,6 +236,13 @@ getLabelShape<T = Shape>(): T
 ```ts
 //获取主形状
 getMainShape<T = Shape>(): T
+```
+
+### getEditGroupId
+
+```ts
+//获取编辑组的 id
+getEditGroupId(): string
 ```
 
 ### getLabelId
@@ -232,6 +278,49 @@ getMouseMoveThreshold(): number
 ```ts
 //设置鼠标移动绘制形状时候的阈值
 setMouseMoveThreshold(threshold: number)
+```
+
+### startEditShape
+
+```ts
+//内部开始编辑Shape,做通用的处理，给editMouseDownEvent和editOriginData赋值等
+startEditShape(event: Event): void
+```
+
+### endEditShape
+
+```ts
+//内部结束编辑Shape,做通用的处理，清除临时数据
+endEditShape(): void
+```
+
+### removeEdit
+
+移除编辑的 svg Group 元素
+
+### edit
+
+```ts
+// 是否开始编辑形状
+edit(on?: boolean, needDraw = true): boolean
+```
+
+### onReadonlyChange
+
+```ts
+//只读状态改变时调用
+onReadonlyChange(readonly: boolean): void
+```
+
+### getMainShapeInfo
+
+```ts
+//获取主形状的信息
+getMainShapeInfo(): {
+	strokeWidth: number
+	strokeColor: string
+	optimalStrokeColor: string //根据 strokeColor 计算出的最优的字体颜色
+}
 ```
 
 ### destroy

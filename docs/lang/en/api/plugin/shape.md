@@ -167,6 +167,12 @@ Stores the Shape class and Shape options used by the current plugin instance
 
 The Shape instance currently being drawn (e.g., by mouse)
 
+### holdShape
+
+Type: `ImageMarkShape | null`
+
+Current shape instance that is being edited or moved, used for document or container event distribution to find the corresponding shape
+
 ### programmaticDrawing
 
 Whether the drawing is being done programmatically
@@ -191,6 +197,20 @@ setData(data: T[]): void
 ```ts
 // Remove a specific shape
 removeNode(data: T): void
+```
+
+### removeNode
+
+```ts
+// Remove a specific shape
+removeNode(data: T|ImageMarkShape<T>): void
+```
+
+### removeNodes
+
+```ts
+// Remove multiple shapes
+removeNodes(dataList: T[]|ImageMarkShape<T>[]): void
 ```
 
 ### removeAllNodes
@@ -310,4 +330,11 @@ addAction(action: typeof Action, actionOptions: any = {}): void
 ```ts
 // Remove instance action
 removeAction(action: typeof Action): void
+```
+
+### onReadonlyChange
+
+```ts
+// Readonly state change trigger
+onReadonlyChange(readonly: boolean): void
 ```

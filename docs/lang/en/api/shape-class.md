@@ -20,16 +20,43 @@ The class name is not Shape, but ImageMarkShape. This is because there is a clas
 ## Types
 
 ```ts
-export type ShapeDrawFunc = (shape: ImageMarkShape) => void
+export type ShapeAttr =
+	| {
+			stroke?: StrokeData
+			fill?: string
+			auxiliary?: {
+				// Configuration for auxiliary lines, such as polygon auxiliary lines
+				stroke?: StrokeData
+			}
+			label?: {
+				// Label-related configuration
+				font?: {
+					fill?: string
+					size?: number
+				}
+				fill?: string
+			}
+			dot?: {
+				r?: number // Radius of the dot
+			}
+			image?: {
+				opacity?: number // Image opacity
+				preserveAspectRatio?: 'xMidYMid' | 'none' // Whether the image maintains its aspect ratio
+			}
+	  }
+	| undefined
 
 export type ShapeOptions = {
-	// Customize the properties of shape
-	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr
-	// Called after the shape is added to the canvas, i.e., the DOM is already rendered
-	afterRender?: (shapeInstance: ImageMarkShape) => void
-	// Custom initial drawing function
-	initDrawFunc?: ShapeDrawFunc
+	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // Custom shape attributes
+	afterRender?: (shapeInstance: ImageMarkShape) => void // Called after rendering is complete and added to the canvas, i.e., when the DOM has been rendered
+	initDrawFunc?: ShapeDrawFunc // Custom initial drawing function
 }
+
+// Mouse drawing type, oneTouch: draw with one stroke, multiPress: draw with multiple clicks
+export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
+// Drawing type, point: draw all passing points, centerR: draw with the start point as the center and the distance between start and end points as radius r, centerRxy: draw with the start point as the center, the difference between x1 and x2 as Rx, and the difference between y1 and y2 as Ry
+export type ShapeDrawType = 'point' | 'centerR' | 'centerRxy'
+export type ShapeDrawFunc = (shape: ImageMarkShape) => void
 ```
 
 ## Constructor
@@ -108,17 +135,28 @@ draw(): void
 translate(x: number, y: number): void
 ```
 
+### drawEdit
+
+```ts
+// Draw edit group
+drawEdit(): void
+```
+
 ## Instance Properties
 
 ### mouseDrawType
 
-`readonly`
+Type: ShapeMouseDrawType
 
-```ts
-export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
-```
+Mouse drawing type, oneTouch: draw with one stroke, multiPress: draw with multiple clicks
 
-The type of mouse drawing, oneTouch: draw with one touch, multiPress: draw with multiple clicks
+### drawType
+
+Drawing type, type: ShapeDrawType
+
+- point: Draw all passing points
+- centerR: Draw with the start point as the center and the distance between start and end points as radius r
+- centerRxy: Draw with the start point as the center, the difference between x1 and x2 as Rx, and the difference between y1 and y2 as Ry
 
 ### uid
 
@@ -150,6 +188,18 @@ action:{
 
 The actions of the shape
 
+### editMouseDownEvent
+
+Type: `MouseEvent | null `
+
+Mouse down event during editing
+
+### editOriginData
+
+Type: `T|null`
+
+Original Shape data during editing
+
 ## Instance Methods
 
 ### addDrawFunc
@@ -166,6 +216,14 @@ addDrawFunc(func: ShapeDrawFunc): void
 removeDrawFunc(func: ShapeDrawFunc): void
 ```
 
+### getEditGroup
+
+```ts
+// Get edit group
+getEditGroup<T = G>(): T
+
+```
+
 ### getLabelShape
 
 ```ts
@@ -178,6 +236,13 @@ getLabelShape<T = Shape>(): T
 ```ts
 // Get the main shape
 getMainShape<T = Shape>(): T
+```
+
+### getEditGroupId
+
+```ts
+// Get the id of the edit group
+getEditGroupId(): string
 ```
 
 ### getLabelId
@@ -213,6 +278,49 @@ getMouseMoveThreshold(): number
 ```ts
 // Set the threshold for mouse movement when drawing the shape
 setMouseMoveThreshold(threshold: number)
+```
+
+### startEditShape
+
+```ts
+// Internally start editing the Shape, do common processing, assign values to editMouseDownEvent and editOriginData, etc.
+startEditShape(event: Event): void
+```
+
+### endEditShape
+
+```ts
+// Internally end editing the Shape, do common processing, clear temporary data
+endEditShape(): void
+```
+
+### removeEdit
+
+Remove the edited svg Group element
+
+### edit
+
+```ts
+// Whether to start editing the shape
+edit(on?: boolean, needDraw = true): boolean
+```
+
+### onReadonlyChange
+
+```ts
+// Called when the readonly state changes
+onReadonlyChange(readonly: boolean): void
+```
+
+### getMainShapeInfo
+
+```ts
+// Get the information of the main shape
+getMainShapeInfo(): {
+	strokeWidth: number
+	strokeColor: string
+	optimalStrokeColor: string // Optimal font color calculated based on strokeColor
+}
 ```
 
 ### destroy

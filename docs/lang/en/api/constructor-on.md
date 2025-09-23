@@ -125,3 +125,10 @@ Events that an ImageMark instance can listen to
 // Triggered when the image loading fails
 (event:Event, shapeInstance:ImageMarkShape): void
 ```
+
+### readonly_change
+
+```ts
+// Triggered when the readonly state of the instance changes
+(readonly: boolean, imgMark: ImageMark): void
+```

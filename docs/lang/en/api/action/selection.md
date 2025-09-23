@@ -16,6 +16,7 @@ export type SelectionActionAttr = {
 	stroke?: StrokeData
 	fill?: string
 	padding?: number
+	whileSelectedEditShape?: boolean // Whether to switch the current `Shape` to edit state when selected
 }
 
 export type SelectionActionOptions = {

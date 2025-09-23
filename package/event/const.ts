@@ -5,6 +5,7 @@ export class EventBusEventName {
 	static draw = 'draw'
 	static resize = 'resize'
 	static scale = 'scale'
+	static readonly_change = 'readonly_change'
 
 	static container_drag_enter = 'container_drag_enter'
 	static container_drag_over = 'container_drag_over'

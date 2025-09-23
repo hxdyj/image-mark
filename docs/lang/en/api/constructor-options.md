@@ -16,6 +16,7 @@ const imageMark = new ImageMark({
 	// options
 	el: ContainerType  //  The container element for image marking. eg： #container
 	src: string   // The URL address of the image
+	readonly?: boolean, // Whether the instance is read-only, default is `false`
 	initScaleConfig?: ({  // Configuration items for initializing image scaling
 		to?: 'image' // The target for scaling image
 	} | {
@@ -32,6 +33,7 @@ const imageMark = new ImageMark({
 	},
 	action?: {
 		enableDrawShapeOutOfImg?: boolean // Whether to allow drawing shapes to exceed the image, default is `false`
+		enableEditShapeOutOfImg?: boolean // Whether to allow editing shapes to exceed the image, default is `false`
 		enableMoveShapeOutOfImg?: boolean // Whether to allow moving shapes to exceed the image, default is `false`
 	}
 	pluginOptions?: {

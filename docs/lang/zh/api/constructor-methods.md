@@ -236,10 +236,17 @@ setEnableDrawShapeOutOfImg(enable: boolean): ImageMark
 setEnableMoveShapeOutOfImg(enable: boolean): ImageMark
 ```
 
+### setEnableEditShapeOutOfImg
+
+```ts
+// 设置编辑是否能超出图片
+setEnableEditShapeOutOfImg(enable: boolean): ImageMark
+```
+
 ### setEnableShapeOutOfImg
 
 ```ts
-// 设置形状是否能超出图片，包含所有的动作，比如移动和绘制
+// 设置形状是否能超出图片，包含所有的动作，比如移动、绘制、编辑
 setEnableShapeOutOfImg(enable: boolean): ImageMark
 ```
 
@@ -278,4 +285,11 @@ getShapePlugin(): ShapePlugin | null
 ```ts
 // 获取实例上的 `selection` 插件实例
 getSelectionPlugin(): SelectionPlugin | null
+```
+
+### setReadonly
+
+```ts
+// 设置实例的只读状态
+setReadonly(readonly: boolean): ImageMark
 ```

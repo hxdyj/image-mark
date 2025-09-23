@@ -125,3 +125,10 @@ ImageMark 实例可以监听的事件
 // 图片加载失败时触发
 (event:Event, shapeInstance:ImageMarkShape): void
 ```
+
+### readonly_change
+
+```ts
+// 只读状态改变时触发
+(readonly: boolean, imgMark: ImageMark): void
+```

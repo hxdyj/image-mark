@@ -157,7 +157,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 
-	//当一个shape绘制完成时有 ShapePlugin 调用
+	//当一个shape绘制完成时有 ShapePlugin 调用，目前主要用于image在保持比例绘制完重新计算实际大小
 	onEndDrawing() {
 
 	}

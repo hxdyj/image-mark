@@ -16,6 +16,7 @@ const imageMark = new ImageMark({
 	// options
 	el: ContainerType  // 容器元素或者元素的selector 如 #container
 	src: string   // 图片的 URL 地址
+	readonly?: boolean, // 是否只读, 默认`false`
 	initScaleConfig?: ({  // 初始化图片缩放的配置项
 		to?: 'image' // 缩放的目标为image的尺寸
 	} | {
@@ -35,6 +36,7 @@ const imageMark = new ImageMark({
 	}
 	action?: {
 		enableDrawShapeOutOfImg?: boolean // 是否允许绘制时超出图片, 默认`false`
+		enableEditShapeOutOfImg?: boolean // 是否允许编辑时超出图片, 默认`false`
 		enableMoveShapeOutOfImg?: boolean // 是否允许移动时超出图片, 默认`false`
 	}
 	pluginOptions?: {

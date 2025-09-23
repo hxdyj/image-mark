@@ -30,3 +30,31 @@ actionOptions: {
 // The method called when the action is destroyed
 destroy(): void
 ```
+
+### onContainerMouseMove
+
+```ts
+// Container mouse move event trigger
+onContainerMouseMove(e: MouseEvent): void
+```
+
+### onDocumentMouseMove
+
+```ts
+// Document mouse move event trigger
+onDocumentMouseMove(e: MouseEvent): void
+```
+
+### onDocumentMouseUp
+
+```ts
+// Document mouse up event trigger
+onDocumentMouseUp(e: MouseEvent): void
+```
+
+### onReadonlyChange
+
+```ts
+// Readonly state change trigger
+onReadonlyChange(readonly: boolean): void
+```

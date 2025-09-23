@@ -168,6 +168,12 @@ shape: {
 
 正在绘制中的（比如鼠标绘制）Shape 实例
 
+### holdShape
+
+类型：`ImageMarkShape | null`
+
+当前正在编辑或移动等这种选中的 shape，为了 document 或者 container 事件分发找到对应的 shape
+
 ### programmaticDrawing
 
 是否是编程式绘制中
@@ -191,7 +197,14 @@ setData(data: T[]): void
 
 ```ts
 // 移除某个 shape
-removeNode(data: T): void
+removeNode(data: T|ImageMarkShape<T>): void
+```
+
+### removeNodes
+
+```ts
+// 移除多个 shape
+removeNodes(dataList: T[]|ImageMarkShape<T>[]): void
 ```
 
 ### removeAllNodes
@@ -311,4 +324,11 @@ addAction(action: typeof Action, actionOptions: any = {}): void
 ```ts
 // 移除实例动作
 removeAction(action: typeof Action): void
+```
+
+### onReadonlyChange
+
+```ts
+// 只读状态改变时触发
+onReadonlyChange(readonly: boolean): void
 ```
