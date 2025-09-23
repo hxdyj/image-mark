@@ -25,3 +25,4 @@ dist-ssr
 
 web-dist
 docs-dist
+docs/.vitepress/cache/*

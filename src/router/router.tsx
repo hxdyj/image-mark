@@ -41,7 +41,15 @@ export const routes: IRoute[] = [
 		element: <App />,
 		errorElement: <AppError />,
 		children: [
-
+			{
+				path: '/full',
+				element: <FullDemo />,
+				meta: {
+					title: 'Full',
+					menuShow: false,
+					noLogin: false,
+				},
+			},
 			{
 				layoutRoute: true,
 				element: <Layout />,
