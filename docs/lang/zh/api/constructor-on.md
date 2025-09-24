@@ -91,11 +91,67 @@ ImageMark 实例可以监听的事件
 (isCancelAdd:boolean,shapeInstance:ShapeInstance): void
 ```
 
+### shape_start_move
+
+```ts
+// 图形开始移动时触发
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_end_move
+
+```ts
+// 图形结束移动时触发
+(shapeInstance: ImageMarkShape, [diffX, diffY]: [number, number], imgMark: ImageMark): void
+```
+
+### shape_start_edit
+
+```ts
+// 图形开始编辑时触发
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_end_edit
+
+```ts
+// 图形结束编辑时触发
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
 ### shape_after_render
 
 ```ts
 // shape 实例渲染完成时触发
 (shapeInstance:ImageMarkShape): void
+```
+
+### shape_delete
+
+```ts
+// 删除单个 shape 时触发
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_delete_patch
+
+```ts
+// 批量删除 shape 时触发
+(shapeInstances: ImageMarkShape[], imgMark: ImageMark): void
+```
+
+### shape_delete_all
+
+```ts
+// 删除所有 shape 时触发
+(shapeInstance:ImageMarkShape): void
+```
+
+### shape_plugin_set_data
+
+```ts
+// Shape 插件设置数据时触发
+(data: ShapeData[], imgMark: ImageMark): void
 ```
 
 ### selection_select_list_change
@@ -112,11 +168,11 @@ ImageMark 实例可以监听的事件
 (shapeInstance:ImageMarkShape): void
 ```
 
-### shape_delete_all
+### readonly_change
 
 ```ts
-// 删除所有 shape 时触发
-(shapeInstance:ImageMarkShape): void
+// 只读状态改变时触发
+(readonly: boolean, imgMark: ImageMark): void
 ```
 
 ### load_image_error
@@ -126,9 +182,9 @@ ImageMark 实例可以监听的事件
 (event:Event, shapeInstance:ImageMarkShape): void
 ```
 
-### readonly_change
+### history_change
 
 ```ts
-// 只读状态改变时触发
-(readonly: boolean, imgMark: ImageMark): void
+// 历史记录状态改变时触发，如撤销/重做操作后
+(info: { undo: number, redo: number }, imgMark: ImageMark): void
 ```

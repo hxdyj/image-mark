@@ -1,17 +1,12 @@
 export class EventBindingThis {
-	protected bindEventThis(functionNameList: string[], args?: {
-		[key: string]: any
-	}) {
+	protected bindEventThis(functionNameList: string[]) {
 		functionNameList.forEach(functionName => {
 			// @ts-ignore
 			if (typeof this[functionName] === 'function') {
 				// @ts-ignore
 				const caller = this[functionName].bind(this)
-				function eventCaller(event: Event) {
-					if (event instanceof Event) {
-						Reflect.set(event, '__args', args?.[functionName])
-					}
-					caller(event)
+				function eventCaller(...args: any) {
+					caller(...args)
 				}
 				// @ts-ignore
 				this[functionName] = eventCaller

@@ -91,11 +91,67 @@ Events that an ImageMark instance can listen to
 (isCancelAdd:boolean,shapeInstance:ShapeInstance): void
 ```
 
+### shape_start_move
+
+```ts
+// Triggered when a shape starts moving
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_end_move
+
+```ts
+// Triggered when a shape ends moving
+(shapeInstance: ImageMarkShape, [diffX, diffY]: [number, number], imgMark: ImageMark): void
+```
+
+### shape_start_edit
+
+```ts
+// Triggered when a shape starts editing
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_end_edit
+
+```ts
+// Triggered when a shape ends editing
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
 ### shape_after_render
 
 ```ts
 // Triggered when the shape instance rendering is complete
 (shapeInstance:ImageMarkShape): void
+```
+
+### shape_delete
+
+```ts
+// Triggered when deleting a single shape
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_delete_patch
+
+```ts
+// Triggered when deleting shapes in batch
+(shapeInstances: ImageMarkShape[], imgMark: ImageMark): void
+```
+
+### shape_delete_all
+
+```ts
+// Triggered when all shapes are deleted
+(shapeInstance:ImageMarkShape): void
+```
+
+### shape_plugin_set_data
+
+```ts
+// Triggered when the Shape plugin sets data
+(data: ShapeData[], imgMark: ImageMark): void
 ```
 
 ### selection_select_list_change
@@ -112,11 +168,11 @@ Events that an ImageMark instance can listen to
 (shapeInstance:ImageMarkShape): void
 ```
 
-### shape_delete_all
+### readonly_change
 
 ```ts
-// Triggered when all shapes are deleted
-(shapeInstance:ImageMarkShape): void
+// Triggered when the readonly state of the instance changes
+(readonly: boolean, imgMark: ImageMark): void
 ```
 
 ### load_image_error
@@ -126,9 +182,9 @@ Events that an ImageMark instance can listen to
 (event:Event, shapeInstance:ImageMarkShape): void
 ```
 
-### readonly_change
+### history_change
 
 ```ts
-// Triggered when the readonly state of the instance changes
-(readonly: boolean, imgMark: ImageMark): void
+// Triggered when the history state changes, such as after undo/redo operations
+(info: { undo: number, redo: number }, imgMark: ImageMark): void
 ```

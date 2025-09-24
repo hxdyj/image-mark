@@ -14,7 +14,6 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 	readonly mouseDrawType: ShapeMouseDrawType = 'multiPress'
 
 	constructor(data: PolyLineData, imageMarkInstance: ImageMark, options: ShapeOptions) {
-		data.auxiliaryPoint = undefined
 		super(data, imageMarkInstance, options)
 	}
 
@@ -73,6 +72,10 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		}
 
 		return newLine
+	}
+
+	onEndDrawing(): void {
+		delete this.data.auxiliaryPoint
 	}
 
 	getEditPointClassName(className: number) {

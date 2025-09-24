@@ -20,6 +20,13 @@ The class name is not Shape, but ImageMarkShape. This is because there is a clas
 ## Types
 
 ```ts
+export interface ShapeData {
+	uuid?: string // Note: All shapes must have a uuid, used for unique identification, if not passed, will be automatically generated
+	shapeName: string
+	label?: string
+	[x: string]: any
+}
+
 export type ShapeAttr =
 	| {
 			stroke?: StrokeData

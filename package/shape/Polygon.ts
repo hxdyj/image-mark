@@ -14,7 +14,6 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 	readonly mouseDrawType: ShapeMouseDrawType = 'multiPress'
 
 	constructor(data: PolygonData, imageMarkInstance: ImageMark, options: ShapeOptions) {
-		data.auxiliaryPoint = undefined
 		super(data, imageMarkInstance, options)
 	}
 
@@ -138,6 +137,10 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 			}
 		})
 		g.addTo(this.shapeInstance)
+	}
+
+	onEndDrawing() {
+		delete this.data.auxiliaryPoint
 	}
 
 

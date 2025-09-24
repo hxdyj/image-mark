@@ -20,6 +20,13 @@ Shape 类是所有形状的基类，它提供了一些基本的属性和方法�
 ## Types
 
 ```ts
+export interface ShapeData {
+	uuid?: string //注意所有的shape都需要有uuid，用于唯一标识, 不传入会自动生成
+	shapeName: string
+	label?: string
+	[x: string]: any
+}
+
 export type ShapeAttr =
 	| {
 			stroke?: StrokeData

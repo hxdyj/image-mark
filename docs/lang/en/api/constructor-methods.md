@@ -287,6 +287,13 @@ getShapePlugin(): ShapePlugin | null
 getSelectionPlugin(): SelectionPlugin | null
 ```
 
+### getHistoryPlugin
+
+```ts
+// Get the `history plugin` instance on the instance
+getHistoryPlugin(): HistoryPlugin | null
+```
+
 ### setReadonly
 
 ```ts

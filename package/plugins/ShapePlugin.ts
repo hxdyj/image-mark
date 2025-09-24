@@ -62,7 +62,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	addAction(action: typeof Action, actionOptions: any = {}) {
 		this.data?.forEach(node => {
-			const shape = this.node2ShapeInstanceWeakMap.get(node)
+			const shape = this.getInstanceByData(node)
 			if (shape) {
 				shape.addAction(action, actionOptions)
 			}
@@ -71,7 +71,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	removeAction(action: typeof Action) {
 		this.data?.forEach(node => {
-			const shape = this.node2ShapeInstanceWeakMap.get(node)
+			const shape = this.getInstanceByData(node)
 			if (shape) {
 				shape.removeAction(action)
 			}
@@ -166,17 +166,17 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.addNode(data)
 		this.renderNode(data)
 		if (emit) {
-			this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.node2ShapeInstanceWeakMap.get(data))
+			this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.getInstanceByData(data))
 		}
 	}
 
-	protected onDelete(_data: T, shapeInstance?: ImageMarkShape) {
+	onDelete(_data: T, shapeInstance?: ImageMarkShape) {
 		const data = shapeInstance ? this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data : _data
 		const list = this.tempData || this.data
 		if (data) {
-			const index = list.findIndex(item => item === data)
+			const index = list.findIndex(item => item.uuid === data.uuid)
 			if (index == -1 || index == undefined) return
-			const shapeInstance = this.node2ShapeInstanceWeakMap.get(data)
+			const shapeInstance = this.getInstanceByData(data)
 			list.splice(index, 1)
 			this.node2ShapeInstanceWeakMap.delete(data)
 			this.shapeInstance2NodeWeakMap.delete(shapeInstance!)
@@ -185,7 +185,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	removeNode(data: T | ImageMarkShape<T>) {
-		const instance = data instanceof ImageMarkShape ? data : this.node2ShapeInstanceWeakMap.get(data) as ImageMarkShape<T>
+		const instance = data instanceof ImageMarkShape ? data : this.getInstanceByData(data) as ImageMarkShape<T>
 		if (!instance) return
 		this.onDelete(instance.data)
 		this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data, instance, this.imageMark)
@@ -202,7 +202,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.tempData = this.tempData || this.data.slice()
 		while (this.tempData?.length) {
 			let item = this.tempData[0]
-			let nodeInstance = this.node2ShapeInstanceWeakMap.get(item)
+			let nodeInstance = this.getInstanceByData(item)
 			nodeInstance?.destroy()
 			this.onDelete(item, nodeInstance!)
 		}
@@ -247,7 +247,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	redrawNodes() {
 		this.data.forEach(node => {
-			const shape = this.node2ShapeInstanceWeakMap.get(node)
+			const shape = this.getInstanceByData(node)
 			if (shape) {
 				shape.draw()
 			}
@@ -259,7 +259,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected renderNode(node: T) {
-		const shape = this.node2ShapeInstanceWeakMap.get(node)
+		const shape = this.getInstanceByData(node)
 		if (shape) {
 			shape.render(this.imageMark.stageGroup)
 		}
@@ -272,7 +272,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	getInstanceByData(data: T) {
-		return this.node2ShapeInstanceWeakMap.get(data)
+		let instance = this.node2ShapeInstanceWeakMap.get(data)
+		if (!instance) {
+			let sourceData = this.data.find(node => node.uuid == data.uuid)
+			if (sourceData) {
+				instance = this.node2ShapeInstanceWeakMap.get(sourceData)
+			}
+		}
+		return instance
 	}
 
 	shape: {
@@ -576,7 +583,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	onReadonlyChange(readonly: boolean) {
 		this.data.forEach(shapeData => {
-			const shapeInstance = this.node2ShapeInstanceWeakMap.get(shapeData)
+			const shapeInstance = this.getInstanceByData(shapeData)
 			shapeInstance?.onReadonlyChange?.(readonly)
 		})
 	}

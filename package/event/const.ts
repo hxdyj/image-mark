@@ -20,9 +20,18 @@ export class EventBusEventName {
 	static shape_after_render = 'shape_after_render'
 	static shape_plugin_set_data = 'shape_plugin_set_data'
 
+	static shape_start_move = 'shape_start_move'
+	static shape_end_move = 'shape_end_move'
+
+	static shape_start_edit = 'shape_start_edit'
+	static shape_end_edit = 'shape_end_edit'
+
 	static selection_select_list_change = 'selection_select_list_change'
 	static selection_action_click = 'selection_action_click'
 
 
 	static load_image_error = 'load_image_error'
+
+
+	static history_change = 'history_change'
 }

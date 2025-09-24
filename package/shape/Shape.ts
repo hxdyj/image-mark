@@ -60,7 +60,6 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	isBindActions = false
 	static shapeName: string
 	imageMark: ImageMark;
-	uid: string
 	action: {
 		[key: string]: Action
 	} = {}
@@ -94,10 +93,11 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		if (!constructor.shapeName) {
 			throw new Error(`${constructor.name} must have a static property 'shapeName'`);
 		}
-		this.uid = uid(6)
+		if (!this.data.uuid) this.data.uuid = uid(6)
+
 		this.imageMark = imageMarkInstance;
 		const group = new G()
-		group.id(this.uid)
+		group.id(this.data.uuid)
 		group.addClass(`shape-${this.data.shapeName}`)
 		this.shapeInstance = group
 		this.attr = defaultsDeep(this.options.setAttr?.(this) || {}, this.attr)
@@ -202,15 +202,15 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 	getEditGroupId() {
-		return `edit_${this.uid}`
+		return `edit_${this.data.uuid}`
 	}
 
 	getLabelId() {
-		return `label_${this.uid}`
+		return `label_${this.data.uuid}`
 	}
 
 	getMainId() {
-		return `main_${this.uid}`
+		return `main_${this.data.uuid}`
 	}
 
 	updateData(data: T): G {
@@ -345,13 +345,16 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.editOriginData = cloneDeep(this.data)
 		this.imageMark.getShapePlugin()?.setHoldShape(this)
 		this.imageMark.status.editing = this
+		this.imageMark.eventBus.emit(EventBusEventName.shape_start_edit, this, this.imageMark)
 	}
 
 	endEditShape() {
+		if (!this.imageMark.status.editing) return
 		this.editMouseDownEvent = null
 		this.editOriginData = null
 		this.imageMark.getShapePlugin()?.setHoldShape(null)
 		this.imageMark.status.editing = null
+		this.imageMark.eventBus.emit(EventBusEventName.shape_end_edit, this, this.imageMark)
 	}
 
 	removeEdit() {
@@ -402,6 +405,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 ImageMarkShape.useDefaultAction()
 
 export interface ShapeData {
+	uuid?: string  // 形状的唯一标识, 如果不传入会自动生成
 	shapeName: string
 	label?: string
 	[x: string]: any

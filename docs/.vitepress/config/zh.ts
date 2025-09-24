@@ -38,6 +38,7 @@ export const zh = defineConfig({
 							[
 								{ text: 'Shape', link: '/plugin/shape' },
 								{ text: 'Selection', link: '/plugin/selection' },
+								{ text: 'History', link: '/plugin/history' },
 							]
 					},
 					{

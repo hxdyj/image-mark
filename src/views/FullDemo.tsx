@@ -1,6 +1,6 @@
 import { LmbMoveAction } from "#/action/LmbMoveAction"
 import './FullDemo.scss'
-import ImageMark from "#/index"
+import ImageMark, { EventBusEventName } from "#/index"
 import { ShapePlugin } from "#/plugins/ShapePlugin"
 import { ImageMarkRect, RectData } from "#/shape/Rect"
 import { useEffect, useRef, useState } from "react"
@@ -17,6 +17,7 @@ import { ImageMarkShape, ShapeData, ShapeOptions } from "#/shape/Shape"
 // import { SelectionAction } from "#/action/SelectionAction"
 import { SelectionPlugin } from "#/plugins/SelectionPlugin"
 import { DotData, ImageMarkDot } from "#/shape/Dot"
+import { IconRedo, IconUndo } from "@arco-design/web-react/icon"
 // import ImageMark from '#/index'
 // import { ShapePlugin } from '#/plugins/ShapePlugin'
 // import { ImageMarkShape } from '#/shape/Shape'
@@ -60,6 +61,10 @@ export function FullDemo() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [readonly, setReadonly] = useState(false)
+	const [historyStackInfo, setHistoryStackInfo] = useState<{ undo: number, redo: number }>({
+		undo: 0,
+		redo: 0
+	})
 	const shapeList = useRef<ShapeData[]>(
 		[
 			{
@@ -290,6 +295,8 @@ export function FullDemo() {
 					shapeOptions
 				}
 			},
+		}).on(EventBusEventName.history_change, (info: { undo: number, redo: number }) => {
+			setHistoryStackInfo(info)
 		})
 		// .addPlugin((imageMarkInstance) => {
 		// 	const shapePluginInstance = new ShapePlugin(imageMarkInstance, {
@@ -381,7 +388,7 @@ export function FullDemo() {
 		return () => {
 			imgMark.current?.destroy()
 		}
-	}, [shapeList.current, containerRef.current])
+	}, [])
 
 	const rectData = useRef<RectData | null>(null)
 
@@ -599,7 +606,31 @@ export function FullDemo() {
 						}}></Switch>
 					</OperateGroup>
 
+					<OperateGroup desc="History plugin">
+						<Space>
+							<Button.Group>
+								<Button type={historyStackInfo?.undo ? 'primary' : 'default'} onClick={() => {
+									const historyPlugin = imgMark?.current?.getHistoryPlugin()
+									historyPlugin?.undo()
+								}} icon={<IconUndo />} />
+								<Button type={historyStackInfo?.redo ? 'primary' : 'default'} onClick={() => {
+									const historyPlugin = imgMark?.current?.getHistoryPlugin()
+									historyPlugin?.redo()
+								}} icon={<IconRedo />} />
+							</Button.Group>
+							<Button.Group>
+								<Button type="default" onClick={() => {
+									const historyPlugin = imgMark?.current?.getHistoryPlugin()
+									historyPlugin?.clear()
+								}}>clear</Button>
 
+							</Button.Group>
+						</Space>
+						<Button type="default" onClick={() => {
+							const historyPlugin = imgMark?.current?.getHistoryPlugin()
+							console.log(historyPlugin)
+						}}>Console History Plugin</Button>
+					</OperateGroup>
 					<OperateGroup desc="Selection plugin">
 						<Button.Group>
 							<Button type="default" onClick={() => {

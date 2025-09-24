@@ -40,6 +40,7 @@ export const en = defineConfig({
 						text: 'Plugin Class', link: '/plugin-class', items: [
 							{ text: 'Shape', link: '/plugin/shape' },
 							{ text: 'Selection', link: '/plugin/selection' },
+							{ text: 'History', link: '/plugin/history' },
 						]
 					},
 					{

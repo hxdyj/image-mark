@@ -287,6 +287,13 @@ getShapePlugin(): ShapePlugin | null
 getSelectionPlugin(): SelectionPlugin | null
 ```
 
+### getHistoryPlugin
+
+```ts
+// 获取实例上的 `history` 插件实例
+getHistoryPlugin(): HistoryPlugin | null
+```
+
 ### setReadonly
 
 ```ts

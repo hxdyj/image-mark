@@ -25,7 +25,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     unbindEvent(): void;
     destroy(): void;
     onAdd(data: T, emit?: boolean): void;
-    protected onDelete(_data: T, shapeInstance?: ImageMarkShape): void;
+    onDelete(_data: T, shapeInstance?: ImageMarkShape): void;
     removeNode(data: T | ImageMarkShape<T>): void;
     removeNodes(dataList: T[] | ImageMarkShape<T>[]): void;
     protected tempData: T[] | null;

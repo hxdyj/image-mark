@@ -15,6 +15,7 @@ export declare class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
     mouseEvent2Data(options: MouseEvent2DataOptions): PolygonData | null;
     getEditPointClassName(className: number): string;
     drawEdit(): void;
+    onEndDrawing(): void;
     getEditShape(): Circle;
     getEditEventPointIndex(): any;
     getEditPoint(event: MouseEvent): {

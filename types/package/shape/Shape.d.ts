@@ -49,7 +49,6 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     isBindActions: boolean;
     static shapeName: string;
     imageMark: ImageMark;
-    uid: string;
     action: {
         [key: string]: Action;
     };
@@ -109,6 +108,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     static unuseDefaultAction(): void;
 }
 export interface ShapeData {
+    uuid?: string;
     shapeName: string;
     label?: string;
     [x: string]: any;

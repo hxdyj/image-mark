@@ -6,6 +6,7 @@ import { EventBindingThis } from './event/event';
 import { ShapePlugin } from './plugins/ShapePlugin';
 import { SelectionPlugin } from './plugins/SelectionPlugin';
 import { ImageMarkShape } from './shape';
+import { HistoryPlugin } from './plugins/HistoryPlugin';
 export type TransformStep = [MatrixAlias, boolean];
 export declare const POSITION_LIST: readonly ["left-top", "right-top", "left-bottom", "right-bottom", "top", "bottom", "left", "right", "center"];
 export type Position = typeof POSITION_LIST[number];
@@ -167,6 +168,7 @@ export declare class ImageMark extends EventBindingThis {
     protected autoSetReadonlyClassName(): void;
     setReadonly(readonly: boolean): void;
     getShapePlugin(): ShapePlugin | null;
+    getHistoryPlugin(): HistoryPlugin | null;
     getSelectionPlugin(): SelectionPlugin | null;
     addPlugin(plugin: typeof Plugin | PluginNewCall): this;
     removePlugin(plugin: typeof Plugin): this;

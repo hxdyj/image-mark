@@ -1,8 +1,9 @@
 import { G, MatrixExtract, Point, Shape } from "@svgdotjs/svg.js";
-import ImageMark, { ArrayPoint } from "..";
+import ImageMark, { ArrayPoint } from "../index";
 import { Action } from "./action";
 import { ImageMarkShape } from "../shape/Shape";
 import { uid } from "uid";
+import { EventBusEventName } from '../event/const';
 
 export type LmbMoveActionOptions = {
 	onStart?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
@@ -26,7 +27,7 @@ export class LmbMoveAction extends Action {
 
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: LmbMoveActionOptions) {
 		super(imageMark, shape, options)
-		this.uid = shape.uid + '_' + uid(6)
+		this.uid = shape.data.uuid + '_' + uid(6)
 
 		this.bindEventThis(['onMouseDown'])
 		this.bindEvents()
@@ -84,6 +85,7 @@ export class LmbMoveAction extends Action {
 		this.startPoint = this.imageMark.stageGroup.point(evt.clientX, evt.clientY)
 		this.startTransform = this.shape.shapeInstance.transform()
 		this.options?.onStart?.(this.imageMark, this.shape, evt)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_start_move, this.shape, this.imageMark)
 	}
 
 	onContainerMouseMove(event: MouseEvent) {
@@ -174,6 +176,7 @@ export class LmbMoveAction extends Action {
 
 		this.options?.onEnd?.(this.imageMark, this.shape, event)
 		this.imageMark.getShapePlugin()?.setHoldShape(null)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_end_move, this.shape, [e, f], this.imageMark)
 	}
 
 }

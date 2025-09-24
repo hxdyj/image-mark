@@ -17,7 +17,12 @@ export declare class EventBusEventName {
     static shape_end_drawing: string;
     static shape_after_render: string;
     static shape_plugin_set_data: string;
+    static shape_start_move: string;
+    static shape_end_move: string;
+    static shape_start_edit: string;
+    static shape_end_edit: string;
     static selection_select_list_change: string;
     static selection_action_click: string;
     static load_image_error: string;
+    static history_change: string;
 }

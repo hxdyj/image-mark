@@ -13,6 +13,7 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
     draw(): G;
     translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null;
+    onEndDrawing(): void;
     getEditPointClassName(className: number): string;
     drawEdit(): void;
     getEditShape(): Circle;

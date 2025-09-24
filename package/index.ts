@@ -13,6 +13,7 @@ import { SelectionPlugin } from "./plugins/SelectionPlugin";
 import './style.scss'
 import { DeepPartial } from "@arco-design/web-react/es/Form/store";
 import { ImageMarkShape } from "./shape";
+import { HistoryPlugin } from "./plugins/HistoryPlugin";
 export type TransformStep = [MatrixAlias, boolean]
 
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
@@ -485,11 +486,13 @@ export class ImageMark extends EventBindingThis {
 	static useDefaultPlugin() {
 		ImageMark.usePlugin(ShapePlugin)
 		ImageMark.usePlugin(SelectionPlugin)
+		ImageMark.usePlugin(HistoryPlugin)
 	}
 
 	static unuseDefaultPlugin() {
 		ImageMark.unusePlugin(ShapePlugin)
 		ImageMark.unusePlugin(SelectionPlugin)
+		ImageMark.unusePlugin(HistoryPlugin)
 	}
 
 	addDefaultAction() {
@@ -1286,6 +1289,10 @@ export class ImageMark extends EventBindingThis {
 
 	getShapePlugin(): ShapePlugin | null {
 		return this.plugin[ShapePlugin.pluginName] as ShapePlugin || null
+	}
+
+	getHistoryPlugin(): HistoryPlugin | null {
+		return this.plugin[HistoryPlugin.pluginName] as HistoryPlugin || null
 	}
 
 	getSelectionPlugin(): SelectionPlugin | null {

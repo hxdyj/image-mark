@@ -36,7 +36,7 @@ export class SelectionAction extends Action {
 	}
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: SelectionActionOptions) {
 		super(imageMark, shape, options)
-		this.uid = shape.uid + '_' + uid(6)
+		this.uid = shape.data.uuid + '_' + uid(6)
 		this.bindEventThis(['onMouseDown', 'onMouseUp', 'draw'])
 		this.bindEvents()
 		this.attr = defaultsDeep(this.options?.setAttr?.(this) || {}, this.attr)
