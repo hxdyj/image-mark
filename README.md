@@ -19,6 +19,10 @@
 
 - [传送门](https://image-mark.docs.wingblog.top/)
 
+## 预览
+
+![preview](https://image-mark.demo.wingblog.top/img/screenshot.png)
+
 ## License
 
 MIT。保留[`mark-img`](https://github.com/hxdyj/image-mark/blob/main/LICENSE)版权声明的情况下可随意商用。如不想保留可联系作者。

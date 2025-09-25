@@ -19,6 +19,10 @@
 
 - [Link](https://image-mark.docs.wingblog.top/en/)
 
+## Preview
+
+![preview](https://image-mark.demo.wingblog.top/img/screenshot.png)
+
 ## License
 
 MIT. Commercial use is permitted with the retention of the [`mark-img`](https://github.com/hxdyj/image-mark/blob/main/LICENSE) copyright notice. If you wish to remove the notice, please contact the author.

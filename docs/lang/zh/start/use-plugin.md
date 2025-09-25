@@ -5,7 +5,7 @@ footer: false
 
 # 如何使用插件
 
-ImageMark 会在导入的时候自动使用内置的 [`shape`](/api/plugin/shape) 和 [`selection`](/api/plugin/selection) 插件。如果不希望自动使用,可以使用[`useDefaultPlugin`](/api/constructor-methods#usedefaultplugin)方法取消。
+ImageMark 会在导入的时候自动使用内置的 [`shape`](/api/plugin/shape) 、 [`selection`](/api/plugin/selection) 、 [`history`](/api/plugin/history) 插件。如果不希望自动使用,可以使用[`unuseDefaultPlugin`](/api/constructor-methods#unusedefaultplugin)方法取消。
 
 ## 示例
 
