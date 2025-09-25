@@ -36,7 +36,9 @@ export declare class ShortcutPlugin extends Plugin {
     options?: DeepPartial<ShortcutPluginOptions> | undefined;
     static pluginName: string;
     constructor(imageMarkInstance: ImageMark, options?: DeepPartial<ShortcutPluginOptions> | undefined);
-    onContainerMouseDown(event: MouseEvent): void;
+    autoActived: boolean;
+    onContainerMouseOver(event: MouseEvent): void;
+    onContainerMouseLeave(event: MouseEvent): void;
     bindEvent(): void;
     unbindEvent(): void;
     getScopeName(): string;

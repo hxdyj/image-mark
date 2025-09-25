@@ -188,3 +188,17 @@ Events that an ImageMark instance can listen to
 // Triggered when the history state changes, such as after undo/redo operations
 (info: { undo: number, redo: number }, imgMark: ImageMark): void
 ```
+
+### container_context_menu
+
+```ts
+// Triggered when the container context menu is triggered
+(event:MouseEvent, imgMark: ImageMark): void
+```
+
+### shape_context_menu
+
+```ts
+// Triggered when the shape context menu is triggered
+(event:MouseEvent, shapeInstance:ImageMarkShape, imgMark: ImageMark): void
+```

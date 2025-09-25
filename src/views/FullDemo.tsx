@@ -81,6 +81,12 @@ export function FullDemo() {
 			},
 		}).on(EventBusEventName.history_change, (info: { undo: number, redo: number }) => {
 			setHistoryStackInfo(info)
+		}).on(EventBusEventName.shape_context_menu, (evt: MouseEvent, shape: ImageMarkShape) => {
+			evt.preventDefault()
+			console.log(shape)
+		}).on(EventBusEventName.container_context_menu, (evt: MouseEvent, imgMark: ImageMarkShape) => {
+			evt.preventDefault()
+			console.log(imgMark)
 		})
 		// .addPlugin((imageMarkInstance) => {
 		// 	const shapePluginInstance = new ShapePlugin(imageMarkInstance, {

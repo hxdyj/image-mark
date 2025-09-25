@@ -18,8 +18,8 @@
 - [x] editing status
 - [x] Shape add uuid
 - [x] operate history and undo redo
-- [ ] shortcut system
-- [ ] context menu support
+- [x] shortcut system
+- [x] context menu support
 - [ ] full demo ui
 - [ ] draw shape select inner shape
 - [ ] single/multiple select (delete can use del key)

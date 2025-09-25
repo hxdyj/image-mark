@@ -188,3 +188,17 @@ ImageMark 实例可以监听的事件
 // 历史记录状态改变时触发，如撤销/重做操作后
 (info: { undo: number, redo: number }, imgMark: ImageMark): void
 ```
+
+### container_context_menu
+
+```ts
+// 容器右键菜单触发时触发
+(event:MouseEvent, imgMark: ImageMark): void
+```
+
+### shape_context_menu
+
+```ts
+// shape 右键菜单触发时触发
+(event:MouseEvent, shapeInstance:ImageMarkShape, imgMark: ImageMark): void
+```

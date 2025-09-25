@@ -72,7 +72,7 @@ export class LmbMoveAction extends Action {
 
 	protected onMouseDown(event: Event) {
 		if (!this.getEnableMove() || this.imageMark?.options.readonly) {
-			this.imageMark.onComtainerLmbDownMoveingMouseDownEvent(event)
+			this.imageMark.onContainerLmbDownMoveingMouseDownEvent(event)
 			return
 		}
 		this.getShapePlugin()?.setHoldShape(this.shape)

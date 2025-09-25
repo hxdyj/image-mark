@@ -121,7 +121,7 @@ export class SelectionAction extends Action {
 
 	protected onMouseDown(event: Event) {
 		if (!this.getEnableSelection()) {
-			this.imageMark.onComtainerLmbDownMoveingMouseDownEvent(event)
+			this.imageMark.onContainerLmbDownMoveingMouseDownEvent(event)
 			return
 		}
 		if (this.imageMark.status.drawing) return

@@ -10,6 +10,7 @@ export declare class EventBusEventName {
     static container_drag_over: string;
     static container_drag_leave: string;
     static container_drop: string;
+    static container_context_menu: string;
     static shape_delete: string;
     static shape_delete_patch: string;
     static shape_delete_all: string;
@@ -17,6 +18,7 @@ export declare class EventBusEventName {
     static shape_end_drawing: string;
     static shape_after_render: string;
     static shape_plugin_set_data: string;
+    static shape_context_menu: string;
     static shape_start_move: string;
     static shape_end_move: string;
     static shape_start_edit: string;

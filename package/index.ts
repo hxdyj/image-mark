@@ -184,9 +184,10 @@ export class ImageMark extends EventBindingThis {
 
 		this.bindEventThis([
 			'onContainerWheel',
-			'onComtainerLmbDownMoveingMouseDownEvent',
-			'onComtainerLmbDownMoveingMouseUpEvent',
-			'onComtainerMouseWheelEvent',
+			'onContainerLmbDownMoveingMouseDownEvent',
+			'onContainerLmbDownMoveingMouseUpEvent',
+			'onContainerMouseWheelEvent',
+			'onContainerContextMenuEvent',
 
 			'onContainerDragEnterEvent',
 			'onContainerDragLeaveEvent',
@@ -552,6 +553,7 @@ export class ImageMark extends EventBindingThis {
 		this.container.addEventListener('dragover', this.onContainerDragOverEvent)
 		this.container.addEventListener('dragleave', this.onContainerDragLeaveEvent)
 		this.container.addEventListener('drop', this.onContainerDropEvent)
+		this.container.addEventListener('contextmenu', this.onContainerContextMenuEvent)
 
 		this.containerResizeObserver.observe(this.container)
 
@@ -566,6 +568,7 @@ export class ImageMark extends EventBindingThis {
 		this.container.removeEventListener('dragover', this.onContainerDragOverEvent)
 		this.container.removeEventListener('dragleave', this.onContainerDragLeaveEvent)
 		this.container.removeEventListener('drop', this.onContainerDropEvent)
+		this.container.removeEventListener('contextmenu', this.onContainerContextMenuEvent)
 
 		this.containerResizeObserver.disconnect()
 
@@ -574,8 +577,12 @@ export class ImageMark extends EventBindingThis {
 		return this
 	}
 
+	onContainerContextMenuEvent(e: Event) {
+		this.eventBus.emit(EventBusEventName.container_context_menu, e, this)
+	}
 
-	onComtainerLmbDownMoveingMouseDownEvent(e: Event) {
+
+	onContainerLmbDownMoveingMouseDownEvent(e: Event) {
 		e.preventDefault()
 		let ev = e as MouseEvent
 		if (ev.button === 0) {
@@ -583,7 +590,7 @@ export class ImageMark extends EventBindingThis {
 		}
 	}
 
-	protected onComtainerLmbDownMoveingMouseMoveEvent = throttle((e: Event) => {
+	protected onContainerLmbDownMoveingMouseMoveEvent = throttle((e: Event) => {
 		let ev = e as MouseEvent
 		if (ev.button === 0 && this.status.moving && this.movingStartPoint) {
 			const { x, y } = this.stage.point(ev.clientX, ev.clientY)
@@ -594,7 +601,7 @@ export class ImageMark extends EventBindingThis {
 		trailing: true
 	})
 
-	protected onComtainerLmbDownMoveingMouseUpEvent(e: Event) {
+	protected onContainerLmbDownMoveingMouseUpEvent(e: Event) {
 		let ev = e as MouseEvent
 		if (ev.button === 0 && this.status.moving && this.movingStartPoint) {
 			this.endSuccessiveMove()
@@ -602,32 +609,32 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	addStageLmbDownMoveing() {
-		this.container.addEventListener('mousedown', this.onComtainerLmbDownMoveingMouseDownEvent)
-		document.addEventListener('mousemove', this.onComtainerLmbDownMoveingMouseMoveEvent)
-		document.addEventListener('mouseup', this.onComtainerLmbDownMoveingMouseUpEvent)
+		this.container.addEventListener('mousedown', this.onContainerLmbDownMoveingMouseDownEvent)
+		document.addEventListener('mousemove', this.onContainerLmbDownMoveingMouseMoveEvent)
+		document.addEventListener('mouseup', this.onContainerLmbDownMoveingMouseUpEvent)
 		return this
 	}
 
 	removeStageLmbDownMoveing() {
-		this.container.removeEventListener('mousedown', this.onComtainerLmbDownMoveingMouseDownEvent)
-		document.removeEventListener('mousemove', this.onComtainerLmbDownMoveingMouseMoveEvent)
-		document.removeEventListener('mouseup', this.onComtainerLmbDownMoveingMouseUpEvent)
+		this.container.removeEventListener('mousedown', this.onContainerLmbDownMoveingMouseDownEvent)
+		document.removeEventListener('mousemove', this.onContainerLmbDownMoveingMouseMoveEvent)
+		document.removeEventListener('mouseup', this.onContainerLmbDownMoveingMouseUpEvent)
 		return this
 	}
 
-	protected onComtainerMouseWheelEvent(ev: Event) {
+	protected onContainerMouseWheelEvent(ev: Event) {
 		let e = ev as WheelEvent
 		const imagePoint = this.image.point(e.clientX, e.clientY)
 		this.scale(e.deltaY < 0 ? 1 : -1, [imagePoint.x, imagePoint.y], 'image')
 	}
 
 	addStageMouseScale() {
-		this.stage.on('wheel', this.onComtainerMouseWheelEvent)
+		this.stage.on('wheel', this.onContainerMouseWheelEvent)
 		return this
 	}
 
 	removeStageMouseScale() {
-		this.stage.off('wheel', this.onComtainerMouseWheelEvent)
+		this.stage.off('wheel', this.onContainerMouseWheelEvent)
 		return this
 	}
 

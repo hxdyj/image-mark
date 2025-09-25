@@ -102,24 +102,36 @@ export class ShortcutPlugin extends Plugin {
 	constructor(imageMarkInstance: ImageMark, public options?: DeepPartial<ShortcutPluginOptions>) {
 		super(imageMarkInstance)
 		this.bindEventThis([
-			'onContainerMouseDown'
+			'onContainerMouseOver',
+			'onContainerMouseLeave',
 		])
 		this.bindEvent()
 		this.bindKeyMap()
 	}
 
-	onContainerMouseDown(event: MouseEvent) {
+	autoActived = false
+
+	onContainerMouseOver(event: MouseEvent) {
+		if (this.autoActived) return
 		this.activeScope()
+		this.autoActived = true
+	}
+
+	onContainerMouseLeave(event: MouseEvent) {
+		hotkeys.setScope('')
+		this.autoActived = false
 	}
 
 	bindEvent() {
 		super.bindEvent()
-		this.imageMark.container.addEventListener('mousedown', this.onContainerMouseDown)
+		this.imageMark.container.addEventListener('mouseover', this.onContainerMouseOver)
+		this.imageMark.container.addEventListener('mouseleave', this.onContainerMouseLeave)
 	}
 
 	unbindEvent() {
 		super.unbindEvent()
-		this.imageMark.container.removeEventListener('mousedown', this.onContainerMouseDown)
+		this.imageMark.container.removeEventListener('mouseover', this.onContainerMouseOver)
+		this.imageMark.container.removeEventListener('mouseleave', this.onContainerMouseLeave)
 	}
 
 	getScopeName() {
@@ -248,6 +260,9 @@ export class ShortcutPlugin extends Plugin {
 
 	unbindKeyMap() {
 		hotkeys.deleteScope(this.getScopeName())
+		if (hotkeys.getScope() == this.getScopeName()) {
+			hotkeys.setScope('')
+		}
 	}
 
 	getOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions {

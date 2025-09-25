@@ -105,9 +105,19 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 		this.bindEventThis([
 			'startEditShape',
-			'endEditShape'
+			'endEditShape',
+			'onContextMenu'
 		])
+		this.bindEvent()
 		this.draw()
+	}
+
+	bindEvent() {
+		this.shapeInstance.on('contextmenu', this.onContextMenu)
+	}
+
+	unbindEvent() {
+		this.shapeInstance.off('contextmenu', this.onContextMenu)
 	}
 
 	abstract draw(): G;
@@ -269,6 +279,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 	destroy() {
+		this.unbindEvent()
 		this.shapeInstance.remove()
 		this.isRendered = false
 		Object.values(this.action).forEach(action => {
@@ -391,6 +402,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 			strokeColor,
 			optimalStrokeColor,
 		}
+	}
+
+	onContextMenu(event: Event) {
+		this.imageMark.eventBus.emit(EventBusEventName.shape_context_menu, event, this, this.imageMark)
 	}
 
 	static useDefaultAction() {

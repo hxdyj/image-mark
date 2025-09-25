@@ -54,6 +54,8 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     };
     attr: ShapeAttr;
     constructor(data: T, imageMarkInstance: ImageMark, options?: ShapeOptions | undefined);
+    bindEvent(): void;
+    unbindEvent(): void;
     abstract draw(): G;
     protected drawFuncList: ShapeDrawFunc[];
     drawLabel(): void;
@@ -104,6 +106,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
         strokeColor: string;
         optimalStrokeColor: string;
     };
+    onContextMenu(event: Event): void;
     static useDefaultAction(): void;
     static unuseDefaultAction(): void;
 }
