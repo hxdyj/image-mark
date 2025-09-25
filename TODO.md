@@ -18,12 +18,13 @@
 - [x] editing status
 - [x] Shape add uuid
 - [x] operate history and undo redo
+- [ ] shortcut system
+- [ ] context menu support
+- [ ] full demo ui
 - [ ] draw shape select inner shape
 - [ ] single/multiple select (delete can use del key)
-- [ ] context menu support
 - [ ] mini map
 - [ ] move action add mode to holder and custom holder ui
-- [ ] shortcut system
 - [ ] mask base image support
 - [ ] mobile support
 - [ ] docs

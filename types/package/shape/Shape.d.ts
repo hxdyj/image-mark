@@ -43,7 +43,7 @@ export type EditPointItem<T extends string | number = string | number> = {
 };
 export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends EventBindingThis {
     data: T;
-    options: ShapeOptions;
+    options?: ShapeOptions | undefined;
     shapeInstance: G;
     isRendered: boolean;
     isBindActions: boolean;
@@ -53,7 +53,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
         [key: string]: Action;
     };
     attr: ShapeAttr;
-    constructor(data: T, imageMarkInstance: ImageMark, options: ShapeOptions);
+    constructor(data: T, imageMarkInstance: ImageMark, options?: ShapeOptions | undefined);
     abstract draw(): G;
     protected drawFuncList: ShapeDrawFunc[];
     drawLabel(): void;

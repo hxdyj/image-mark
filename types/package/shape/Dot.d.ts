@@ -9,7 +9,7 @@ export interface DotData extends ShapeData {
 }
 export declare class ImageMarkDot extends ImageMarkShape<DotData> {
     static shapeName: string;
-    constructor(data: DotData, imageMarkInstance: ImageMark, options: ShapeOptions);
+    constructor(data: DotData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     drawEdit(): void;
     translate(x: number, y: number): void;

@@ -10,7 +10,7 @@ export interface LineData extends ShapeData {
 }
 export declare class ImageMarkLine extends ImageMarkShape<LineData> {
     static shapeName: string;
-    constructor(data: LineData, imageMarkInstance: ImageMark, options: ShapeOptions);
+    constructor(data: LineData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): LineData | null;

@@ -13,7 +13,7 @@ export type RectEditPointClassName = 'tl' | 't' | 'tr' | 'b' | 'bl' | 'br' | 'l'
 export type RectEditPointItem = EditPointItem<RectEditPointClassName>;
 export declare class ImageMarkRect extends ImageMarkShape<RectData> {
     static shapeName: string;
-    constructor(data: RectData, imageMarkInstance: ImageMark, options: ShapeOptions);
+    constructor(data: RectData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): RectData | null;

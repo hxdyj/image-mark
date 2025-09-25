@@ -10,7 +10,7 @@ export interface PathLineData extends ShapeData {
 export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 	static shapeName = "pathline"
 
-	constructor(data: PathLineData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+	constructor(data: PathLineData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
 

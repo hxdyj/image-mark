@@ -13,7 +13,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 	static shapeName = "polyline"
 	readonly mouseDrawType: ShapeMouseDrawType = 'multiPress'
 
-	constructor(data: PolyLineData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+	constructor(data: PolyLineData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
 

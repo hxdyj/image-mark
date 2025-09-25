@@ -12,7 +12,7 @@ export type CircleEditPointClassName = Extract<RectEditPointClassName, 'tl' | 't
 export type CircleEditPointItem = EditPointItem<CircleEditPointClassName>;
 export declare class ImageMarkCircle extends ImageMarkShape<CircleData> {
     static shapeName: string;
-    constructor(data: CircleData, imageMarkInstance: ImageMark, options: ShapeOptions);
+    constructor(data: CircleData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     readonly drawType = "centerR";
     draw(): G;
     translate(x: number, y: number): void;

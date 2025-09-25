@@ -9,7 +9,7 @@ export interface PolygonData extends ShapeData {
 export declare class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
     static shapeName: string;
     readonly mouseDrawType: ShapeMouseDrawType;
-    constructor(data: PolygonData, imageMarkInstance: ImageMark, options: ShapeOptions);
+    constructor(data: PolygonData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PolygonData | null;

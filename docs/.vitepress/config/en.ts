@@ -41,6 +41,7 @@ export const en = defineConfig({
 							{ text: 'Shape', link: '/plugin/shape' },
 							{ text: 'Selection', link: '/plugin/selection' },
 							{ text: 'History', link: '/plugin/history' },
+							{ text: 'Shortcut', link: '/plugin/shortcut' },
 						]
 					},
 					{

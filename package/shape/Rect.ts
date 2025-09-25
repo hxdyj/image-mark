@@ -31,11 +31,9 @@ export type RectEditPointItem = EditPointItem<RectEditPointClassName>
 
 export class ImageMarkRect extends ImageMarkShape<RectData> {
 	static shapeName = "rect"
-	constructor(data: RectData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+	constructor(data: RectData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
-
-
 
 	draw(): G {
 		const { x, y, width, height } = this.data

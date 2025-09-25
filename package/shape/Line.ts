@@ -13,7 +13,7 @@ export interface LineData extends ShapeData {
 
 export class ImageMarkLine extends ImageMarkShape<LineData> {
 	static shapeName = "line"
-	constructor(data: LineData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+	constructor(data: LineData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
 

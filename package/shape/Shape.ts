@@ -86,7 +86,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		}
 	}
 
-	constructor(public data: T, imageMarkInstance: ImageMark, public options: ShapeOptions) {
+	constructor(public data: T, imageMarkInstance: ImageMark, public options?: ShapeOptions) {
 		super()
 		const constructor = this.constructor
 		// @ts-ignore
@@ -100,8 +100,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		group.id(this.data.uuid)
 		group.addClass(`shape-${this.data.shapeName}`)
 		this.shapeInstance = group
-		this.attr = defaultsDeep(this.options.setAttr?.(this) || {}, this.attr)
-		this.options.initDrawFunc && this.addDrawFunc(this.options.initDrawFunc)
+		this.attr = defaultsDeep(this.options?.setAttr?.(this) || {}, this.attr)
+		this.options?.initDrawFunc && this.addDrawFunc(this.options.initDrawFunc)
 
 		this.bindEventThis([
 			'startEditShape',

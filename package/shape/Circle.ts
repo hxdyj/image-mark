@@ -15,7 +15,7 @@ export type CircleEditPointItem = EditPointItem<CircleEditPointClassName>
 
 export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	static shapeName = "circle"
-	constructor(data: CircleData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+	constructor(data: CircleData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
 

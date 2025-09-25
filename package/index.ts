@@ -14,6 +14,7 @@ import './style.scss'
 import { DeepPartial } from "@arco-design/web-react/es/Form/store";
 import { ImageMarkShape } from "./shape";
 import { HistoryPlugin } from "./plugins/HistoryPlugin";
+import { ShortcutPlugin } from "./plugins/ShortcutPlugin";
 export type TransformStep = [MatrixAlias, boolean]
 
 export const POSITION_LIST = ['left-top', 'right-top', 'left-bottom', 'right-bottom', 'top', 'bottom', 'left', 'right', 'center'] as const
@@ -487,12 +488,14 @@ export class ImageMark extends EventBindingThis {
 		ImageMark.usePlugin(ShapePlugin)
 		ImageMark.usePlugin(SelectionPlugin)
 		ImageMark.usePlugin(HistoryPlugin)
+		ImageMark.usePlugin(ShortcutPlugin)
 	}
 
 	static unuseDefaultPlugin() {
 		ImageMark.unusePlugin(ShapePlugin)
 		ImageMark.unusePlugin(SelectionPlugin)
 		ImageMark.unusePlugin(HistoryPlugin)
+		ImageMark.unusePlugin(ShortcutPlugin)
 	}
 
 	addDefaultAction() {

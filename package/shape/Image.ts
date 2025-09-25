@@ -14,7 +14,7 @@ export interface ImageData extends ShapeData {
 }
 export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	static shapeName = 'image'
-	constructor(data: ImageData, imageMarkInstance: ImageMark, options: ShapeOptions) {
+	constructor(data: ImageData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
 
