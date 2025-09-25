@@ -45,6 +45,7 @@ export type ShortcutKeyMap = {
 }
 
 export type ShortcutPluginOptions = {
+	autoActive: boolean // Whether to automatically activate the shortcut scope, default is true
 	keyMap: ShortcutKeyMap
 }
 ```

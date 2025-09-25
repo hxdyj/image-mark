@@ -30,6 +30,7 @@ export type ShortcutKeyMap = {
     redo: ShortKeyValue;
 };
 export type ShortcutPluginOptions = {
+    autoActive: boolean;
     keyMap: ShortcutKeyMap;
 };
 export declare class ShortcutPlugin extends Plugin {

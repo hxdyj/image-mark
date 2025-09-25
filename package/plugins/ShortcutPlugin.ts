@@ -39,11 +39,13 @@ export type ShortcutKeyMap = {
 }
 
 export type ShortcutPluginOptions = {
+	autoActive: boolean
 	keyMap: ShortcutKeyMap
 }
 
 
 const defaultShortcutPluginOptions: ShortcutPluginOptions = {
+	autoActive: true,
 	keyMap: {
 		delete_shape: {
 			keyName: 'backspace',
@@ -112,12 +114,16 @@ export class ShortcutPlugin extends Plugin {
 	autoActived = false
 
 	onContainerMouseOver(event: MouseEvent) {
+		const { autoActive } = this.getOptions()
+		if (!autoActive) return
 		if (this.autoActived) return
 		this.activeScope()
 		this.autoActived = true
 	}
 
 	onContainerMouseLeave(event: MouseEvent) {
+		const { autoActive } = this.getOptions()
+		if (!autoActive) return
 		hotkeys.setScope('')
 		this.autoActived = false
 	}

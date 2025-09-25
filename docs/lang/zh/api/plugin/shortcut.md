@@ -45,6 +45,7 @@ export type ShortcutKeyMap = {
 }
 
 export type ShortcutPluginOptions = {
+	autoActive: boolean // 是否自动激活快捷键作用域，默认为 true
 	keyMap: ShortcutKeyMap
 }
 ```
