@@ -88,7 +88,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		actionNameList.forEach(item => this.disableActionList.delete(item))
 	}
 
-	protected addNode(node: T) {
+	protected renderNewNode(node: T) {
 		if (!this.node2ShapeInstanceWeakMap.has(node)) {
 			let shape = null
 			const shapeInfo = this.shape[node.shapeName]
@@ -108,7 +108,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	protected createShape() {
 		this.data.forEach(node => {
-			this.addNode(node)
+			this.renderNewNode(node)
 		})
 	}
 
@@ -161,13 +161,19 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		super.destroy()
 	}
 
-	onAdd(data: T, emit = true) {
-		this.data.push(data)
-		this.addNode(data)
-		this.renderNode(data)
-		if (emit) {
-			this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.getInstanceByData(data))
+	addNode(data: T, emit = true) {
+		if (data instanceof ImageMarkShape) {
+			data = data.data
 		}
+		this.data.push(data)
+		this.renderNewNode(data)
+		this.renderNode(data)
+		emit && this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.getInstanceByData(data))
+	}
+
+	addNodes(dataList: T[], emit = true) {
+		dataList.forEach(item => this.addNode(item, false))
+		emit && this.imageMark.eventBus.emit(EventBusEventName.shape_add_patch, dataList, this.imageMark)
 	}
 
 	onDelete(_data: T, shapeInstance?: ImageMarkShape) {
@@ -184,16 +190,16 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	removeNode(data: T | ImageMarkShape<T>) {
+	removeNode(data: T | ImageMarkShape<T>, emit = true) {
 		const instance = data instanceof ImageMarkShape ? data : this.getInstanceByData(data) as ImageMarkShape<T>
 		if (!instance) return
 		this.onDelete(instance.data)
-		this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data, instance, this.imageMark)
+		emit && this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data instanceof ImageMarkShape ? data.data : data, instance, this.imageMark)
 	}
 
-	removeNodes(dataList: T[] | ImageMarkShape<T>[]) {
-		dataList.forEach(item => this.removeNode(item instanceof ImageMarkShape ? item.data : item))
-		this.imageMark.eventBus.emit(EventBusEventName.shape_delete_patch, dataList, this.imageMark)
+	removeNodes(dataList: T[] | ImageMarkShape<T>[], emit = true) {
+		dataList.forEach(item => this.removeNode(item instanceof ImageMarkShape ? item.data : item, false))
+		emit && this.imageMark.eventBus.emit(EventBusEventName.shape_delete_patch, dataList.map(i => i instanceof ImageMarkShape ? i.data : i), this.imageMark)
 	}
 
 	protected tempData: T[] | null = null
@@ -342,7 +348,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		const shapeData = cloneDeep(this.drawingShape.data)
 		this.drawingShape.destroy()
 		if (!cancel) {
-			this.onAdd(shapeData, true)
+			this.addNode(shapeData)
 		}
 		this.drawingShape = null
 		this.imageMark.status.drawing = null

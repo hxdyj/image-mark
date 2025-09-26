@@ -99,7 +99,7 @@ export class ImageMarkManager {
 }
 
 export const imageMarkManager = new ImageMarkManager()
-
+export const imageMarkGlobalEventBus = new EventEmitter()
 export type ImageMarkStatus = {
 	scaling: boolean
 	moving: boolean
@@ -145,9 +145,9 @@ export class ImageMark extends EventBindingThis {
 	maxScale = 10
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
+	globalEventBus = imageMarkGlobalEventBus
 	private destroyed = false
 	createTime: number = Date.now()
-
 
 
 	constructor(public options: ImageMarkOptions) {

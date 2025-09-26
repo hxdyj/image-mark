@@ -44,8 +44,10 @@ const shapeOptions: ShapeOptions = {
 					fill: 'black'
 				}
 			},
-			stroke: {
-				color: '#FF7D00',
+			auxiliary: {
+				stroke: {
+					color: '#FADC19',
+				}
 			}
 		}
 	},
@@ -251,7 +253,7 @@ export function FullDemo() {
 									y: 0,
 									r: 0
 								}
-								const circleInstance = new ImageMarkCircle(circleData, imgMark.current!, {})
+								const circleInstance = new ImageMarkCircle(circleData, imgMark.current!, shapeOptions)
 								shapePlugin.startDrawing(circleInstance)
 							}}>
 								Circle
@@ -302,7 +304,7 @@ export function FullDemo() {
 									shapeName: 'polygon',
 									points: []
 								}
-								const lineInstance = new ImageMarkPolygon(polygonData, imgMark.current!, {})
+								const lineInstance = new ImageMarkPolygon(polygonData, imgMark.current!, shapeOptions)
 								shapePlugin.startDrawing(lineInstance)
 							}}>
 								Polygon Start

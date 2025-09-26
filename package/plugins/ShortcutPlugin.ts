@@ -1,8 +1,22 @@
-import ImageMark, { ImageMarkCircle, ImageMarkDot, ImageMarkLine, ImageMarkPathLine, ImageMarkPolygon, ImageMarkPolyLine, ImageMarkRect, LmbMoveAction } from "../index";
+import ImageMark, { ImageMarkCircle, ImageMarkDot, imageMarkGlobalEventBus, ImageMarkLine, ImageMarkPathLine, ImageMarkPolygon, ImageMarkPolyLine, ImageMarkRect, LmbMoveAction } from "../index";
 import { Plugin } from "./plugin";
 import { defaultsDeep } from "lodash-es";
 import hotkeys from "hotkeys-js";
 import { DeepPartial } from 'utility-types';
+import { GlobalEventBusEventName } from "../event/const";
+
+let imageMarkHotkeys = new Proxy(hotkeys, {
+	get(target, prop, receiver) {
+		if (prop === 'setScope') {
+			return (scopeName: string) => {
+				target.setScope.call(receiver, scopeName)
+				const currentScopeName = imageMarkHotkeys.getScope()
+				imageMarkGlobalEventBus.emit(GlobalEventBusEventName.shortcut_auto_active, currentScopeName)
+			}
+		}
+		return Reflect.get(target, prop, receiver)
+	}
+})
 
 export type ShortKeyValue = {
 	keyName: string
@@ -105,7 +119,7 @@ export class ShortcutPlugin extends Plugin {
 		super(imageMarkInstance)
 		this.bindEventThis([
 			'onContainerMouseOver',
-			'onContainerMouseLeave',
+			'onShortcutAutoActive'
 		])
 		this.bindEvent()
 		this.bindKeyMap()
@@ -119,25 +133,25 @@ export class ShortcutPlugin extends Plugin {
 		if (this.autoActived) return
 		this.activeScope()
 		this.autoActived = true
+		console.log('auto active scope', this.getScopeName())
 	}
 
-	onContainerMouseLeave(event: MouseEvent) {
-		const { autoActive } = this.getOptions()
-		if (!autoActive) return
-		hotkeys.setScope('')
-		this.autoActived = false
+	onShortcutAutoActive(scopeName: string) {
+		if (scopeName !== this.getScopeName()) {
+			this.autoActived = false
+		}
 	}
 
 	bindEvent() {
 		super.bindEvent()
 		this.imageMark.container.addEventListener('mouseover', this.onContainerMouseOver)
-		this.imageMark.container.addEventListener('mouseleave', this.onContainerMouseLeave)
+		this.imageMark.globalEventBus.on(GlobalEventBusEventName.shortcut_auto_active, this.onShortcutAutoActive)
 	}
 
 	unbindEvent() {
 		super.unbindEvent()
 		this.imageMark.container.removeEventListener('mouseover', this.onContainerMouseOver)
-		this.imageMark.container.removeEventListener('mouseleave', this.onContainerMouseLeave)
+		this.imageMark.globalEventBus.off(GlobalEventBusEventName.shortcut_auto_active, this.onShortcutAutoActive)
 	}
 
 	getScopeName() {
@@ -145,20 +159,18 @@ export class ShortcutPlugin extends Plugin {
 	}
 
 	activeScope() {
-		hotkeys.setScope(this.getScopeName())
+		imageMarkHotkeys.setScope(this.getScopeName())
 	}
 
 	eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent) {
 		const handler = {
 			delete_shape: (event: KeyboardEvent) => {
 				const list = this.imageMark.getSelectionPlugin()?.selectShapeList ?? []
-				list.forEach(item => {
-					this.imageMark.getShapePlugin()?.onDelete(item.data)
-				})
+				this.imageMark.getShapePlugin()?.removeNodes(list)
 			},
 			delete_all_shape: (event: KeyboardEvent) => {
 				event.preventDefault()
-				this.imageMark.getShapePlugin()?.clear()
+				this.imageMark.getShapePlugin()?.removeAllNodes()
 			},
 			move_mode: (event: KeyboardEvent) => {
 				event.preventDefault()
@@ -255,7 +267,7 @@ export class ShortcutPlugin extends Plugin {
 	bindKeyMap(options?: DeepPartial<ShortcutPluginOptions>) {
 		const keyMap = this.getOptions(options).keyMap
 		Object.entries(keyMap).forEach(([key, value]) => {
-			hotkeys(value.keyName, {
+			imageMarkHotkeys(value.keyName, {
 				...value.hotkeyOptions,
 				scope: this.getScopeName(),
 			}, e => {
@@ -265,9 +277,9 @@ export class ShortcutPlugin extends Plugin {
 	}
 
 	unbindKeyMap() {
-		hotkeys.deleteScope(this.getScopeName())
-		if (hotkeys.getScope() == this.getScopeName()) {
-			hotkeys.setScope('')
+		imageMarkHotkeys.deleteScope(this.getScopeName())
+		if (imageMarkHotkeys.getScope() == this.getScopeName()) {
+			imageMarkHotkeys.setScope('')
 		}
 	}
 

@@ -72,6 +72,10 @@ export type ImageMarkStatus = {
 
 当前实例的事件总线对象
 
+### globalEventBus
+
+ImageMark 全局事件总线
+
 ### createTime
 
 当前实例的创建时间

@@ -67,7 +67,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	attr: ShapeAttr = {
 		stroke: {
 			width: 10,
-			color: '#FADC19'
+			// color: '#FADC19'
+			color: '#FF7D00'
 		},
 		auxiliary: {
 			stroke: {

@@ -72,6 +72,10 @@ The starting point of the canvas move for the current instance
 
 The event bus object of the current instance
 
+### globalEventBus
+
+ImageMark global event bus
+
 ### createTime
 
 The creation time of the current instance

@@ -3,7 +3,7 @@ layout: doc
 footer: false
 ---
 
-## 事件
+## 实例事件
 
 ImageMark 实例可以监听的事件
 
@@ -201,4 +201,13 @@ ImageMark 实例可以监听的事件
 ```ts
 // shape 右键菜单触发时触发
 (event:MouseEvent, shapeInstance:ImageMarkShape, imgMark: ImageMark): void
+```
+
+## 全局事件
+
+### shortcut_auto_active
+
+```ts
+// 快捷操作自动激活时触发
+(scopeName:string): void
 ```

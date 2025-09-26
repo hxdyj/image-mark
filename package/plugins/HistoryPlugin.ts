@@ -17,6 +17,8 @@ export class HistoryPlugin extends Plugin {
 		this.bindEventThis([
 			'onShapeAdd',
 			'onShapeDelete',
+			'onShapeDeletePatch',
+			//TODO(): delete all
 			'onShapeStartMove',
 			'onShapeEndMove',
 			'onShapeStartEdit',
@@ -38,6 +40,7 @@ export class HistoryPlugin extends Plugin {
 		this.imageMark.on(EventBusEventName.shape_end_move, this.onShapeEndMove)
 		this.imageMark.on(EventBusEventName.shape_add, this.onShapeAdd)
 		this.imageMark.on(EventBusEventName.shape_delete, this.onShapeDelete)
+		this.imageMark.on(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
 		this.imageMark.on(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
 		this.imageMark.on(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
 	}
@@ -48,6 +51,7 @@ export class HistoryPlugin extends Plugin {
 		this.imageMark.off(EventBusEventName.shape_end_move, this.onShapeEndMove)
 		this.imageMark.off(EventBusEventName.shape_add, this.onShapeAdd)
 		this.imageMark.off(EventBusEventName.shape_delete, this.onShapeDelete)
+		this.imageMark.off(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
 		this.imageMark.off(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
 		this.imageMark.off(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
 	}
@@ -90,8 +94,13 @@ export class HistoryPlugin extends Plugin {
 
 
 	onShapeDelete(data: ShapeData) {
-		this.push(new ShapeExistHistory(data, undefined))
+		this.push(new ShapeExistHistory(data))
 	}
+
+	onShapeDeletePatch(dataList: ShapeData[]) {
+		this.push(new ShapePatchExistHistory(dataList))
+	}
+
 
 	onShapeStartMove(shape: ImageMarkShape) {
 		this.tmpHistory = new ShapeEditHistory(shape.data)
@@ -175,18 +184,42 @@ export class ShapeExistHistory extends History<ShapeData> {
 	}
 	undo(imageMark: ImageMark): void {
 		if (this.oldData) {
-			imageMark.getShapePlugin()?.onAdd(this.oldData, false)
+			imageMark.getShapePlugin()?.addNode(this.oldData, false)
 		}
 		if (this.newData) {
-			imageMark.getShapePlugin()?.onDelete(this.newData)
+			imageMark.getShapePlugin()?.removeNode(this.newData, false)
 		}
 	}
 	redo(imageMark: ImageMark): void {
 		if (this.oldData) {
-			imageMark.getShapePlugin()?.onDelete(this.oldData)
+			imageMark.getShapePlugin()?.removeNode(this.oldData, false)
 		}
 		if (this.newData) {
-			imageMark.getShapePlugin()?.onAdd(this.newData, false)
+			imageMark.getShapePlugin()?.addNode(this.newData, false)
+		}
+	}
+}
+
+export class ShapePatchExistHistory extends History<ShapeData[]> {
+	static operate = 'patch_exist'
+	constructor(oldData?: ShapeData[], newData?: ShapeData[]) {
+		super(oldData, newData)
+	}
+	undo(imageMark: ImageMark): void {
+		if (this.oldData) {
+			imageMark.getShapePlugin()?.addNodes(this.oldData, false)
+			debugger
+		}
+		if (this.newData) {
+			imageMark.getShapePlugin()?.removeNodes(this.newData, false)
+		}
+	}
+	redo(imageMark: ImageMark): void {
+		if (this.oldData) {
+			imageMark.getShapePlugin()?.removeNodes(this.oldData, false)
+		}
+		if (this.newData) {
+			imageMark.getShapePlugin()?.addNodes(this.newData, false)
 		}
 	}
 }

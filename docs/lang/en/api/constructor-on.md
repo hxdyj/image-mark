@@ -3,7 +3,7 @@ layout: doc
 footer: false
 ---
 
-## Events
+## Instance Events
 
 Events that an ImageMark instance can listen to
 
@@ -201,4 +201,13 @@ Events that an ImageMark instance can listen to
 ```ts
 // Triggered when the shape context menu is triggered
 (event:MouseEvent, shapeInstance:ImageMarkShape, imgMark: ImageMark): void
+```
+
+## Global Events
+
+### shortcut_auto_active
+
+```ts
+// Triggered when the shortcut operation automatically activates
+(scopeName:string): void
 ```

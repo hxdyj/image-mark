@@ -12,6 +12,7 @@ import { SvgMaskDemo } from '../views/test/SvgMaskDemo'
 import { FullDemo } from '../views/FullDemo'
 import { SvgNestGroupTransform } from '../views/test/SvgNestGroupTransform'
 import { SvgNestDemo } from '../views/test/SvgNestDemo'
+import { BeautifulPresentation } from '../views/BeautifulPresentation'
 
 interface CustomRouteFields {
 	meta?: {
@@ -41,6 +42,15 @@ export const routes: IRoute[] = [
 		element: <App />,
 		errorElement: <AppError />,
 		children: [
+			{
+				path: '/beautiful-presentation',
+				element: <BeautifulPresentation />,
+				meta: {
+					title: 'BeautifulPresentation',
+					menuShow: false,
+					noLogin: false,
+				},
+			},
 			{
 				path: '/full',
 				element: <FullDemo />,
