@@ -101,8 +101,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		group.id(this.data.uuid)
 		group.addClass(`shape-${this.data.shapeName}`)
 		this.shapeInstance = group
-		this.attr = defaultsDeep(this.options?.setAttr?.(this) || {}, this.attr)
-		this.options?.initDrawFunc && this.addDrawFunc(this.options.initDrawFunc)
+
+		const finalOptions = this.getOptions()
+		this.attr = defaultsDeep(finalOptions?.setAttr?.(this) || {}, this.attr)
+		finalOptions?.initDrawFunc && this.addDrawFunc(finalOptions.initDrawFunc)
 
 		this.bindEventThis([
 			'startEditShape',
@@ -111,6 +113,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		])
 		this.bindEvent()
 		this.draw()
+	}
+
+	getOptions(options?: ShapeOptions): ShapeOptions {
+		return defaultsDeep(options, this.options, this.imageMark.getShapePlugin()?.getShapeOptions() || {})
 	}
 
 	bindEvent() {
