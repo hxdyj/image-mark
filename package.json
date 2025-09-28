@@ -22,6 +22,7 @@
 	"description": "一个框架无关的JS图片标注库，支持多种标注方式，包括矩形、圆、多边形、直线、图片、Path等。This JS library is a framework-agnostic image annotation tool that supports customization through a plugin system. It allows developers to integrate and extend functionality easily without altering the core library code.",
 	"scripts": {
 		"dev": "vite --mode development --force",
+		"dev:vue": "vite --mode development --config vite.vue.config.ts --force",
 		"build": "vite build -c vite.lib.config.ts",
 		"build-web": "pnpm run build-demo && pnpm run docs:build",
 		"build-demo": "vite build --mode dev",
@@ -50,6 +51,10 @@
 		"@typescript-eslint/eslint-plugin": "^8.12.2",
 		"@typescript-eslint/parser": "^8.12.2",
 		"@vitejs/plugin-react": "^4.3.3",
+		"@vitejs/plugin-vue": "^6.0.1",
+		"@vue/compiler-dom": "^3.5.22",
+		"@vue/runtime-dom": "^3.5.22",
+		"@vue/tsconfig": "^0.8.1",
 		"autoprefixer": "^10.4.19",
 		"bbl-scripts": "^0.0.2",
 		"classnames": "^2.5.1",
@@ -73,7 +78,11 @@
 		"vite": "^6.1.0",
 		"vite-plugin-clean": "^2.0.1",
 		"vite-plugin-dts": "^4.3.0",
-		"vitepress": "^1.5.0"
+		"vite-plugin-virtual-html": "^1.2.6",
+		"vitepress": "^1.5.0",
+		"vue": "^3.5.22",
+		"vue-router": "^4.5.1",
+		"vue-tsc": "^3.0.8"
 	},
 	"main": "./dist/index.umd.js",
 	"module": "./dist/index.es.js",

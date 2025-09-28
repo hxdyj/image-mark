@@ -6,6 +6,7 @@ import { uid } from "uid";
 import { EventBusEventName } from '../event/const';
 
 export type LmbMoveActionOptions = {
+	moveable?: boolean
 	onStart?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
 	onMove?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
 	onEnd?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void
@@ -28,10 +29,19 @@ export class LmbMoveAction extends Action {
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: LmbMoveActionOptions) {
 		super(imageMark, shape, options)
 		this.uid = shape.data.uuid + '_' + uid(6)
-
+		const finalOptions = this.getOptions<LmbMoveActionOptions>()
+		this.moveable = finalOptions.moveable ?? true
 		this.bindEventThis(['onMouseDown'])
 		this.bindEvents()
-		this.addClassName()
+		if (this.moveable) {
+			this.addClassName()
+		} else {
+			this.removeClassName()
+		}
+	}
+
+	getLmbMoveActionOptions() {
+		return this.getOptions<LmbMoveActionOptions>()
 	}
 
 	protected bindEvents() {
@@ -60,7 +70,7 @@ export class LmbMoveAction extends Action {
 	}
 
 	getEnableMove() {
-		const shapePlugin = this.getShapePlugin()
+		const shapePlugin = this.imageMark?.getShapePlugin()
 		return this.moveable && !shapePlugin?.disableActionList.has(LmbMoveAction.actionName)
 	}
 
@@ -75,7 +85,7 @@ export class LmbMoveAction extends Action {
 			this.imageMark.onContainerLmbDownMoveingMouseDownEvent(event)
 			return
 		}
-		this.getShapePlugin()?.setHoldShape(this.shape)
+		this.imageMark?.getShapePlugin()?.setHoldShape(this.shape)
 		if (this.imageMark.status.drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
@@ -84,7 +94,7 @@ export class LmbMoveAction extends Action {
 		this.status.mouseDown = true
 		this.startPoint = this.imageMark.stageGroup.point(evt.clientX, evt.clientY)
 		this.startTransform = this.shape.shapeInstance.transform()
-		this.options?.onStart?.(this.imageMark, this.shape, evt)
+		this.getLmbMoveActionOptions()?.onStart?.(this.imageMark, this.shape, evt)
 		this.imageMark.eventBus.emit(EventBusEventName.shape_start_move, this.shape, this.imageMark)
 	}
 
@@ -103,11 +113,8 @@ export class LmbMoveAction extends Action {
 
 		const nextTransform = cloneShape.transform()
 		const enableMoveShapeOutOfImg = this.imageMark.options.action?.enableMoveShapeOutOfImg
-		if (!enableMoveShapeOutOfImg && !this.options?.limit) {
-			if (!this.options) {
-				this.options = {}
-			}
-			this.options.limit = (imageMark, shape, nextTransform) => {
+		if (!enableMoveShapeOutOfImg && !this.getLmbMoveActionOptions()?.limit) {
+			this.getLmbMoveActionOptions().limit = (imageMark, shape, nextTransform) => {
 				const { x, y, width, height } = shape.getMainShape().bbox()
 				let { translateX = 0, translateY = 0 } = nextTransform
 				translateX += x
@@ -141,7 +148,7 @@ export class LmbMoveAction extends Action {
 				return fixTranslate
 			}
 		}
-		const limitFlag = this.options?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
+		const limitFlag = this.getLmbMoveActionOptions()?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
 
 		this.shape.shapeInstance.transform(this.startTransform)
 
@@ -153,7 +160,7 @@ export class LmbMoveAction extends Action {
 			translate: diffPoint
 		}, true)
 
-		this.options?.onMove?.(this.imageMark, this.shape, event)
+		this.getLmbMoveActionOptions()?.onMove?.(this.imageMark, this.shape, event)
 		return diffPoint
 	}
 
@@ -174,7 +181,7 @@ export class LmbMoveAction extends Action {
 		this.shape.updateData(this.shape.data)
 		this.startTransform = null
 
-		this.options?.onEnd?.(this.imageMark, this.shape, event)
+		this.getLmbMoveActionOptions()?.onEnd?.(this.imageMark, this.shape, event)
 		this.imageMark.getShapePlugin()?.setHoldShape(null)
 		this.imageMark.eventBus.emit(EventBusEventName.shape_end_move, this.shape, [e, f], this.imageMark)
 	}

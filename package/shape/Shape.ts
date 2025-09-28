@@ -116,7 +116,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 	getOptions(options?: ShapeOptions): ShapeOptions {
-		return defaultsDeep(options, this.options, this.imageMark.getShapePlugin()?.getShapeOptions() || {})
+		return defaultsDeep(options, this.options, this.imageMark.getShapePlugin()?.getShapeOptions())
 	}
 
 	bindEvent() {
@@ -305,7 +305,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 	private actionAfterRenderNeedAdd: Function[] = []
 
-	addAction(action: typeof Action, actionOptions: any = {}) {
+	addAction<ActionType extends typeof Action = typeof Action>(action: ActionType, actionOptions: any = {}) {
 		if (!this.isRendered) {
 			this.actionAfterRenderNeedAdd.push(() => this.initAction(action, actionOptions))
 		} else {
@@ -320,7 +320,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		}
 	}
 
-	initAction(action: typeof Action, actionOptions: any = null) {
+	initAction<ActionType extends typeof Action = typeof Action>(action: ActionType, actionOptions: any = null) {
 		const constructor = Object.getPrototypeOf(this).constructor as typeof ImageMarkShape<T>
 		if (this.action[action.actionName]) {
 			this.removeAction(action)
@@ -330,14 +330,15 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 	static actionList: Array<typeof Action> = []
 
-	static useAction(action: typeof Action, actionOptions: any = {}) {
-		if (ImageMarkShape.hasAction(action)) return ImageMarkShape
+	static useAction<ActionType extends typeof Action = typeof Action>(action: ActionType, actionOptions: any = {}) {
 		action.actionOptions[this.shapeName || 'static'] = actionOptions
-		ImageMarkShape.actionList.push(action)
+		if (!ImageMarkShape.hasAction(action)) {
+			ImageMarkShape.actionList.push(action)
+		}
 		return ImageMarkShape
 	}
 
-	static unuseAction(action: typeof Action) {
+	static unuseAction<ActionType extends typeof Action = typeof Action>(action: ActionType) {
 		const hasAction = ImageMarkShape.hasAction(action)
 		if (hasAction) {
 			ImageMarkShape.actionList.splice(ImageMarkShape.actionList.indexOf(action), 1)
@@ -345,7 +346,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		return ImageMarkShape
 	}
 
-	static hasAction(action: typeof Action) {
+	static hasAction<ActionType extends typeof Action = typeof Action>(action: ActionType) {
 		return ImageMarkShape.actionList.includes(action)
 	}
 

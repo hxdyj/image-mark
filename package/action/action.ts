@@ -1,19 +1,21 @@
 import { EventBindingThis } from "../event/event";
-import { ImageMarkShape, ShapeData } from "../shape/Shape";
+import { ImageMarkShape } from "../shape/Shape";
 import ImageMark from "..";
-import { ShapePlugin } from "../plugins/ShapePlugin";
+import { defaultsDeep } from "lodash-es";
 
+
+export type ActionOptions = {
+	[key: string]: any
+}
 export class Action extends EventBindingThis {
 	static actionName: string;
-	static actionOptions: {
-		[key: string]: any
-	} = {};
+	static actionOptions: ActionOptions = {}
 	constructor(protected imageMark: ImageMark, protected shape: ImageMarkShape, protected options?: any) {
 		super()
 	}
 
 	destroy() {
-		const shapePlugin = this.getShapePlugin()
+		const shapePlugin = this.imageMark?.getShapePlugin()
 		//@ts-ignore
 		const actionName = this.constructor.actionName
 		const shapeInstance = shapePlugin?.getInstanceByData(this.shape.data)
@@ -22,9 +24,9 @@ export class Action extends EventBindingThis {
 		}
 	}
 
-	protected getShapePlugin(): ShapePlugin | undefined {
-		const shapeInstance = this.imageMark.plugin[ShapePlugin.pluginName] as ShapePlugin
-		return shapeInstance
+
+	getOptions<T extends ActionOptions = ActionOptions>(options?: T): T {
+		return defaultsDeep(options, this.options, Object.getPrototypeOf(this).constructor.actionOptions[this.shape.data.shapeName || 'static'])
 	}
 
 	onContainerMouseMove(event: MouseEvent) { }

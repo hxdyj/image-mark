@@ -1,6 +1,5 @@
 import ImageMark, { ImageMarkCircle, ImageMarkDot, imageMarkGlobalEventBus, ImageMarkLine, ImageMarkPathLine, ImageMarkPolygon, ImageMarkPolyLine, ImageMarkRect, LmbMoveAction } from "../index";
 import { Plugin } from "./plugin";
-import { defaultsDeep } from "lodash-es";
 import hotkeys from "hotkeys-js";
 import { DeepPartial } from 'utility-types';
 import { GlobalEventBusEventName } from "../event/const";
@@ -51,6 +50,7 @@ export type ShortcutKeyMap = {
 	undo: ShortKeyValue //撤销, 默认 ctrl/command + z
 	redo: ShortKeyValue //重做, 默认 ctrl/command + y
 }
+
 
 export type ShortcutPluginOptions = {
 	autoActive: boolean
@@ -112,11 +112,13 @@ const defaultShortcutPluginOptions: ShortcutPluginOptions = {
 	}
 }
 
+export type KeyType = keyof ShortcutKeyMap
+
 export class ShortcutPlugin extends Plugin {
 	static pluginName = "shortcut";
 
-	constructor(imageMarkInstance: ImageMark, public options?: DeepPartial<ShortcutPluginOptions>) {
-		super(imageMarkInstance)
+	constructor(imageMarkInstance: ImageMark, public pluginOptions?: DeepPartial<ShortcutPluginOptions>) {
+		super(imageMarkInstance, pluginOptions)
 		this.bindEventThis([
 			'onContainerMouseOver',
 			'onShortcutAutoActive'
@@ -127,8 +129,25 @@ export class ShortcutPlugin extends Plugin {
 
 	autoActived = false
 
+	disableKeyList: Set<KeyType> = new Set()
+
+	disableKeys(nameList: Array<KeyType>) {
+		nameList.forEach(name => {
+			imageMarkHotkeys.unbind(name, this.getScopeName())
+			this.disableKeyList.add(name)
+		})
+	}
+
+	enableKeys(nameList: Array<KeyType>) {
+		nameList.forEach(name => {
+			if (this.disableKeyList.has(name)) {
+				this.disableKeyList.delete(name)
+			}
+		})
+	}
+
 	onContainerMouseOver(event: MouseEvent) {
-		const { autoActive } = this.getOptions()
+		const { autoActive } = this.getShorcutPluginOptions()
 		if (!autoActive) return
 		if (this.autoActived) return
 		this.activeScope()
@@ -163,6 +182,7 @@ export class ShortcutPlugin extends Plugin {
 	}
 
 	eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent) {
+		if (this.disableKeyList.has(keyName)) return
 		const handler = {
 			delete_shape: (event: KeyboardEvent) => {
 				const list = this.imageMark.getSelectionPlugin()?.selectShapeList ?? []
@@ -265,14 +285,16 @@ export class ShortcutPlugin extends Plugin {
 	}
 
 	bindKeyMap(options?: DeepPartial<ShortcutPluginOptions>) {
-		const keyMap = this.getOptions(options).keyMap
+		const keyMap = this.getShorcutPluginOptions(options).keyMap
 		Object.entries(keyMap).forEach(([key, value]) => {
-			imageMarkHotkeys(value.keyName, {
-				...value.hotkeyOptions,
-				scope: this.getScopeName(),
-			}, e => {
-				this.eventCaller(key as keyof ShortcutKeyMap, e)
-			})
+			if (!this.disableKeyList.has(key as KeyType)) {
+				imageMarkHotkeys(value.keyName, {
+					...value.hotkeyOptions,
+					scope: this.getScopeName(),
+				}, e => {
+					this.eventCaller(key as keyof ShortcutKeyMap, e)
+				})
+			}
 		})
 	}
 
@@ -283,9 +305,8 @@ export class ShortcutPlugin extends Plugin {
 		}
 	}
 
-	getOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions {
-		const thisPluginOptions = this.getThisPluginOptions<ShortcutPluginOptions>()
-		return defaultsDeep(options, this.options, thisPluginOptions, defaultShortcutPluginOptions)
+	getShorcutPluginOptions(options?: DeepPartial<ShortcutPluginOptions>) {
+		return this.getOptions(options || defaultShortcutPluginOptions) as ShortcutPluginOptions
 	}
 
 	destroy(): void {

@@ -13,6 +13,7 @@ import { ImageMarkPolyLine } from "../shape/PolyLine";
 import { ImageMarkPolygon } from "../shape/Polygon";
 import { ImageMarkDot } from "../shape/Dot";
 import { Point } from "@svgdotjs/svg.js";
+import { DeepPartial } from "utility-types";
 
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 	shapeList: T[]
@@ -26,15 +27,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	data: T[] = []
 	disableActionList: Set<string> = new Set()
 
-	constructor(imageMarkInstance: ImageMark, public shapeOptions?: ShapeOptions) {
-		super(imageMarkInstance);
+	constructor(imageMarkInstance: ImageMark, public pluginOptions?: DeepPartial<ShapePluginOptions<T>>) {
+		super(imageMarkInstance, pluginOptions);
 
-		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions<T>>()
-
-		this.data = thisPlugin?.shapeList || []
-
+		const finalOptions = this.getShapePluginOptions(pluginOptions)
+		this.data = finalOptions?.shapeList || []
 		ShapePlugin.shapeList.forEach(shape => {
-			this.initShape(shape.shape, this.getShapeOptions(shape.shapeOptions))
+			this.initShape(shape.shape, finalOptions.shapeOptions)
 		})
 
 		this.bindEventThis(
@@ -55,9 +54,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 
-	getShapeOptions(shapeOptions?: ShapeOptions): ShapeOptions {
-		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions>()
-		return defaultsDeep(shapeOptions, this.shapeOptions, thisPlugin?.shapeOptions)
+	getShapePluginOptions(options?: DeepPartial<ShapePluginOptions<T>>) {
+		return this.getOptions(options) as ShapePluginOptions<T>
 	}
 
 	addAction(action: typeof Action, actionOptions: any = {}) {
@@ -114,10 +112,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	setData(data: T[]) {
 		this.removeAllNodes(false)
-		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions<T>>()
-		if (thisPlugin) {
-			thisPlugin.shapeList.push(...data)
-			this.data = thisPlugin.shapeList
+		const finalOptions = this.getShapePluginOptions()
+		if (finalOptions) {
+			finalOptions.shapeList.push(...data)
+			this.data = finalOptions.shapeList
 		}
 		this.createShape()
 		this.onDraw()
@@ -217,14 +215,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	removeAllNodes(emit = true) {
 		this.clear()
-		const thisPlugin = this.getThisPluginOptions<ShapePluginOptions<T>>()
-		if (thisPlugin) {
-			thisPlugin.shapeList.splice(0, thisPlugin.shapeList.length)
+		const finalOptions = this.getShapePluginOptions()
+		if (finalOptions) {
+			finalOptions.shapeList.splice(0, finalOptions.shapeList.length)
 		}
 		this.clearMap()
 		if (emit) {
-			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all, this.imageMark)
+			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all, this.data, this.imageMark)
 		}
+		this.data.splice(0, this.data.length)
 	}
 
 	onScale() {
@@ -294,6 +293,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			shapeOptions?: ShapeOptions
 		}
 	} = {}
+
+	getShapeOptions(shapeOptions?: ShapeOptions) {
+		const finalOptions = this.getShapePluginOptions()
+		return defaultsDeep(shapeOptions, finalOptions?.shapeOptions)
+	}
 
 	addShape(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions) {
 		this.initShape(shape, this.getShapeOptions(shapeOptions))

@@ -3,7 +3,7 @@ import { getContainerInfo, getElement } from "./utils/dom";
 import { defaultsDeep, difference, forEach, throttle } from "lodash-es";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
-import { Plugin } from "./plugins/plugin";
+import { Plugin, PluginOptions } from "./plugins/plugin";
 import { EventBindingThis } from "./event/event";
 import { EventBusEventName } from "./event/const";
 import { CssNameKey } from "./const/const";
@@ -23,7 +23,7 @@ export type OutOfData = [boolean, number] // [是否超出,距离(正数为超�
 export type ArrayPoint = [number, number]
 export type ArrayWH = ArrayPoint
 export type ContainerType = string | HTMLElement;
-export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin
+export type PluginNewCall = (imageMarkInstance: ImageMark, pluginOptions?: PluginOptions) => Plugin
 export type BoundingBox = {
 	x: number
 	y: number
@@ -141,7 +141,7 @@ export class ImageMark extends EventBindingThis {
 		drawing: null,
 		editing: null,
 	}
-	minScale = 0.1
+	minScale = 0.01
 	maxScale = 10
 	movingStartPoint: ArrayPoint | null = null
 	eventBus = new EventEmitter()
@@ -202,7 +202,7 @@ export class ImageMark extends EventBindingThis {
 		this.bindEvent()
 
 		ImageMark.pluginList.forEach(plugin => {
-			this.initPlugin(plugin)
+			this.initPlugin(plugin, plugin.pluginOptions)
 		})
 		this.init()
 	}
@@ -1309,9 +1309,13 @@ export class ImageMark extends EventBindingThis {
 		return this.plugin[SelectionPlugin.pluginName] as SelectionPlugin || null
 	}
 
+	getShortcutPlugin(): ShortcutPlugin | null {
+		return this.plugin[ShortcutPlugin.pluginName] as ShortcutPlugin || null
+	}
+
 	// 添加实例上的插件
-	addPlugin(plugin: typeof Plugin | PluginNewCall) {
-		this.initPlugin(plugin)
+	addPlugin(plugin: typeof Plugin | PluginNewCall, pluginOptions?: PluginOptions) {
+		this.initPlugin(plugin, pluginOptions)
 		return this
 	}
 
@@ -1325,13 +1329,13 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	// 实例化插件
-	initPlugin(plugin: typeof Plugin | PluginNewCall) {
+	initPlugin(plugin: typeof Plugin | PluginNewCall, pluginOptions?: PluginOptions) {
 		if ('pluginName' in plugin) {
 			if (!this.plugin[plugin.pluginName]) {
-				this.plugin[plugin.pluginName] = new plugin(this)
+				this.plugin[plugin.pluginName] = new plugin(this, defaultsDeep(pluginOptions, plugin.pluginOptions))
 			}
 		} else {
-			const pluginInstance = plugin(this)
+			const pluginInstance = plugin(this, pluginOptions)
 			const pluginName = (Reflect.getPrototypeOf(pluginInstance)?.constructor as typeof Plugin).pluginName
 			if (pluginName) {
 				this.plugin[pluginName] = pluginInstance
@@ -1344,9 +1348,13 @@ export class ImageMark extends EventBindingThis {
 
 	static pluginList: Array<typeof Plugin> = []
 
-	static usePlugin(plugin: typeof Plugin) {
-		if (ImageMark.hasPlugin(plugin)) return ImageMark
-		ImageMark.pluginList.push(plugin)
+	static usePlugin(plugin: typeof Plugin, pluginOptions?: any) {
+		if (pluginOptions) {
+			Object.assign(plugin.pluginOptions, pluginOptions)
+		}
+		if (!ImageMark.hasPlugin(plugin)) {
+			ImageMark.pluginList.push(plugin)
+		}
 		return ImageMark
 	}
 

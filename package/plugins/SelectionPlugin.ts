@@ -1,9 +1,10 @@
 import { ImageMark } from "..";
-import { Plugin } from "./plugin";
+import { Plugin, PluginOptions } from './plugin';
 import { ImageMarkShape } from "../shape/Shape";
 import { SelectionAction, SelectionActionOptions } from "../action/SelectionAction";
 import { EventBusEventName } from "../event/const";
 import { cloneDeep } from 'lodash-es';
+import { DeepPartial } from "utility-types";
 
 export type SelectionPluginOptions = {
 	selectionActionOptions?: SelectionActionOptions
@@ -16,17 +17,22 @@ export class SelectionPlugin extends Plugin {
 	selectShapeList: ImageMarkShape[] = []
 	private _mode: SelectionType = 'single'
 
-	constructor(imageMarkInstance: ImageMark, public selectionPluginOptions?: SelectionPluginOptions) {
-		super(imageMarkInstance);
+	constructor(imageMarkInstance: ImageMark, public pluginOptions?: DeepPartial<SelectionPluginOptions>) {
+		super(imageMarkInstance, pluginOptions);
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
 		this.bindEventThis(['onSelectionActionClick', 'onShapeAfterRender'])
 		this.bindEvent()
 	}
 
+
+	getSelectionPluginOptions(options?: DeepPartial<SelectionPluginOptions>) {
+		return this.getOptions(options) as SelectionPluginOptions
+	}
+
 	onShapeAfterRender(shapeInstance: ImageMarkShape) {
 		if (!shapeInstance.action[SelectionAction.actionName]) {
-			shapeInstance.addAction(SelectionAction, this.selectionPluginOptions?.selectionActionOptions)
+			shapeInstance.addAction(SelectionAction, this.getSelectionPluginOptions()?.selectionActionOptions)
 		}
 	}
 

@@ -91,10 +91,12 @@ export function BeautifulPresentation() {
 							<Button className={'icon-btn'} type={historyStackInfo?.redo ? 'primary' : 'text'} icon={<IconRedo style={{ fontSize: '18px', color: historyStackInfo?.redo ? 'white' : iconColor }} />} onClick={() => {
 								imgMark?.current?.getHistoryPlugin()?.redo()
 							}} />
+
 						</Badge>
 					</div>
-					<Button className={'icon-btn'} type='text' icon={<IconFont type="icon-del" style={{ fontSize: '20px', color: iconColor }} />} />
-
+					<Button className={'icon-btn'} type='text' icon={<IconFont type="icon-del" style={{ fontSize: '20px', color: iconColor }} />} onClick={() => {
+						imgMark?.current?.getShapePlugin()?.removeAllNodes()
+					}} />
 				</div>
 				<div>
 					<div className='flex items-center gap-x-6'>

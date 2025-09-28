@@ -39,7 +39,7 @@ export class SelectionAction extends Action {
 		this.uid = shape.data.uuid + '_' + uid(6)
 		this.bindEventThis(['onMouseDown', 'onMouseUp', 'draw'])
 		this.bindEvents()
-		this.attr = defaultsDeep(this.options?.setAttr?.(this) || {}, this.attr)
+		this.attr = defaultsDeep(this.getSelectionActionOptions()?.setAttr?.(this) || {}, this.attr)
 	}
 
 	protected bindEvents() {
@@ -50,6 +50,10 @@ export class SelectionAction extends Action {
 	protected unbindEvent() {
 		this.shape.shapeInstance.off('mousedown', this.onMouseDown)
 		this.shape.shapeInstance.off('mouseup', this.onMouseUp)
+	}
+
+	getSelectionActionOptions() {
+		return this.getOptions<SelectionActionOptions>()
 	}
 
 	getSelectionShape(): Rect | undefined {
@@ -101,7 +105,7 @@ export class SelectionAction extends Action {
 
 		selectionShape.addTo(this.shape.shapeInstance, 0)
 
-		this.options?.initDrawFunc?.(this)
+		this.getSelectionActionOptions()?.initDrawFunc?.(this)
 	}
 
 
@@ -114,7 +118,7 @@ export class SelectionAction extends Action {
 
 
 	getEnableSelection() {
-		const shapePlugin = this.getShapePlugin()
+		const shapePlugin = this.imageMark?.getShapePlugin()
 		return !shapePlugin?.disableActionList.has(SelectionAction.actionName)
 	}
 

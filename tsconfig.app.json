@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"preserveSymlinks": true,
 		"composite": true,
-		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+		"types": ["vite/client"],
 		"target": "ES2020",
 		"useDefineForClassFields": true,
 		"module": "ESNext",
@@ -26,7 +26,13 @@
 		"paths": {
 			"#/*": ["./package/*"]
 		}
-		// ,
 	},
-	"include": ["package/**/*", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+	"include": [
+		"package/**/*",
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"src_vue/**/*.vue",
+		"src_vue/**/*.ts",
+		"src_vue/**/*.tsx"
+	]
 }

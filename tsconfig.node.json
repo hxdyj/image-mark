@@ -9,5 +9,10 @@
 		"strict": true,
 		"noEmit": false
 	},
-	"include": ["package/**/*", "vite.config.ts", "vite.lib.config.ts"]
+	"include": [
+		"package/**/*",
+		"vite.config.ts",
+		"vite.lib.config.ts",
+		"vite.vue.config.ts"
+	]
 }
