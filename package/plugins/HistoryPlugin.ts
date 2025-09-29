@@ -125,11 +125,13 @@ export class HistoryPlugin extends Plugin {
 
 	onShapeStartEdit(shape: ImageMarkShape) {
 		this.tmpHistory = new ShapeEditHistory(shape.data)
+		console.log(111, cloneDeep(shape.data))
 	}
 
 	onShapeEndEdit(shape: ImageMarkShape) {
 		if (this.tmpHistory) {
 			this.tmpHistory.setNewData(shape.data)
+			console.log(222, cloneDeep(shape.data))
 			this.push(this.tmpHistory)
 			this.tmpHistory = null
 		}

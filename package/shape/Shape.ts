@@ -372,7 +372,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		if (list?.length) {
 			const index = list.findIndex(i => i.uuid == this.data.uuid)
 			if (index != -1) {
-				list[index] = this.data
+				Object.assign(list[index], this.data)
 			}
 		}
 	}
