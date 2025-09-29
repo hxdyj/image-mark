@@ -113,8 +113,11 @@ export class LmbMoveAction extends Action {
 
 		const nextTransform = cloneShape.transform()
 		const enableMoveShapeOutOfImg = this.imageMark.options.action?.enableMoveShapeOutOfImg
-		if (!enableMoveShapeOutOfImg && !this.getLmbMoveActionOptions()?.limit) {
-			this.getLmbMoveActionOptions().limit = (imageMark, shape, nextTransform) => {
+
+		const actionOptions = this.getLmbMoveActionOptions()
+
+		if (!enableMoveShapeOutOfImg && !actionOptions?.limit) {
+			actionOptions.limit = (imageMark, shape, nextTransform) => {
 				const { x, y, width, height } = shape.getMainShape().bbox()
 				let { translateX = 0, translateY = 0 } = nextTransform
 				translateX += x
@@ -148,7 +151,8 @@ export class LmbMoveAction extends Action {
 				return fixTranslate
 			}
 		}
-		const limitFlag = this.getLmbMoveActionOptions()?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
+
+		const limitFlag = actionOptions?.limit?.(this.imageMark, this.shape, nextTransform) || [0, 0]
 
 		this.shape.shapeInstance.transform(this.startTransform)
 

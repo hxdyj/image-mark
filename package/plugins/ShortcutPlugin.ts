@@ -183,6 +183,25 @@ export class ShortcutPlugin extends Plugin {
 
 	eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent) {
 		if (this.disableKeyList.has(keyName)) return
+		if (
+			this.imageMark.options.readonly &&
+			[
+				'delete_shape',
+				'delete_all_shape',
+				'draw_dot',
+				'draw_line',
+				'draw_pathline',
+				'draw_polyline',
+				'draw_rect',
+				'draw_circle',
+				'draw_polygon',
+				'drawing_delete_point',
+				'end_drawing',
+				'confirm_draw',
+				'undo',
+				'redo',
+			].includes(keyName)) return
+
 		const handler = {
 			delete_shape: (event: KeyboardEvent) => {
 				const list = this.imageMark.getSelectionPlugin()?.selectShapeList ?? []

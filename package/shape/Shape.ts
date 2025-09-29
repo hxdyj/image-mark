@@ -367,12 +367,23 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.imageMark.eventBus.emit(EventBusEventName.shape_start_edit, this, this.imageMark)
 	}
 
+	syncData() {
+		const list = this.imageMark.getShapePlugin()?.data
+		if (list?.length) {
+			const index = list.findIndex(i => i.uuid == this.data.uuid)
+			if (index != -1) {
+				list[index] = this.data
+			}
+		}
+	}
+
 	endEditShape() {
 		if (!this.imageMark.status.editing) return
 		this.editMouseDownEvent = null
 		this.editOriginData = null
 		this.imageMark.getShapePlugin()?.setHoldShape(null)
 		this.imageMark.status.editing = null
+		this.syncData()
 		this.imageMark.eventBus.emit(EventBusEventName.shape_end_edit, this, this.imageMark)
 	}
 

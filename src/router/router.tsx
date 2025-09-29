@@ -90,6 +90,17 @@ export const routes: IRoute[] = [
 								},
 							},
 							{
+								childIndexRoute: true,
+								homeRoute: true,
+								path: '/demo/beautiful-presentation',
+								element: <BeautifulPresentation />,
+								meta: {
+									title: 'BeautifulPresentation',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
 								path: '/demo/base',
 								element: <Base />,
 								meta: {

@@ -26,5 +26,5 @@ features:
     details: Except for core features, all other capabilities are provided as plugins, allowing you to choose only what you need and reduce unnecessary code.
 ---
 
-<iframe src="https://image-mark.demo.wingblog.top/#/full" frameborder="0"  width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe>
-<!-- <iframe src="http://localhost:5173/#/full" frameborder="0" width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe> -->
+<iframe src="https://image-mark.demo.wingblog.top/#/beautiful-presentation" frameborder="0"  width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe>
+<!-- <iframe src="http://localhost:5173/#/beautiful-presentation" frameborder="0" width="100%" height="700px" style="margin-top:20px;border-radius:8px"></iframe> -->
