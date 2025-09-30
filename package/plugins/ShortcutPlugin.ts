@@ -3,6 +3,7 @@ import { Plugin } from "./plugin";
 import hotkeys from "hotkeys-js";
 import { DeepPartial } from 'utility-types';
 import { GlobalEventBusEventName } from "../event/const";
+import { SelectionType } from "./SelectionPlugin";
 
 let imageMarkHotkeys = new Proxy(hotkeys, {
 	get(target, prop, receiver) {
@@ -19,6 +20,7 @@ let imageMarkHotkeys = new Proxy(hotkeys, {
 
 export type ShortKeyValue = {
 	keyName: string
+	hotkeyName?: string
 	hotkeyOptions?: {
 		element?: HTMLElement | null;
 		keyup?: boolean | null;
@@ -31,7 +33,7 @@ export type ShortKeyValue = {
 
 export type ShortcutKeyMap = {
 	delete_shape: ShortKeyValue  //删除shape（选中时） 默认 backspace
-	delete_all_shape: ShortKeyValue //删除所有shape 默认 ctrl/command + backspace
+	delete_all_shape: ShortKeyValue //删除所有shape 默认 ctrl/control + backspace
 
 	move_mode: ShortKeyValue //整体改为移动模式，就是禁用了shape直接能移动 ，默认按着 space 为移动模式（就像蓝湖这种）
 
@@ -47,8 +49,10 @@ export type ShortcutKeyMap = {
 	end_drawing: ShortKeyValue //结束绘制, 默认 esc
 	confirm_draw: ShortKeyValue //确定绘制, 默认 enter
 
-	undo: ShortKeyValue //撤销, 默认 ctrl/command + z
-	redo: ShortKeyValue //重做, 默认 ctrl/command + y
+	undo: ShortKeyValue //撤销, 默认 ctrl/control + z
+	redo: ShortKeyValue //重做, 默认 ctrl/control + y
+
+	multiple_select_mode: ShortKeyValue // 多选模式   这里仅支持设置 cmd | command | ctrl | control | shift 这几个值   默认 ctrl/control + click
 }
 
 
@@ -65,12 +69,13 @@ const defaultShortcutPluginOptions: ShortcutPluginOptions = {
 			keyName: 'backspace',
 		},
 		delete_all_shape: {
-			keyName: 'ctrl+backspace',
+			keyName: 'ctrl+backspace,control+backspace',
 		},
 		move_mode: {
 			keyName: 'space',
 			hotkeyOptions: {
-				keyup: true
+				keyup: true,
+				keydown: true
 			}
 		},
 		draw_dot: {
@@ -104,14 +109,22 @@ const defaultShortcutPluginOptions: ShortcutPluginOptions = {
 			keyName: 'enter'
 		},
 		undo: {
-			keyName: 'ctrl+z,command+z',
+			keyName: 'ctrl+z,control+z',
 		},
 		redo: {
-			keyName: 'ctrl+y,command+y'
+			keyName: 'ctrl+y,control+y'
 		},
+		multiple_select_mode: {
+			keyName: 'ctrl,control',
+			hotkeyName: '*',
+			hotkeyOptions: {
+				keydown: true,
+				keyup: true,
+				single: true
+			}
+		}
 	}
 }
-
 export type KeyType = keyof ShortcutKeyMap
 
 export class ShortcutPlugin extends Plugin {
@@ -181,7 +194,7 @@ export class ShortcutPlugin extends Plugin {
 		imageMarkHotkeys.setScope(this.getScopeName())
 	}
 
-	eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent) {
+	eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent, value: ShortKeyValue) {
 		if (this.disableKeyList.has(keyName)) return
 		if (
 			this.imageMark.options.readonly &&
@@ -204,8 +217,10 @@ export class ShortcutPlugin extends Plugin {
 
 		const handler = {
 			delete_shape: (event: KeyboardEvent) => {
-				const list = this.imageMark.getSelectionPlugin()?.selectShapeList ?? []
-				this.imageMark.getShapePlugin()?.removeNodes(list)
+				if (!this.imageMark.status.drawing && !this.imageMark.status.editing) {
+					const list = this.imageMark.getSelectionPlugin()?.selectShapeList ?? []
+					this.imageMark.getShapePlugin()?.removeNodes(list)
+				}
 			},
 			delete_all_shape: (event: KeyboardEvent) => {
 				event.preventDefault()
@@ -298,20 +313,43 @@ export class ShortcutPlugin extends Plugin {
 				event.preventDefault()
 				this.imageMark.getHistoryPlugin()?.redo()
 			},
+			multiple_select_mode: (event: KeyboardEvent) => {
+				const selectionPlugin = this.imageMark.getSelectionPlugin()
+				if (!selectionPlugin) return
+				const keyList = value.keyName.split(',')
+
+				//@ts-ignore
+				const isKeyExist = keyList.some(keyName => hotkeys[keyName])
+
+				if (!this.multiple_select_mode_keydown && isKeyExist && event.type === 'keydown') {
+					this.multiple_select_mode_pre_mode = selectionPlugin?.mode() || 'single'
+					selectionPlugin.mode('multiple')
+					this.multiple_select_mode_keydown = true
+				}
+
+				if (this.multiple_select_mode_keydown && event.type === 'keyup') {
+					selectionPlugin.mode(this.multiple_select_mode_pre_mode || 'single')
+					this.multiple_select_mode_keydown = false
+					this.multiple_select_mode_pre_mode = null
+				}
+			}
 		}[keyName]
 
 		handler?.(event)
 	}
 
+	protected multiple_select_mode_keydown = false
+	protected multiple_select_mode_pre_mode: SelectionType | null = null
+
 	bindKeyMap(options?: DeepPartial<ShortcutPluginOptions>) {
 		const keyMap = this.getShorcutPluginOptions(options).keyMap
 		Object.entries(keyMap).forEach(([key, value]) => {
 			if (!this.disableKeyList.has(key as KeyType)) {
-				imageMarkHotkeys(value.keyName, {
+				imageMarkHotkeys(value.hotkeyName || value.keyName, {
 					...value.hotkeyOptions,
 					scope: this.getScopeName(),
 				}, e => {
-					this.eventCaller(key as keyof ShortcutKeyMap, e)
+					this.eventCaller(key as keyof ShortcutKeyMap, e, value)
 				})
 			}
 		})

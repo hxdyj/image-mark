@@ -130,7 +130,7 @@ export class TeamMarkPlugin extends ShapePlugin<TeamData> {
 		shapeData.x = x
 		shapeData.y = y
 
-		this.onAdd(shapeData)
+		this.addNode(shapeData)
 	}
 
 	onDragOver(e: DragEvent) {

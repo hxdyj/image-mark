@@ -10,7 +10,7 @@ export function Layout() {
 	const [collapse, setCollapse] = useState(false)
 	return (
 		<ArcoLayout className="w-full h-full comp-layout">
-			<ArcoLayout className="h-full relative">
+			<div className="h-full flex relative">
 				<Sider collapsed={collapse} style={{ width: collapse ? '48px' : '250px' }}>
 					<LeftMenuList collapse={collapse} setCollapse={setCollapse} />
 				</Sider>
@@ -21,7 +21,7 @@ export function Layout() {
 						</Content>
 					</ArcoLayout>
 				</ArcoLayout>
-			</ArcoLayout>
+			</div>
 		</ArcoLayout>
 	)
 }

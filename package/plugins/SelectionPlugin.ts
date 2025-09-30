@@ -5,6 +5,7 @@ import { SelectionAction, SelectionActionOptions } from "../action/SelectionActi
 import { EventBusEventName } from "../event/const";
 import { cloneDeep } from 'lodash-es';
 import { DeepPartial } from "utility-types";
+import { ShapeData } from '../../types/package/shape/Shape';
 
 export type SelectionPluginOptions = {
 	selectionActionOptions?: SelectionActionOptions
@@ -21,7 +22,13 @@ export class SelectionPlugin extends Plugin {
 		super(imageMarkInstance, pluginOptions);
 		// @ts-ignore
 		let pluginName = this.constructor['pluginName']
-		this.bindEventThis(['onSelectionActionClick', 'onShapeAfterRender'])
+		this.bindEventThis([
+			'onSelectionActionClick',
+			'onShapeAfterRender',
+			'onShapeDelete',
+			'onShapeDeletePatch',
+			'onShapeDeleteAll',
+		])
 		this.bindEvent()
 	}
 
@@ -78,7 +85,7 @@ export class SelectionPlugin extends Plugin {
 			}
 			selectionActoin.enableSelection()
 		})
-		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList)
+		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList, this.imageMark)
 	}
 
 	unselectShape(shape: ImageMarkShape) {
@@ -88,12 +95,10 @@ export class SelectionPlugin extends Plugin {
 	unselectShapes(shapeList: ImageMarkShape[]) {
 		shapeList.slice().forEach(shape => {
 			const selectionActoin = this.getSelectionAction(shape)
-			if (!selectionActoin) return console.error('shape has no selection action')
-
-			if (selectionActoin.selected) {
+			if (selectionActoin?.selected) {
 				this.selectShapeList.splice(this.selectShapeList.indexOf(shape), 1)
 			}
-			selectionActoin.disableSelection()
+			selectionActoin?.disableSelection()
 		})
 		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList)
 	}
@@ -107,11 +112,33 @@ export class SelectionPlugin extends Plugin {
 		super.bindEvent()
 		this.imageMark.on(EventBusEventName.shape_after_render, this.onShapeAfterRender)
 		this.imageMark.on(EventBusEventName.selection_action_click, this.onSelectionActionClick)
+		this.imageMark.on(EventBusEventName.shape_delete, this.onShapeDelete)
+		this.imageMark.on(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
+		this.imageMark.on(EventBusEventName.shape_delete_all, this.onShapeDeleteAll)
 	}
 
 	unbindEvent() {
 		super.unbindEvent()
 		this.imageMark.off(EventBusEventName.selection_action_click, this.onSelectionActionClick)
+		this.imageMark.off(EventBusEventName.shape_delete, this.onShapeDelete)
+		this.imageMark.off(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
+		this.imageMark.off(EventBusEventName.shape_delete_all, this.onShapeDeleteAll)
+	}
+
+	onShapeDelete(data: ShapeData, shape: ImageMarkShape) {
+		this.unselectShape(shape)
+	}
+
+	onShapeDeletePatch(dataList: ShapeData[]) {
+		const uuidList = dataList.map(i => i.uuid)
+		const unselectShapeList = this.selectShapeList.filter(i => uuidList.includes(i.data?.uuid))
+		this.unselectShapes(unselectShapeList)
+
+	}
+
+	onShapeDeleteAll() {
+		this.selectShapeList.splice(0, this.selectShapeList.length)
+		this.imageMark.eventBus.emit(EventBusEventName.selection_select_list_change, this.selectShapeList, this.imageMark)
 	}
 
 	destroy(): void {

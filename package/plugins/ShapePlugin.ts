@@ -55,7 +55,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 
 	getShapePluginOptions(options?: DeepPartial<ShapePluginOptions<T>>) {
-		return this.getOptions(options) as ShapePluginOptions<T>
+		return this.getOptions(options, thisPluginOptions => {
+			delete thisPluginOptions.shapeList
+			return thisPluginOptions
+		}) as ShapePluginOptions<T>
 	}
 
 	addAction(action: typeof Action, actionOptions: any = {}) {
@@ -358,7 +361,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.status.drawing = null
 		this.programmaticDrawing = false
 		this.drawingMouseTrace = []
-		this.imageMark.eventBus.emit(EventBusEventName.shape_end_drawing, cancel, this.imageMark)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_end_drawing, cancel, shapeData, this.imageMark)
 		return this
 	}
 
@@ -473,7 +476,12 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	drawingMouseTracePush(event: MouseEvent): boolean {
 		const { event: finalEvent, limit } = this.shiftMouseEvent2LimitMouseEvent(event)
 		if (limit && this.drawingShape?.data.shapeName == 'dot') return false
+		let preLength = this.drawingMouseTrace.length
 		this.drawingMouseTrace.push(finalEvent)
+		let curLength = this.drawingMouseTrace.length
+		if (preLength == 0 && curLength == 1) {
+			this.imageMark.eventBus.emit(EventBusEventName.shape_start_drawing, this.drawingShape, this.imageMark)
+		}
 		return true
 	}
 

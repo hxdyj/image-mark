@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	--header-height: 0px;
+}
+
 @font-face {
 	font-family: 'trigram';
 	src: url('./assets/fonts/trigram/Trigram-Light.ttf') format('truetype');

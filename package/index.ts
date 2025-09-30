@@ -1,6 +1,6 @@
 import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
-import { defaultsDeep, difference, forEach, throttle } from "lodash-es";
+import { cloneDeep, defaultsDeep, difference, forEach, throttle } from "lodash-es";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
 import { Plugin, PluginOptions } from "./plugins/plugin";
@@ -99,6 +99,8 @@ export class ImageMarkManager {
 }
 
 export const imageMarkManager = new ImageMarkManager()
+//@ts-ignore
+globalThis.__imageMarkManager = imageMarkManager
 export const imageMarkGlobalEventBus = new EventEmitter()
 export type ImageMarkStatus = {
 	scaling: boolean
@@ -124,6 +126,15 @@ const defaultOptions: DeepPartial<ImageMarkOptions> = {
 		enableEditShapeOutOfImg: false,
 	}
 }
+
+export function getDefaultImageMarkStatus(): ImageMarkStatus {
+	return {
+		scaling: false,
+		moving: false,
+		drawing: null,
+		editing: null,
+	}
+}
 export class ImageMark extends EventBindingThis {
 	id: string;
 	container: HTMLElement;
@@ -135,12 +146,7 @@ export class ImageMark extends EventBindingThis {
 	plugin: {
 		[key: string]: Plugin
 	} = {}
-	status: ImageMarkStatus = {
-		scaling: false,
-		moving: false,
-		drawing: null,
-		editing: null,
-	}
+	status: ImageMarkStatus
 	minScale = 0.01
 	maxScale = 10
 	movingStartPoint: ArrayPoint | null = null
@@ -149,11 +155,18 @@ export class ImageMark extends EventBindingThis {
 	private destroyed = false
 	createTime: number = Date.now()
 
-
 	constructor(public options: ImageMarkOptions) {
 		super()
 		this.id = uid(6)
 		this.container = getElement(this.options.el)
+		const that = this
+		this.status = new Proxy(getDefaultImageMarkStatus(), {
+			set(target: ImageMarkStatus, prop: keyof ImageMarkStatus, value: ImageMarkStatus, receiver: ImageMarkStatus) {
+				const newStatus = Reflect.set(target, prop, value, receiver)
+				that.eventBus.emit(EventBusEventName.status_change, target, that)
+				return newStatus
+			}
+		})
 
 		imageMarkManager.addNewInstance(this)
 

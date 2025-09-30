@@ -21,10 +21,11 @@ export class Plugin extends EventBindingThis {
 		this.bindEventThis(['onInit'])
 	}
 
-	getOptions<T extends PluginOptions = PluginOptions>(options?: T): T {
+	getOptions<T extends PluginOptions = PluginOptions>(options?: T, dealPluginOptions?: (options: T) => T): T {
 		const thisPlugin = Object.getPrototypeOf(this).constructor
+		const thisPluginOptions = dealPluginOptions ? dealPluginOptions(thisPlugin.pluginOptions) : thisPlugin.pluginOptions
 		const thisPluginName = thisPlugin.pluginName
-		return defaultsDeep(options, this.pluginOptions, this.imageMark.options.pluginOptions?.[thisPluginName], thisPlugin.pluginOptions)
+		return defaultsDeep(options, this.pluginOptions, this.imageMark.options.pluginOptions?.[thisPluginName], thisPluginOptions)
 	}
 
 	bindEvent() {

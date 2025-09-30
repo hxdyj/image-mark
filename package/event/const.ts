@@ -18,6 +18,7 @@ export class EventBusEventName {
 	static shape_delete_all = 'shape_delete_all'
 	static shape_add = 'shape_add'
 	static shape_add_patch = 'shape_add_patch'
+	static shape_start_drawing = 'shape_start_drawing'
 	static shape_end_drawing = 'shape_end_drawing'
 	static shape_after_render = 'shape_after_render'
 	static shape_plugin_set_data = 'shape_plugin_set_data'
@@ -37,6 +38,8 @@ export class EventBusEventName {
 
 
 	static history_change = 'history_change'
+
+	static status_change = 'status_change'
 }
 
 
