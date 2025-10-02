@@ -181,6 +181,7 @@ export class LmbMoveAction extends Action {
 		this.status.mouseDown = false
 		this.startPoint = null
 		const { e = 0, f = 0 } = this.shape.shapeInstance.transform()
+		if (e === 0 && f === 0) return
 		this.shape.translate?.(e, f)
 		this.shape.updateData(this.shape.data)
 		this.startTransform = null

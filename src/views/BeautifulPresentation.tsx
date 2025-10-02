@@ -100,7 +100,7 @@ export function BeautifulPresentation() {
 			return {
 				label: {
 					font: {
-						fill: 'black',
+						// fill: 'black',
 					}
 				},
 				auxiliary: {
@@ -199,6 +199,9 @@ export function BeautifulPresentation() {
 			.on(EventBusEventName.selection_select_list_change, (list: ImageMarkShape[]) => {
 				console.log('selection_select_list_change', list)
 				setSelectShapeList(list.slice())
+			})
+			.on(EventBusEventName.shape_data_change, () => {
+				console.log('shape_data_change');
 			})
 		return () => {
 			imgMark.current?.destroy()
@@ -456,7 +459,7 @@ export function BeautifulPresentation() {
 									imgMark.current?.scale(-1, 'center', 'image')
 								}} />
 							</Tooltip>
-							<div className='scale-text'>{(scale * 100).toFixed(0)}%</div>
+							<div className='scale-text w-[30px] flex justify-center items-center'>{(scale * 100).toFixed(0)}%</div>
 							<Tooltip content='Scale +'>
 								<Button className={'icon-btn'} type='text' icon={<IconFont type="icon-scale_plus" style={{ fontSize: '22px', color: iconColor }} />} onClick={() => {
 									imgMark.current?.scale(+1, 'center', 'image')
@@ -525,15 +528,15 @@ export function BeautifulPresentation() {
 														Delete All Shapes
 													</div>
 												</div>,
-												value: <kbd>ctrl/control + delete</kbd>
+												value: <kbd>ctrl/command + delete</kbd>
 											},
 											{
 												label: 'Undo',
-												value: <kbd>ctrl/control + z</kbd>
+												value: <kbd>ctrl/command + z</kbd>
 											},
 											{
 												label: 'Redo',
-												value: <kbd>ctrl/control + y</kbd>
+												value: <kbd>ctrl/command + y</kbd>
 											},
 											{
 												label: 'Move Mode',
@@ -541,7 +544,7 @@ export function BeautifulPresentation() {
 											},
 											{
 												label: 'Multiple Select Mode',
-												value: <div>hold <kbd>ctrl/control</kbd> + click</div>
+												value: <div>hold <kbd>ctrl/command</kbd> + click</div>
 											},
 										]} />
 									})
@@ -553,6 +556,19 @@ export function BeautifulPresentation() {
 									setDrawerVisible(true)
 								}} />
 							</Tooltip>
+							{/* <Button type='text' onClick={() => {
+								imgMark.current?.getShapePlugin()?.setData([
+									{
+										shapeName: 'dot',
+										uuid: '234',
+										x: 100,
+										y: 100,
+										r: 10
+									}
+								])
+							}}>
+								Set Data
+							</Button> */}
 						</div>
 
 					</div>

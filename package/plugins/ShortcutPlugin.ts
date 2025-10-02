@@ -33,7 +33,7 @@ export type ShortKeyValue = {
 
 export type ShortcutKeyMap = {
 	delete_shape: ShortKeyValue  //删除shape（选中时） 默认 backspace
-	delete_all_shape: ShortKeyValue //删除所有shape 默认 ctrl/control + backspace
+	delete_all_shape: ShortKeyValue //删除所有shape 默认 ctrl/command + backspace
 
 	move_mode: ShortKeyValue //整体改为移动模式，就是禁用了shape直接能移动 ，默认按着 space 为移动模式（就像蓝湖这种）
 
@@ -49,10 +49,10 @@ export type ShortcutKeyMap = {
 	end_drawing: ShortKeyValue //结束绘制, 默认 esc
 	confirm_draw: ShortKeyValue //确定绘制, 默认 enter
 
-	undo: ShortKeyValue //撤销, 默认 ctrl/control + z
-	redo: ShortKeyValue //重做, 默认 ctrl/control + y
+	undo: ShortKeyValue //撤销, 默认 ctrl/command + z
+	redo: ShortKeyValue //重做, 默认 ctrl/command + y
 
-	multiple_select_mode: ShortKeyValue // 多选模式   这里仅支持设置 cmd | command | ctrl | control | shift 这几个值   默认 ctrl/control + click
+	multiple_select_mode: ShortKeyValue // 多选模式   这里仅支持设置 cmd | command | ctrl | command | shift 这几个值   默认 ctrl/command + click
 }
 
 
@@ -69,7 +69,7 @@ const defaultShortcutPluginOptions: ShortcutPluginOptions = {
 			keyName: 'backspace',
 		},
 		delete_all_shape: {
-			keyName: 'ctrl+backspace,control+backspace',
+			keyName: 'ctrl+backspace,command+backspace',
 		},
 		move_mode: {
 			keyName: 'space',
@@ -109,13 +109,13 @@ const defaultShortcutPluginOptions: ShortcutPluginOptions = {
 			keyName: 'enter'
 		},
 		undo: {
-			keyName: 'ctrl+z,control+z',
+			keyName: 'ctrl+z,command+z',
 		},
 		redo: {
-			keyName: 'ctrl+y,control+y'
+			keyName: 'ctrl+y,command+y'
 		},
 		multiple_select_mode: {
-			keyName: 'ctrl,control',
+			keyName: 'ctrl,command',
 			hotkeyName: '*',
 			hotkeyOptions: {
 				keydown: true,

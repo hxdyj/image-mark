@@ -19,6 +19,7 @@ export class HistoryPlugin extends Plugin {
 			'onShapeDelete',
 			'onShapeDeletePatch',
 			'onShapeDeleteAll',
+			'onShapePluginSetData',
 			'onShapeStartMove',
 			'onShapeEndMove',
 			'onShapeStartEdit',
@@ -46,6 +47,7 @@ export class HistoryPlugin extends Plugin {
 		this.imageMark.on(EventBusEventName.shape_delete, this.onShapeDelete)
 		this.imageMark.on(EventBusEventName.shape_delete_all, this.onShapeDeleteAll)
 		this.imageMark.on(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
+		this.imageMark.on(EventBusEventName.shape_plugin_set_data, this.onShapePluginSetData)
 		this.imageMark.on(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
 		this.imageMark.on(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
 	}
@@ -58,6 +60,7 @@ export class HistoryPlugin extends Plugin {
 		this.imageMark.off(EventBusEventName.shape_delete, this.onShapeDelete)
 		this.imageMark.off(EventBusEventName.shape_delete_all, this.onShapeDeleteAll)
 		this.imageMark.off(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
+		this.imageMark.off(EventBusEventName.shape_plugin_set_data, this.onShapePluginSetData)
 		this.imageMark.off(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
 		this.imageMark.off(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
 	}
@@ -109,6 +112,10 @@ export class HistoryPlugin extends Plugin {
 
 	onShapeDeleteAll(dataList: ShapeData[]) {
 		this.push(new ShapePatchExistHistory(dataList))
+	}
+
+	onShapePluginSetData(data: ShapeData[], oldData: ShapeData[]) {
+		this.push(new ShapePatchExistHistory(oldData, data))
 	}
 
 	onShapeStartMove(shape: ImageMarkShape) {

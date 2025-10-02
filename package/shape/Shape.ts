@@ -144,15 +144,16 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		const scale = this.imageMark.getCurrentScale()
 
 		const { optimalStrokeColor } = this.getMainShapeInfo()
+		const fontSize = (this.attr?.label?.font?.size ?? 14) / scale
 		text.font({
 			fill: this.attr?.label?.font?.fill || optimalStrokeColor,
-			size: (this.attr?.label?.font?.size ?? 14) / scale
+			size: fontSize
 		})
-
-		const strokeWidth = mainShape.attr('stroke-width') || 6
+		const { strokeWidth } = this.getMainShapeInfo()
 		const halfStrokeWidth = strokeWidth / 2
 
 		text.move(halfStrokeWidth, 0)
+
 		// 获取文本的边界框
 		let textBbox = text.bbox();
 
@@ -163,14 +164,23 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		// 创建一个矩形元素作为背景
 		const bgBox = labelGroup.find('rect')[0] as Rect || new Rect()
 
-		bgBox.size(textBbox.width + strokeWidth + 10, textBbox.height) // 矩形的宽度和高度比文本稍大一点
+		bgBox // 矩形的宽度和高度比文本稍大一点
 			.fill(this.attr?.label?.fill ?? this.attr?.stroke?.color ?? '#FADC19') // 设置背景颜色
 			.move(-halfStrokeWidth, 0)
 			.addTo(labelGroup) // 将矩形移动到文本的后面
 
 		text.addTo(labelGroup)
-
 		labelGroup.addTo(this.shapeInstance, 10000)
+		this.setLabelBgBox()
+	}
+
+	setLabelBgBox() {
+		const labelGroup = this.getLabelShape<G>() || new G()
+		const bgBox = labelGroup.find('rect')[0] as Rect || new Rect()
+		const text = labelGroup.find('text')[0] as Text || new Text()
+		let textBbox = text.bbox();
+		const { strokeWidth } = this.getMainShapeInfo()
+		bgBox.size(textBbox.width + strokeWidth * 2, textBbox.height)
 	}
 
 
@@ -283,6 +293,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.bindActions()
 		this.options?.afterRender?.(this)
 		this.imageMark.eventBus.emit(EventBusEventName.shape_after_render, this)
+		this.setLabelBgBox()
 	}
 
 	destroy() {
