@@ -24,7 +24,8 @@ export class EventBusEventName {
 	static shape_after_render = 'shape_after_render'
 	static shape_plugin_set_data = 'shape_plugin_set_data'
 	static shape_context_menu = 'shape_context_menu'
-	static shape_data_change = 'shape_data_change'
+	static shape_plugin_data_change = 'shape_plugin_data_change'
+	static shape_update_data = 'shape_update_data'
 
 	static shape_start_move = 'shape_start_move'
 	static shape_end_move = 'shape_end_move'

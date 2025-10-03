@@ -22,8 +22,8 @@ export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 
 export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	static pluginName = "shape";
-	protected node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
-	protected shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
+	protected node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape<T>>()
+	// protected shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
 	data: T[]
 	disableActionList: Set<string> = new Set()
 
@@ -35,7 +35,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.data = new Proxy((finalOptions?.shapeList || []).map(i => this.proxyDataItem(i)), {
 			set(target, property, newValue, receiver) {
 				const result = Reflect.set(target, property, newValue, receiver)
-				that.imageMark.eventBus.emit(EventBusEventName.shape_data_change, that.data, that.imageMark)
+				that.imageMark.eventBus.emit(EventBusEventName.shape_plugin_data_change, that.data, that.imageMark)
 				return result
 			},
 		})
@@ -64,10 +64,12 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		let that = this
 		return new Proxy(data, {
 			set(target, property, newValue, receiver) {
+				const oldData = cloneDeep(target)
 				const result = Reflect.set(target, property, newValue, receiver)
 				if (!['auxiliaryPoint'].includes(property.toString())) {
-					that.imageMark.eventBus.emit(EventBusEventName.shape_data_change, that.data, that.imageMark)
+					that.imageMark.eventBus.emit(EventBusEventName.shape_plugin_data_change, that.data, that.imageMark)
 				}
+				that.imageMark.eventBus.emit(EventBusEventName.shape_update_data, target, oldData, that.imageMark)
 				return result
 			},
 		})
@@ -109,20 +111,25 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		actionNameList.forEach(item => this.disableActionList.delete(item))
 	}
 
+	hasNode(node: T) {
+		return this.data.find(item => item.uuid === node.uuid)
+	}
+
+	getInstanceByData(node: T): ImageMarkShape<T> | undefined {
+		//@ts-ignore
+		return this.imageMark.stage.find(`#main_${node.uuid}`)?._image_mark_shape
+	}
+
 	protected renderNewNode(node: T) {
-		if (!this.node2ShapeInstanceWeakMap.has(node)) {
-			let shape = null
+		if (!this.getInstanceByData(node)) {
 			const shapeInfo = this.shape[node.shapeName]
 			if (shapeInfo) {
 				if (shapeInfo.ShapeClass.constructor === ImageMarkShape) {
 					throw new Error(`Shape ${Reflect.get(shapeInfo.ShapeClass, 'shapeName')} must be a subclass of ImageMarkShape`)
 				}
 				// @ts-ignore
-				shape = new shapeInfo.ShapeClass(node, this.imageMark, this.getShapeOptions(shapeInfo.shapeOptions))
-				if (shape) {
-					this.node2ShapeInstanceWeakMap.set(node, shape)
-					this.shapeInstance2NodeWeakMap.set(shape, node)
-				}
+				const shape = new shapeInfo.ShapeClass(node, this.imageMark, this.getShapeOptions(shapeInfo.shapeOptions))
+				this.node2ShapeInstanceWeakMap.set(node, shape)
 			}
 		}
 	}
@@ -140,7 +147,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.createShape()
 		this.onDraw()
 		this.imageMark.eventBus.emit(EventBusEventName.shape_plugin_set_data, data, oldData, this.imageMark)
-		this.imageMark.eventBus.emit(EventBusEventName.shape_data_change, data, this.imageMark)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_plugin_data_change, data, this.imageMark)
 	}
 
 	bindEvent() {
@@ -175,7 +182,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	destroy(): void {
 		this.clear()
 		this.disableActionList.clear()
-		this.clearMap()
 		this.unbindEvent()
 		super.destroy()
 	}
@@ -186,12 +192,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			this.data[index] = this.proxyDataItem(data)
 		}
 		const shapeInstance = this.getInstanceByData(data)
-
-		if (shapeInstance) {
-			this.node2ShapeInstanceWeakMap.set(this.data[index], shapeInstance)
-			this.node2ShapeInstanceWeakMap.delete(data)
-			this.shapeInstance2NodeWeakMap.set(shapeInstance, this.data[index])
-		}
 
 		if (callShape && shapeInstance) {
 			shapeInstance.updateData(this.data[index], false)
@@ -215,15 +215,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	onDelete(_data: T, shapeInstance?: ImageMarkShape) {
-		const data = shapeInstance ? this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data : _data
+		const data = shapeInstance ? shapeInstance?.data || _data : _data
 		const list = this.tempData || this.data
 		if (data) {
 			const index = list.findIndex(item => item.uuid === data.uuid)
 			if (index == -1 || index == undefined) return
-			const shapeInstance = this.getInstanceByData(data)
+			const shapeInstance = this.getInstanceByData(data as T)
 			list.splice(index, 1)
-			this.node2ShapeInstanceWeakMap.delete(data)
-			this.shapeInstance2NodeWeakMap.delete(shapeInstance!)
 			shapeInstance?.destroy()
 		}
 	}
@@ -255,7 +253,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	removeAllNodes(emit = true) {
 		this.clear()
-		this.clearMap()
 		if (emit) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all, this.data, this.imageMark)
 		}
@@ -275,13 +272,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.createShape()
 	}
 
-	clearMap() {
-		this.node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
-		this.shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
-	}
-
 	protected onRerender() {
-		this.clearMap()
 		this.createShape()
 		this.onDraw()
 	}
@@ -300,27 +291,18 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected renderNode(node: T) {
-		const shape = this.getInstanceByData(node)
-		if (shape) {
-			shape.render(this.imageMark.stageGroup)
+		let shape = this.getInstanceByData(node)
+		if (!shape) {
+			shape = this.node2ShapeInstanceWeakMap.get(node)
+			this.node2ShapeInstanceWeakMap.delete(node)
 		}
+		shape?.render(this.imageMark.stageGroup)
 	}
 
 	protected onDraw() {
 		(this.data || []).forEach(node => {
 			this.renderNode(node)
 		})
-	}
-
-	getInstanceByData(data: T) {
-		let instance = this.node2ShapeInstanceWeakMap.get(data)
-		if (!instance) {
-			let sourceData = this.data.find(node => node.uuid == data.uuid)
-			if (sourceData) {
-				instance = this.node2ShapeInstanceWeakMap.get(sourceData)
-			}
-		}
-		return instance
 	}
 
 	shape: {

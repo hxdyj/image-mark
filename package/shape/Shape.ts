@@ -101,6 +101,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		group.id(this.data.uuid)
 		group.addClass(`shape-${this.data.shapeName}`)
 		this.shapeInstance = group
+		//@ts-ignore
+		this.shapeInstance._image_mark_shape = this
 		const finalOptions = this.getOptions()
 		this.attr = defaultsDeep(finalOptions?.setAttr?.(this) || {}, this.attr)
 		finalOptions?.initDrawFunc && this.addDrawFunc(finalOptions.initDrawFunc)

@@ -95,6 +95,11 @@ export function BeautifulPresentation() {
 	useEffect(() => {
 		imgMark.current?.getSelectionPlugin()?.mode(selectMode)
 	}, [selectMode])
+
+	function updateLocalStorageShapeList() {
+		localStorage.setItem('shapeList', JSON.stringify(shapeList.current))
+	}
+
 	const initShapeList = localStorage.getItem('shapeList') ? JSON.parse(localStorage.getItem('shapeList') || '[]') : demoData
 	const shapeList = useRef<ShapeData[]>(initShapeList)
 	const shapeOptions: ShapeOptions = {
@@ -198,7 +203,7 @@ export function BeautifulPresentation() {
 			cancelText: 'Cancel',
 			okText: 'Submit',
 			unmountOnExit: true,
-			content: <Select
+			content: <Select allowClear
 				renderFormat={
 					(option: OptionInfo | null, value: string | number | LabeledValue) => {
 						const category = categoryList.find(c => c.category_id === option?.value)
@@ -305,9 +310,9 @@ export function BeautifulPresentation() {
 				console.log('selection_select_list_change', list)
 				setSelectShapeList(list.slice())
 			})
-			.on(EventBusEventName.shape_data_change, (data: ShapeData[]) => {
-				console.log('shape_data_change', data);
-				localStorage.setItem('shapeList', JSON.stringify(data))
+			.on(EventBusEventName.shape_plugin_data_change, (data: ShapeData[]) => {
+				console.log('shape_plugin_data_change', data);
+				updateLocalStorageShapeList()
 			})
 			.on(EventBusEventName.shape_click, (evt: MouseEvent) => {
 				// evt.stopPropagation()

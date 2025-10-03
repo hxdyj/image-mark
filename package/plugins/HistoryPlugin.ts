@@ -23,7 +23,8 @@ export class HistoryPlugin extends Plugin {
 			'onShapeStartMove',
 			'onShapeEndMove',
 			'onShapeStartEdit',
-			'onShapeEndEdit'
+			'onShapeEndEdit',
+			'onShapeUpdateData'
 		])
 		this.bindEvent()
 	}
@@ -50,6 +51,7 @@ export class HistoryPlugin extends Plugin {
 		this.imageMark.on(EventBusEventName.shape_plugin_set_data, this.onShapePluginSetData)
 		this.imageMark.on(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
 		this.imageMark.on(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
+		this.imageMark.on(EventBusEventName.shape_update_data, this.onShapeUpdateData)
 	}
 
 	unbindEvent() {
@@ -63,6 +65,7 @@ export class HistoryPlugin extends Plugin {
 		this.imageMark.off(EventBusEventName.shape_plugin_set_data, this.onShapePluginSetData)
 		this.imageMark.off(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
 		this.imageMark.off(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
+		this.imageMark.off(EventBusEventName.shape_update_data, this.onShapeUpdateData)
 	}
 
 	tmpHistory: History | null = null
@@ -132,16 +135,18 @@ export class HistoryPlugin extends Plugin {
 
 	onShapeStartEdit(shape: ImageMarkShape) {
 		this.tmpHistory = new ShapeEditHistory(shape.data)
-		console.log(111, cloneDeep(shape.data))
 	}
 
 	onShapeEndEdit(shape: ImageMarkShape) {
 		if (this.tmpHistory) {
 			this.tmpHistory.setNewData(shape.data)
-			console.log(222, cloneDeep(shape.data))
 			this.push(this.tmpHistory)
 			this.tmpHistory = null
 		}
+	}
+
+	onShapeUpdateData(newData: ShapeData, oldData: ShapeData) {
+		this.push(new ShapeEditHistory(oldData, newData))
 	}
 
 	destroy(): void {
@@ -191,6 +196,7 @@ export class ShapeEditHistory extends History<ShapeData> {
 		if (this.newData && this.oldData) {
 			const shapeInstance = imageMark.getShapePlugin()?.getInstanceByData(this.oldData)
 			shapeInstance?.updateData(this.newData)
+			debugger
 		}
 	}
 }
