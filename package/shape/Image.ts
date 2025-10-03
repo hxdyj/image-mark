@@ -72,6 +72,8 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		image.size(this.data.width, this.data.height)
 		console.log('draw image info', this.data.x, this.data.y, this.data.width, this.data.height)
 		this.getMainShape()?.move(this.data.x, this.data.y)
+		this.getLabelShape()?.remove()
+		this.drawLabel()
 	}
 
 	onEndDrawing() {

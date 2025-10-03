@@ -31,8 +31,6 @@ loader.config({
 TODO:
 4. docs
 5. rect data small zero
-6. readme screenshot
-7. BUG: reset data image label position uncorrect
 */
 
 const iconColor = `#111`
