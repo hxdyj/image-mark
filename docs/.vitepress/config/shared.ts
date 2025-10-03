@@ -8,7 +8,21 @@ export const shared = defineConfig({
 	cleanUrls: true,
 	metaChunk: true,
 	srcDir: 'lang',
-	head: [['link', { rel: 'icon', href: '/logo.svg' }]],
+	head: [
+		['link', { rel: 'icon', href: '/logo.svg' }],
+		[
+			'script',
+			{ async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-4ZR7Q442GZ' }
+		],
+		[
+			'script',
+			{},
+			`window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4ZR7Q442GZ');`
+		]
+	],
 	rewrites: {
 		"zh/:rest*": ":rest*",
 	},
