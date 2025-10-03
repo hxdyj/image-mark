@@ -30,6 +30,20 @@
 
 	.arco-select-popup {
 	}
+
+	.context-menu {
+		.arco-menu-inner {
+			padding: 0;
+			.arco-menu-item {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
+.context-menu-panel {
+	border-radius: 4px;
+	overflow: hidden;
+	z-index: 9999;
 }
 
 .comp-beautiful-presentation-select-category-trigger {

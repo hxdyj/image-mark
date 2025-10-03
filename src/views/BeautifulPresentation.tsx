@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import './BeautifulPresentation.scss'
 import { ShapeData, ShapeOptions } from '#/shape/Shape'
 import { ImageMarkShape } from '../../package/shape/Shape';
-import ImageMark, { EventBusEventName, getDefaultImageMarkStatus, ImageMarkCircle, ImageMarkDot, ImageMarkImage, ImageMarkLine, ImageMarkPathLine, ImageMarkPolygon, ImageMarkPolyLine, ImageMarkRect, ImageMarkStatus, ShapePlugin } from '#/index';
+import ImageMark, { getDefaultImageMarkStatus, ImageMarkCircle, ImageMarkDot, ImageMarkImage, ImageMarkLine, ImageMarkPathLine, ImageMarkPolygon, ImageMarkPolyLine, ImageMarkRect, ImageMarkStatus, ShapePlugin } from '#/index';
 import { demoData } from '../data/fullDemo.data';
-import { Badge, Button, ColorPicker, Descriptions, Divider, Drawer, Empty, Form, Input, Message, Modal, Popover, Radio, Select, Table, Tooltip } from '@arco-design/web-react';
+import { Badge, Button, ColorPicker, Descriptions, Divider, Drawer, Empty, Form, Input, Menu, Message, Modal, Popover, Radio, Select, Space, Table, Tooltip, Trigger, Upload } from '@arco-design/web-react';
 import { IconFont } from '../components/Iconfont';
 import { IconRedo, IconUndo } from '@arco-design/web-react/icon';
 import { SelectionType } from '#/plugins/SelectionPlugin';
@@ -12,14 +12,14 @@ import { useLocalStorage } from 'usehooks-ts'
 import { ModalReturnProps } from '@arco-design/web-react/es/Modal/modal';
 import { ImageData } from '#/shape/Image';
 import Editor, { useMonaco, loader } from '@monaco-editor/react';
-import { clone } from 'lodash-es';
+import { clone, set } from 'lodash-es';
 import { useImmer } from 'use-immer';
 import { LabeledValue, OptionInfo } from '@arco-design/web-react/es/Select/interface';
 import { uid } from 'uid';
 import createColor from "create-color";
 import md5 from 'md5';
-import { getOptimalTextColor } from '#/utils/color.util';
 import Color from 'color';
+import { EventBusEventName } from '../../package/event/const';
 
 loader.config({
 	paths: {
@@ -29,16 +29,10 @@ loader.config({
 
 /*
 TODO:
-1. category
 4. docs
 5. rect data small zero
 6. readme screenshot
-7. context menu for container reset position/delete all
-8. context menu for shape category/label
-9. shape category render diff color
-10. setCurrentPage src
-11. export data file
-12. import data
+7. BUG: reset data image label position uncorrect
 */
 
 const iconColor = `#111`
@@ -48,6 +42,8 @@ export type CategoryItem = {
 	name: string
 	color?: string
 }
+
+const DEFAULT_SRC = '/img/demo-parking.jpg'
 export function BeautifulPresentation() {
 	let imgMark = useRef<ImageMark | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -62,12 +58,16 @@ export function BeautifulPresentation() {
 
 	const [readonly, setReadonly] = useLocalStorage('readOnly', false)
 	const [selectMode, setSelectMode] = useLocalStorage<SelectionType>('selectMode', 'single')
+	const [drawOutOfImg, setDrawOutOfImg] = useLocalStorage<boolean>('drawOutOfImg', false)
+	const [src, setSrc] = useLocalStorage('src', DEFAULT_SRC)
 
 	const [status, setStatus] = useState(getDefaultImageMarkStatus())
 
 	const [startDrawing, setStartDrawing] = useState(false)
-
+	const tmpShape = useRef<ImageMarkShape | null>(null)
 	const [selectCategory, setSelectCategory] = useLocalStorage<string | undefined>('selectCategory', undefined)
+	const [contextType, setContextType] = useState<'shape' | 'container' | ''>('')
+	const [contextMenuStartPosition, setContextMenuStartPosition] = useState<{ x: number, y: number } | null>(null)
 
 	const [categoryList, setCategoryList] = useLocalStorage<CategoryItem[]>('categoryList', [
 		{
@@ -91,10 +91,14 @@ export function BeautifulPresentation() {
 	}, [readonly])
 
 	useEffect(() => {
+		imgMark.current?.setEnableShapeOutOfImg(drawOutOfImg)
+	}, [drawOutOfImg])
+
+	useEffect(() => {
 		imgMark.current?.getSelectionPlugin()?.mode(selectMode)
 	}, [selectMode])
-
-	const shapeList = useRef<ShapeData[]>(demoData)
+	const initShapeList = localStorage.getItem('shapeList') ? JSON.parse(localStorage.getItem('shapeList') || '[]') : demoData
+	const shapeList = useRef<ShapeData[]>(initShapeList)
 	const shapeOptions: ShapeOptions = {
 		setAttr(shapeInstance: ImageMarkShape) {
 			return {
@@ -130,12 +134,118 @@ export function BeautifulPresentation() {
 		}
 	}
 
+	function hideContextMenu() {
+		setContextType('')
+		setContextMenuStartPosition(null)
+	}
+
+	function changeSrc() {
+		let srcValue = src
+		let modal: ModalReturnProps | null = null
+		function onOk() {
+			setSrc(srcValue)
+			modal?.close()
+		}
+		modal = Modal.confirm({
+			title: 'Set Img Src',
+			content:
+				<Input defaultValue={srcValue}
+					onChange={v => {
+						srcValue = v
+					}}
+					onKeyDown={e => {
+						if (e.key === 'Enter') {
+							onOk()
+						}
+					}}
+				/>,
+			onOk,
+		})
+	}
+
+	function editShapeLabel() {
+		let name = tmpShape.current?.data?.label || ''
+		let modal: ModalReturnProps | null = null
+		function onOk() {
+			const data = tmpShape.current?.data!
+			data.label = name
+			tmpShape.current?.updateData(data)
+			modal?.close()
+		}
+		modal = Modal.confirm({
+			title: 'Set Shape Label',
+			cancelText: 'Cancel',
+			okText: 'Submit',
+			unmountOnExit: true,
+			content: <Input defaultValue={name} onChange={v => name = v} onKeyDown={e => {
+				if (e.key === 'Enter') {
+					onOk()
+				}
+			}} />,
+			onOk
+		})
+	}
+
+	function editShapeCategory() {
+		let category_id = tmpShape.current?.data?.category_id || ''
+		let modal: ModalReturnProps | null = null
+		function onOk() {
+			const data = tmpShape.current?.data!
+			data.category_id = category_id
+			tmpShape.current?.updateData(data)
+			modal?.close()
+		}
+		modal = Modal.confirm({
+			title: 'Set Shape Category',
+			cancelText: 'Cancel',
+			okText: 'Submit',
+			unmountOnExit: true,
+			content: <Select
+				renderFormat={
+					(option: OptionInfo | null, value: string | number | LabeledValue) => {
+						const category = categoryList.find(c => c.category_id === option?.value)
+						return <div className='flex gap-x-4 items-center'>
+							<ColorPicker disabled value={category?.color || '#ff7d00'} />
+							<div>
+								{category?.name}
+							</div>
+						</div>
+					}
+				}
+				defaultValue={category_id} placeholder='Select Category' onChange={v => category_id = v} >
+				{
+					categoryList.map(category => {
+						return <Select.Option value={category.category_id} key={category.category_id}>
+							<div className='flex  items-center gap-x-4 justify-between'>
+								<div className='flex items-center gap-x-4'>
+									<div className='flex items-center' onClick={e => {
+										e.stopPropagation()
+									}}>
+										<ColorPicker disabled value={category.color || '#ff7d00'} />
+									</div>
+									<div>
+										{category.name}
+									</div>
+								</div>
+								<Button type='text' icon={<IconFont type="icon-del" style={{ fontSize: '20px', color: iconColor }} />} onClick={(e) => {
+									e.stopPropagation()
+									category_id = category.category_id
+								}} />
+							</div>
+						</Select.Option>
+					})
+				}
+			</Select>,
+			onOk
+		})
+	}
+
 	useEffect(() => {
 		if (!containerRef.current) throw new Error("containerRef is null")
 
 		imgMark.current = new ImageMark({
 			el: containerRef.current,
-			src: '/img/demo-parking.jpg',
+			src,
 			readonly,
 			pluginOptions: {
 				[ShapePlugin.pluginName]: {
@@ -148,38 +258,34 @@ export function BeautifulPresentation() {
 				setHistoryStackInfo(info)
 			})
 			.on(EventBusEventName.shape_context_menu, (evt: MouseEvent, shape: ImageMarkShape) => {
+				evt.stopPropagation()
 				evt.preventDefault()
-				console.log(shape)
+				console.log('shape_context_menu')
+				tmpShape.current = shape
+				setContextType('shape')
+				setContextMenuStartPosition({
+					x: evt.clientX,
+					y: evt.clientY,
+				})
 			})
 			.on(EventBusEventName.container_context_menu, (evt: MouseEvent, imgMark: ImageMarkShape) => {
 				evt.preventDefault()
-				console.log(imgMark)
+				console.log('container_context_menu')
+				setContextType('container')
+				setContextMenuStartPosition({
+					x: evt.clientX,
+					y: evt.clientY,
+				})
 			})
 			.on(EventBusEventName.first_render, () => {
 				imgMark.current?.setReadonly(readonly ? true : false)
 				imgMark.current?.getSelectionPlugin()?.mode(selectMode)
+				imgMark.current?.setEnableShapeOutOfImg(drawOutOfImg)
 				setScale(imgMark.current?.getCurrentScale() || 1)
 			})
 			.on(EventBusEventName.shape_add, (data: ShapeData, shape: ImageMarkShape) => {
-				let name = ''
-				let modal: ModalReturnProps | null = null
-				function onOk() {
-					data.label = name
-					shape.updateData(data)
-					modal?.close()
-				}
-				modal = Modal.confirm({
-					title: 'Set Shape Label',
-					cancelText: 'Cancel',
-					okText: 'Add',
-					unmountOnExit: true,
-					content: <Input defaultValue={name} onChange={v => name = v} onKeyDown={e => {
-						if (e.key === 'Enter') {
-							onOk()
-						}
-					}} />,
-					onOk
-				})
+				tmpShape.current = shape
+				editShapeLabel()
 			})
 			.on(EventBusEventName.scale, (scale: number) => {
 				setScale(scale)
@@ -187,6 +293,7 @@ export function BeautifulPresentation() {
 			.on(EventBusEventName.status_change, (status: ImageMarkStatus) => {
 				console.log('status_change', status)
 				setStatus(clone(status))
+				hideContextMenu()
 			})
 			.on(EventBusEventName.shape_start_drawing, (shape: ImageMarkShape) => {
 				console.log('shape_start_drawing', shape)
@@ -200,13 +307,22 @@ export function BeautifulPresentation() {
 				console.log('selection_select_list_change', list)
 				setSelectShapeList(list.slice())
 			})
-			.on(EventBusEventName.shape_data_change, () => {
-				console.log('shape_data_change');
+			.on(EventBusEventName.shape_data_change, (data: ShapeData[]) => {
+				console.log('shape_data_change', data);
+				localStorage.setItem('shapeList', JSON.stringify(data))
 			})
+			.on(EventBusEventName.shape_click, (evt: MouseEvent) => {
+				// evt.stopPropagation()
+				console.log('shape_click');
+				hideContextMenu()
+			})
+
+		containerRef.current.addEventListener('click', hideContextMenu)
 		return () => {
 			imgMark.current?.destroy()
+			containerRef.current?.removeEventListener('click', hideContextMenu)
 		}
-	}, [])
+	}, [src])
 	const drawingTipFlag = startDrawing && ['polygon', 'polyline'].includes(status.drawing?.data.shapeName || '')
 	const hasSelectShape = selectShapeList.length > 0 && !drawingTipFlag
 	const drawType = status?.drawing && !startDrawing
@@ -216,6 +332,9 @@ export function BeautifulPresentation() {
 
 			<div className='header h-[40px] flex-shrink-0 flex-grow-0 bg-[white] px-2 flex justify-between items-center'>
 				<div className='flex items-center gap-x-6'>
+					<Tooltip content='Set Img Src'>
+						<Button className={'icon-btn'} type='text' icon={<IconFont type="icon-laiyuan" style={{ fontSize: '16px', color: iconColor }} />} onClick={changeSrc} />
+					</Tooltip>
 					<div className='flex items-center gap-x-2'>
 						<Tooltip content='Dot'>
 							<Button className={'icon-btn'} type='text' icon={<IconFont type="icon-huizhidian" style={{ fontSize: '18px', color: iconColor }} />} onClick={() => {
@@ -556,19 +675,7 @@ export function BeautifulPresentation() {
 									setDrawerVisible(true)
 								}} />
 							</Tooltip>
-							{/* <Button type='text' onClick={() => {
-								imgMark.current?.getShapePlugin()?.setData([
-									{
-										shapeName: 'dot',
-										uuid: '234',
-										x: 100,
-										y: 100,
-										r: 10
-									}
-								])
-							}}>
-								Set Data
-							</Button> */}
+
 						</div>
 
 					</div>
@@ -638,13 +745,57 @@ export function BeautifulPresentation() {
 							<Radio value={false}>Off</Radio>
 						</Radio.Group>
 					</Form.Item>
-					{/* TODO  enable draw outof image*/}
+					<Form.Item label="Draw Out of Image" field={'drawOutOfImg'} initialValue={drawOutOfImg}>
+						<Radio.Group type='button' onChange={val => setDrawOutOfImg(val)}>
+							<Radio value={true}>On</Radio>
+							<Radio value={false}>Off</Radio>
+						</Radio.Group>
+					</Form.Item>
+					<Form.Item label="Data" field={'resetData'}>
+						<Space>
+							<Button type='default' onClick={() => {
+								imgMark.current?.getShapePlugin()?.setData(demoData)
+							}}>
+								Reset Data
+							</Button>
+							<Button type='default' onClick={() => {
+								setSrc(DEFAULT_SRC)
+							}}>
+								Reset Src
+							</Button>
+							<Upload accept={'.json'} showUploadList={false} customRequest={({ file }) => {
+								const reader = new FileReader()
+								reader.readAsText(file, 'utf-8')
+								reader.onload = () => {
+									const shapeDataList = JSON.parse(reader.result as string)
+									imgMark.current?.getShapePlugin()?.setData(shapeDataList)
+									Message.success('Import Success')
+									setDrawerVisible(false)
+								}
+							}}>
+								<Button type='default' onClick={() => {
+								}}>
+									Import
+								</Button>
+							</Upload>
+						</Space>
+					</Form.Item>
 				</Form>
 			</Drawer>
 			<Drawer
 				footer={null}
 				width={660}
-				title={<span>Shape Data</span>}
+				title={<Space size={'large'}>
+					<div>Shape Data</div>
+					<Button type='default' size='small' onClick={() => {
+						const shapeDataList = imgMark.current?.getShapePlugin()?.data
+						const blob = new Blob([JSON.stringify(shapeDataList, null, 2)], { type: 'application/json' })
+						const a = document.createElement('a')
+						a.href = URL.createObjectURL(blob)
+						a.download = 'shape-data.json'
+						a.click()
+					}}>Export</Button>
+				</Space>}
 				visible={shapeDataVisible}
 				unmountOnExit
 				getPopupContainer={() => drawerTargetRef && drawerTargetRef.current!}
@@ -660,6 +811,59 @@ export function BeautifulPresentation() {
 					readOnly: true,
 				}} theme={'vs-dark'} defaultLanguage="json" value={JSON.stringify(shapeDataList, null, 2)} />
 			</Drawer>
+			{
+				contextMenuStartPosition ?
+					<div className='fixed context-menu-panel' style={{ left: contextMenuStartPosition.x + 'px', top: contextMenuStartPosition.y + 'px' }}>
+						<Menu className={'context-menu'} onClickMenuItem={(key) => {
+							if (key === 'delete') {
+								imgMark.current?.getShapePlugin()?.removeNode(tmpShape.current!)
+							} else if (key === 'edit_label') {
+								editShapeLabel()
+							} else if (key === 'edit_category') {
+								editShapeCategory()
+							} else if (key === 'delete_all') {
+								imgMark.current?.getShapePlugin()?.removeAllNodes()
+							} else if (key === 'set_img_src') {
+								changeSrc()
+							}
+							hideContextMenu()
+						}}>
+							{
+								contextType === 'shape' ?
+									<>
+										<Menu.Item key={'edit_label'} >
+											<IconFont type='icon-edit' style={{ color: iconColor, fontSize: '16px' }} />
+											Edit Label
+										</Menu.Item>
+										<Menu.Item key={'edit_category'} >
+											<IconFont type='icon-flag' style={{ color: iconColor, fontSize: '16px' }} />
+											Edit Category
+										</Menu.Item>
+										<Menu.Item key={'delete'}>
+											<IconFont type='icon-del' style={{ color: iconColor, fontSize: '18px' }} />
+											Delete
+										</Menu.Item>
+									</>
+									: null
+							}
+							{
+								contextType == 'container' ?
+									<>
+										<Menu.Item key={'set_img_src'}>
+											<IconFont type="icon-laiyuan" style={{ fontSize: '13px', color: iconColor }} />
+											Set Img Src
+										</Menu.Item>
+										<Menu.Item key={'delete_all'}>
+											<IconFont type='icon-del' style={{ color: iconColor, fontSize: '18px' }} />
+											Delete All
+										</Menu.Item>
+									</>
+									: null
+							}
+						</Menu>
+					</div>
+					: null
+			}
 		</div>
 	)
 }

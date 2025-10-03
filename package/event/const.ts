@@ -13,6 +13,7 @@ export class EventBusEventName {
 	static container_drop = 'container_drop'
 	static container_context_menu = 'container_context_menu'
 
+	static shape_click = 'shape_click'
 	static shape_delete = 'shape_delete'
 	static shape_delete_patch = 'shape_delete_patch'
 	static shape_delete_all = 'shape_delete_all'

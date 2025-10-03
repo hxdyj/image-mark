@@ -131,8 +131,6 @@ export class SelectionAction extends Action {
 		if (this.imageMark.status.drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
-		evt.stopPropagation()
-		evt.preventDefault()
 		this.downTime = Date.now()
 	}
 

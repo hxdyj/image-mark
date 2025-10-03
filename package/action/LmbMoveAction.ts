@@ -89,8 +89,7 @@ export class LmbMoveAction extends Action {
 		if (this.imageMark.status.drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
-		event.stopPropagation()
-		event.preventDefault()
+		evt.stopPropagation()
 		this.status.mouseDown = true
 		this.startPoint = this.imageMark.stageGroup.point(evt.clientX, evt.clientY)
 		this.startTransform = this.shape.shapeInstance.transform()
@@ -101,8 +100,6 @@ export class LmbMoveAction extends Action {
 	onContainerMouseMove(event: MouseEvent) {
 		if (event.button !== 0) return
 		if (!this.status.mouseDown || !this.startTransform || !this.startPoint) return
-		event.stopPropagation()
-		event.preventDefault()
 		let cloneShape = new G()
 		cloneShape.transform(this.startTransform)
 		const cloneMovePoint = this.imageMark.stageGroup.point(event.clientX, event.clientY)

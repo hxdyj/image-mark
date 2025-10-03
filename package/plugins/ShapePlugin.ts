@@ -60,7 +60,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.bindEvent()
 	}
 
-	protected proxyDataItem(data: T) {
+	proxyDataItem(data: T) {
 		let that = this
 		return new Proxy(data, {
 			set(target, property, newValue, receiver) {
@@ -140,6 +140,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.createShape()
 		this.onDraw()
 		this.imageMark.eventBus.emit(EventBusEventName.shape_plugin_set_data, data, oldData, this.imageMark)
+		this.imageMark.eventBus.emit(EventBusEventName.shape_data_change, data, this.imageMark)
 	}
 
 	bindEvent() {
@@ -177,6 +178,25 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.clearMap()
 		this.unbindEvent()
 		super.destroy()
+	}
+
+	updateNode(data: T, callShape = true) {
+		const index = this.data.findIndex(item => item.uuid === data.uuid)
+		if (index !== -1) {
+			this.data[index] = this.proxyDataItem(data)
+		}
+		const shapeInstance = this.getInstanceByData(data)
+
+		if (shapeInstance) {
+			this.node2ShapeInstanceWeakMap.set(this.data[index], shapeInstance)
+			this.node2ShapeInstanceWeakMap.delete(data)
+			this.shapeInstance2NodeWeakMap.set(shapeInstance, this.data[index])
+		}
+
+		if (callShape && shapeInstance) {
+			shapeInstance.updateData(this.data[index], false)
+		}
+		return this.data[index]
 	}
 
 	addNode(data: T, emit = true) {

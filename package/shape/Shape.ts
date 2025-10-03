@@ -101,7 +101,6 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		group.id(this.data.uuid)
 		group.addClass(`shape-${this.data.shapeName}`)
 		this.shapeInstance = group
-
 		const finalOptions = this.getOptions()
 		this.attr = defaultsDeep(finalOptions?.setAttr?.(this) || {}, this.attr)
 		finalOptions?.initDrawFunc && this.addDrawFunc(finalOptions.initDrawFunc)
@@ -109,7 +108,9 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.bindEventThis([
 			'startEditShape',
 			'endEditShape',
-			'onContextMenu'
+			'onContextMenu',
+			'onMouseDown',
+			'onMouseUp'
 		])
 		this.bindEvent()
 		this.draw()
@@ -121,10 +122,14 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 	bindEvent() {
 		this.shapeInstance.on('contextmenu', this.onContextMenu)
+		this.shapeInstance.on('mousedown', this.onMouseDown)
+		this.shapeInstance.on('mouseup', this.onMouseUp)
 	}
 
 	unbindEvent() {
 		this.shapeInstance.off('contextmenu', this.onContextMenu)
+		this.shapeInstance.off('mousedown', this.onMouseDown)
+		this.shapeInstance.off('mouseup', this.onMouseUp)
 	}
 
 	abstract draw(): G;
@@ -240,12 +245,17 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		return `main_${this.data.uuid}`
 	}
 
-	updateData(data: T): G {
+	updateData(data: T, callPlugin = true): G {
+		if (!this.imageMark.status.drawing) {
+			const shapePlugin = this.imageMark.getShapePlugin()
+			if (callPlugin) {
+				data = shapePlugin?.updateNode(data, false) as T
+			}
+		}
 		this.data = data
 		this.draw()
 		return this.shapeInstance
 	}
-
 
 	readonly mouseDrawType: ShapeMouseDrawType = 'oneTouch'
 	readonly drawType: ShapeDrawType = 'point'
@@ -436,6 +446,17 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 	onContextMenu(event: Event) {
 		this.imageMark.eventBus.emit(EventBusEventName.shape_context_menu, event, this, this.imageMark)
+	}
+	mouseDownEvent: MouseEvent | null = null
+	onMouseDown(event: Event) {
+		this.mouseDownEvent = event as unknown as MouseEvent
+	}
+
+	onMouseUp(event: Event) {
+		if (!this.imageMark.status.drawing && !this.imageMark.status.editing && this.mouseDownEvent && this.mouseDownEvent.button === 0 && event.timeStamp - this.mouseDownEvent.timeStamp < 300) {
+			this.imageMark.eventBus.emit(EventBusEventName.shape_click, event, this, this.imageMark)
+		}
+		this.mouseDownEvent = null
 	}
 
 	static useDefaultAction() {
