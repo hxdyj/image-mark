@@ -29,16 +29,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	constructor(imageMarkInstance: ImageMark, public pluginOptions?: DeepPartial<ShapePluginOptions<T>>) {
 		super(imageMarkInstance, pluginOptions);
-
 		const finalOptions = this.getShapePluginOptions(pluginOptions)
-		const that = this
-		this.data = new Proxy((finalOptions?.shapeList || []).map(i => this.proxyDataItem(i)), {
-			set(target, property, newValue, receiver) {
-				const result = Reflect.set(target, property, newValue, receiver)
-				that.imageMark.eventBus.emit(EventBusEventName.shape_data_change, that.data, that.imageMark)
-				return result
-			},
-		})
+		this.data = finalOptions?.shapeList || []
 		ShapePlugin.shapeList.forEach(shape => {
 			this.initShape(shape.shape, finalOptions.shapeOptions)
 		})
@@ -59,20 +51,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		)
 		this.bindEvent()
 	}
-
-	proxyDataItem(data: T) {
-		let that = this
-		return new Proxy(data, {
-			set(target, property, newValue, receiver) {
-				const result = Reflect.set(target, property, newValue, receiver)
-				if (!['auxiliaryPoint'].includes(property.toString())) {
-					that.imageMark.eventBus.emit(EventBusEventName.shape_data_change, that.data, that.imageMark)
-				}
-				return result
-			},
-		})
-	}
-
 
 	getShapePluginOptions(options?: DeepPartial<ShapePluginOptions<T>>) {
 		return this.getOptions(options, thisPluginOptions => {
@@ -136,11 +114,11 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	setData(data: T[]) {
 		const oldData = this.data.slice()
 		this.removeAllNodes(false)
-		this.data = data.map(i => this.proxyDataItem(i))
+		this.data.splice(0, this.data.length, ...data)
 		this.createShape()
 		this.onDraw()
 		this.imageMark.eventBus.emit(EventBusEventName.shape_plugin_set_data, data, oldData, this.imageMark)
-		this.imageMark.eventBus.emit(EventBusEventName.shape_data_change, data, this.imageMark)
+		this.emitPluginDataChange()
 	}
 
 	bindEvent() {
@@ -180,23 +158,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		super.destroy()
 	}
 
-	updateNode(data: T, callShape = true) {
-		const index = this.data.findIndex(item => item.uuid === data.uuid)
-		if (index !== -1) {
-			this.data[index] = this.proxyDataItem(data)
-		}
-		const shapeInstance = this.getInstanceByData(data)
-
-		if (shapeInstance) {
-			this.node2ShapeInstanceWeakMap.set(this.data[index], shapeInstance)
-			this.node2ShapeInstanceWeakMap.delete(data)
-			this.shapeInstance2NodeWeakMap.set(shapeInstance, this.data[index])
-		}
-
-		if (callShape && shapeInstance) {
-			shapeInstance.updateData(this.data[index], false)
-		}
-		return this.data[index]
+	emitPluginDataChange() {
+		this.imageMark.eventBus.emit(EventBusEventName.shape_plugin_data_change, this.data, this.imageMark)
 	}
 
 	addNode(data: T, emit = true) {
@@ -206,12 +169,18 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.data.push(data)
 		this.renderNewNode(data)
 		this.renderNode(data)
-		emit && this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.getInstanceByData(data))
+		if (emit) {
+			this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.getInstanceByData(data))
+			this.emitPluginDataChange()
+		}
 	}
 
 	addNodes(dataList: T[], emit = true) {
 		dataList.forEach(item => this.addNode(item, false))
-		emit && this.imageMark.eventBus.emit(EventBusEventName.shape_add_patch, dataList, this.imageMark)
+		if (emit) {
+			this.imageMark.eventBus.emit(EventBusEventName.shape_add_patch, dataList, this.imageMark)
+			this.emitPluginDataChange()
+		}
 	}
 
 	onDelete(_data: T, shapeInstance?: ImageMarkShape) {
@@ -232,7 +201,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		const instance = data instanceof ImageMarkShape ? data : this.getInstanceByData(data) as ImageMarkShape<T>
 		if (!instance) return
 		this.onDelete(instance.data)
-		emit && this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data instanceof ImageMarkShape ? data.data : data, instance, this.imageMark)
+		if (emit) {
+			this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data instanceof ImageMarkShape ? data.data : data, instance, this.imageMark)
+			this.emitPluginDataChange()
+		}
 	}
 
 	removeNodes(dataList: T[] | ImageMarkShape<T>[], emit = true) {
@@ -258,6 +230,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.clearMap()
 		if (emit) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all, this.data, this.imageMark)
+			this.emitPluginDataChange()
 		}
 		this.data.splice(0, this.data.length)
 	}
@@ -315,6 +288,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	getInstanceByData(data: T) {
 		let instance = this.node2ShapeInstanceWeakMap.get(data)
 		if (!instance) {
+			//@ts-ignore
+			instance = this.imageMark.stage.find(`#G_${data.uuid}`)[0]?._imageMarkShape
+		}
+		if (!instance) {
 			let sourceData = this.data.find(node => node.uuid == data.uuid)
 			if (sourceData) {
 				instance = this.node2ShapeInstanceWeakMap.get(sourceData)
@@ -364,7 +341,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		// const isClass = !(shape instanceof ImageMarkShape)
 		// const shapeName = isClass ? shape.shapeName : Object.getPrototypeOf(shape).constructor.shapeName
 		// const shapeName = Object.getPrototypeOf(shape).constructor.shapeName
-		this.imageMark.status.drawing = shape
+		this.imageMark.status.shape_drawing = shape
 		this.drawingShape = shape
 		this.programmaticDrawing = programmaticDrawing
 		this.drawingMouseTrace = []
@@ -391,7 +368,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			this.addNode(shapeData)
 		}
 		this.drawingShape = null
-		this.imageMark.status.drawing = null
+		this.imageMark.status.shape_drawing = null
 		this.programmaticDrawing = false
 		this.drawingMouseTrace = []
 		this.imageMark.eventBus.emit(EventBusEventName.shape_end_drawing, cancel, shapeData, this.imageMark)
@@ -519,7 +496,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	dropLastMouseTrace() {
-		if (!this.imageMark.status.drawing) return
+		if (!this.imageMark.status.shape_drawing) return
 		if (this.programmaticDrawing) return
 		if (this.drawingShape?.mouseDrawType !== 'multiPress') return
 
@@ -544,7 +521,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	onContainerMouseDown(event: MouseEvent) {
-		if (!this.imageMark.status.drawing) return
+		if (!this.imageMark.status.shape_drawing) return
 		if (this.programmaticDrawing) return
 
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
@@ -563,7 +540,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 	onContainerMouseMove(event: MouseEvent) {
 		this.holdShape?.onContainerMouseMove(event)
-		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		if (!this.imageMark?.status.shape_drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
 		if (this.drawingShape?.mouseDrawType == 'multiPress') {
@@ -580,7 +557,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	onDocumentMouseMove(event: MouseEvent) {
 		this.holdShape?.onDocumentMouseMove(event)
 
-		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		if (!this.imageMark?.status.shape_drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
 		if (event.buttons === 0) {
@@ -615,7 +592,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	onDocumentMouseUp(event: MouseEvent) {
 		this.holdShape?.onDocumentMouseUp(event)
 
-		if (!this.imageMark?.status.drawing || !this.drawingShape) return
+		if (!this.imageMark?.status.shape_drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
 		if (!this.drawingMouseTrace?.length) return

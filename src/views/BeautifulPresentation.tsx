@@ -12,7 +12,7 @@ import { useLocalStorage } from 'usehooks-ts'
 import { ModalReturnProps } from '@arco-design/web-react/es/Modal/modal';
 import { ImageData } from '#/shape/Image';
 import Editor, { useMonaco, loader } from '@monaco-editor/react';
-import { clone, set } from 'lodash-es';
+import { clone, debounce, set } from 'lodash-es';
 import { useImmer } from 'use-immer';
 import { LabeledValue, OptionInfo } from '@arco-design/web-react/es/Select/interface';
 import { uid } from 'uid';
@@ -31,6 +31,7 @@ loader.config({
 TODO:
 4. docs
 5. rect data small zero
+6. remove nodeWeakMap
 */
 
 const iconColor = `#111`
@@ -95,6 +96,14 @@ export function BeautifulPresentation() {
 	useEffect(() => {
 		imgMark.current?.getSelectionPlugin()?.mode(selectMode)
 	}, [selectMode])
+
+	const updateLocalStorageShapeList = debounce(() => {
+		localStorage.setItem('shapeList', JSON.stringify(imgMark.current?.getShapePlugin()?.data || []))
+	}, 300, {
+		trailing: true,
+		leading: false,
+	})
+
 	const initShapeList = localStorage.getItem('shapeList') ? JSON.parse(localStorage.getItem('shapeList') || '[]') : demoData
 	const shapeList = useRef<ShapeData[]>(initShapeList)
 	const shapeOptions: ShapeOptions = {
@@ -165,6 +174,7 @@ export function BeautifulPresentation() {
 		let name = tmpShape.current?.data?.label || ''
 		let modal: ModalReturnProps | null = null
 		function onOk() {
+			tmpShape.current?.startModifyData()
 			const data = tmpShape.current?.data!
 			data.label = name
 			tmpShape.current?.updateData(data)
@@ -188,6 +198,7 @@ export function BeautifulPresentation() {
 		let category_id = tmpShape.current?.data?.category_id || ''
 		let modal: ModalReturnProps | null = null
 		function onOk() {
+			tmpShape.current?.startModifyData()
 			const data = tmpShape.current?.data!
 			data.category_id = category_id
 			tmpShape.current?.updateData(data)
@@ -198,7 +209,7 @@ export function BeautifulPresentation() {
 			cancelText: 'Cancel',
 			okText: 'Submit',
 			unmountOnExit: true,
-			content: <Select
+			content: <Select allowClear
 				renderFormat={
 					(option: OptionInfo | null, value: string | number | LabeledValue) => {
 						const category = categoryList.find(c => c.category_id === option?.value)
@@ -305,9 +316,9 @@ export function BeautifulPresentation() {
 				console.log('selection_select_list_change', list)
 				setSelectShapeList(list.slice())
 			})
-			.on(EventBusEventName.shape_data_change, (data: ShapeData[]) => {
-				console.log('shape_data_change', data);
-				localStorage.setItem('shapeList', JSON.stringify(data))
+			.on(EventBusEventName.shape_plugin_data_change, (data: ShapeData[]) => {
+				console.log('shape_plugin_data_change', data);
+				updateLocalStorageShapeList()
 			})
 			.on(EventBusEventName.shape_click, (evt: MouseEvent) => {
 				// evt.stopPropagation()
@@ -321,7 +332,7 @@ export function BeautifulPresentation() {
 			containerRef.current?.removeEventListener('click', hideContextMenu)
 		}
 	}, [src])
-	const drawingTipFlag = startDrawing && ['polygon', 'polyline'].includes(status.drawing?.data.shapeName || '')
+	const drawingTipFlag = startDrawing && ['polygon', 'polyline'].includes(status.shape_drawing?.data.shapeName || '')
 	const hasSelectShape = selectShapeList.length > 0 && !drawingTipFlag
 	const drawType = status?.drawing && !startDrawing
 	const showStatusTip = drawingTipFlag || hasSelectShape || drawType
@@ -708,7 +719,7 @@ export function BeautifulPresentation() {
 										'polygon': <div>click on container multiple to drawing polygon</div>,
 										'circle': <div>hold lmb to move on container drawing circle</div>,
 										'image': <div>hold lmb to move on container drawing image</div>,
-									}[status.drawing?.data?.shapeName || '']
+									}[status.shape_drawing?.data?.shapeName || '']
 									: null
 							}
 						</div> : null

@@ -312,7 +312,7 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		return list
 	}
 
-	onDocumentMouseMove(event: MouseEvent) {
+	onDocumentMouseMove(event: MouseEvent, emit = false) {
 		super.onDocumentMouseMove(event)
 		const evt = event as MouseEvent
 		if (evt.button === 0 && this.editMouseDownEvent) {
@@ -322,12 +322,12 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 			this.updateData({
 				...this.data,
 				...newData
-			})
+			}, emit)
 		}
 	}
 	onDocumentMouseUp(event: MouseEvent) {
 		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event)
+		this.onDocumentMouseMove(event, true)
 		this.endEditShape()
 		this.onEndDrawing()
 		this.draw()

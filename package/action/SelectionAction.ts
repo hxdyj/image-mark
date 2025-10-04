@@ -128,7 +128,7 @@ export class SelectionAction extends Action {
 			this.imageMark.onContainerLmbDownMoveingMouseDownEvent(event)
 			return
 		}
-		if (this.imageMark.status.drawing) return
+		if (this.imageMark.status.shape_drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
 		this.downTime = Date.now()

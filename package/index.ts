@@ -105,8 +105,9 @@ export const imageMarkGlobalEventBus = new EventEmitter()
 export type ImageMarkStatus = {
 	scaling: boolean
 	moving: boolean
-	drawing: null | ImageMarkShape
-	editing: null | ImageMarkShape
+	shape_drawing: null | ImageMarkShape
+	shape_editing: null | ImageMarkShape
+	shape_moving: null | ImageMarkShape
 }
 
 
@@ -131,8 +132,9 @@ export function getDefaultImageMarkStatus(): ImageMarkStatus {
 	return {
 		scaling: false,
 		moving: false,
-		drawing: null,
-		editing: null,
+		shape_drawing: null,
+		shape_editing: null,
+		shape_moving: null,
 	}
 }
 export class ImageMark extends EventBindingThis {
@@ -691,7 +693,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	moveTo(position: Position) {
-		if (this.status.drawing) return
+		if (this.status.shape_drawing) return
 		const { scaleX = 1, translateX = 0, translateY = 0 } = this.stageGroup.transform()
 		const { width, height } = this.containerRectInfo
 		const { naturalWidth, naturalHeight } = this.imageDom
@@ -744,7 +746,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	move(point: ArrayPoint) {
-		if (this.status.scaling || this.status.moving || this.status.drawing) return
+		if (this.status.scaling || this.status.moving || this.status.shape_drawing) return
 		point = this.fixPoint(point, this.limitMovePoint(point))
 		this.status.moving = true
 
@@ -759,7 +761,7 @@ export class ImageMark extends EventBindingThis {
 	movingStartTransform: MatrixExtract | null = null
 
 	startSuccessiveMove(point: ArrayPoint) {
-		if (this.status.drawing) return
+		if (this.status.shape_drawing) return
 		this.status.moving = true
 		this.movingStartPoint = point
 		this.movingStartTransform = this.stageGroup.transform()
@@ -820,7 +822,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
-		if (this.status.scaling || this.status.moving || this.status.drawing) return
+		if (this.status.scaling || this.status.moving || this.status.shape_drawing) return
 		this.status.scaling = true
 
 		if (point === 'left-top') {

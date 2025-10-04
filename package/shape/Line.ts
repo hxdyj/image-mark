@@ -139,7 +139,7 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		}
 	}
 
-	onDocumentMouseMove(event: MouseEvent) {
+	onDocumentMouseMove(event: MouseEvent, emit = false) {
 		super.onDocumentMouseMove(event)
 		const evt = event as MouseEvent
 		if (evt.button === 0 && this.editMouseDownEvent) {
@@ -149,14 +149,14 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 				...this.data,
 				[index === 0 ? 'x' : 'x2']: point.x,
 				[index === 0 ? 'y' : 'y2']: point.y,
-			})
+			}, emit)
 		}
 		this.getEditShape()?.addClass('edit-moving-point')
 	}
 
 	onDocumentMouseUp(event: MouseEvent) {
 		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event)
+		this.onDocumentMouseMove(event, true)
 		this.getEditShape()?.removeClass('edit-moving-point')
 		this.endEditShape()
 	}

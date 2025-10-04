@@ -86,11 +86,13 @@ export class LmbMoveAction extends Action {
 			return
 		}
 		this.imageMark?.getShapePlugin()?.setHoldShape(this.shape)
-		if (this.imageMark.status.drawing) return
+		if (this.imageMark.status.shape_drawing) return
 		let evt = event as MouseEvent
 		if (evt.button !== 0) return
 		evt.stopPropagation()
 		this.status.mouseDown = true
+		this.shape.startModifyData()
+		this.imageMark.status.shape_moving = this.shape
 		this.startPoint = this.imageMark.stageGroup.point(evt.clientX, evt.clientY)
 		this.startTransform = this.shape.shapeInstance.transform()
 		this.getLmbMoveActionOptions()?.onStart?.(this.imageMark, this.shape, evt)
@@ -177,6 +179,7 @@ export class LmbMoveAction extends Action {
 		this.onContainerMouseMove(event)
 		this.status.mouseDown = false
 		this.startPoint = null
+		this.imageMark.status.shape_moving = null
 		const { e = 0, f = 0 } = this.shape.shapeInstance.transform()
 		if (e === 0 && f === 0) return
 		this.shape.translate?.(e, f)

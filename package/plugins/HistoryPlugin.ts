@@ -1,5 +1,5 @@
-import { ImageMarkShape, ShapeData } from "../shape/Shape";
-import ImageMark, { ArrayPoint, EventBusEventName } from "../index";
+import { ShapeData } from "../shape/Shape";
+import ImageMark, { EventBusEventName } from "../index";
 import { Plugin } from "./plugin";
 import { cloneDeep } from "lodash-es";
 import { DeepPartial } from "utility-types";
@@ -20,10 +20,7 @@ export class HistoryPlugin extends Plugin {
 			'onShapeDeletePatch',
 			'onShapeDeleteAll',
 			'onShapePluginSetData',
-			'onShapeStartMove',
-			'onShapeEndMove',
-			'onShapeStartEdit',
-			'onShapeEndEdit'
+			'onShapeUpdateData'
 		])
 		this.bindEvent()
 	}
@@ -41,31 +38,23 @@ export class HistoryPlugin extends Plugin {
 
 	bindEvent() {
 		super.bindEvent()
-		this.imageMark.on(EventBusEventName.shape_start_move, this.onShapeStartMove)
-		this.imageMark.on(EventBusEventName.shape_end_move, this.onShapeEndMove)
 		this.imageMark.on(EventBusEventName.shape_add, this.onShapeAdd)
 		this.imageMark.on(EventBusEventName.shape_delete, this.onShapeDelete)
 		this.imageMark.on(EventBusEventName.shape_delete_all, this.onShapeDeleteAll)
 		this.imageMark.on(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
 		this.imageMark.on(EventBusEventName.shape_plugin_set_data, this.onShapePluginSetData)
-		this.imageMark.on(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
-		this.imageMark.on(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
+		this.imageMark.on(EventBusEventName.shape_update_data, this.onShapeUpdateData)
 	}
 
 	unbindEvent() {
 		super.unbindEvent()
-		this.imageMark.off(EventBusEventName.shape_start_move, this.onShapeStartMove)
-		this.imageMark.off(EventBusEventName.shape_end_move, this.onShapeEndMove)
 		this.imageMark.off(EventBusEventName.shape_add, this.onShapeAdd)
 		this.imageMark.off(EventBusEventName.shape_delete, this.onShapeDelete)
 		this.imageMark.off(EventBusEventName.shape_delete_all, this.onShapeDeleteAll)
 		this.imageMark.off(EventBusEventName.shape_delete_patch, this.onShapeDeletePatch)
 		this.imageMark.off(EventBusEventName.shape_plugin_set_data, this.onShapePluginSetData)
-		this.imageMark.off(EventBusEventName.shape_start_edit, this.onShapeStartEdit)
-		this.imageMark.off(EventBusEventName.shape_end_edit, this.onShapeEndEdit)
+		this.imageMark.off(EventBusEventName.shape_update_data, this.onShapeUpdateData)
 	}
-
-	tmpHistory: History | null = null
 
 	emitHistoryChange() {
 		this.imageMark.eventBus.emit(EventBusEventName.history_change, this.getStackInfo(), this.imageMark)
@@ -118,30 +107,8 @@ export class HistoryPlugin extends Plugin {
 		this.push(new ShapePatchExistHistory(oldData, data))
 	}
 
-	onShapeStartMove(shape: ImageMarkShape) {
-		this.tmpHistory = new ShapeEditHistory(shape.data)
-	}
-
-	onShapeEndMove(shape: ImageMarkShape, diff: ArrayPoint) {
-		if (this.tmpHistory && !(diff.every(i => i == 0))) {
-			this.tmpHistory.setNewData(shape.data)
-			this.push(this.tmpHistory)
-			this.tmpHistory = null
-		}
-	}
-
-	onShapeStartEdit(shape: ImageMarkShape) {
-		this.tmpHistory = new ShapeEditHistory(shape.data)
-		console.log(111, cloneDeep(shape.data))
-	}
-
-	onShapeEndEdit(shape: ImageMarkShape) {
-		if (this.tmpHistory) {
-			this.tmpHistory.setNewData(shape.data)
-			console.log(222, cloneDeep(shape.data))
-			this.push(this.tmpHistory)
-			this.tmpHistory = null
-		}
+	onShapeUpdateData(newData: ShapeData, oldData: ShapeData) {
+		this.push(new ShapeEditHistory(oldData, newData))
 	}
 
 	destroy(): void {

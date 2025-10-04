@@ -143,7 +143,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		}
 	}
 
-	onDocumentMouseMove(event: MouseEvent) {
+	onDocumentMouseMove(event: MouseEvent, emit = false) {
 		super.onDocumentMouseMove(event)
 		const evt = event as MouseEvent
 		if (evt.button === 0 && this.editMouseDownEvent) {
@@ -151,14 +151,14 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 			const { index, point } = this.getEditPoint(event)
 			const startIndex = index * 2
 			this.data.points.splice(startIndex, 2, point.x, point.y)
-			this.updateData(this.data)
+			this.updateData(this.data, emit)
 		}
 		this.getEditShape()?.addClass('edit-moving-point')
 	}
 
 	onDocumentMouseUp(event: MouseEvent) {
 		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event)
+		this.onDocumentMouseMove(event, true)
 		this.getEditShape()?.removeClass('edit-moving-point')
 		this.endEditShape()
 	}

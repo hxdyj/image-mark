@@ -7,6 +7,7 @@ import { cloneDeep, defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "../action/LmbMoveAction";
 import { EventBusEventName } from "../event/const";
 import { getOptimalTextColor } from "../utils/color.util";
+import { setObjectNewValue } from "#/utils/object";
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
@@ -98,9 +99,11 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 		this.imageMark = imageMarkInstance;
 		const group = new G()
-		group.id(this.data.uuid)
+		group.id(`G_${this.data.uuid}`)
 		group.addClass(`shape-${this.data.shapeName}`)
 		this.shapeInstance = group
+		//@ts-ignore
+		this.shapeInstance._imageMarkShape = this
 		const finalOptions = this.getOptions()
 		this.attr = defaultsDeep(finalOptions?.setAttr?.(this) || {}, this.attr)
 		finalOptions?.initDrawFunc && this.addDrawFunc(finalOptions.initDrawFunc)
@@ -245,15 +248,15 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		return `main_${this.data.uuid}`
 	}
 
-	updateData(data: T, callPlugin = true): G {
-		if (!this.imageMark.status.drawing) {
-			const shapePlugin = this.imageMark.getShapePlugin()
-			if (callPlugin) {
-				data = shapePlugin?.updateNode(data, false) as T
-			}
-		}
-		this.data = data
+	updateData(data: T, emit = true): G {
+		setObjectNewValue(this.data, data)
 		this.draw()
+		console.log('updateData', emit, cloneDeep(this.dataSnapshot));
+		if (emit && this.dataSnapshot) {
+			this.imageMark.eventBus.emit(EventBusEventName.shape_update_data, this.data, this.dataSnapshot, this, this.imageMark)
+			this.imageMark.getShapePlugin()?.emitPluginDataChange()
+			this.dataSnapshot = null
+		}
 		return this.shapeInstance
 	}
 
@@ -280,6 +283,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}): T | null {
 		return null;
 	}
+
+
 
 	bindActions() {
 		if (!this.isBindActions) {
@@ -384,28 +389,24 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.editMouseDownEvent = event as unknown as MouseEvent
 		this.editOriginData = cloneDeep(this.data)
 		this.imageMark.getShapePlugin()?.setHoldShape(this)
-		this.imageMark.status.editing = this
+		this.startModifyData()
+		this.imageMark.status.shape_editing = this
 		this.imageMark.eventBus.emit(EventBusEventName.shape_start_edit, this, this.imageMark)
 	}
 
-	syncData() {
-		const list = this.imageMark.getShapePlugin()?.data
-		if (list?.length) {
-			const index = list.findIndex(i => i.uuid == this.data.uuid)
-			if (index != -1) {
-				Object.assign(list[index], this.data)
-			}
-		}
-	}
 
 	endEditShape() {
-		if (!this.imageMark.status.editing) return
+		if (!this.imageMark.status.shape_editing) return
 		this.editMouseDownEvent = null
 		this.editOriginData = null
 		this.imageMark.getShapePlugin()?.setHoldShape(null)
-		this.imageMark.status.editing = null
-		this.syncData()
+		this.imageMark.status.shape_editing = null
 		this.imageMark.eventBus.emit(EventBusEventName.shape_end_edit, this, this.imageMark)
+	}
+
+	dataSnapshot: T | null = null
+	startModifyData() {
+		this.dataSnapshot = cloneDeep(this.data)
 	}
 
 	removeEdit() {
@@ -453,7 +454,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 	onMouseUp(event: Event) {
-		if (!this.imageMark.status.drawing && !this.imageMark.status.editing && this.mouseDownEvent && this.mouseDownEvent.button === 0 && event.timeStamp - this.mouseDownEvent.timeStamp < 300) {
+		if (!this.imageMark.status.shape_drawing && !this.imageMark.status.shape_editing && this.mouseDownEvent && this.mouseDownEvent.button === 0 && event.timeStamp - this.mouseDownEvent.timeStamp < 300) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_click, event, this, this.imageMark)
 		}
 		this.mouseDownEvent = null

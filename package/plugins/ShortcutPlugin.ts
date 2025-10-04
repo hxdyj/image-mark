@@ -217,7 +217,7 @@ export class ShortcutPlugin extends Plugin {
 
 		const handler = {
 			delete_shape: (event: KeyboardEvent) => {
-				if (!this.imageMark.status.drawing && !this.imageMark.status.editing) {
+				if (!this.imageMark.status.shape_drawing && !this.imageMark.status.shape_editing) {
 					const list = this.imageMark.getSelectionPlugin()?.selectShapeList ?? []
 					this.imageMark.getShapePlugin()?.removeNodes(list)
 				}
@@ -290,18 +290,18 @@ export class ShortcutPlugin extends Plugin {
 				}, this.imageMark))
 			},
 			drawing_delete_point: (event: KeyboardEvent) => {
-				if (this.imageMark.status.drawing) {
+				if (this.imageMark.status.shape_drawing) {
 					this.imageMark.getShapePlugin()?.dropLastMouseTrace()
 				}
 			},
 			end_drawing: (event: KeyboardEvent) => {
-				if (this.imageMark.status.drawing) {
+				if (this.imageMark.status.shape_drawing) {
 					this.imageMark.getShapePlugin()?.endDrawing(true)
 				}
 			},
 			confirm_draw: (event: KeyboardEvent) => {
 				event.preventDefault()
-				if (this.imageMark.status.drawing) {
+				if (this.imageMark.status.shape_drawing) {
 					this.imageMark.getShapePlugin()?.endDrawing()
 				}
 			},
