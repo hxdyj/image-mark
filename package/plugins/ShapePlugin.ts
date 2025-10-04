@@ -22,8 +22,7 @@ export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
 
 export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	static pluginName = "shape";
-	protected node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
-	protected shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
+	protected node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape<T>>()
 	data: T[]
 	disableActionList: Set<string> = new Set()
 
@@ -88,7 +87,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected renderNewNode(node: T) {
-		if (!this.node2ShapeInstanceWeakMap.has(node)) {
+		if (!this.getInstanceByData(node)) {
 			let shape = null
 			const shapeInfo = this.shape[node.shapeName]
 			if (shapeInfo) {
@@ -99,7 +98,6 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 				shape = new shapeInfo.ShapeClass(node, this.imageMark, this.getShapeOptions(shapeInfo.shapeOptions))
 				if (shape) {
 					this.node2ShapeInstanceWeakMap.set(node, shape)
-					this.shapeInstance2NodeWeakMap.set(shape, node)
 				}
 			}
 		}
@@ -183,16 +181,14 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		}
 	}
 
-	onDelete(_data: T, shapeInstance?: ImageMarkShape) {
-		const data = shapeInstance ? this.shapeInstance2NodeWeakMap?.get(shapeInstance) || _data : _data
+	onDelete(_data: T, shapeInstance?: ImageMarkShape<T>) {
+		const data = shapeInstance?.data || _data
 		const list = this.tempData || this.data
 		if (data) {
 			const index = list.findIndex(item => item.uuid === data.uuid)
 			if (index == -1 || index == undefined) return
 			const shapeInstance = this.getInstanceByData(data)
 			list.splice(index, 1)
-			this.node2ShapeInstanceWeakMap.delete(data)
-			this.shapeInstance2NodeWeakMap.delete(shapeInstance!)
 			shapeInstance?.destroy()
 		}
 	}
@@ -249,8 +245,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	clearMap() {
-		this.node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape>()
-		this.shapeInstance2NodeWeakMap = new WeakMap<ImageMarkShape, T>()
+		this.node2ShapeInstanceWeakMap = new WeakMap<T, ImageMarkShape<T>>()
 	}
 
 	protected onRerender() {
@@ -273,10 +268,12 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	protected renderNode(node: T) {
-		const shape = this.getInstanceByData(node)
-		if (shape) {
-			shape.render(this.imageMark.stageGroup)
+		let shape: ImageMarkShape<T> | undefined = this.getInstanceByData(node)
+		if (!shape) {
+			shape = this.node2ShapeInstanceWeakMap.get(node)
+			this.node2ShapeInstanceWeakMap.delete(node)
 		}
+		shape?.render(this.imageMark.stageGroup)
 	}
 
 	protected onDraw() {
@@ -285,19 +282,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		})
 	}
 
-	getInstanceByData(data: T) {
-		let instance = this.node2ShapeInstanceWeakMap.get(data)
-		if (!instance) {
-			//@ts-ignore
-			instance = this.imageMark.stage.find(`#G_${data.uuid}`)[0]?._imageMarkShape
-		}
-		if (!instance) {
-			let sourceData = this.data.find(node => node.uuid == data.uuid)
-			if (sourceData) {
-				instance = this.node2ShapeInstanceWeakMap.get(sourceData)
-			}
-		}
-		return instance
+	getInstanceByData(node: T) {
+		//@ts-ignore
+		return this.imageMark.stage.find(`#G_${node.uuid}`)[0]?._imageMarkShape as ImageMarkShape<T>
 	}
 
 	shape: {

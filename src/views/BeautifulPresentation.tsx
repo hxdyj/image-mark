@@ -20,6 +20,7 @@ import createColor from "create-color";
 import md5 from 'md5';
 import Color from 'color';
 import { EventBusEventName } from '../../package/event/const';
+import hotkeys from 'hotkeys-js';
 
 loader.config({
 	paths: {
@@ -31,7 +32,6 @@ loader.config({
 TODO:
 4. docs
 5. rect data small zero
-6. remove nodeWeakMap
 */
 
 const iconColor = `#111`
@@ -96,6 +96,16 @@ export function BeautifulPresentation() {
 	useEffect(() => {
 		imgMark.current?.getSelectionPlugin()?.mode(selectMode)
 	}, [selectMode])
+
+
+	useEffect(() => {
+		hotkeys('esc', (e) => {
+			hideContextMenu()
+		})
+		return () => {
+			hotkeys.unbind('esc')
+		}
+	}, [])
 
 	const updateLocalStorageShapeList = debounce(() => {
 		localStorage.setItem('shapeList', JSON.stringify(imgMark.current?.getShapePlugin()?.data || []))

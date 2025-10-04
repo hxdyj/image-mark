@@ -81,17 +81,6 @@ export const routes: IRoute[] = [
 							{
 								childIndexRoute: true,
 								homeRoute: true,
-								path: '/demo/full',
-								element: <FullDemo />,
-								meta: {
-									title: 'Full',
-									menuShow: true,
-									noLogin: false,
-								},
-							},
-							{
-								childIndexRoute: true,
-								homeRoute: true,
 								path: '/demo/beautiful-presentation',
 								element: <BeautifulPresentation />,
 								meta: {
@@ -100,6 +89,7 @@ export const routes: IRoute[] = [
 									noLogin: false,
 								},
 							},
+
 							{
 								path: '/demo/base',
 								element: <Base />,
@@ -123,6 +113,15 @@ export const routes: IRoute[] = [
 								element: <TeamMarkPluginDemo />,
 								meta: {
 									title: 'TeamPlugin',
+									menuShow: true,
+									noLogin: false,
+								},
+							},
+							{
+								path: '/demo/full',
+								element: <FullDemo />,
+								meta: {
+									title: 'Full',
 									menuShow: true,
 									noLogin: false,
 								},
