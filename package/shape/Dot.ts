@@ -46,6 +46,16 @@ export class ImageMarkDot extends ImageMarkShape<DotData> {
 		}, false)
 	}
 
+	fixData(data?: DotData | undefined): void {
+		data = data || this.data
+		const flagName = this.getPreStatusOperateActionName()
+		if (flagName) {
+			const r = this.data.r
+			data.x = this.imageMark.options.action?.[flagName] ? data.x : this.clampX(data.x, -r, r)
+			data.y = this.imageMark.options.action?.[flagName] ? data.y : this.clampY(data.y, -r, r)
+		}
+	}
+
 	mouseEvent2Data(options: MouseEvent2DataOptions): DotData | null {
 		const { eventList = [] } = options
 		const startPoint = this.imageMark.image.point(eventList[0])

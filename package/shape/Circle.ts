@@ -55,6 +55,17 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		}, false)
 	}
 
+	fixData(data?: CircleData | undefined): void {
+		data = data || this.data
+		const flagName = this.getPreStatusOperateActionName()
+		if (flagName) {
+			const r = this.data.r
+			data.x = this.imageMark.options.action?.[flagName] ? data.x : this.clampX(data.x, -r, r)
+			data.y = this.imageMark.options.action?.[flagName] ? data.y : this.clampY(data.y, -r, r)
+		}
+	}
+
+
 	mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null {
 		const { eventList = [] } = options
 		if (eventList.length < 2) return null

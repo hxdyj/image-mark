@@ -52,6 +52,17 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		}, false)
 	}
 
+	fixData(data?: LineData | undefined): void {
+		data = data || this.data
+		const flagName = this.getPreStatusOperateActionName()
+		if (flagName) {
+			data.x = this.imageMark.options.action?.[flagName] ? data.x : this.clampX(data.x)
+			data.y = this.imageMark.options.action?.[flagName] ? data.y : this.clampY(data.y)
+			data.x2 = this.imageMark.options.action?.[flagName] ? data.x2 : this.clampX(data.x2)
+			data.y2 = this.imageMark.options.action?.[flagName] ? data.y2 : this.clampY(data.y2)
+		}
+	}
+
 	mouseEvent2Data(options: MouseEvent2DataOptions): LineData | null {
 		const { eventList = [] } = options
 		if (eventList.length < 2) return null

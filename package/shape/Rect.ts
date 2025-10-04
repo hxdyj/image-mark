@@ -1,6 +1,6 @@
 import { Circle, G, Point, Polygon, Rect } from "@svgdotjs/svg.js";
 import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
-import ImageMark, { BoundingBox } from "../index";
+import ImageMark, { BoundingBox, ImageMarkOptions } from "../index";
 import { clamp } from "lodash-es";
 
 
@@ -61,10 +61,18 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 	translate(x: number, y: number): void {
 		this.data.x += x
 		this.data.y += y
-
 		this.shapeInstance.transform({
 			translate: [0, 0]
 		}, false)
+	}
+
+	fixData(data?: RectData | undefined): void {
+		data = data || this.data
+		const flagName = this.getPreStatusOperateActionName()
+		if (flagName) {
+			data.x = this.imageMark.options.action?.[flagName] ? data.x : this.clampX(data.x, -data.width)
+			data.y = this.imageMark.options.action?.[flagName] ? data.y : this.clampY(data.y, -data.height)
+		}
 	}
 
 

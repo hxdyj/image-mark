@@ -1,6 +1,6 @@
 import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
-import { cloneDeep, defaultsDeep, difference, forEach, throttle } from "lodash-es";
+import { clone, cloneDeep, defaultsDeep, difference, forEach, throttle } from "lodash-es";
 import EventEmitter from "eventemitter3";
 import { getRectWeltContainerEdgeNameList, sortEdgeNames } from "./utils/cartesianCoordinateSystem";
 import { Plugin, PluginOptions } from "./plugins/plugin";
@@ -156,6 +156,8 @@ export class ImageMark extends EventBindingThis {
 	globalEventBus = imageMarkGlobalEventBus
 	private destroyed = false
 	createTime: number = Date.now()
+	preStatus: ImageMarkStatus | null = null
+
 
 	constructor(public options: ImageMarkOptions) {
 		super()
@@ -164,6 +166,7 @@ export class ImageMark extends EventBindingThis {
 		const that = this
 		this.status = new Proxy(getDefaultImageMarkStatus(), {
 			set(target: ImageMarkStatus, prop: keyof ImageMarkStatus, value: ImageMarkStatus, receiver: ImageMarkStatus) {
+				that.preStatus = clone(target)
 				const newStatus = Reflect.set(target, prop, value, receiver)
 				that.eventBus.emit(EventBusEventName.status_change, target, that)
 				return newStatus

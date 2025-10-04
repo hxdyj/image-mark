@@ -31,7 +31,6 @@ loader.config({
 /*
 TODO:
 4. docs
-5. rect data small zero
 */
 
 const iconColor = `#111`
@@ -408,6 +407,17 @@ export function BeautifulPresentation() {
 								}, imgMark.current))
 							}} />
 						</Tooltip>
+						<Tooltip content='Circle'>
+							<Button className={'icon-btn'} type='text' icon={<IconFont type="icon-biaozhuyuanxing" style={{ fontSize: '17px', color: iconColor }} />} onClick={() => {
+								imgMark.current?.getShapePlugin()?.startDrawing(new ImageMarkCircle({
+									shapeName: 'circle',
+									x: 0,
+									y: 0,
+									r: 0,
+									category_id: selectCategory,
+								}, imgMark.current))
+							}} />
+						</Tooltip>
 						<Tooltip content='Polygon'>
 							<Button className={'icon-btn'} type='text' icon={<IconFont type="icon-polygon" style={{ fontSize: '17px', color: iconColor }} />} onClick={() => {
 								imgMark.current?.getShapePlugin()?.startDrawing(new ImageMarkPolygon({
@@ -634,8 +644,12 @@ export function BeautifulPresentation() {
 												value: <kbd>alt/option + 5</kbd>
 											},
 											{
-												label: 'Polygon',
+												label: 'Circle',
 												value: <kbd>alt/option + 6</kbd>
+											},
+											{
+												label: 'Polygon',
+												value: <kbd>alt/option + 7</kbd>
 											},
 											{
 												label: <div>

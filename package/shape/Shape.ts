@@ -1,9 +1,9 @@
 import { G, Rect, Shape, StrokeData, Svg, Text } from "@svgdotjs/svg.js";
-import { ImageMark, SelectionAction } from "../index";
+import { ImageMark, ImageMarkOptions, SelectionAction } from "../index";
 import { EventBindingThis } from '../event/event'
 import { Action } from "../action/action";
 import { uid } from "uid";
-import { cloneDeep, defaultsDeep } from "lodash-es";
+import { clamp, cloneDeep, defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "../action/LmbMoveAction";
 import { EventBusEventName } from "../event/const";
 import { getOptimalTextColor } from "../utils/color.util";
@@ -239,6 +239,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 	updateData(data: T, emit = true): G {
+		this.fixData?.(data)
 		setObjectNewValue(this.data, data)
 		this.draw()
 		console.log('updateData', emit, cloneDeep(this.dataSnapshot));
@@ -248,6 +249,30 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 			this.dataSnapshot = null
 		}
 		return this.shapeInstance
+	}
+
+	getPreStatusOperateActionName(): keyof ImageMarkOptions['action'] | null {
+		const { shape_drawing, shape_editing, shape_moving } = this.imageMark.preStatus || {}
+		let flagName: keyof ImageMarkOptions['action'] | null = null
+		if (shape_drawing) {
+			//@ts-ignore
+			flagName = 'enableDrawShapeOutOfImg'
+		} else if (shape_editing) {
+			//@ts-ignore
+			flagName = 'enableEditShapeOutOfImg'
+		} else if (shape_moving) {
+			//@ts-ignore
+			flagName = 'enableMoveShapeOutOfImg'
+		}
+		return flagName
+	}
+
+	clampX(x: number, fixMax = 0, fixMin = 0) {
+		return clamp(x, 0 + fixMin, this.imageMark.imageDom.naturalWidth + fixMax)
+	}
+
+	clampY(y: number, fixMax = 0, fixMin = 0) {
+		return clamp(y, 0 + fixMin, this.imageMark.imageDom.naturalHeight + fixMax)
 	}
 
 	readonly mouseDrawType: ShapeMouseDrawType = 'oneTouch'
@@ -298,7 +323,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.bindActions()
 		this.options?.afterRender?.(this)
 		this.imageMark.eventBus.emit(EventBusEventName.shape_after_render, this)
-		this.drawLabel()
+		//多绘制一遍，确保在dom插入以后各种计算准确
+		this.draw()
 	}
 
 	destroy() {
@@ -366,7 +392,9 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		return ImageMarkShape.actionList.includes(action)
 	}
 
+
 	abstract translate(x: number, y: number): void
+	abstract fixData(data?: T): void
 
 	protected editOn: boolean = false
 

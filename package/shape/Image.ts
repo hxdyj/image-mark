@@ -101,6 +101,15 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		}, false)
 	}
 
+	fixData(data?: ImageData | undefined): void {
+		data = data || this.data
+		const flagName = this.getPreStatusOperateActionName()
+		if (flagName) {
+			data.x = this.imageMark.options.action?.[flagName] ? data.x : this.clampX(data.x, -data.width)
+			data.y = this.imageMark.options.action?.[flagName] ? data.y : this.clampY(data.y, -data.height)
+		}
+	}
+
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): ImageData | null {
 		const { eventList = [] } = options

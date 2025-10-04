@@ -53,6 +53,19 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		}, false)
 	}
 
+	fixData(data?: PolyLineData | undefined): void {
+		data = data || this.data
+		const flagName = this.getPreStatusOperateActionName()
+		if (flagName) {
+			data.points = data.points.map((point, index) => {
+				if (index % 2 === 0) {
+					return this.imageMark.options.action?.[flagName] ? point : this.clampX(point)
+				}
+				return this.imageMark.options.action?.[flagName] ? point : this.clampY(point)
+			})
+		}
+	}
+
 	mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null {
 		const { eventList = [], auxiliaryEvent } = options
 		if (!eventList.length) return null

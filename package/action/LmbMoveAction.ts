@@ -131,19 +131,16 @@ export class LmbMoveAction extends Action {
 				}
 
 				if (translateX > (naturalWidth - width)) {
-
 					isOutOfBounds = true
 					fixTranslate[0] = naturalWidth - width - translateX
 				}
 
 				if (translateY < 0) {
-
 					isOutOfBounds = true
 					fixTranslate[1] = -translateY
 				}
 
 				if (translateY > (naturalHeight - height)) {
-
 					isOutOfBounds = true
 					fixTranslate[1] = naturalHeight - height - translateY
 				}
@@ -182,6 +179,7 @@ export class LmbMoveAction extends Action {
 		this.imageMark.status.shape_moving = null
 		const { e = 0, f = 0 } = this.shape.shapeInstance.transform()
 		if (e === 0 && f === 0) return
+
 		this.shape.translate?.(e, f)
 		this.shape.updateData(this.shape.data)
 		this.startTransform = null
