@@ -169,8 +169,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.renderNode(data)
 		if (emit) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_add, data, this.getInstanceByData(data))
-			this.emitPluginDataChange()
 		}
+		this.emitPluginDataChange()
 	}
 
 	addNodes(dataList: T[], emit = true) {
@@ -199,8 +199,8 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.onDelete(instance.data)
 		if (emit) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_delete, data instanceof ImageMarkShape ? data.data : data, instance, this.imageMark)
-			this.emitPluginDataChange()
 		}
+		this.emitPluginDataChange()
 	}
 
 	removeNodes(dataList: T[] | ImageMarkShape<T>[], emit = true) {
@@ -226,9 +226,9 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.clearMap()
 		if (emit) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_delete_all, this.data, this.imageMark)
-			this.emitPluginDataChange()
 		}
 		this.data.splice(0, this.data.length)
+		this.emitPluginDataChange()
 	}
 
 	onScale() {

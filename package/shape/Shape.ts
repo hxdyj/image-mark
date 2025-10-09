@@ -245,9 +245,9 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		console.log('updateData', emit, cloneDeep(this.dataSnapshot));
 		if (emit && this.dataSnapshot) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_update_data, this.data, this.dataSnapshot, this, this.imageMark)
-			this.imageMark.getShapePlugin()?.emitPluginDataChange()
 			this.dataSnapshot = null
 		}
+		this.imageMark.getShapePlugin()?.emitPluginDataChange()
 		return this.shapeInstance
 	}
 
