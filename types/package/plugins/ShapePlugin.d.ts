@@ -1,33 +1,35 @@
 import { Action, ImageMark } from '../index';
 import { Plugin } from './plugin';
 import { ImageMarkShape, ShapeData, ShapeOptions } from '../shape/Shape';
+import { DeepPartial } from 'utility-types';
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
     shapeList: T[];
     shapeOptions?: ShapeOptions;
 };
 export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
-    shapeOptions?: ShapeOptions | undefined;
+    pluginOptions?: DeepPartial<ShapePluginOptions<T>> | undefined;
     static pluginName: string;
-    protected node2ShapeInstanceWeakMap: WeakMap<T, ImageMarkShape<ShapeData>>;
-    protected shapeInstance2NodeWeakMap: WeakMap<ImageMarkShape<ShapeData>, T>;
+    protected node2ShapeInstanceWeakMap: WeakMap<T, ImageMarkShape<T>>;
     data: T[];
     disableActionList: Set<string>;
-    constructor(imageMarkInstance: ImageMark, shapeOptions?: ShapeOptions | undefined);
-    getShapeOptions(shapeOptions?: ShapeOptions): ShapeOptions;
+    constructor(imageMarkInstance: ImageMark, pluginOptions?: DeepPartial<ShapePluginOptions<T>> | undefined);
+    getShapePluginOptions(options?: DeepPartial<ShapePluginOptions<T>>): ShapePluginOptions<T>;
     addAction(action: typeof Action, actionOptions?: any): void;
     removeAction(action: typeof Action): void;
     disableAction(action: string | string[]): void;
     enableAction(action: string | string[]): void;
-    protected addNode(node: T): void;
+    protected renderNewNode(node: T): void;
     protected createShape(): void;
     setData(data: T[]): void;
     bindEvent(): void;
     unbindEvent(): void;
     destroy(): void;
-    onAdd(data: T, emit?: boolean): void;
-    onDelete(_data: T, shapeInstance?: ImageMarkShape): void;
-    removeNode(data: T | ImageMarkShape<T>): void;
-    removeNodes(dataList: T[] | ImageMarkShape<T>[]): void;
+    emitPluginDataChange(): void;
+    addNode(data: T, emit?: boolean): void;
+    addNodes(dataList: T[], emit?: boolean): void;
+    onDelete(_data: T, shapeInstance?: ImageMarkShape<T>): void;
+    removeNode(data: T | ImageMarkShape<T>, emit?: boolean): void;
+    removeNodes(dataList: T[] | ImageMarkShape<T>[], emit?: boolean): void;
     protected tempData: T[] | null;
     clear(): void;
     removeAllNodes(emit?: boolean): void;
@@ -40,13 +42,14 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     protected onResize(): void;
     protected renderNode(node: T): void;
     protected onDraw(): void;
-    getInstanceByData(data: T): ImageMarkShape<ShapeData> | undefined;
+    getInstanceByData(node: T): ImageMarkShape<T>;
     shape: {
         [key: string]: {
             ShapeClass: ImageMarkShape;
             shapeOptions?: ShapeOptions;
         };
     };
+    getShapeOptions(shapeOptions?: ShapeOptions): any;
     addShape(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): this;
     removeShape(shape: typeof ImageMarkShape<T>): this;
     initShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): this;
@@ -74,7 +77,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
         shapeOptions?: ShapeOptions;
     }>;
     static useShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>, shapeOptions?: ShapeOptions): {
-        new (imageMarkInstance: ImageMark, shapeOptions?: ShapeOptions | undefined): ShapePlugin<T>;
+        new (imageMarkInstance: ImageMark, pluginOptions?: DeepPartial<ShapePluginOptions<T>> | undefined): ShapePlugin<T>;
         pluginName: string;
         shapeList: Array<{
             shape: typeof ImageMarkShape;
@@ -88,6 +91,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
         } | undefined;
         useDefaultShape(): void;
         unuseDefaultShape(): void;
+        pluginOptions: import('./plugin').PluginOptions;
     };
     static unuseShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>): typeof ShapePlugin;
     static hasShape<T extends ShapeData>(shape: typeof ImageMarkShape<T>): {

@@ -3,6 +3,7 @@ import { default as ImageMark, ArrayPoint } from '../index';
 import { Action } from './action';
 import { ImageMarkShape } from '../shape/Shape';
 export type LmbMoveActionOptions = {
+    moveable?: boolean;
     onStart?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void;
     onMove?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void;
     onEnd?: (imageMark: ImageMark, shape: ImageMarkShape, event: MouseEvent) => void;
@@ -21,6 +22,7 @@ export declare class LmbMoveAction extends Action {
     protected startTransform: MatrixExtract | null;
     protected uid: string;
     constructor(imageMark: ImageMark, shape: ImageMarkShape, options?: LmbMoveActionOptions | undefined);
+    getLmbMoveActionOptions(): LmbMoveActionOptions;
     protected bindEvents(): void;
     protected unbindEvent(): void;
     addClassName(): void;

@@ -3,13 +3,22 @@ layout: doc
 footer: false
 ---
 
+## Types
+
+```ts
+export type PluginNewCall = (
+	imageMarkInstance: ImageMark,
+	pluginOptions?: PluginOptions
+) => Plugin
+```
+
 ## Static Methods
 
 ### usePlugin
 
 ```ts
 // Use a plugin
-usePlugin(plugin: typeof Plugin): ImageMark
+usePlugin(plugin: typeof Plugin, pluginOptions?: PluginOptions): ImageMark
 ```
 
 ### unusePlugin
@@ -253,37 +262,35 @@ setEnableShapeOutOfImg(enable: boolean): ImageMark
 ### initPlugin
 
 ```ts
-export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin
-
 // Initialize a plugin
-initPlugin(plugin: typeof Plugin|PluginNewCall): ImageMark
+initPlugin(plugin: typeof Plugin|PluginNewCall, pluginOptions?: PluginOptions): ImageMark
 ```
 
 ### addPlugin
 
 ```ts
-// Add a plugin
-addPlugin(plugin: typeof Plugin|PluginNewCall): ImageMark
+// Add a plugin to the instance, currently has the same effect as `initPlugin`
+addPlugin(plugin: typeof Plugin|PluginNewCall, pluginOptions?: PluginOptions): ImageMark
 ```
 
 ### removePlugin
 
 ```ts
-//Remove a plugin from the instance
-(plugin: typeof Plugin): ImageMark
+// Remove a plugin from the instance
+removePlugin(plugin: typeof Plugin): ImageMark
 ```
 
 ### getShapePlugin
 
 ```ts
-//Get the `shape plugin` instance on the instance
+// Get the `shape plugin` instance on the instance
 getShapePlugin(): ShapePlugin | null
 ```
 
 ### getSelectionPlugin
 
 ```ts
-//Get the `selection plugin` instance on the instance
+// Get the `selection plugin` instance on the instance
 getSelectionPlugin(): SelectionPlugin | null
 ```
 
@@ -292,6 +299,13 @@ getSelectionPlugin(): SelectionPlugin | null
 ```ts
 // Get the `history plugin` instance on the instance
 getHistoryPlugin(): HistoryPlugin | null
+```
+
+### getShortcutPlugin
+
+```ts
+// Get the `shortcut plugin` instance on the instance
+getShortcutPlugin(): ShortcutPlugin | null
 ```
 
 ### setReadonly

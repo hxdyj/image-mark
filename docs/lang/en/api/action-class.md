@@ -7,6 +7,14 @@ footer: false
 
 The Action class is used to define actions for `Shape`, and it serves as the base class for all actions. You can define your own actions by inheriting from the Action class.
 
+## Types
+
+```ts
+export type ActionOptions = {
+	[key: string]: any
+}
+```
+
 ## Static Properties
 
 ### actionName
@@ -15,12 +23,7 @@ The name of the action, a string type.
 
 ### actionOptions
 
-```ts
-// Action options
-actionOptions: {
-	[key: string]: any
-} = {}
-```
+Type: `ActionOptions`
 
 ## Methods
 
@@ -29,6 +32,13 @@ actionOptions: {
 ```ts
 // The method called when the action is destroyed
 destroy(): void
+```
+
+### getOptions
+
+```ts
+// Get configuration
+getOptions<T extends ActionOptions = ActionOptions>(options?: T): T
 ```
 
 ### onContainerMouseMove

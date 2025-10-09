@@ -1,12 +1,13 @@
 import { G, Image, MatrixAlias, MatrixExtract, Svg } from '@svgdotjs/svg.js';
 import { getContainerInfo } from './utils/dom';
 import { default as EventEmitter } from 'eventemitter3';
-import { Plugin } from './plugins/plugin';
+import { Plugin, PluginOptions } from './plugins/plugin';
 import { EventBindingThis } from './event/event';
 import { ShapePlugin } from './plugins/ShapePlugin';
 import { SelectionPlugin } from './plugins/SelectionPlugin';
 import { ImageMarkShape } from './shape';
 import { HistoryPlugin } from './plugins/HistoryPlugin';
+import { ShortcutPlugin } from './plugins/ShortcutPlugin';
 export type TransformStep = [MatrixAlias, boolean];
 export declare const POSITION_LIST: readonly ["left-top", "right-top", "left-bottom", "right-bottom", "top", "bottom", "left", "right", "center"];
 export type Position = typeof POSITION_LIST[number];
@@ -14,7 +15,7 @@ export type OutOfData = [boolean, number];
 export type ArrayPoint = [number, number];
 export type ArrayWH = ArrayPoint;
 export type ContainerType = string | HTMLElement;
-export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin;
+export type PluginNewCall = (imageMarkInstance: ImageMark, pluginOptions?: PluginOptions) => Plugin;
 export type BoundingBox = {
     x: number;
     y: number;
@@ -69,12 +70,15 @@ export declare class ImageMarkManager {
     unusePlugin(plugin: typeof Plugin): void;
 }
 export declare const imageMarkManager: ImageMarkManager;
+export declare const imageMarkGlobalEventBus: EventEmitter<string | symbol, any>;
 export type ImageMarkStatus = {
     scaling: boolean;
     moving: boolean;
-    drawing: null | ImageMarkShape;
-    editing: null | ImageMarkShape;
+    shape_drawing: null | ImageMarkShape;
+    shape_editing: null | ImageMarkShape;
+    shape_moving: null | ImageMarkShape;
 };
+export declare function getDefaultImageMarkStatus(): ImageMarkStatus;
 export declare class ImageMark extends EventBindingThis {
     options: ImageMarkOptions;
     id: string;
@@ -92,8 +96,10 @@ export declare class ImageMark extends EventBindingThis {
     maxScale: number;
     movingStartPoint: ArrayPoint | null;
     eventBus: EventEmitter<string | symbol, any>;
+    globalEventBus: EventEmitter<string | symbol, any>;
     private destroyed;
     createTime: number;
+    preStatus: ImageMarkStatus | null;
     constructor(options: ImageMarkOptions);
     protected init(action?: 'rerender'): void;
     protected initVariable(): void;
@@ -171,11 +177,12 @@ export declare class ImageMark extends EventBindingThis {
     getShapePlugin(): ShapePlugin | null;
     getHistoryPlugin(): HistoryPlugin | null;
     getSelectionPlugin(): SelectionPlugin | null;
-    addPlugin(plugin: typeof Plugin | PluginNewCall): this;
+    getShortcutPlugin(): ShortcutPlugin | null;
+    addPlugin(plugin: typeof Plugin | PluginNewCall, pluginOptions?: PluginOptions): this;
     removePlugin(plugin: typeof Plugin): this;
-    initPlugin(plugin: typeof Plugin | PluginNewCall): this;
+    initPlugin(plugin: typeof Plugin | PluginNewCall, pluginOptions?: PluginOptions): this;
     static pluginList: Array<typeof Plugin>;
-    static usePlugin(plugin: typeof Plugin): typeof ImageMark;
+    static usePlugin(plugin: typeof Plugin, pluginOptions?: any): typeof ImageMark;
     static unusePlugin(plugin: typeof Plugin, currentInstanceRemove?: boolean): typeof ImageMark;
     static hasPlugin(plugin: typeof Plugin): typeof Plugin | undefined;
 }

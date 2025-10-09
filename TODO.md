@@ -28,4 +28,8 @@
 - [ ] mask base image support
 - [ ] mobile support
 - [ ] docs
+  - 1. 如何调试
+  - 2. 在 vue 中使用
+  - 3. 在 react 中使用
+  - 4. 在 html 中使用
 - [ ] 掘金宣传

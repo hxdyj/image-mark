@@ -1,5 +1,5 @@
 import { G, Shape, StrokeData } from '@svgdotjs/svg.js';
-import { ImageMark } from '../index';
+import { ImageMark, ImageMarkOptions } from '../index';
 import { EventBindingThis } from '../event/event';
 import { Action } from '../action/action';
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0];
@@ -54,6 +54,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     };
     attr: ShapeAttr;
     constructor(data: T, imageMarkInstance: ImageMark, options?: ShapeOptions | undefined);
+    getOptions(options?: ShapeOptions): ShapeOptions;
     bindEvent(): void;
     unbindEvent(): void;
     abstract draw(): G;
@@ -72,7 +73,10 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     getEditGroupId(): string;
     getLabelId(): string;
     getMainId(): string;
-    updateData(data: T): G;
+    updateData(data: T, emit?: boolean): G;
+    getPreStatusOperateActionName(): keyof ImageMarkOptions['action'] | null;
+    clampX(x: number, fixMax?: number, fixMin?: number): number;
+    clampY(y: number, fixMax?: number, fixMin?: number): number;
     readonly mouseDrawType: ShapeMouseDrawType;
     readonly drawType: ShapeDrawType;
     private mouseMoveThreshold;
@@ -84,20 +88,23 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     destroy(): void;
     render(stage: AddToShape): void;
     private actionAfterRenderNeedAdd;
-    addAction(action: typeof Action, actionOptions?: any): void;
+    addAction<ActionType extends typeof Action = typeof Action>(action: ActionType, actionOptions?: any): void;
     removeAction(action: typeof Action): void;
-    initAction(action: typeof Action, actionOptions?: any): void;
+    initAction<ActionType extends typeof Action = typeof Action>(action: ActionType, actionOptions?: any): void;
     static actionList: Array<typeof Action>;
-    static useAction(action: typeof Action, actionOptions?: any): typeof ImageMarkShape;
-    static unuseAction(action: typeof Action): typeof ImageMarkShape;
-    static hasAction(action: typeof Action): boolean;
+    static useAction<ActionType extends typeof Action = typeof Action>(action: ActionType, actionOptions?: any): typeof ImageMarkShape;
+    static unuseAction<ActionType extends typeof Action = typeof Action>(action: ActionType): typeof ImageMarkShape;
+    static hasAction<ActionType extends typeof Action = typeof Action>(action: ActionType): boolean;
     abstract translate(x: number, y: number): void;
+    abstract fixData(data?: T): void;
     protected editOn: boolean;
     abstract drawEdit(): void;
     editMouseDownEvent: MouseEvent | null;
     editOriginData: T | null;
     startEditShape(event: Event): void;
     endEditShape(): void;
+    dataSnapshot: T | null;
+    startModifyData(): void;
     removeEdit(): void;
     edit(on?: boolean, needDraw?: boolean): boolean;
     onReadonlyChange(readonly: boolean): void;
@@ -107,6 +114,9 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
         optimalStrokeColor: string;
     };
     onContextMenu(event: Event): void;
+    mouseDownEvent: MouseEvent | null;
+    onMouseDown(event: Event): void;
+    onMouseUp(event: Event): void;
     static useDefaultAction(): void;
     static unuseDefaultAction(): void;
 }

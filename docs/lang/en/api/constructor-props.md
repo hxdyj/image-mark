@@ -49,8 +49,9 @@ The plugin object of the current instance
 export type ImageMarkStatus = {
 	scaling: boolean
 	moving: boolean
-	drawing: null | ImageMarkShape
-	editing: null | ImageMarkShape
+	shape_drawing: null | ImageMarkShape
+	shape_editing: null | ImageMarkShape
+	shape_moving: null | ImageMarkShape
 }
 ```
 
@@ -58,11 +59,11 @@ The status of the current instance
 
 ### minScale
 
-The minimum scale ratio of the current instance
+The minimum scale ratio of the current instance, default `0.01`
 
 ### maxScale
 
-The maximum scale ratio of the current instance
+The maximum scale ratio of the current instance, default `10`
 
 ### movingStartPoint
 

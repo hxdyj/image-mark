@@ -12,6 +12,7 @@ footer: false
 ```typescript
 export type ShortKeyValue = {
 	keyName: string
+	hotkeyName?: string
 	hotkeyOptions?: {
 		element?: HTMLElement | null
 		keyup?: boolean | null
@@ -23,25 +24,27 @@ export type ShortKeyValue = {
 }
 
 export type ShortcutKeyMap = {
-	delete_shape: ShortKeyValue // 删除选中的形状，默认为 backspace
-	delete_all_shape: ShortKeyValue // 删除所有形状，默认为 ctrl/command + backspace
+	delete_shape: ShortKeyValue //删除shape（选中时） 默认 backspace
+	delete_all_shape: ShortKeyValue //删除所有shape 默认 ctrl/command + backspace
 
-	move_mode: ShortKeyValue // 进入移动模式，默认为 space
+	move_mode: ShortKeyValue //整体改为移动模式，就是禁用了shape直接能移动 ，默认按着 space 为移动模式（就像蓝湖这种）
 
-	draw_dot: ShortKeyValue // 绘制点，默认为 alt/option + 1
-	draw_line: ShortKeyValue // 绘制线，默认为 alt/option + 2
-	draw_pathline: ShortKeyValue // 绘制路径，默认为 alt/option + 3
-	draw_polyline: ShortKeyValue // 绘制折线，默认为 alt/option + 4
-	draw_rect: ShortKeyValue // 绘制矩形，默认为 alt/option + 5
-	draw_circle: ShortKeyValue // 绘制圆形，默认为 alt/option + 6
-	draw_polygon: ShortKeyValue // 绘制多边形，默认为 alt/option + 7
+	draw_dot: ShortKeyValue //绘制矩形, 默认 alt/option + 1
+	draw_line: ShortKeyValue //绘制矩形, 默认 alt/option + 2
+	draw_pathline: ShortKeyValue //绘制路径, 默认 alt/option + 3
+	draw_polyline: ShortKeyValue //绘制折线, 默认 alt/option + 4
+	draw_rect: ShortKeyValue //绘制矩形, 默认 alt/option + 5
+	draw_circle: ShortKeyValue //绘制矩形, 默认 alt/option + 6
+	draw_polygon: ShortKeyValue //绘制多边形, 默认 alt/option + 7
 
-	drawing_delete_point: ShortKeyValue // 绘制时删除点，默认为 backspace
-	end_drawing: ShortKeyValue // 结束绘制，默认为 esc
-	confirm_draw: ShortKeyValue // 确认绘制，默认为 enter
+	drawing_delete_point: ShortKeyValue //绘制时删除点, 默认 backspace
+	end_drawing: ShortKeyValue //结束绘制, 默认 esc
+	confirm_draw: ShortKeyValue //确定绘制, 默认 enter
 
-	undo: ShortKeyValue // 撤销，默认为 ctrl/command + z
-	redo: ShortKeyValue // 重做，默认为 ctrl/command + y
+	undo: ShortKeyValue //撤销, 默认 ctrl/command + z
+	redo: ShortKeyValue //重做, 默认 ctrl/command + y
+
+	multiple_select_mode: ShortKeyValue // 多选模式   这里仅支持设置 cmd | command | ctrl | command | shift 这几个值   默认 ctrl/command + click
 }
 
 export type ShortcutPluginOptions = {
@@ -67,13 +70,6 @@ constructor(
 `shortcut`
 
 ## 实例方法
-
-### onContainerMouseDown
-
-```ts
-// 处理容器鼠标按下事件以激活快捷键作用域
-onContainerMouseDown(event: MouseEvent): void
-```
 
 ### bindEvent
 
@@ -128,7 +124,7 @@ unbindKeyMap(): void
 
 ```ts
 // 获取合并后的插件选项
-getOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions
+getShorcutPluginOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions
 ```
 
 ### destroy

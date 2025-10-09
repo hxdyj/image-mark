@@ -39,11 +39,11 @@ Indicates whether the current `Shape` is selected.
 
 ## Instance Methods
 
-### getSelectionPlugin
+### getSelectionActionOptions
 
 ```ts
-// Get the `Selection` plugin instance
-getSelectionPlugin(): SelectionPlugin | undefined
+// Get selectionAction configuration
+getSelectionActionOptions(): SelectionActionOptions
 ```
 
 ### getSelectionShape

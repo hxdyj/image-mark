@@ -29,17 +29,17 @@ export interface ShapeData {
 
 export type ShapeAttr =
 	| {
-			stroke?: StrokeData
+			stroke?: StrokeData // Default value { width:10, color:'#FF7D00'}
 			fill?: string
 			auxiliary?: {
 				// Configuration for auxiliary lines, such as polygon auxiliary lines
-				stroke?: StrokeData
+				stroke?: StrokeData // Default value { dasharray: '20,20'}
 			}
 			label?: {
 				// Label-related configuration
 				font?: {
 					fill?: string
-					size?: number
+					size?: number // Default value 14
 				}
 				fill?: string
 			}
@@ -47,8 +47,8 @@ export type ShapeAttr =
 				r?: number // Radius of the dot
 			}
 			image?: {
-				opacity?: number // Image opacity
-				preserveAspectRatio?: 'xMidYMid' | 'none' // Whether the image maintains its aspect ratio
+				opacity?: number // Image opacity, default value 1
+				preserveAspectRatio?: 'xMidYMid' | 'none' // Whether the image maintains its aspect ratio, default value xMidYMid
 			}
 	  }
 	| undefined
@@ -149,6 +149,13 @@ translate(x: number, y: number): void
 drawEdit(): void
 ```
 
+### fixData
+
+```ts
+// Fix data, when restricted, fix abnormal data such as out-of-bounds or negative values
+fixData(data?: T): void
+```
+
 ## Instance Properties
 
 ### mouseDrawType
@@ -207,7 +214,20 @@ Type: `T|null`
 
 Original Shape data during editing
 
+### dataSnapshot
+
+Type: `T|null`
+
+Data snapshot, when the `startModifyData` method is called, the current data will be saved to dataSnapshot
+
 ## Instance Methods
+
+### getOptions
+
+```ts
+// Get merged configuration
+getOptions(options?: ShapeOptions): ShapeOptions
+```
 
 ### addDrawFunc
 
@@ -270,7 +290,14 @@ getMainId(): string
 
 ```ts
 // Update the data of the shape
-updateData(data: T): G
+updateData(data: T, emit = true): G
+```
+
+### getPreStatusOperateActionName
+
+```ts
+// Get the operation action configuration name of the previous status
+getPreStatusOperateActionName(): keyof ImageMarkOptions['action'] | null
 ```
 
 ### getMouseMoveThreshold
@@ -299,6 +326,13 @@ startEditShape(event: Event): void
 ```ts
 // Internally end editing the Shape, do common processing, clear temporary data
 endEditShape(): void
+```
+
+### startModifyData
+
+```ts
+// Start editing, will save the current data to dataSnapshot
+startModifyData(): void
 ```
 
 ### removeEdit

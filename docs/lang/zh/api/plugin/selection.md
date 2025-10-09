@@ -42,6 +42,13 @@ constructor(
 
 ## 实例方法
 
+### getSelectionPluginOptions
+
+```ts
+// 获取插件配置
+getSelectionPluginOptions(options?: DeepPartial<SelectionPluginOptions>):SelectionPluginOptions
+```
+
 ### mode
 
 ```ts

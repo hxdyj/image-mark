@@ -11,6 +11,7 @@ Action for moving a Shape with the left mouse button
 
 ```ts
 export type LmbMoveActionOptions = {
+	moveable?: boolean
 	onStart?: (
 		imageMark: ImageMark,
 		shape: ImageMarkShape,
@@ -41,6 +42,13 @@ export type LmbMoveActionOptions = {
 `lmbMove`
 
 ## Methods
+
+### getLmbMoveActionOptions
+
+```ts
+// Get lmbAction configuration
+getLmbMoveActionOptions(): void
+```
 
 ### disableMove
 

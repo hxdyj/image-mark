@@ -11,14 +11,19 @@ export declare class EventBusEventName {
     static container_drag_leave: string;
     static container_drop: string;
     static container_context_menu: string;
+    static shape_click: string;
     static shape_delete: string;
     static shape_delete_patch: string;
     static shape_delete_all: string;
     static shape_add: string;
+    static shape_add_patch: string;
+    static shape_start_drawing: string;
     static shape_end_drawing: string;
     static shape_after_render: string;
     static shape_plugin_set_data: string;
     static shape_context_menu: string;
+    static shape_plugin_data_change: string;
+    static shape_update_data: string;
     static shape_start_move: string;
     static shape_end_move: string;
     static shape_start_edit: string;
@@ -27,4 +32,8 @@ export declare class EventBusEventName {
     static selection_action_click: string;
     static load_image_error: string;
     static history_change: string;
+    static status_change: string;
+}
+export declare class GlobalEventBusEventName {
+    static shortcut_auto_active: string;
 }

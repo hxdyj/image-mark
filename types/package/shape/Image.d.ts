@@ -23,10 +23,11 @@ export declare class ImageMarkImage extends ImageMarkShape<ImageData> {
     protected drawInfo(): void;
     onEndDrawing(): void;
     translate(x: number, y: number): void;
+    fixData(data?: ImageData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): ImageData | null;
     drawEdit(): void;
     getEditEventPointType(): RectEditPointClassName;
     getEditPoint(event: MouseEvent): [Point, Point];
-    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
 }

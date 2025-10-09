@@ -1,29 +1,31 @@
-import { ImageMarkShape, ShapeData } from '../shape/Shape';
-import { default as ImageMark, ArrayPoint } from '../index';
+import { ShapeData } from '../shape/Shape';
+import { default as ImageMark } from '../index';
 import { Plugin } from './plugin';
+import { DeepPartial } from 'utility-types';
 export type HistoryPluginOptions = {};
 export declare class HistoryPlugin extends Plugin {
+    pluginOptions?: DeepPartial<HistoryPluginOptions> | undefined;
     static pluginName: string;
     stack: History[];
     redoStack: History[];
-    constructor(imageMarkInstance: ImageMark);
+    constructor(imageMarkInstance: ImageMark, pluginOptions?: DeepPartial<HistoryPluginOptions> | undefined);
+    getHistoryPluginOptions(options?: DeepPartial<HistoryPluginOptions>): HistoryPluginOptions;
     getStackInfo(): {
         undo: number;
         redo: number;
     };
     bindEvent(): void;
     unbindEvent(): void;
-    tmpHistory: History | null;
     emitHistoryChange(): void;
     push(history: History, clear?: boolean): void;
     undo(): void;
     redo(): void;
     onShapeAdd(data: ShapeData): void;
     onShapeDelete(data: ShapeData): void;
-    onShapeStartMove(shape: ImageMarkShape): void;
-    onShapeEndMove(shape: ImageMarkShape, diff: ArrayPoint): void;
-    onShapeStartEdit(shape: ImageMarkShape): void;
-    onShapeEndEdit(shape: ImageMarkShape): void;
+    onShapeDeletePatch(dataList: ShapeData[]): void;
+    onShapeDeleteAll(dataList: ShapeData[]): void;
+    onShapePluginSetData(data: ShapeData[], oldData: ShapeData[]): void;
+    onShapeUpdateData(newData: ShapeData, oldData: ShapeData): void;
     destroy(): void;
     clear(): void;
 }
@@ -46,6 +48,12 @@ export declare class ShapeEditHistory extends History<ShapeData> {
 export declare class ShapeExistHistory extends History<ShapeData> {
     static operate: string;
     constructor(oldData?: ShapeData, newData?: ShapeData);
+    undo(imageMark: ImageMark): void;
+    redo(imageMark: ImageMark): void;
+}
+export declare class ShapePatchExistHistory extends History<ShapeData[]> {
+    static operate: string;
+    constructor(oldData?: ShapeData[], newData?: ShapeData[]);
     undo(imageMark: ImageMark): void;
     redo(imageMark: ImageMark): void;
 }

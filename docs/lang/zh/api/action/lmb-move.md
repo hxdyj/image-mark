@@ -11,6 +11,7 @@ footer: false
 
 ```ts
 export type LmbMoveActionOptions = {
+	moveable?: boolean
 	onStart?: (
 		imageMark: ImageMark,
 		shape: ImageMarkShape,
@@ -41,6 +42,14 @@ export type LmbMoveActionOptions = {
 `lmbMove`
 
 ## 方法
+
+### getLmbMoveActionOptions
+
+```ts
+// 获取 lmbAction 配置
+getLmbMoveActionOptions(): void
+
+```
 
 ### disableMove
 

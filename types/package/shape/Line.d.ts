@@ -13,6 +13,7 @@ export declare class ImageMarkLine extends ImageMarkShape<LineData> {
     constructor(data: LineData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
+    fixData(data?: LineData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): LineData | null;
     getEditPointClassName(className: number): string;
     drawEdit(): void;
@@ -22,6 +23,6 @@ export declare class ImageMarkLine extends ImageMarkShape<LineData> {
         index: number;
         point: Point;
     };
-    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
 }

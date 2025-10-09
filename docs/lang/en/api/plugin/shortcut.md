@@ -12,6 +12,7 @@ Shortcut plugin, used to manage keyboard shortcuts in ImageMark, supporting vari
 ```typescript
 export type ShortKeyValue = {
 	keyName: string
+	hotkeyName?: string
 	hotkeyOptions?: {
 		element?: HTMLElement | null
 		keyup?: boolean | null
@@ -42,6 +43,8 @@ export type ShortcutKeyMap = {
 
 	undo: ShortKeyValue // Undo, default ctrl/command + z
 	redo: ShortKeyValue // Redo, default ctrl/command + y
+
+	multiple_select_mode: ShortKeyValue // Multiple selection mode, only supports cmd | command | ctrl | shift, default ctrl/command + click
 }
 
 export type ShortcutPluginOptions = {
@@ -128,7 +131,7 @@ unbindKeyMap(): void
 
 ```ts
 // Get merged plugin options
-getOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions
+getShorcutPluginOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions
 ```
 
 ### destroy

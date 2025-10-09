@@ -7,7 +7,7 @@ import { clamp, cloneDeep, defaultsDeep } from "lodash-es";
 import { LmbMoveAction } from "../action/LmbMoveAction";
 import { EventBusEventName } from "../event/const";
 import { getOptimalTextColor } from "../utils/color.util";
-import { setObjectNewValue } from "#/utils/object";
+import { setObjectNewValue } from '../utils/object';
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {

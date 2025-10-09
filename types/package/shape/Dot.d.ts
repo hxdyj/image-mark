@@ -13,5 +13,6 @@ export declare class ImageMarkDot extends ImageMarkShape<DotData> {
     draw(): G;
     drawEdit(): void;
     translate(x: number, y: number): void;
+    fixData(data?: DotData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): DotData | null;
 }

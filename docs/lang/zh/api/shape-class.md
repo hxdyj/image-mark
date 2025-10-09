@@ -29,17 +29,17 @@ export interface ShapeData {
 
 export type ShapeAttr =
 	| {
-			stroke?: StrokeData
+			stroke?: StrokeData // 默认值 { width:10, color:'#FF7D00'}
 			fill?: string
 			auxiliary?: {
 				// 辅助线的配置，比如polygon的辅助线
-				stroke?: StrokeData
+				stroke?: StrokeData // 默认值 { dasharray: '20,20'}
 			}
 			label?: {
 				//标签相关配置
 				font?: {
 					fill?: string
-					size?: number
+					size?: number // 默认值 14
 				}
 				fill?: string
 			}
@@ -47,8 +47,8 @@ export type ShapeAttr =
 				r?: number //点的半径
 			}
 			image?: {
-				opacity?: number //图片透明度
-				preserveAspectRatio?: 'xMidYMid' | 'none' //图片是否保持比例
+				opacity?: number //图片透明度 默认值 1
+				preserveAspectRatio?: 'xMidYMid' | 'none' //图片是否保持比例 默认值 xMidYMid
 			}
 	  }
 	| undefined
@@ -149,6 +149,13 @@ translate(x: number, y: number): void
 drawEdit(): void
 ```
 
+### fixData
+
+```ts
+//修复数据，在限制时候，修复超出或者负数等异常数据
+fixData(data?: T): void
+```
+
 ## 实例属性
 
 ### mouseDrawType
@@ -207,7 +214,20 @@ action:{
 
 编辑时原始的 Shape 数据
 
+### dataSnapshot
+
+类型：`T|null`
+
+数据快照, 当调用`startModifyData`方法时候会将当前数据保存到 dataSnapshot 中
+
 ## 实例方法
+
+### getOptions
+
+```ts
+//获取合并后的配置
+getOptions(options?: ShapeOptions): ShapeOptions
+```
 
 ### addDrawFunc
 
@@ -270,7 +290,14 @@ getMainId(): string
 
 ```ts
 //更新形状的数据
-updateData(data: T): G
+updateData(data: T, emit = true): G
+```
+
+### getPreStatusOperateActionName
+
+```ts
+//获取上一个状态的操作动作配置名称
+getPreStatusOperateActionName(): keyof ImageMarkOptions['action'] | null
 ```
 
 ### getMouseMoveThreshold
@@ -299,6 +326,13 @@ startEditShape(event: Event): void
 ```ts
 //内部结束编辑Shape,做通用的处理，清除临时数据
 endEditShape(): void
+```
+
+### startModifyData
+
+```ts
+//开始编辑，会将当前数据保存到 dataSnapshot 中
+startModifyData(): void
 ```
 
 ### removeEdit

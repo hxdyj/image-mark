@@ -12,6 +12,7 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
     constructor(data: PolyLineData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
+    fixData(data?: PolyLineData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null;
     onEndDrawing(): void;
     getEditPointClassName(className: number): string;
@@ -22,6 +23,6 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
         index: number;
         point: Point;
     };
-    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
 }

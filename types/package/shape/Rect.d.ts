@@ -16,10 +16,11 @@ export declare class ImageMarkRect extends ImageMarkShape<RectData> {
     constructor(data: RectData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
+    fixData(data?: RectData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): RectData | null;
     drawEdit(): void;
     getEditEventPointType(): RectEditPointClassName;
     getEditPoint(event: MouseEvent): [Point, Point];
-    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
 }

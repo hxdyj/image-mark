@@ -7,6 +7,14 @@ footer: false
 
 Action 类用于`Shape`定义动作，它是所有动作的基类。可以通过继承 Action 类来定义自己的动作。
 
+## Types
+
+```ts
+export type ActionOptions = {
+	[key: string]: any
+}
+```
+
 ## 静态属性
 
 ### actionName
@@ -15,12 +23,7 @@ Action 类用于`Shape`定义动作，它是所有动作的基类。可以通过
 
 ### actionOptions
 
-```ts
-// 动作选项
-actionOptions: {
-	[key: string]: any
-} = {}
-```
+类型：`ActionOptions`
 
 ## 方法
 
@@ -29,6 +32,13 @@ actionOptions: {
 ```ts
 // 销毁时调用的方法
 destroy(): void
+```
+
+### getOptions
+
+```ts
+// 获取配置
+getOptions<T extends ActionOptions = ActionOptions>(options?: T): T
 ```
 
 ### onContainerMouseMove

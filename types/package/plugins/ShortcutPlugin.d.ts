@@ -1,8 +1,10 @@
 import { default as ImageMark } from '../index';
 import { Plugin } from './plugin';
 import { DeepPartial } from 'utility-types';
+import { SelectionType } from './SelectionPlugin';
 export type ShortKeyValue = {
     keyName: string;
+    hotkeyName?: string;
     hotkeyOptions?: {
         element?: HTMLElement | null;
         keyup?: boolean | null;
@@ -28,25 +30,32 @@ export type ShortcutKeyMap = {
     confirm_draw: ShortKeyValue;
     undo: ShortKeyValue;
     redo: ShortKeyValue;
+    multiple_select_mode: ShortKeyValue;
 };
 export type ShortcutPluginOptions = {
     autoActive: boolean;
     keyMap: ShortcutKeyMap;
 };
+export type KeyType = keyof ShortcutKeyMap;
 export declare class ShortcutPlugin extends Plugin {
-    options?: DeepPartial<ShortcutPluginOptions> | undefined;
+    pluginOptions?: DeepPartial<ShortcutPluginOptions> | undefined;
     static pluginName: string;
-    constructor(imageMarkInstance: ImageMark, options?: DeepPartial<ShortcutPluginOptions> | undefined);
+    constructor(imageMarkInstance: ImageMark, pluginOptions?: DeepPartial<ShortcutPluginOptions> | undefined);
     autoActived: boolean;
+    disableKeyList: Set<KeyType>;
+    disableKeys(nameList: Array<KeyType>): void;
+    enableKeys(nameList: Array<KeyType>): void;
     onContainerMouseOver(event: MouseEvent): void;
-    onContainerMouseLeave(event: MouseEvent): void;
+    onShortcutAutoActive(scopeName: string): void;
     bindEvent(): void;
     unbindEvent(): void;
     getScopeName(): string;
     activeScope(): void;
-    eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent): void;
+    eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent, value: ShortKeyValue): void;
+    protected multiple_select_mode_keydown: boolean;
+    protected multiple_select_mode_pre_mode: SelectionType | null;
     bindKeyMap(options?: DeepPartial<ShortcutPluginOptions>): void;
     unbindKeyMap(): void;
-    getOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions;
+    getShorcutPluginOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions;
     destroy(): void;
 }

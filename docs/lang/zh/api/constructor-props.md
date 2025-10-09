@@ -49,8 +49,9 @@ footer: false
 export type ImageMarkStatus = {
 	scaling: boolean
 	moving: boolean
-	drawing: null | ImageMarkShape
-	editing: null | ImageMarkShape
+	shape_drawing: null | ImageMarkShape
+	shape_editing: null | ImageMarkShape
+	shape_moving: null | ImageMarkShape
 }
 ```
 
@@ -58,11 +59,11 @@ export type ImageMarkStatus = {
 
 ### minScale
 
-当前实例的最小缩放比例
+当前实例的最小缩放比例, 默认`0.01`
 
 ### maxScale
 
-当前实例的最大缩放比例
+当前实例的最大缩放比例，默认`10`
 
 ### movingStartPoint
 

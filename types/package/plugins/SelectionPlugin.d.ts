@@ -1,17 +1,19 @@
 import { ImageMark } from '..';
 import { Plugin } from './plugin';
-import { ImageMarkShape } from '../shape/Shape';
+import { ImageMarkShape, ShapeData } from '../shape/Shape';
 import { SelectionAction, SelectionActionOptions } from '../action/SelectionAction';
+import { DeepPartial } from 'utility-types';
 export type SelectionPluginOptions = {
     selectionActionOptions?: SelectionActionOptions;
 };
 export type SelectionType = 'single' | 'multiple';
 export declare class SelectionPlugin extends Plugin {
-    selectionPluginOptions?: SelectionPluginOptions | undefined;
+    pluginOptions?: DeepPartial<SelectionPluginOptions> | undefined;
     static pluginName: string;
     selectShapeList: ImageMarkShape[];
     private _mode;
-    constructor(imageMarkInstance: ImageMark, selectionPluginOptions?: SelectionPluginOptions | undefined);
+    constructor(imageMarkInstance: ImageMark, pluginOptions?: DeepPartial<SelectionPluginOptions> | undefined);
+    getSelectionPluginOptions(options?: DeepPartial<SelectionPluginOptions>): SelectionPluginOptions;
     onShapeAfterRender(shapeInstance: ImageMarkShape): void;
     mode(newMode?: SelectionType): SelectionType;
     onSelectionActionClick(shape: ImageMarkShape): void;
@@ -23,6 +25,9 @@ export declare class SelectionPlugin extends Plugin {
     clear(): void;
     bindEvent(): void;
     unbindEvent(): void;
+    onShapeDelete(data: ShapeData, shape: ImageMarkShape): void;
+    onShapeDeletePatch(dataList: ShapeData[]): void;
+    onShapeDeleteAll(): void;
     destroy(): void;
     static useDefaultAction(): void;
     static unuseDefaultAction(): void;

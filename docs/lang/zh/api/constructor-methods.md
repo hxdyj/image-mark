@@ -3,13 +3,22 @@ layout: doc
 footer: false
 ---
 
+## Types
+
+```ts
+export type PluginNewCall = (
+	imageMarkInstance: ImageMark,
+	pluginOptions?: PluginOptions
+) => Plugin
+```
+
 ## 静态方法
 
 ### usePlugin
 
 ```ts
 // 使用插件
-usePlugin(plugin: typeof Plugin): ImageMark
+usePlugin(plugin: typeof Plugin, pluginOptions?: PluginOptions): ImageMark
 ```
 
 ### unusePlugin
@@ -253,17 +262,15 @@ setEnableShapeOutOfImg(enable: boolean): ImageMark
 ### initPlugin
 
 ```ts
-export type PluginNewCall = (imageMarkInstance: ImageMark) => Plugin
-
 // 实例化插件
-initPlugin(plugin: typeof Plugin|PluginNewCall): ImageMark
+initPlugin(plugin: typeof Plugin|PluginNewCall, pluginOptions?: PluginOptions): ImageMark
 ```
 
 ### addPlugin
 
 ```ts
 // 添加实例上的插件,目前和 `initPlugin` 效果一致
-addPlugin(plugin: typeof Plugin|PluginNewCall): ImageMark
+addPlugin(plugin: typeof Plugin|PluginNewCall, pluginOptions?: PluginOptions): ImageMark
 ```
 
 ### removePlugin
@@ -292,6 +299,13 @@ getSelectionPlugin(): SelectionPlugin | null
 ```ts
 // 获取实例上的 `history` 插件实例
 getHistoryPlugin(): HistoryPlugin | null
+```
+
+### getShortcutPlugin
+
+```ts
+// 获取实例上的 `shortcut` 插件实例
+getShortcutPlugin(): ShortcutPlugin | null
 ```
 
 ### setReadonly

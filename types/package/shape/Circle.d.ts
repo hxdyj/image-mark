@@ -16,9 +16,10 @@ export declare class ImageMarkCircle extends ImageMarkShape<CircleData> {
     readonly drawType = "centerR";
     draw(): G;
     translate(x: number, y: number): void;
+    fixData(data?: CircleData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null;
     drawEdit(): void;
     getEditR(event: MouseEvent): number;
-    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
 }

@@ -24,6 +24,7 @@ export declare class SelectionAction extends Action {
     constructor(imageMark: ImageMark, shape: ImageMarkShape, options?: SelectionActionOptions | undefined);
     protected bindEvents(): void;
     protected unbindEvent(): void;
+    getSelectionActionOptions(): SelectionActionOptions;
     getSelectionShape(): Rect | undefined;
     getSelectionId(): string;
     disableSelection(): void;

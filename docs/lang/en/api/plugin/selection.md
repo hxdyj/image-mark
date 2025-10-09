@@ -42,6 +42,13 @@ List of selected shapes
 
 ## Instance Methods
 
+### getSelectionPluginOptions
+
+```ts
+// Get plugin configuration
+getSelectionPluginOptions(options?: DeepPartial<SelectionPluginOptions>):SelectionPluginOptions
+```
+
 ### mode
 
 ```ts

@@ -39,11 +39,11 @@ export type SelectionActionOptions = {
 
 ## 实例方法
 
-### getSelectionPlugin
+### getSelectionActionOptions
 
 ```ts
-// 获取当前`Selection`插件实例
-getSelectionPlugin(): SelectionPlugin | undefined
+// 获取 selectionAction 配置
+getSelectionActionOptions(): SelectionActionOptions
 ```
 
 ### getSelectionShape

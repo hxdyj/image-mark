@@ -1,11 +1,10 @@
 import { ImageMark } from "..";
 import { Plugin, PluginOptions } from './plugin';
-import { ImageMarkShape } from "../shape/Shape";
+import { ImageMarkShape, ShapeData } from "../shape/Shape";
 import { SelectionAction, SelectionActionOptions } from "../action/SelectionAction";
 import { EventBusEventName } from "../event/const";
 import { cloneDeep } from 'lodash-es';
 import { DeepPartial } from "utility-types";
-import { ShapeData } from '../../types/package/shape/Shape';
 
 export type SelectionPluginOptions = {
 	selectionActionOptions?: SelectionActionOptions

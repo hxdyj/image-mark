@@ -49,6 +49,13 @@ ImageMark 实例可以监听的事件
 (scale:number,imgMark:ImageMark): void
 ```
 
+### readonly_change
+
+```ts
+// 只读状态改变时触发
+(readonly: boolean, imgMark: ImageMark): void
+```
+
 ### container_drag_enter
 
 ```ts
@@ -77,6 +84,41 @@ ImageMark 实例可以监听的事件
 (imgMark:ImageMark): void
 ```
 
+### container_context_menu
+
+```ts
+// 容器右键菜单触发时触发
+(event:MouseEvent, imgMark: ImageMark): void
+```
+
+### shape_click
+
+```ts
+// 形状被点击时触发
+(event:MouseEvent, shapeInstance:ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_delete
+
+```ts
+// 删除单个 shape 时触发
+(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_delete_patch
+
+```ts
+// 批量删除 shape 时触发
+(shapeInstances: ImageMarkShape[], imgMark: ImageMark): void
+```
+
+### shape_delete_all
+
+```ts
+// 删除所有 shape 时触发
+(shapeInstance:ImageMarkShape): void
+```
+
 ### shape_add
 
 ```ts
@@ -84,11 +126,60 @@ ImageMark 实例可以监听的事件
 (data:ShapeData,shapeInstance:ShapeInstance): void
 ```
 
+### shape_add_patch
+
+```ts
+// 批量添加 shape 时触发
+(dataList:ShapeData[], imgMark:ImageMark): void
+```
+
+### shape_start_drawing
+
+```ts
+// 开始绘制形状时触发
+(shapeInstance:ImageMarkShape, imgMark:ImageMark): void
+```
+
 ### shape_end_drawing
 
 ```ts
 // shape 结束绘制时触发
 (isCancelAdd:boolean,shapeInstance:ShapeInstance): void
+```
+
+### shape_after_render
+
+```ts
+// shape 实例渲染完成时触发
+(shapeInstance:ImageMarkShape): void
+```
+
+### shape_plugin_set_data
+
+```ts
+// Shape 插件设置数据时触发
+(data: ShapeData[], imgMark: ImageMark): void
+```
+
+### shape_context_menu
+
+```ts
+// shape 右键菜单触发时触发
+(event:MouseEvent, shapeInstance:ImageMarkShape, imgMark: ImageMark): void
+```
+
+### shape_plugin_data_change
+
+```ts
+// Shape 插件数据改变时触发
+(data: ShapeData[], imgMark: ImageMark): void
+```
+
+### shape_update_data
+
+```ts
+// 形状数据更新时触发
+(newData: ShapeData, oldData: ShapeData, imgMark: ImageMark): void
 ```
 
 ### shape_start_move
@@ -119,41 +210,6 @@ ImageMark 实例可以监听的事件
 (shapeInstance: ImageMarkShape, imgMark: ImageMark): void
 ```
 
-### shape_after_render
-
-```ts
-// shape 实例渲染完成时触发
-(shapeInstance:ImageMarkShape): void
-```
-
-### shape_delete
-
-```ts
-// 删除单个 shape 时触发
-(shapeInstance: ImageMarkShape, imgMark: ImageMark): void
-```
-
-### shape_delete_patch
-
-```ts
-// 批量删除 shape 时触发
-(shapeInstances: ImageMarkShape[], imgMark: ImageMark): void
-```
-
-### shape_delete_all
-
-```ts
-// 删除所有 shape 时触发
-(shapeInstance:ImageMarkShape): void
-```
-
-### shape_plugin_set_data
-
-```ts
-// Shape 插件设置数据时触发
-(data: ShapeData[], imgMark: ImageMark): void
-```
-
 ### selection_select_list_change
 
 ```ts
@@ -166,13 +222,6 @@ ImageMark 实例可以监听的事件
 ```ts
 // 选中插件操作按钮点击时触发
 (shapeInstance:ImageMarkShape): void
-```
-
-### readonly_change
-
-```ts
-// 只读状态改变时触发
-(readonly: boolean, imgMark: ImageMark): void
 ```
 
 ### load_image_error
@@ -189,18 +238,11 @@ ImageMark 实例可以监听的事件
 (info: { undo: number, redo: number }, imgMark: ImageMark): void
 ```
 
-### container_context_menu
+### status_change
 
 ```ts
-// 容器右键菜单触发时触发
-(event:MouseEvent, imgMark: ImageMark): void
-```
-
-### shape_context_menu
-
-```ts
-// shape 右键菜单触发时触发
-(event:MouseEvent, shapeInstance:ImageMarkShape, imgMark: ImageMark): void
+// 实例状态改变时触发
+(status: any, imgMark: ImageMark): void
 ```
 
 ## 全局事件

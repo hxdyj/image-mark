@@ -7,6 +7,23 @@ footer: false
 
 ## Example
 
+### UsePlugin
+
+```ts
+imageMarkInstance.usePlugin(SelectionAction, {
+	selectionActionOptions: {
+		setAttr(action: SelectionAction) {
+			return {
+				stroke: {
+					color: 'red',
+				},
+				padding: 10,
+			}
+		},
+	},
+})
+```
+
 ### Class Method
 
 ```ts
