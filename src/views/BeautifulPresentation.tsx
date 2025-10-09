@@ -342,8 +342,8 @@ export function BeautifulPresentation() {
 		}
 	}, [src])
 	const drawingTipFlag = startDrawing && ['polygon', 'polyline'].includes(status.shape_drawing?.data.shapeName || '')
-	const hasSelectShape = selectShapeList.length > 0 && !drawingTipFlag
-	const drawType = status?.drawing && !startDrawing
+	const drawType = status?.shape_drawing && !startDrawing
+	const hasSelectShape = !drawType && selectShapeList.length > 0 && !drawingTipFlag
 	const showStatusTip = drawingTipFlag || hasSelectShape || drawType
 	return (
 		<div className="comp-beautiful-presentation flex flex-col h-full min-h-[500px]" >
