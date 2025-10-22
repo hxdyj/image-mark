@@ -4,6 +4,11 @@
 
 If your company or product is willing to sponsor this project, you can contact `bingbinglle` via WeChat.
 
+<div style="display: flex;column-gap:16px">
+	<img src="/img/wechat_group.png " style="height: 400px;">
+	<img src="/img/wechat.png" style="height: 400px;">
+</div>
+
 ## Buy the author a cup of coffee
 
 If this project has been helpful to you, you can consider buying the author a cup of coffee~

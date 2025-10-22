@@ -4,6 +4,11 @@
 
 如果你的企业或产品愿意赞助本项目，可以微信联系 `bingbinglle`。
 
+<div style="display: flex;column-gap:16px">
+	<img src="/img/wechat_group.png " style="height: 400px;">
+	<img src="/img/wechat.png" style="height: 400px;">
+</div>
+
 ## 请作者喝杯咖啡
 
 如果本项目有帮助到你的话，可以考虑请作者喝杯咖啡~
