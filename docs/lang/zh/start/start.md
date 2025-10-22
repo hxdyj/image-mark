@@ -8,7 +8,9 @@ footer: false
 ## 安装
 
 ```shell
-npm i mark-img
+npm install mark-img
+# 安装 @svgdotjs/svg.js 库，mark-img 依赖它
+npm install @svgdotjs/svg.js
 ```
 
 ## 使用
@@ -25,6 +27,10 @@ npm i mark-img
 	</head>
 	<body>
 		<div id="container" style="width: 800px;height: 600px;"></div>
+		<!-- 引入 @svgdotjs/svg.js 库 -->
+		<!-- [!code highlight] -->
+		<script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@latest/dist/svg.min.js"></script>
+		<!-- 引入 mark-img 库 -->
 		<script src="../dist/index.umd.js"></script>
 		<script>
 			const ImageMark = window['mark-img'].ImageMark

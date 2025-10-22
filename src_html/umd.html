@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>UMD</title>
+	<link rel="stylesheet" href="../dist/style.css">
+</head>
+
+<body>
+	<div id="container" style="width: 500px; height: 500px;"></div>
+	<script src="./assets/svg.js"></script>
+	<script src="../dist/index.umd.js"></script>
+	<script>
+		const ImageMark = window['mark-img'].ImageMark
+		const imgMark = new ImageMark({
+			el: '#container',
+			src: '/public/img/demo-parking.jpg',
+			pluginOptions: {
+				shape: {
+					shapeList: [
+						{
+							shapeName: 'rect',
+							width: 100,
+							height: 200,
+							x: 100,
+							y: 100,
+						},
+					],
+				},
+			},
+		})
+	</script>
+</body>
+
+</html>

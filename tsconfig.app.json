@@ -28,6 +28,7 @@
 		}
 	},
 	"include": [
+		"typings/**/*",
 		"package/**/*",
 		"src/**/*.ts",
 		"src/**/*.tsx",

@@ -10,8 +10,16 @@ export default defineConfig({
 		lib: {
 			entry: path.resolve(__dirname, './package/index.ts'),
 			name: pkg.name,
-			fileName: format => `index.${format}.js`,
+			fileName: (format) => `index.${format}.js`,
 			cssFileName: 'style'
+		},
+		rollupOptions: {
+			external: ['@svgdotjs/svg.js'],
+			output: {
+				globals: {
+					'@svgdotjs/svg.js': 'SVG'
+				}
+			}
 		},
 		minify: false,
 	},
@@ -23,7 +31,10 @@ export default defineConfig({
 		dts({
 			outDir: path.resolve(__dirname, './types'),
 			root: path.resolve(__dirname, './package'),
-			include: [path.resolve(__dirname, './package') + '/**/*'],
+			include: [
+				path.resolve(__dirname, './package') + '/**/*',
+				path.resolve(__dirname, './typings') + '/**/*'
+			],
 			tsconfigPath: path.resolve(__dirname, './tsconfig.node.json'),
 		})
 	],

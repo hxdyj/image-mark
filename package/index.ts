@@ -1,3 +1,4 @@
+import './extend/svgjs'
 import { G, Image, MatrixAlias, MatrixExtract, Shape, SVG, Svg } from "@svgdotjs/svg.js";
 import { getContainerInfo, getElement } from "./utils/dom";
 import { clone, cloneDeep, defaultsDeep, difference, forEach, throttle } from "lodash-es";
