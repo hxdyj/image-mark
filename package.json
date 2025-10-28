@@ -100,6 +100,7 @@
 		"README-en.md"
 	],
 	"dependencies": {
+		"@monaco-editor/loader": "1.5.0",
 		"color": "^5.0.2",
 		"eventemitter3": "^5.0.1",
 		"hotkeys-js": "^3.13.7",
