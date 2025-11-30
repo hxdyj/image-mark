@@ -33,3 +33,4 @@
   - 3. 在 react 中使用
   - 4. 在 html 中使用
 - [ ] 掘金宣传
+- [ ] BUG：demo 新增 shape 以后写了 label，需要回退两次才行
