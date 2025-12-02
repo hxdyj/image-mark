@@ -20,9 +20,9 @@
 - [x] operate history and undo redo
 - [x] shortcut system
 - [x] context menu support
-- [ ] full demo ui
+- [x] full demo ui
+- [x] single/multiple select (delete can use del key)
 - [ ] draw shape select inner shape
-- [ ] single/multiple select (delete can use del key)
 - [ ] mini map
 - [ ] move action add mode to holder and custom holder ui
 - [ ] mask base image support
@@ -33,4 +33,4 @@
   - 3. 在 react 中使用
   - 4. 在 html 中使用
 - [ ] 掘金宣传
-- [ ] BUG：demo 新增 shape 以后写了 label，需要回退两次才行
+- [ ] add/edit shape support canvas scale

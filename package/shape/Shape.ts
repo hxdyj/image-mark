@@ -140,12 +140,13 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	protected drawFuncList: ShapeDrawFunc[] = []
 
 	drawLabel() {
-		if (!this.data.label) return
 		const mainShape = this.getMainShape()
 		const bbox = mainShape.bbox()
 		const labelGroup = this.getLabelShape<G>() || new G()
 		labelGroup.id(this.getLabelId())
-
+		if (!this.data.label) {
+			return labelGroup?.remove()
+		}
 		const text = labelGroup.find('text')[0] as Text || new Text()
 		text.text(this.data.label)
 		text.addClass('shape-label')

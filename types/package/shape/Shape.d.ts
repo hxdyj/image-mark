@@ -59,7 +59,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     unbindEvent(): void;
     abstract draw(): G;
     protected drawFuncList: ShapeDrawFunc[];
-    drawLabel(): void;
+    drawLabel(): G | undefined;
     onEndDrawing(): void;
     actionListForEach(callback: (action: Action) => void): void;
     onContainerMouseMove(event: MouseEvent): void;
