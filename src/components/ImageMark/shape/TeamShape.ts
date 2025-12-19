@@ -64,6 +64,8 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 		this.data.y = y
 		this.draw()
 	}
+	fixData(data?: TeamData | undefined): void {
+	}
 
 	draw(): G {
 		let { prefixName, x, y } = this.data
@@ -138,7 +140,7 @@ export class TeamShape extends ImageMarkShape<TeamData> {
 		}, false)
 		innerGroup.addTo(this.shapeInstance)
 
-		if (this.isRendered) {
+		if (this.isRendered()) {
 			innerGroup.transform({
 				translate: [-_width / 2, -_height]
 			}, false)

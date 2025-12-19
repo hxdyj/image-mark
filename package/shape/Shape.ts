@@ -57,8 +57,6 @@ export type EditPointItem<T extends string | number = string | number> = {
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends EventBindingThis {
 	shapeInstance: G;
-	//TODO(hxdyj): 改用Svg.js的has方法去判断是否已经渲染
-	isRendered = false
 	isBindActions = false
 	static shapeName: string
 	imageMark: ImageMark;
@@ -329,10 +327,13 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.draw()
 	}
 
+	isRendered() {
+		return this.imageMark.stageGroup.has(this.shapeInstance)
+	}
+
 	destroy() {
 		this.unbindEvent()
 		this.shapeInstance.remove()
-		this.isRendered = false
 		Object.values(this.action).forEach(action => {
 			action.destroy()
 		})
@@ -340,9 +341,8 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	}
 
 	render(stage: AddToShape): void {
-		if (!this.isRendered) {
+		if (!this.isRendered()) {
 			this.shapeInstance.addTo(stage)
-			this.isRendered = true
 			this.afterRender()
 		}
 	}
@@ -350,7 +350,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	private actionAfterRenderNeedAdd: Function[] = []
 
 	addAction<ActionType extends typeof Action = typeof Action>(action: ActionType, actionOptions: any = {}) {
-		if (!this.isRendered) {
+		if (!this.isRendered()) {
 			this.actionAfterRenderNeedAdd.push(() => this.initAction(action, actionOptions))
 		} else {
 			this.initAction(action, actionOptions)

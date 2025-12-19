@@ -180,10 +180,6 @@ The unique identifier of the shape
 
 The `Svg.js` `G` instance of the shape
 
-### isRendered
-
-Whether it has been rendered
-
 ### isBindActions
 
 Whether actions have been bound
@@ -221,6 +217,13 @@ Type: `T|null`
 Data snapshot, when the `startModifyData` method is called, the current data will be saved to dataSnapshot
 
 ## Instance Methods
+
+### isRendered
+
+```ts
+// Check if the shape has been rendered to the stage
+isRendered(): boolean
+```
 
 ### getOptions
 
