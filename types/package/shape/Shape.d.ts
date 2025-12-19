@@ -45,7 +45,6 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     data: T;
     options?: ShapeOptions | undefined;
     shapeInstance: G;
-    isRendered: boolean;
     isBindActions: boolean;
     static shapeName: string;
     imageMark: ImageMark;
@@ -85,6 +84,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     mouseEvent2Data(options?: MouseEvent2DataOptions): T | null;
     bindActions(): void;
     afterRender(): void;
+    isRendered(): boolean;
     destroy(): void;
     render(stage: AddToShape): void;
     private actionAfterRenderNeedAdd;
