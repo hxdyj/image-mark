@@ -33,4 +33,4 @@
   - 3. 在 react 中使用
   - 4. 在 html 中使用
 - [ ] 掘金宣传
-- [ ] add/edit shape support canvas scale
+- [ ] 提升交互体验，绘制过程中可以缩放（但是一笔画出的那个需要注意实现，也可以那个不能缩放）
