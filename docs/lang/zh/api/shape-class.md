@@ -180,6 +180,10 @@ fixData(data?: T): void
 
 形状的 `Svg.js` `G` 实例
 
+### isRendered
+
+是否已经渲染过
+
 ### isBindActions
 
 是否已经绑定动作
@@ -217,13 +221,6 @@ action:{
 数据快照, 当调用`startModifyData`方法时候会将当前数据保存到 dataSnapshot 中
 
 ## 实例方法
-
-### isRendered
-
-```ts
-//判断形状是否已经渲染到舞台上
-isRendered(): boolean
-```
 
 ### getOptions
 
