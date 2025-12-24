@@ -57,7 +57,6 @@ export type EditPointItem<T extends string | number = string | number> = {
 
 export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends EventBindingThis {
 	shapeInstance: G;
-	//TODO(hxdyj): 改用Svg.js的has方法去判断是否已经渲染
 	isRendered = false
 	isBindActions = false
 	static shapeName: string
