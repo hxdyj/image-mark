@@ -1,3 +1,7 @@
+<script setup>
+	import Sponsor from "../components/Sponsor.vue";
+</script>
+
 # Sponsorship
 
 ## Sponsors
@@ -28,4 +32,4 @@ None yet
 
 ## List of Individual Sponsors
 
-None yet
+<Sponsor type="personal" />

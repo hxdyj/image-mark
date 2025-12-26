@@ -334,6 +334,10 @@ export function BeautifulPresentation() {
 				console.log('shape_click');
 				hideContextMenu()
 			})
+			.on(EventBusEventName.shape_delete_patch, (data: ShapeData[]) => {
+				// evt.stopPropagation()
+				console.log('shape_delete_patch', data);
+			})
 
 		containerRef.current.addEventListener('click', hideContextMenu)
 		return () => {

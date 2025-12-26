@@ -1,3 +1,7 @@
+<script setup>
+	import Sponsor from "../components/Sponsor.vue";
+</script>
+
 # 赞助
 
 ## 赞助商
@@ -28,4 +32,4 @@
 
 ## 个人赞助名单
 
-暂无
+<Sponsor type="personal" />
