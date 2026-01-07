@@ -169,6 +169,16 @@ export class ImageMark extends EventBindingThis {
 			set(target: ImageMarkStatus, prop: keyof ImageMarkStatus, value: ImageMarkStatus, receiver: ImageMarkStatus) {
 				that.preStatus = clone(target)
 				const newStatus = Reflect.set(target, prop, value, receiver)
+				const classList = that.stageGroup.classes()
+				const statusClass = classList.find(i => i.startsWith('status-'))
+				if (statusClass) {
+					that.stageGroup.removeClass(statusClass)
+				}
+				if (value) {
+					that.stageGroup.addClass(`status-${prop}`)
+				} else if (statusClass) {
+					that.stageGroup.removeClass(statusClass)
+				}
 				that.eventBus.emit(EventBusEventName.status_change, target, that)
 				return newStatus
 			}
