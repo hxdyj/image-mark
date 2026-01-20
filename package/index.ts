@@ -774,8 +774,8 @@ export class ImageMark extends EventBindingThis {
 
 	movingStartTransform: MatrixExtract | null = null
 
-	startSuccessiveMove(point: ArrayPoint) {
-		if (this.status.shape_drawing) return
+	startSuccessiveMove(point: ArrayPoint, force = false) {
+		if (this.status.shape_drawing && !force) return
 		this.status.moving = true
 		this.movingStartPoint = point
 		this.movingStartTransform = this.stageGroup.transform()
@@ -836,7 +836,7 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	scale(direction: 1 | -1, point: ArrayPoint | 'left-top' | 'center', reletiveTo: 'container' | 'image' = 'container', newScale?: number) {
-		if (this.status.scaling || this.status.moving || this.status.shape_drawing) return
+		if (this.status.scaling || this.status.moving) return
 		this.status.scaling = true
 
 		if (point === 'left-top') {

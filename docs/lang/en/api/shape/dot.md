@@ -5,6 +5,12 @@ footer: false
 
 # Dot
 
+A dot is a simple shape that represents a position on the canvas.
+
+## Drawing Method
+
+Single click to complete drawing: Click anywhere on the canvas to create a dot.
+
 ## Data
 
 ```ts

@@ -62,11 +62,10 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): PathLineData | null {
-		const { eventList = [] } = options
-		if (!eventList.length) return null
-		const points = eventList.map(event => {
-			const { x, y } = this.imageMark.image.point(event)
-			return [x, y]
+		const { pointList = [] } = options
+		if (!pointList.length) return null
+		const points = pointList.map(point => {
+			return [point.x, point.y]
 		}).flat() as unknown as number[]
 
 		const newLine: PathLineData = {

@@ -28,6 +28,7 @@ export type ShortcutKeyMap = {
 	delete_all_shape: ShortKeyValue // Delete all shapes, default ctrl/command + backspace
 
 	move_mode: ShortKeyValue // Enter move mode, default space
+	drawing_pan_mode: ShortKeyValue // Pan while drawing by holding space, default space
 
 	draw_dot: ShortKeyValue // Draw dot, default alt/option + 1
 	draw_line: ShortKeyValue // Draw line, default alt/option + 2

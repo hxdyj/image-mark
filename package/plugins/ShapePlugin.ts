@@ -331,7 +331,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.status.shape_drawing = shape
 		this.drawingShape = shape
 		this.programmaticDrawing = programmaticDrawing
-		this.drawingMouseTrace = []
+		this.drawingPointTrace = []
 		return this
 	}
 
@@ -357,33 +357,33 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.drawingShape = null
 		this.imageMark.status.shape_drawing = null
 		this.programmaticDrawing = false
-		this.drawingMouseTrace = []
+		this.drawingPointTrace = []
 		this.imageMark.eventBus.emit(EventBusEventName.shape_end_drawing, cancel, shapeData, this.imageMark)
 		return this
 	}
 
-	drawingMouseTrace: Array<MouseEvent> = []
+	drawingPointTrace: Array<Point> = []
 
-
-	shiftMouseEvent2LimitMouseEvent(evt: Event | MouseEvent) {
+	/**
+	 * 将鼠标事件转换为相对于图片的 Point，并处理边界限制
+	 */
+	mouseEvent2LimitPoint(evt: Event | MouseEvent): { point: Point, limit: boolean } {
 		let limit = false
-		let event = evt as MouseEvent
+		const event = evt as MouseEvent
+		let point = this.imageMark.image.point(event.clientX, event.clientY)
 		const enableDrawShapeOutOfImg = this.imageMark.options.action?.enableDrawShapeOutOfImg
 		if (!enableDrawShapeOutOfImg) {
-			const point = this.imageMark.image.point(event.clientX, event.clientY)
 			if (this.drawingShape?.drawType == 'point') {
 				if (point.x < 0 || point.y < 0 || point.x > this.imageMark.imageDom.naturalWidth || point.y > this.imageMark.imageDom.naturalHeight) {
-					const newPoint = this.imageMark.image.unpoint(clamp(point.x, 0, this.imageMark.imageDom.naturalWidth), clamp(point.y, 0, this.imageMark.imageDom.naturalHeight))
-					const limitEvent = new MouseEvent(event.type, {
-						clientX: newPoint.x,
-						clientY: newPoint.y
-					})
+					point = new Point(
+						clamp(point.x, 0, this.imageMark.imageDom.naturalWidth),
+						clamp(point.y, 0, this.imageMark.imageDom.naturalHeight)
+					)
 					limit = true
-					event = limitEvent
 				}
 			} else if (this.drawingShape?.drawType == 'centerR') {
-				if (this.drawingMouseTrace?.length > 1) {
-					const startPoint = this.imageMark.image.point(this.drawingMouseTrace[0])
+				if (this.drawingPointTrace?.length >= 1) {
+					const startPoint = this.drawingPointTrace[0]
 					const minR = Math.min(
 						startPoint.x,
 						this.imageMark.imageDom.naturalWidth - startPoint.x,
@@ -394,33 +394,23 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 					const distance = twoPointsDistance([startPoint.x, startPoint.y], [endPoint.x, endPoint.y])
 					if (distance > minR) {
 						const unit = unitVector(startPoint, endPoint)
-						const rPoint = new Point(startPoint.x + unit.x * minR, startPoint.y + unit.y * minR)
-						const fixEventPoint = this.imageMark.image.unpoint(rPoint.x, rPoint.y)
-						const limitEvent = new MouseEvent(event.type, {
-							clientX: fixEventPoint.x,
-							clientY: fixEventPoint.y
-						})
+						point = new Point(startPoint.x + unit.x * minR, startPoint.y + unit.y * minR)
 						limit = true
-						event = limitEvent
 					}
 				}
 			} else if (this.drawingShape?.drawType == 'centerRxy') {
-				if (this.drawingMouseTrace?.length > 1) {
-					const startPoint = this.imageMark.image.point(this.drawingMouseTrace[0])
+				if (this.drawingPointTrace?.length >= 1) {
+					const startPoint = this.drawingPointTrace[0]
 					const minRx = Math.min(
 						startPoint.x,
 						this.imageMark.imageDom.naturalWidth - startPoint.x,
-
 					)
 					const minRy = Math.min(
 						startPoint.y,
 						this.imageMark.imageDom.naturalHeight - startPoint.y,
 					)
 
-					// console.log(111, startPoint, [minRx, minRy])
-
 					const endPoint = point
-
 					const distanceX = Math.abs(endPoint.x - startPoint.x)
 					const distanceY = Math.abs(endPoint.y - startPoint.y)
 
@@ -434,48 +424,24 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 					}
 
 					if (rPoint.x != endPoint.x || rPoint.y != endPoint.y) {
-						const fixEventPoint = this.imageMark.image.unpoint(rPoint.x, rPoint.y)
-						const limitEvent = new MouseEvent(event.type, {
-							clientX: fixEventPoint.x,
-							clientY: fixEventPoint.y
-						})
+						point = rPoint
 						limit = true
-						event = limitEvent
 					}
-
-					// if (distanceX > minRx || distanceY > minRy) {
-					// 	const unitX = unitVector(startPoint, new Point({
-					// 		x: endPoint.x,
-					// 		y: startPoint.y
-					// 	})).x
-					// 	const unitY = unitVector(startPoint, new Point({
-					// 		x: startPoint.x,
-					// 		y: endPoint.y
-					// 	})).y
-					// 	const rPoint = new Point(startPoint.x + unitX * minRx, startPoint.y + unitY * minRy)
-					// 	const fixEventPoint = this.imageMark.image.unpoint(rPoint.x, rPoint.y)
-					// 	const limitEvent = new MouseEvent(event.type, {
-					// 		clientX: fixEventPoint.x,
-					// 		clientY: fixEventPoint.y
-					// 	})
-					// 	limit = true
-					// 	event = limitEvent
-					// }
 				}
 			}
 		}
 		return {
-			event,
+			point,
 			limit
 		}
 	}
 
-	drawingMouseTracePush(event: MouseEvent): boolean {
-		const { event: finalEvent, limit } = this.shiftMouseEvent2LimitMouseEvent(event)
+	drawingPointTracePush(event: MouseEvent): boolean {
+		const { point, limit } = this.mouseEvent2LimitPoint(event)
 		if (limit && this.drawingShape?.data.shapeName == 'dot') return false
-		let preLength = this.drawingMouseTrace.length
-		this.drawingMouseTrace.push(finalEvent)
-		let curLength = this.drawingMouseTrace.length
+		let preLength = this.drawingPointTrace.length
+		this.drawingPointTrace.push(point)
+		let curLength = this.drawingPointTrace.length
 		if (preLength == 0 && curLength == 1) {
 			this.imageMark.eventBus.emit(EventBusEventName.shape_start_drawing, this.drawingShape, this.imageMark)
 		}
@@ -487,15 +453,15 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (this.programmaticDrawing) return
 		if (this.drawingShape?.mouseDrawType !== 'multiPress') return
 
-		if (this.drawingMouseTrace.length == 1) {
+		if (this.drawingPointTrace.length == 1) {
 			this.endDrawing(true)
 			return
 		}
 
-		this.drawingMouseTrace.pop()
+		this.drawingPointTrace.pop()
 		const newData = this.drawingShape.mouseEvent2Data({
-			eventList: this.drawingMouseTrace,
-			auxiliaryEvent: this.drawingShape.data.auxiliaryEvent
+			pointList: this.drawingPointTrace,
+			auxiliaryPoint: this.drawingShape.data.auxiliaryPoint
 		})
 		newData && this.drawing(newData)
 	}
@@ -508,20 +474,21 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	}
 
 	onContainerMouseDown(event: MouseEvent) {
-		if (!this.imageMark.status.shape_drawing) return
+		if (!this.imageMark.status.shape_drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
-		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
-			this.drawingMouseTracePush(event)
+		if (this.drawingShape.mouseDrawType == 'oneTouch') {
+			this.drawingPointTracePush(event)
 		}
 
-		if (this.drawingShape?.mouseDrawType == 'multiPress') {
-			const valid = this.drawingMouseTracePush(event)
+		if (this.drawingShape.mouseDrawType == 'multiPress') {
+			const valid = this.drawingPointTracePush(event)
 			if (!valid) return
 			const newData = this.drawingShape.mouseEvent2Data({
-				eventList: this.drawingMouseTrace
+				pointList: this.drawingPointTrace
 			})
-			newData && this.drawing(newData)
+			// mouseEvent2Data 可能会在内部调用 endDrawing，导致 drawingShape 变为 null
+			newData && this.drawingShape && this.drawing(newData)
 		}
 	}
 
@@ -532,12 +499,13 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 		if (this.drawingShape?.mouseDrawType == 'multiPress') {
 
-			const { event: finalEvent } = this.shiftMouseEvent2LimitMouseEvent(event)
+			const { point: auxiliaryPoint } = this.mouseEvent2LimitPoint(event)
 			const newData = this.drawingShape.mouseEvent2Data({
-				eventList: this.drawingMouseTrace,
-				auxiliaryEvent: finalEvent
+				pointList: this.drawingPointTrace,
+				auxiliaryPoint
 			})
-			newData && this.drawing(newData)
+			// mouseEvent2Data 可能会在内部调用 endDrawing，导致 drawingShape 变为 null
+			newData && this.drawingShape && this.drawing(newData)
 		}
 	}
 
@@ -554,25 +522,29 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
 			const threshold = this.drawingShape.getMouseMoveThreshold()
 			if (threshold) {
-				const lastEvent = last(this.drawingMouseTrace) as MouseEvent
-				const distance = twoPointsDistance([lastEvent.pageX, lastEvent.pageY], [event.pageX, event.pageY])
+				const lastPoint = last(this.drawingPointTrace) as Point
+				const currentPoint = this.imageMark.image.point(event.clientX, event.clientY)
+				const distance = twoPointsDistance([lastPoint.x, lastPoint.y], [currentPoint.x, currentPoint.y])
 				console.log(distance)
 				if (distance < threshold) return
 			}
-			const valid = this.drawingMouseTracePush(event)
+			const valid = this.drawingPointTracePush(event)
 			if (!valid) return
 			const newData = this.drawingShape.mouseEvent2Data({
-				eventList: this.drawingMouseTrace
+				pointList: this.drawingPointTrace
 			})
-			newData && this.drawing(newData)
+			// mouseEvent2Data 可能会在内部调用 endDrawing，导致 drawingShape 变为 null
+			newData && this.drawingShape && this.drawing(newData)
 		}
 
 		if (this.drawingShape?.mouseDrawType == 'multiPress') {
+			const { point: auxiliaryPoint } = this.mouseEvent2LimitPoint(event)
 			const newData = this.drawingShape.mouseEvent2Data({
-				eventList: this.drawingMouseTrace,
-				auxiliaryEvent: event
+				pointList: this.drawingPointTrace,
+				auxiliaryPoint
 			})
-			newData && this.drawing(newData)
+			// mouseEvent2Data 可能会在内部调用 endDrawing，导致 drawingShape 变为 null
+			newData && this.drawingShape && this.drawing(newData)
 		}
 	}
 
@@ -582,17 +554,18 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (!this.imageMark?.status.shape_drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
-		if (!this.drawingMouseTrace?.length) return
+		if (!this.drawingPointTrace?.length) return
 
 		if (this.drawingShape?.mouseDrawType == 'oneTouch') {
-			const valid = this.drawingMouseTracePush(event)
+			const valid = this.drawingPointTracePush(event)
 			if (valid) {
 				const newData = this.drawingShape.mouseEvent2Data({
-					eventList: this.drawingMouseTrace
+					pointList: this.drawingPointTrace
 				})
-				newData && this.drawing(newData)
+				// mouseEvent2Data 可能会在内部调用 endDrawing，导致 drawingShape 变为 null
+				newData && this.drawingShape && this.drawing(newData)
 			}
-			this.endDrawing()
+			this.drawingShape && this.endDrawing()
 		}
 	}
 

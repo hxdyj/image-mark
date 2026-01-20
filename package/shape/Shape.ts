@@ -1,4 +1,4 @@
-import { G, Rect, Shape, StrokeData, Svg, Text } from "@svgdotjs/svg.js";
+import { G, Point, Rect, Shape, StrokeData, Svg, Text } from "@svgdotjs/svg.js";
 import { ImageMark, ImageMarkOptions, SelectionAction } from "../index";
 import { EventBindingThis } from '../event/event'
 import { Action } from "../action/action";
@@ -11,8 +11,8 @@ import { setObjectNewValue } from '../utils/object';
 
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0]
 export type MouseEvent2DataOptions = {
-	eventList?: MouseEvent[]
-	auxiliaryEvent?: MouseEvent
+	pointList?: Point[]
+	auxiliaryPoint?: Point
 }
 
 
@@ -295,7 +295,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 	//通过鼠标事件怎么画出Shape
 	mouseEvent2Data(options: MouseEvent2DataOptions = {
-		eventList: [],
+		pointList: [],
 	}): T | null {
 		return null;
 	}

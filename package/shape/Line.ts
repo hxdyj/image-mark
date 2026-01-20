@@ -13,6 +13,8 @@ export interface LineData extends ShapeData {
 
 export class ImageMarkLine extends ImageMarkShape<LineData> {
 	static shapeName = "line"
+	readonly mouseDrawType = 'multiPress' as const
+
 	constructor(data: LineData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
@@ -64,10 +66,11 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): LineData | null {
-		const { eventList = [] } = options
-		if (eventList.length < 2) return null
-		const startPoint = this.imageMark.image.point(eventList[0])
-		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
+		const { pointList = [], auxiliaryPoint } = options
+		if (pointList.length < 1) return null
+		const startPoint = pointList[0]
+		const endPoint = auxiliaryPoint || pointList[pointList.length - 1]
+		if (!endPoint) return null
 		const newLine: LineData = {
 			...this.data,
 			x: startPoint.x,
@@ -75,6 +78,12 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 			x2: endPoint.x,
 			y2: endPoint.y,
 		}
+
+		// 点击两次完成绘制
+		if (pointList.length >= 2) {
+			this.imageMark.getShapePlugin()?.endDrawing()
+		}
+
 		return newLine
 
 	}

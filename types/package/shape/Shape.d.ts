@@ -1,11 +1,11 @@
-import { G, Shape, StrokeData } from '@svgdotjs/svg.js';
+import { G, Point, Shape, StrokeData } from '@svgdotjs/svg.js';
 import { ImageMark, ImageMarkOptions } from '../index';
 import { EventBindingThis } from '../event/event';
 import { Action } from '../action/action';
 export type AddToShape = Parameters<InstanceType<typeof Shape>['addTo']>[0];
 export type MouseEvent2DataOptions = {
-    eventList?: MouseEvent[];
-    auxiliaryEvent?: MouseEvent;
+    pointList?: Point[];
+    auxiliaryPoint?: Point;
 };
 export type ShapeAttr = {
     stroke?: StrokeData;

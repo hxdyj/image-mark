@@ -57,8 +57,9 @@ export class ImageMarkDot extends ImageMarkShape<DotData> {
 	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): DotData | null {
-		const { eventList = [] } = options
-		const startPoint = this.imageMark.image.point(eventList[0])
+		const { pointList = [] } = options
+		if (!pointList.length) return null
+		const startPoint = pointList[0]
 		const r = this.attr?.dot?.r || 10
 		const newCircle: DotData = {
 			...this.data,

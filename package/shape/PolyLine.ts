@@ -67,11 +67,10 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 	}
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null {
-		const { eventList = [], auxiliaryEvent } = options
-		if (!eventList.length) return null
-		const points = eventList.map(event => {
-			const { x, y } = this.imageMark.image.point(event)
-			return [x, y]
+		const { pointList = [], auxiliaryPoint } = options
+		if (!pointList.length) return null
+		const points = pointList.map(point => {
+			return [point.x, point.y]
 		}).flat() as unknown as number[]
 
 		const newLine: PolyLineData = {
@@ -79,8 +78,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 			points,
 		}
 
-		if (auxiliaryEvent) {
-			const auxiliaryPoint = this.imageMark.image.point(auxiliaryEvent)
+		if (auxiliaryPoint) {
 			newLine.auxiliaryPoint = [auxiliaryPoint.x, auxiliaryPoint.y]
 		}
 

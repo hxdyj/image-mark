@@ -15,11 +15,12 @@ export type CircleEditPointItem = EditPointItem<CircleEditPointClassName>
 
 export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	static shapeName = "circle"
+	readonly mouseDrawType = 'multiPress' as const
+	readonly drawType = 'centerR' as const
+
 	constructor(data: CircleData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
 	}
-
-	readonly drawType = 'centerR'
 
 	draw(): G {
 		const { x, y, r } = this.data
@@ -33,6 +34,14 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 
 		circle.addTo(this.shapeInstance)
 
+		// 绘制中心点（绘制过程中或编辑状态）
+		const isDrawing = this.imageMark.status.shape_drawing === this
+		if (isDrawing || this.editOn) {
+			this.drawCenterPoint()
+		} else {
+			this.removeCenterPoint()
+		}
+
 		if (this.editOn) {
 			this?.drawEdit()
 		} else {
@@ -45,6 +54,30 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 			func(this)
 		})
 		return this.shapeInstance
+	}
+
+	protected getCenterPointId() {
+		return `center-point-${this.data.uuid}`
+	}
+
+	protected drawCenterPoint() {
+		const { x, y } = this.data
+		const { strokeWidth, optimalStrokeColor } = this.getMainShapeInfo()
+
+		let centerPoint = this.shapeInstance.findOne(`#${this.getCenterPointId()}`) as Circle
+		if (!centerPoint) {
+			centerPoint = new Circle().id(this.getCenterPointId())
+			this.shapeInstance.add(centerPoint)
+		}
+
+		centerPoint.center(x, y).attr({
+			r: strokeWidth
+		}).fill(optimalStrokeColor)
+	}
+
+	protected removeCenterPoint() {
+		const centerPoint = this.shapeInstance.findOne(`#${this.getCenterPointId()}`)
+		centerPoint?.remove()
 	}
 
 	translate(x: number, y: number): void {
@@ -67,10 +100,11 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 
 
 	mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null {
-		const { eventList = [] } = options
-		if (eventList.length < 2) return null
-		const startPoint = this.imageMark.image.point(eventList[0])
-		const endPoint = this.imageMark.image.point(eventList[eventList.length - 1])
+		const { pointList = [], auxiliaryPoint } = options
+		if (pointList.length < 1) return null
+		const startPoint = pointList[0]
+		const endPoint = auxiliaryPoint || pointList[pointList.length - 1]
+		if (!endPoint) return null
 		const r = twoPointsDistance([startPoint.x, startPoint.y], [endPoint.x, endPoint.y])
 
 		const newCircle: CircleData = {
@@ -80,11 +114,18 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 			r,
 		}
 
-		// console.log('end', eventList[eventList.length - 1], endPoint, newCircle)
+		// 点击两次完成绘制
+		if (pointList.length >= 2) {
+			this.imageMark.getShapePlugin()?.endDrawing()
+		}
 
 		return newCircle
 	}
 
+
+	onEndDrawing(): void {
+		this.removeCenterPoint()
+	}
 
 	drawEdit() {
 		const { x, y, r } = this.data

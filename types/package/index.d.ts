@@ -145,7 +145,7 @@ export declare class ImageMark extends EventBindingThis {
     moveTo(position: Position): this | undefined;
     move(point: ArrayPoint): this | undefined;
     movingStartTransform: MatrixExtract | null;
-    startSuccessiveMove(point: ArrayPoint): this | undefined;
+    startSuccessiveMove(point: ArrayPoint, force?: boolean): this | undefined;
     moveSuccessive(point: ArrayPoint): this | undefined;
     endSuccessiveMove(): this;
     protected checkScaleLimitImageInContainer(point: ArrayPoint, callback?: (nextGroup: G) => void): {

@@ -1,6 +1,7 @@
 import { Action, ImageMark } from '../index';
 import { Plugin } from './plugin';
 import { ImageMarkShape, ShapeData, ShapeOptions } from '../shape/Shape';
+import { Point } from '@svgdotjs/svg.js';
 import { DeepPartial } from 'utility-types';
 export type ShapePluginOptions<T extends ShapeData = ShapeData> = {
     shapeList: T[];
@@ -58,12 +59,15 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     startDrawing(shape: ImageMarkShape<T>, programmaticDrawing?: boolean): this;
     drawing(shapeData: T): this;
     endDrawing(cancel?: boolean): this;
-    drawingMouseTrace: Array<MouseEvent>;
-    shiftMouseEvent2LimitMouseEvent(evt: Event | MouseEvent): {
-        event: MouseEvent;
+    drawingPointTrace: Array<Point>;
+    /**
+     * 将鼠标事件转换为相对于图片的 Point，并处理边界限制
+     */
+    mouseEvent2LimitPoint(evt: Event | MouseEvent): {
+        point: Point;
         limit: boolean;
     };
-    drawingMouseTracePush(event: MouseEvent): boolean;
+    drawingPointTracePush(event: MouseEvent): boolean;
     dropLastMouseTrace(): void;
     holdShape: ImageMarkShape | null;
     setHoldShape(shape: ImageMarkShape | null): void;

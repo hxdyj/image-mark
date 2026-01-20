@@ -28,13 +28,14 @@ export type ShortcutKeyMap = {
 	delete_all_shape: ShortKeyValue //删除所有shape 默认 ctrl/command + backspace
 
 	move_mode: ShortKeyValue //整体改为移动模式，就是禁用了shape直接能移动 ，默认按着 space 为移动模式（就像蓝湖这种）
+	drawing_pan_mode: ShortKeyValue //绘制中按住空格进行平移，默认按着 space 为平移模式
 
-	draw_dot: ShortKeyValue //绘制矩形, 默认 alt/option + 1
-	draw_line: ShortKeyValue //绘制矩形, 默认 alt/option + 2
+	draw_dot: ShortKeyValue //绘制点, 默认 alt/option + 1
+	draw_line: ShortKeyValue //绘制线条, 默认 alt/option + 2
 	draw_pathline: ShortKeyValue //绘制路径, 默认 alt/option + 3
 	draw_polyline: ShortKeyValue //绘制折线, 默认 alt/option + 4
 	draw_rect: ShortKeyValue //绘制矩形, 默认 alt/option + 5
-	draw_circle: ShortKeyValue //绘制矩形, 默认 alt/option + 6
+	draw_circle: ShortKeyValue //绘制圆形, 默认 alt/option + 6
 	draw_polygon: ShortKeyValue //绘制多边形, 默认 alt/option + 7
 
 	drawing_delete_point: ShortKeyValue //绘制时删除点, 默认 backspace

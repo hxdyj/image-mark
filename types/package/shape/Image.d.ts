@@ -12,6 +12,7 @@ export interface ImageData extends ShapeData {
 }
 export declare class ImageMarkImage extends ImageMarkShape<ImageData> {
     static shapeName: string;
+    readonly mouseDrawType: "multiPress";
     constructor(data: ImageData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     sourceWH: {
         width: number;

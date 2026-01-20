@@ -36,6 +36,7 @@ export type ShortcutKeyMap = {
 	delete_all_shape: ShortKeyValue //删除所有shape 默认 ctrl/command + backspace
 
 	move_mode: ShortKeyValue //整体改为移动模式，就是禁用了shape直接能移动 ，默认按着 space 为移动模式（就像蓝湖这种）
+	drawing_pan_mode: ShortKeyValue //绘制中按住空格进行平移，默认按着 space 为平移模式
 
 	draw_dot: ShortKeyValue //绘制矩形, 默认 alt/option + 1
 	draw_line: ShortKeyValue //绘制矩形, 默认 alt/option + 2
@@ -72,6 +73,13 @@ const defaultShortcutPluginOptions: ShortcutPluginOptions = {
 			keyName: 'ctrl+backspace,command+backspace',
 		},
 		move_mode: {
+			keyName: 'space',
+			hotkeyOptions: {
+				keyup: true,
+				keydown: true
+			}
+		},
+		drawing_pan_mode: {
 			keyName: 'space',
 			hotkeyOptions: {
 				keyup: true,
@@ -134,7 +142,10 @@ export class ShortcutPlugin extends Plugin {
 		super(imageMarkInstance, pluginOptions)
 		this.bindEventThis([
 			'onContainerMouseOver',
-			'onShortcutAutoActive'
+			'onShortcutAutoActive',
+			'onDrawingPanMouseDown',
+			'onDrawingPanMouseMove',
+			'onDrawingPanMouseUp'
 		])
 		this.bindEvent()
 		this.bindKeyMap()
@@ -178,12 +189,20 @@ export class ShortcutPlugin extends Plugin {
 		super.bindEvent()
 		this.imageMark.container.addEventListener('mouseover', this.onContainerMouseOver)
 		this.imageMark.globalEventBus.on(GlobalEventBusEventName.shortcut_auto_active, this.onShortcutAutoActive)
+		// 绘制中平移事件
+		this.imageMark.container.addEventListener('mousedown', this.onDrawingPanMouseDown, true)
+		document.addEventListener('mousemove', this.onDrawingPanMouseMove, true)
+		document.addEventListener('mouseup', this.onDrawingPanMouseUp, true)
 	}
 
 	unbindEvent() {
 		super.unbindEvent()
 		this.imageMark.container.removeEventListener('mouseover', this.onContainerMouseOver)
 		this.imageMark.globalEventBus.off(GlobalEventBusEventName.shortcut_auto_active, this.onShortcutAutoActive)
+		// 绘制中平移事件
+		this.imageMark.container.removeEventListener('mousedown', this.onDrawingPanMouseDown, true)
+		document.removeEventListener('mousemove', this.onDrawingPanMouseMove, true)
+		document.removeEventListener('mouseup', this.onDrawingPanMouseUp, true)
 	}
 
 	getScopeName() {
@@ -228,6 +247,8 @@ export class ShortcutPlugin extends Plugin {
 			},
 			move_mode: (event: KeyboardEvent) => {
 				event.preventDefault()
+				// 如果正在绘制，则由 drawing_pan_mode 处理
+				if (this.imageMark.status.shape_drawing) return
 				const shapePlugin = this.imageMark.getShapePlugin()
 				if (!shapePlugin) return
 				if (event.type === 'keydown') {
@@ -235,6 +256,20 @@ export class ShortcutPlugin extends Plugin {
 				}
 				if (event.type === 'keyup') {
 					shapePlugin.enableAction(LmbMoveAction.actionName)
+				}
+			},
+			drawing_pan_mode: (event: KeyboardEvent) => {
+				event.preventDefault()
+				// 只在绘制中生效
+				if (!this.imageMark.status.shape_drawing) return
+				if (event.type === 'keydown' && !this.drawing_pan_mode_active) {
+					this.drawing_pan_mode_active = true
+					this.imageMark.stageGroup.addClass('drawing-pan-mode')
+				}
+				if (event.type === 'keyup' && this.drawing_pan_mode_active) {
+					this.drawing_pan_mode_active = false
+					this.imageMark.stageGroup.removeClass('drawing-pan-mode')
+					this.endDrawingPan()
 				}
 			},
 			draw_dot: (event: KeyboardEvent) => {
@@ -340,6 +375,44 @@ export class ShortcutPlugin extends Plugin {
 
 	protected multiple_select_mode_keydown = false
 	protected multiple_select_mode_pre_mode: SelectionType | null = null
+
+	// 绘制中平移相关属性
+	protected drawing_pan_mode_active = false
+	protected drawing_pan_start_point: [number, number] | null = null
+
+	onDrawingPanMouseDown(event: MouseEvent) {
+		if (!this.drawing_pan_mode_active) return
+		if (event.button !== 0) return
+		event.preventDefault()
+		event.stopPropagation()
+		const { x, y } = this.imageMark.stage.point(event.clientX, event.clientY)
+		this.drawing_pan_start_point = [x, y]
+		this.imageMark.startSuccessiveMove([event.offsetX, event.offsetY], true)
+	}
+
+	onDrawingPanMouseMove(event: MouseEvent) {
+		if (!this.drawing_pan_mode_active) return
+		if (!this.drawing_pan_start_point) return
+		if (!this.imageMark.status.moving) return
+		event.preventDefault()
+		event.stopPropagation()
+		const { x, y } = this.imageMark.stage.point(event.clientX, event.clientY)
+		this.imageMark.moveSuccessive([x, y])
+	}
+
+	onDrawingPanMouseUp(event: MouseEvent) {
+		if (!this.drawing_pan_start_point) return
+		event.preventDefault()
+		event.stopPropagation()
+		this.endDrawingPan()
+	}
+
+	endDrawingPan() {
+		if (this.drawing_pan_start_point) {
+			this.imageMark.endSuccessiveMove()
+			this.drawing_pan_start_point = null
+		}
+	}
 
 	bindKeyMap(options?: DeepPartial<ShortcutPluginOptions>) {
 		const keyMap = this.getShorcutPluginOptions(options).keyMap

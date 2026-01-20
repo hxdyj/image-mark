@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useDebugValue, useEffect, useMemo, useRef, useState } from 'react'
 import './BeautifulPresentation.scss'
 import { ShapeData, ShapeOptions } from '#/shape/Shape'
 import { ImageMarkShape } from '../../package/shape/Shape';
@@ -28,10 +28,6 @@ loader.config({
 	}
 });
 
-/*
-TODO:
-4. docs
-*/
 
 const iconColor = `#111`
 
@@ -346,9 +342,10 @@ export function BeautifulPresentation() {
 		}
 	}, [src])
 	const drawingTipFlag = startDrawing && ['polygon', 'polyline'].includes(status.shape_drawing?.data.shapeName || '')
+	const drawingTwoTimesTipFlag = startDrawing && ['image', 'line', 'rect', 'circle'].includes(status.shape_drawing?.data.shapeName || '')
 	const drawType = status?.shape_drawing && !startDrawing
 	const hasSelectShape = !drawType && selectShapeList.length > 0 && !drawingTipFlag
-	const showStatusTip = drawingTipFlag || hasSelectShape || drawType
+	const showStatusTip = drawingTipFlag || hasSelectShape || drawType || drawingTwoTimesTipFlag
 	return (
 		<div className="comp-beautiful-presentation flex flex-col h-full min-h-[500px]" >
 
@@ -725,6 +722,13 @@ export function BeautifulPresentation() {
 					showStatusTip ?
 						<div className='status-tip absolute left-0 top-0 p-2 flex flex-col gap-y-2'>
 							{
+								drawingTwoTimesTipFlag ?
+									<>
+										<div>press <kbd>delete</kbd>/<kbd>esc</kbd> to cancel drawing shape</div>
+										<div>click last point to confirm drawing shape</div>
+									</> : null
+							}
+							{
 								drawingTipFlag ?
 									<>
 										<div>press <kbd>delete</kbd> to delete last point</div>
@@ -740,13 +744,13 @@ export function BeautifulPresentation() {
 								drawType ?
 									{
 										'dot': <div>click on container to confirm drawing dot</div>,
-										'line': <div>hold lmb to move on container drawing line</div>,
-										'pathline': <div>hold lmb to move on container drawing pathline</div>,
+										'line': <div>click two times to draw line</div>,
+										'pathline': <div>click two times to draw pathline</div>,
 										'polyline': <div>click on container multiple to drawing polyline</div>,
-										'rect': <div>hold lmb to move on container drawing rect</div>,
+										'rect': <div>click two times to draw rect</div>,
 										'polygon': <div>click on container multiple to drawing polygon</div>,
-										'circle': <div>hold lmb to move on container drawing circle</div>,
-										'image': <div>hold lmb to move on container drawing image</div>,
+										'circle': <div>click two times to draw circle</div>,
+										'image': <div>click two times to draw image</div>,
 									}[status.shape_drawing?.data?.shapeName || '']
 									: null
 							}

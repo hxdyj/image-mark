@@ -12,12 +12,17 @@ export type CircleEditPointClassName = Extract<RectEditPointClassName, 'tl' | 't
 export type CircleEditPointItem = EditPointItem<CircleEditPointClassName>;
 export declare class ImageMarkCircle extends ImageMarkShape<CircleData> {
     static shapeName: string;
+    readonly mouseDrawType: "multiPress";
+    readonly drawType: "centerR";
     constructor(data: CircleData, imageMarkInstance: ImageMark, options?: ShapeOptions);
-    readonly drawType = "centerR";
     draw(): G;
+    protected getCenterPointId(): string;
+    protected drawCenterPoint(): void;
+    protected removeCenterPoint(): void;
     translate(x: number, y: number): void;
     fixData(data?: CircleData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): CircleData | null;
+    onEndDrawing(): void;
     drawEdit(): void;
     getEditR(event: MouseEvent): number;
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;

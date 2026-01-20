@@ -18,6 +18,7 @@ export type ShortcutKeyMap = {
     delete_shape: ShortKeyValue;
     delete_all_shape: ShortKeyValue;
     move_mode: ShortKeyValue;
+    drawing_pan_mode: ShortKeyValue;
     draw_dot: ShortKeyValue;
     draw_line: ShortKeyValue;
     draw_pathline: ShortKeyValue;
@@ -54,6 +55,12 @@ export declare class ShortcutPlugin extends Plugin {
     eventCaller(keyName: keyof ShortcutKeyMap, event: KeyboardEvent, value: ShortKeyValue): void;
     protected multiple_select_mode_keydown: boolean;
     protected multiple_select_mode_pre_mode: SelectionType | null;
+    protected drawing_pan_mode_active: boolean;
+    protected drawing_pan_start_point: [number, number] | null;
+    onDrawingPanMouseDown(event: MouseEvent): void;
+    onDrawingPanMouseMove(event: MouseEvent): void;
+    onDrawingPanMouseUp(event: MouseEvent): void;
+    endDrawingPan(): void;
     bindKeyMap(options?: DeepPartial<ShortcutPluginOptions>): void;
     unbindKeyMap(): void;
     getShorcutPluginOptions(options?: DeepPartial<ShortcutPluginOptions>): ShortcutPluginOptions;
