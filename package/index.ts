@@ -66,6 +66,10 @@ export type ImageMarkOptions = {
 		//如果为true，图片会覆盖整个容器，移动操作这些都不会超出边界，会有图片内容始终覆盖整个容器
 		imageFullOfContainer?: boolean
 	},
+	interactive?: {
+		move?: boolean // 是否启用拖动画布功能，默认 true
+		scale?: boolean // 是否启用缩放画布功能，默认 true
+	},
 	action?: {
 		enableDrawShapeOutOfImg?: boolean
 		enableEditShapeOutOfImg?: boolean
@@ -121,6 +125,10 @@ const defaultOptions: DeepPartial<ImageMarkOptions> = {
 	readonly: false,
 	setting: {
 		imageFullOfContainer: false,
+	},
+	interactive: {
+		move: true,
+		scale: true,
 	},
 	action: {
 		enableDrawShapeOutOfImg: false,
@@ -529,8 +537,12 @@ export class ImageMark extends EventBindingThis {
 	}
 
 	addDefaultAction() {
-		this.addStageMouseScale()
-		this.addStageLmbDownMoveing()
+		if (this.options.interactive?.scale !== false) {
+			this.addStageMouseScale()
+		}
+		if (this.options.interactive?.move !== false) {
+			this.addStageLmbDownMoveing()
+		}
 		return this
 	}
 
@@ -1036,6 +1048,32 @@ export class ImageMark extends EventBindingThis {
 		this.setEnableDrawShapeOutOfImg(enable)
 		this.setEnableMoveShapeOutOfImg(enable)
 		this.setEnableEditShapeOutOfImg(enable)
+	}
+
+	setInteractiveMove(enable: boolean) {
+		if (!this.options.interactive) {
+			this.options.interactive = {}
+		}
+		this.options.interactive.move = enable
+		if (enable) {
+			this.addStageLmbDownMoveing()
+		} else {
+			this.removeStageLmbDownMoveing()
+		}
+		return this
+	}
+
+	setInteractiveScale(enable: boolean) {
+		if (!this.options.interactive) {
+			this.options.interactive = {}
+		}
+		this.options.interactive.scale = enable
+		if (enable) {
+			this.addStageMouseScale()
+		} else {
+			this.removeStageMouseScale()
+		}
+		return this
 	}
 
 	protected cloneGroup(transform?: MatrixExtract): G {

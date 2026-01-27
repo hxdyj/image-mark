@@ -34,6 +34,10 @@ const imageMark = new ImageMark({
 	setting?:{
 		imageFullOfContainer?: boolean // 是否图片覆盖容器, 默认`false`。如果为true，图片会覆盖整个容器，移动操作这些都不会超出边界，会有图片内容始终覆盖整个容器
 	}
+	interactive?: {
+		move?: boolean // 是否启用拖动画布功能, 默认`true`
+		scale?: boolean // 是否启用缩放画布功能, 默认`true`
+	}
 	action?: {
 		enableDrawShapeOutOfImg?: boolean // 是否允许绘制时超出图片, 默认`false`
 		enableEditShapeOutOfImg?: boolean // 是否允许编辑时超出图片, 默认`false`

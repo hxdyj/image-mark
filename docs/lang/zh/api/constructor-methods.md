@@ -259,6 +259,20 @@ setEnableEditShapeOutOfImg(enable: boolean): ImageMark
 setEnableShapeOutOfImg(enable: boolean): ImageMark
 ```
 
+### setInteractiveMove
+
+```ts
+// 设置是否启用拖动画布功能
+setInteractiveMove(enable: boolean): ImageMark
+```
+
+### setInteractiveScale
+
+```ts
+// 设置是否启用缩放画布功能
+setInteractiveScale(enable: boolean): ImageMark
+```
+
 ### initPlugin
 
 ```ts

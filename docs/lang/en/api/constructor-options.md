@@ -31,6 +31,10 @@ const imageMark = new ImageMark({
 	setting?:{
 		imageFullOfContainer?: boolean // Whether the image fills the container, default is `false`. If set to true, the image will cover the entire container, movement operations will not exceed the boundaries, and the image content will always cover the entire container
 	},
+	interactive?: {
+		move?: boolean // Whether to enable canvas dragging, default is `true`
+		scale?: boolean // Whether to enable canvas scaling, default is `true`
+	}
 	action?: {
 		enableDrawShapeOutOfImg?: boolean // Whether to allow drawing shapes to exceed the image, default is `false`
 		enableEditShapeOutOfImg?: boolean // Whether to allow editing shapes to exceed the image, default is `false`

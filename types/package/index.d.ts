@@ -53,6 +53,10 @@ export type ImageMarkOptions = {
     setting?: {
         imageFullOfContainer?: boolean;
     };
+    interactive?: {
+        move?: boolean;
+        scale?: boolean;
+    };
     action?: {
         enableDrawShapeOutOfImg?: boolean;
         enableEditShapeOutOfImg?: boolean;
@@ -164,6 +168,8 @@ export declare class ImageMark extends EventBindingThis {
     setEnableMoveShapeOutOfImg(enable: boolean): this;
     setEnableEditShapeOutOfImg(enable: boolean): this;
     setEnableShapeOutOfImg(enable: boolean): void;
+    setInteractiveMove(enable: boolean): this;
+    setInteractiveScale(enable: boolean): this;
     protected cloneGroup(transform?: MatrixExtract): G;
     protected getImageBoundingBoxByTransform(transform: MatrixExtract): EnhanceBoundingBox;
     protected getScaleLimitImageInContainerInfo(scaleOrigin: ArrayPoint, currentTransform: MatrixExtract, nextStepTransform: MatrixExtract): Array<[MatrixAlias, boolean]> | null | false;

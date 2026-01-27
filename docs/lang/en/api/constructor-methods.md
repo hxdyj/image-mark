@@ -259,6 +259,20 @@ setEnableEditShapeOutOfImg(enable: boolean): ImageMark
 setEnableShapeOutOfImg(enable: boolean): ImageMark
 ```
 
+### setInteractiveMove
+
+```ts
+// Set whether to enable canvas dragging
+setInteractiveMove(enable: boolean): ImageMark
+```
+
+### setInteractiveScale
+
+```ts
+// Set whether to enable canvas scaling
+setInteractiveScale(enable: boolean): ImageMark
+```
+
 ### initPlugin
 
 ```ts
