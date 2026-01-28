@@ -32,6 +32,8 @@ export type ShapeOptions = {
     setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr;
     afterRender?: (shapeInstance: ImageMarkShape) => void;
     initDrawFunc?: ShapeDrawFunc;
+    enableEdit?: (shapeInstance: ImageMarkShape) => Boolean;
+    enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean;
 };
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress';
 export type ShapeDrawType = 'point' | 'centerR' | 'centerRxy';
@@ -107,6 +109,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     startModifyData(): void;
     removeEdit(): void;
     edit(on?: boolean, needDraw?: boolean): boolean;
+    isEnableEditAddMidPoint(): boolean;
     onReadonlyChange(readonly: boolean): void;
     getMainShapeInfo(): {
         strokeWidth: any;

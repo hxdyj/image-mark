@@ -57,6 +57,8 @@ export type ShapeOptions = {
 	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr // Custom shape attributes
 	afterRender?: (shapeInstance: ImageMarkShape) => void // Called after rendering is complete and added to the canvas, i.e., when the DOM has been rendered
 	initDrawFunc?: ShapeDrawFunc // Custom initial drawing function
+	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean // Whether to allow editing, returns false to prevent entering edit mode
+	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // Whether to enable adding midpoints during editing, only polyline and polygon need to add midpoints. If null or undefined, it is allowed
 }
 
 // Mouse drawing type, oneTouch: draw with one stroke, multiPress: draw with multiple clicks
@@ -344,6 +346,14 @@ Remove the edited svg Group element
 ```ts
 // Whether to start editing the shape
 edit(on?: boolean, needDraw = true): boolean
+```
+
+### isEnableEditAddMidPoint
+
+```ts
+// Determine whether adding midpoints is allowed in edit mode (only supported by polyline and polygon)
+// If options.enableEditAddMidPoint is null or undefined, returns true
+isEnableEditAddMidPoint(): boolean
 ```
 
 ### onReadonlyChange

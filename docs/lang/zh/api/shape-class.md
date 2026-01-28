@@ -57,6 +57,8 @@ export type ShapeOptions = {
 	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr //自定义 shape 的属性
 	afterRender?: (shapeInstance: ImageMarkShape) => void // 绘制完成后添加画布后调用，也就是 dom 已经渲染完成
 	initDrawFunc?: ShapeDrawFunc // 自定义初始绘制函数
+	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean // 是否允许编辑，返回 false 则不允许进入编辑模式
+	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时添加中位点，只有折线和多边形才需要添加中位点。如果为 null 或 undefined 则允许
 }
 
 //鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
@@ -344,6 +346,14 @@ startModifyData(): void
 ```ts
 // 是否开始编辑形状
 edit(on?: boolean, needDraw = true): boolean
+```
+
+### isEnableEditAddMidPoint
+
+```ts
+// 判断是否允许在编辑模式下添加中位点（仅折线和多边形支持）
+// 如果 options.enableEditAddMidPoint 为 null 或 undefined，则返回 true
+isEnableEditAddMidPoint(): boolean
 ```
 
 ### onReadonlyChange

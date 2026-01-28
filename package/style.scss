@@ -65,6 +65,14 @@
 			cursor: grabbing;
 		}
 
+		.edit-add-point {
+			cursor: pointer;
+
+			&:hover {
+				opacity: 0.8;
+			}
+		}
+
 		.shape-enable-move {
 			cursor: move;
 		}

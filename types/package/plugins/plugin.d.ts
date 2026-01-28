@@ -10,6 +10,7 @@ export declare class Plugin extends EventBindingThis {
     imageMark: ImageMark;
     constructor(imageMarkInstance: ImageMark, pluginOptions?: PluginOptions | undefined);
     getOptions<T extends PluginOptions = PluginOptions>(options?: T, dealPluginOptions?: (options: T) => T): T;
+    setOptions<T extends PluginOptions = PluginOptions>(options: T): void;
     bindEvent(): void;
     unbindEvent(): void;
     onInit(): void;

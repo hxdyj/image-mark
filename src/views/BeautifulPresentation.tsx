@@ -143,7 +143,7 @@ export function BeautifulPresentation() {
 					})
 				}
 			}
-		}
+		},
 	}
 
 	function hideContextMenu() {

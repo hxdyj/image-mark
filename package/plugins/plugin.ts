@@ -28,6 +28,10 @@ export class Plugin extends EventBindingThis {
 		return defaultsDeep(options, this.pluginOptions, this.imageMark.options.pluginOptions?.[thisPluginName], thisPluginOptions)
 	}
 
+	setOptions<T extends PluginOptions = PluginOptions>(options: T) {
+		this.pluginOptions = options
+	}
+
 	bindEvent() {
 		this.imageMark.on('init', this.onInit)
 	}

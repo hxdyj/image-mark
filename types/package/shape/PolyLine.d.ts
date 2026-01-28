@@ -16,7 +16,9 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
     mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null;
     onEndDrawing(): void;
     getEditPointClassName(className: number): string;
+    getMidPointClassName(index: number): string;
     drawEdit(): void;
+    onMidPointMouseDown: (event: Event) => void;
     getEditShape(): Circle;
     getEditEventPointIndex(): any;
     getEditPoint(event: MouseEvent): {

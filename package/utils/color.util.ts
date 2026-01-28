@@ -20,3 +20,7 @@ export function getOptimalTextColor(backgroundColor: string) {
 	}
 	return Color({ h: complementaryHue, s: 70, l: textLightness }).toString();
 }
+
+export function darkenColor(color: string, percent: number) {
+	return Color(color).darken(percent / 100).toString();
+}

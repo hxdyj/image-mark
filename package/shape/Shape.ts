@@ -42,6 +42,8 @@ export type ShapeOptions = {
 	setAttr?: (shapeInstance: ImageMarkShape) => ShapeAttr
 	afterRender?: (shapeInstance: ImageMarkShape) => void
 	initDrawFunc?: ShapeDrawFunc
+	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean
+	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时添加中位点 只有折线和多边形才需要添加中位点
 }
 //鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
@@ -437,12 +439,25 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 			on = false
 			needDraw = true
 		}
+		// 检查 enableEdit 选项
+		if (on && this.options?.enableEdit !== undefined && this.options?.enableEdit !== null) {
+			if (!this.options.enableEdit(this)) {
+				on = false
+			}
+		}
 		if (on === undefined) {
 			return this.editOn
 		}
 		this.editOn = on
 		needDraw && this.draw()
 		return this.editOn
+	}
+
+	isEnableEditAddMidPoint(): boolean {
+		if (this.options?.enableEditAddMidPoint === undefined || this.options?.enableEditAddMidPoint === null) {
+			return true
+		}
+		return !!this.options.enableEditAddMidPoint(this)
 	}
 
 	onReadonlyChange(readonly: boolean) {
