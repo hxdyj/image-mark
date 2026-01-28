@@ -44,12 +44,21 @@ export type ShapeOptions = {
 	initDrawFunc?: ShapeDrawFunc
 	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean
 	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时添加中位点 只有折线和多边形才需要添加中位点
+	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时双击删除顶点 只有折线和多边形才需要删除顶点
 }
 //鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
 //绘制类型，point:所有划过的点绘制，centerR:起点为中心点，起止点距离为半径r绘制，centerRxy:起点为中心点，起止点x1，x2差值为Rx,y1,y2差值为Ry绘制
 export type ShapeDrawType = 'point' | 'centerR' | 'centerRxy'
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void
+
+export type MinimapDrawContext = {
+	ctx: CanvasRenderingContext2D
+	scale: number  // minimap 相对于原图的缩放比例
+	fill?: string
+	stroke?: string
+	strokeWidth?: number
+}
 
 export type EditPointItem<T extends string | number = string | number> = {
 	x: number
@@ -399,6 +408,10 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	abstract translate(x: number, y: number): void
 	abstract fixData(data?: T): void
 
+	// 在 Minimap 中绘制 Shape，子类可选实现
+	// 如果不实现，该 Shape 在 minimap 中不会显示
+	drawMinimap?(ctx: MinimapDrawContext): void
+
 	protected editOn: boolean = false
 
 	abstract drawEdit(): void
@@ -458,6 +471,13 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 			return true
 		}
 		return !!this.options.enableEditAddMidPoint(this)
+	}
+
+	isEnableEditDropPoint(): boolean {
+		if (this.options?.enableEditDropPoint === undefined || this.options?.enableEditDropPoint === null) {
+			return true
+		}
+		return !!this.options.enableEditDropPoint(this)
 	}
 
 	onReadonlyChange(readonly: boolean) {

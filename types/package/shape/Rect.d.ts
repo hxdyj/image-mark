@@ -1,5 +1,5 @@
 import { G, Point } from '@svgdotjs/svg.js';
-import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
+import { EditPointItem, ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
 import { default as ImageMark, BoundingBox } from '../index';
 export interface RectData extends BoundingBox, ShapeData {
     shapeName: "rect";
@@ -24,4 +24,5 @@ export declare class ImageMarkRect extends ImageMarkShape<RectData> {
     getEditPoint(event: MouseEvent): [Point, Point];
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
+    drawMinimap(drawContext: MinimapDrawContext): void;
 }

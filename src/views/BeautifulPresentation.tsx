@@ -760,6 +760,7 @@ export function BeautifulPresentation() {
 			</div>
 
 			<Drawer
+				wrapClassName={'!z-[1001]'}
 				footer={null}
 				width={332}
 				title={<span>Settings</span>}
@@ -826,6 +827,7 @@ export function BeautifulPresentation() {
 			<Drawer
 				footer={null}
 				width={660}
+				wrapClassName={'!z-[1001]'}
 				title={<Space size={'large'}>
 					<div>Shape Data</div>
 					<Button type='default' size='small' onClick={() => {

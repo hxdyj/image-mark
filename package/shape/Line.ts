@@ -1,5 +1,5 @@
 import { Circle, G, Line, Point, } from "@svgdotjs/svg.js";
-import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
+import { EditPointItem, ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "..";
 import { clamp } from "lodash-es";
 
@@ -179,5 +179,18 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		this.onDocumentMouseMove(event, true)
 		this.getEditShape()?.removeClass('edit-moving-point')
 		this.endEditShape()
+	}
+
+	drawMinimap(drawContext: MinimapDrawContext): void {
+		const { ctx, scale, stroke, strokeWidth } = drawContext;
+		const { x, y, x2, y2 } = this.data;
+
+		ctx.strokeStyle = stroke || '#FF7D00';
+		ctx.lineWidth = (strokeWidth || 1) * 2; // 线条在 minimap 中稍微粗一点
+
+		ctx.beginPath();
+		ctx.moveTo(x * scale, y * scale);
+		ctx.lineTo(x2 * scale, y2 * scale);
+		ctx.stroke();
 	}
 }

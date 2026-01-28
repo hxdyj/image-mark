@@ -1,5 +1,5 @@
 import { G } from '@svgdotjs/svg.js';
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
+import { ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
 import { default as ImageMark } from '../index';
 export interface PathLineData extends ShapeData {
     shapeName: "pathline";
@@ -13,4 +13,5 @@ export declare class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
     fixData(data?: PathLineData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PathLineData | null;
     drawEdit(): void;
+    drawMinimap(drawContext: MinimapDrawContext): void;
 }

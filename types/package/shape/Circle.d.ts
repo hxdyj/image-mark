@@ -1,5 +1,5 @@
 import { G } from '@svgdotjs/svg.js';
-import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
+import { EditPointItem, ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
 import { default as ImageMark } from '../index';
 import { RectEditPointClassName } from './Rect';
 export interface CircleData extends ShapeData {
@@ -27,4 +27,5 @@ export declare class ImageMarkCircle extends ImageMarkShape<CircleData> {
     getEditR(event: MouseEvent): number;
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
+    drawMinimap(drawContext: MinimapDrawContext): void;
 }

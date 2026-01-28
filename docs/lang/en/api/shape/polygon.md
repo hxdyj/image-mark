@@ -23,7 +23,9 @@ You can hold the space key to pan the canvas while drawing.
 After selecting a polygon, it enters edit mode:
 1. Drag vertices to adjust the polygon shape
 2. Midpoint controls with a plus sign are displayed between adjacent vertices. Click a midpoint to insert a new vertex at that position
-3. Use `ShapeOptions.enableEditAddMidPoint` to control whether midpoints are displayed
+3. Double-click a vertex to delete it (polygon must keep at least 3 vertices)
+4. Use `ShapeOptions.enableEditAddMidPoint` to control whether midpoints are displayed
+5. Use `ShapeOptions.enableEditDropPoint` to control whether double-click to delete vertex is enabled
 
 ## Data
 

@@ -1,5 +1,5 @@
 import { Circle, G, Point } from '@svgdotjs/svg.js';
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
+import { ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
 import { default as ImageMark } from '..';
 export interface LineData extends ShapeData {
     shapeName: "line";
@@ -26,4 +26,5 @@ export declare class ImageMarkLine extends ImageMarkShape<LineData> {
     };
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
+    drawMinimap(drawContext: MinimapDrawContext): void;
 }

@@ -1,5 +1,5 @@
 import { Circle, G, Image, Point } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeDrawType, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeDrawType, ShapeOptions } from "./Shape";
 import { ImageMark } from "../index";
 import { getBoundingBoxByTwoPoints, RectEditPointClassName, RectEditPointItem } from "./Rect";
 import { clamp } from "lodash-es";
@@ -349,5 +349,56 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 		this.endEditShape()
 		this.onEndDrawing()
 		this.draw()
+	}
+
+	// 用于 minimap 绘制的缓存图片
+	private minimapImageCache?: HTMLImageElement;
+	private minimapImageSrc?: string;
+
+	drawMinimap(drawContext: MinimapDrawContext): void {
+		const { ctx, scale } = drawContext;
+		const { x, y, width, height, src } = this.data;
+
+		const scaledX = x * scale;
+		const scaledY = y * scale;
+		const scaledWidth = width * scale;
+		const scaledHeight = height * scale;
+
+		// 检查是否需要加载/更新图片缓存
+		if (!this.minimapImageCache || this.minimapImageSrc !== src) {
+			this.minimapImageSrc = src;
+			this.minimapImageCache = new window.Image();
+			this.minimapImageCache.src = src;
+		}
+
+		const img = this.minimapImageCache;
+		if (img.complete && img.naturalWidth > 0) {
+			// 图片已加载完成，直接绘制
+			try {
+				ctx.drawImage(img, scaledX, scaledY, scaledWidth, scaledHeight);
+			} catch (e) {
+				// 绘制失败时显示占位矩形
+				this.drawMinimapPlaceholder(ctx, scaledX, scaledY, scaledWidth, scaledHeight, drawContext);
+			}
+		} else {
+			// 图片未加载完成，显示占位矩形
+			this.drawMinimapPlaceholder(ctx, scaledX, scaledY, scaledWidth, scaledHeight, drawContext);
+		}
+	}
+
+	private drawMinimapPlaceholder(
+		ctx: CanvasRenderingContext2D,
+		x: number,
+		y: number,
+		width: number,
+		height: number,
+		drawContext: MinimapDrawContext
+	): void {
+		const { fill, stroke, strokeWidth } = drawContext;
+		ctx.fillStyle = fill || 'rgba(255, 125, 0, 0.2)';
+		ctx.strokeStyle = stroke || '#FF7D00';
+		ctx.lineWidth = strokeWidth || 1;
+		ctx.fillRect(x, y, width, height);
+		ctx.strokeRect(x, y, width, height);
 	}
 }

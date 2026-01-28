@@ -1,5 +1,5 @@
 import { Circle, G, Line, Point, Polygon, Polyline } from "@svgdotjs/svg.js";
-import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { EditPointItem, ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark from "../index";
 import { chunk, clamp, defaultsDeep } from "lodash-es";
 import { darkenColor } from "../utils/color.util";
@@ -12,10 +12,16 @@ export interface PolygonData extends ShapeData {
 
 export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 	static shapeName = "polygon"
+	static minVertexCount = 3 // Polygon 最少需要 3 个顶点
 	readonly mouseDrawType: ShapeMouseDrawType = 'multiPress'
+
+	// 用于检测双击的状态
+	private lastVertexClickTime: number = 0
+	private lastVertexClickIndex: number = -1
 
 	constructor(data: PolygonData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
+		this.bindEventThis(['onVertexMouseDown'])
 	}
 
 	draw(): G {
@@ -159,7 +165,7 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 			}).fill(optimalStrokeColor)
 			circle.addTo(g)
 			if (!findCircle) {
-				circle.on('mousedown', this.startEditShape)
+				circle.on('mousedown', this.onVertexMouseDown)
 			}
 		})
 
@@ -241,6 +247,81 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 		this.updateData(this.data, true)
 	}
 
+	onVertexMouseDown = (event: Event) => {
+		event.stopPropagation()
+		const now = Date.now()
+
+		// 获取顶点索引
+		// @ts-ignore
+		let target = event.target.instance
+		while (target && target.attr('data-index') === undefined) {
+			target = target.parent()
+		}
+		const index = target?.attr('data-index') as number
+		if (index === undefined) {
+			this.startEditShape(event)
+			return
+		}
+
+		// 检测双击：同一个顶点，间隔小于 300ms
+		const isDoubleClick = (now - this.lastVertexClickTime < 300) && (index === this.lastVertexClickIndex)
+
+		// 更新点击记录
+		this.lastVertexClickTime = now
+		this.lastVertexClickIndex = index
+
+		if (isDoubleClick) {
+			// 双击删除顶点
+			// 只读模式检查
+			if (this.imageMark.options.readonly) return
+
+			// 绘制中不允许删除
+			if (this.imageMark.status.shape_drawing) return
+
+			// 检查是否启用删除顶点功能
+			if (!this.isEnableEditDropPoint()) return
+
+			// 最小顶点数检查
+			const vertexCount = this.data.points.length / 2
+			if (vertexCount <= ImageMarkPolygon.minVertexCount) return
+
+			// 保存快照用于撤销
+			this.startModifyData()
+
+			// 删除顶点
+			const deleteIndex = index * 2
+			this.data.points.splice(deleteIndex, 2)
+
+			// 更新数据并触发事件
+			this.updateData(this.data, true)
+
+			// 重置点击记录，避免连续删除
+			this.lastVertexClickTime = 0
+			this.lastVertexClickIndex = -1
+		} else {
+			// 普通点击，开始拖拽
+			this.startEditShape(event)
+		}
+	}
+
+	deleteVertex(index: number): boolean {
+		const vertexCount = this.data.points.length / 2
+		if (vertexCount <= ImageMarkPolygon.minVertexCount) return false
+
+		this.startModifyData()
+		this.data.points.splice(index * 2, 2)
+		this.updateData(this.data, true)
+		return true
+	}
+
+	getVertexCount(): number {
+		return this.data.points.length / 2
+	}
+
+	canDeleteVertex(): boolean {
+		return this.getVertexCount() > ImageMarkPolygon.minVertexCount
+	}
+
 	onEndDrawing() {
 		delete this.data.auxiliaryPoint
 	}
@@ -297,5 +378,30 @@ export class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
 		this.onDocumentMouseMove(event, true)
 		this.getEditShape()?.removeClass('edit-moving-point')
 		this.endEditShape()
+	}
+
+	drawMinimap(drawContext: MinimapDrawContext): void {
+		const { ctx, scale, fill, stroke, strokeWidth } = drawContext;
+		const { points } = this.data;
+
+		if (points.length < 4) return; // 至少需要 2 个点 (x, y, x, y)
+
+		ctx.fillStyle = fill || 'rgba(255, 125, 0, 0.3)';
+		ctx.strokeStyle = stroke || '#FF7D00';
+		ctx.lineWidth = strokeWidth || 1;
+
+		ctx.beginPath();
+
+		// 第一个点 - moveTo
+		ctx.moveTo(points[0] * scale, points[1] * scale);
+
+		// 其余的点 - lineTo
+		for (let i = 2; i < points.length; i += 2) {
+			ctx.lineTo(points[i] * scale, points[i + 1] * scale);
+		}
+
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
 	}
 }

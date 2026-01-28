@@ -40,6 +40,7 @@ export const zh = defineConfig({
 								{ text: 'Selection', link: '/plugin/selection' },
 								{ text: 'History', link: '/plugin/history' },
 								{ text: 'Shortcut', link: '/plugin/shortcut' },
+								{ text: 'Minimap', link: '/plugin/minimap' },
 							]
 					},
 					{

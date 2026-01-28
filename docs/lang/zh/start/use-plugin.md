@@ -5,7 +5,7 @@ footer: false
 
 # 如何使用插件
 
-ImageMark 会在导入的时候自动使用内置的 [`shape`](/api/plugin/shape) 、 [`selection`](/api/plugin/selection) 、 [`history`](/api/plugin/history) 、 [`shortcut`](/api/plugin/shortcut) 插件。如果不希望自动使用,可以使用[`unuseDefaultPlugin`](/api/constructor-methods#unusedefaultplugin)方法取消。
+ImageMark 会在导入的时候自动使用内置的 [`shape`](/api/plugin/shape) 、 [`selection`](/api/plugin/selection) 、 [`history`](/api/plugin/history) 、 [`shortcut`](/api/plugin/shortcut) 、 [`minimap`](/api/plugin/minimap) 插件。如果不希望自动使用,可以使用[`unuseDefaultPlugin`](/api/constructor-methods#unusedefaultplugin)方法取消。
 
 ## 示例
 

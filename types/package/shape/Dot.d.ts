@@ -1,5 +1,5 @@
 import { G } from '@svgdotjs/svg.js';
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
+import { ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from './Shape';
 import { default as ImageMark } from '../index';
 export interface DotData extends ShapeData {
     shapeName: "dot";
@@ -15,4 +15,5 @@ export declare class ImageMarkDot extends ImageMarkShape<DotData> {
     translate(x: number, y: number): void;
     fixData(data?: DotData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): DotData | null;
+    drawMinimap(drawContext: MinimapDrawContext): void;
 }

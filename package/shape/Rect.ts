@@ -1,5 +1,5 @@
 import { Circle, G, Point, Polygon, Rect } from "@svgdotjs/svg.js";
-import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { EditPointItem, ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark, { BoundingBox, ImageMarkOptions } from "../index";
 import { clamp } from "lodash-es";
 
@@ -302,5 +302,22 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 		super.onDocumentMouseUp(event)
 		this.onDocumentMouseMove(event, true)
 		this.endEditShape()
+	}
+
+	drawMinimap(drawContext: MinimapDrawContext): void {
+		const { ctx, scale, fill, stroke, strokeWidth } = drawContext;
+		const { x, y, width, height } = this.data;
+
+		ctx.fillStyle = fill || 'rgba(255, 125, 0, 0.3)';
+		ctx.strokeStyle = stroke || '#FF7D00';
+		ctx.lineWidth = strokeWidth || 1;
+
+		const scaledX = x * scale;
+		const scaledY = y * scale;
+		const scaledWidth = width * scale;
+		const scaledHeight = height * scale;
+
+		ctx.fillRect(scaledX, scaledY, scaledWidth, scaledHeight);
+		ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
 	}
 }

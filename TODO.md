@@ -28,6 +28,7 @@
 - [ ] mask base image support
 - [ ] mobile support
 - [ ] docs
+  - 0.  其他常规简单的教程，渐进学习
   - 1. 如何调试
   - 2. 在 vue 中使用
   - 3. 在 react 中使用
@@ -35,3 +36,4 @@
 - [x] 掘金宣传
 - [x] 提升交互体验，绘制过程中可以缩放（但是一笔画出的那个需要注意实现，也可以那个不能缩放）
 - [x] Plygon Polyline 编辑过程在相邻的点加增加点的操作
+- [x] Plygon Polyline 编辑过程删除正常的点

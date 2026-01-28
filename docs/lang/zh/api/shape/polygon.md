@@ -23,7 +23,9 @@ footer: false
 选中多边形后进入编辑模式：
 1. 拖动顶点可调整多边形形状
 2. 在相邻顶点之间会显示带有加号的中位点控制点，点击中位点可在该位置插入新的顶点
-3. 可通过 `ShapeOptions.enableEditAddMidPoint` 控制是否显示中位点
+3. 双击顶点可删除该顶点（多边形至少保留 3 个顶点）
+4. 可通过 `ShapeOptions.enableEditAddMidPoint` 控制是否显示中位点
+5. 可通过 `ShapeOptions.enableEditDropPoint` 控制是否启用双击删除顶点功能
 
 ## Data
 

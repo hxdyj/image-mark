@@ -1,5 +1,5 @@
 import { G, Line, Path, Polygon, Polyline } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeMouseDrawType, ShapeOptions } from "./Shape";
 import ImageMark from "../index";
 
 export interface PathLineData extends ShapeData {
@@ -76,5 +76,27 @@ export class ImageMarkPathLine extends ImageMarkShape<PathLineData> {
 	}
 
 	drawEdit() {
+	}
+
+	drawMinimap(drawContext: MinimapDrawContext): void {
+		const { ctx, scale, stroke, strokeWidth } = drawContext;
+		const { points } = this.data;
+
+		if (points.length < 2) return;
+
+		ctx.strokeStyle = stroke || '#FF7D00';
+		ctx.lineWidth = (strokeWidth || 1) * 2;
+
+		ctx.beginPath();
+
+		// 第一个点 - moveTo
+		ctx.moveTo(points[0] * scale, points[1] * scale);
+
+		// 其余的点 - lineTo
+		for (let i = 2; i < points.length; i += 2) {
+			ctx.lineTo(points[i] * scale, points[i + 1] * scale);
+		}
+
+		ctx.stroke();
 	}
 }

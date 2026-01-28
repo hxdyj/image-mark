@@ -1,5 +1,5 @@
 import { Circle, G, } from "@svgdotjs/svg.js";
-import { ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
+import { ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "../index";
 
 export interface DotData extends ShapeData {
@@ -68,5 +68,23 @@ export class ImageMarkDot extends ImageMarkShape<DotData> {
 			r,
 		}
 		return newCircle
+	}
+
+	drawMinimap(drawContext: MinimapDrawContext): void {
+		const { ctx, scale, fill, stroke, strokeWidth } = drawContext;
+		const { x, y, r } = this.data;
+
+		ctx.fillStyle = fill || stroke || '#FF7D00';
+		ctx.strokeStyle = stroke || '#FF7D00';
+		ctx.lineWidth = strokeWidth || 1;
+
+		const scaledX = x * scale;
+		const scaledY = y * scale;
+		const scaledR = r * scale;
+
+		ctx.beginPath();
+		ctx.arc(scaledX, scaledY, scaledR, 0, 2 * Math.PI);
+		ctx.fill();
+		ctx.stroke();
 	}
 }

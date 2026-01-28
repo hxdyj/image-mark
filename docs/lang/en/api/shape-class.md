@@ -59,6 +59,7 @@ export type ShapeOptions = {
 	initDrawFunc?: ShapeDrawFunc // Custom initial drawing function
 	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean // Whether to allow editing, returns false to prevent entering edit mode
 	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // Whether to enable adding midpoints during editing, only polyline and polygon need to add midpoints. If null or undefined, it is allowed
+	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // Whether to enable double-click to delete vertices during editing, only polyline and polygon support deleting vertices. If null or undefined, it is allowed
 }
 
 // Mouse drawing type, oneTouch: draw with one stroke, multiPress: draw with multiple clicks
@@ -354,6 +355,14 @@ edit(on?: boolean, needDraw = true): boolean
 // Determine whether adding midpoints is allowed in edit mode (only supported by polyline and polygon)
 // If options.enableEditAddMidPoint is null or undefined, returns true
 isEnableEditAddMidPoint(): boolean
+```
+
+### isEnableEditDropPoint
+
+```ts
+// Determine whether double-clicking to delete vertices is allowed in edit mode (only supported by polyline and polygon)
+// If options.enableEditDropPoint is null or undefined, returns true
+isEnableEditDropPoint(): boolean
 ```
 
 ### onReadonlyChange

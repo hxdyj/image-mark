@@ -34,10 +34,18 @@ export type ShapeOptions = {
     initDrawFunc?: ShapeDrawFunc;
     enableEdit?: (shapeInstance: ImageMarkShape) => Boolean;
     enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean;
+    enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean;
 };
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress';
 export type ShapeDrawType = 'point' | 'centerR' | 'centerRxy';
 export type ShapeDrawFunc = (shape: ImageMarkShape) => void;
+export type MinimapDrawContext = {
+    ctx: CanvasRenderingContext2D;
+    scale: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+};
 export type EditPointItem<T extends string | number = string | number> = {
     x: number;
     y: number;
@@ -99,6 +107,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     static hasAction<ActionType extends typeof Action = typeof Action>(action: ActionType): boolean;
     abstract translate(x: number, y: number): void;
     abstract fixData(data?: T): void;
+    drawMinimap?(ctx: MinimapDrawContext): void;
     protected editOn: boolean;
     abstract drawEdit(): void;
     editMouseDownEvent: MouseEvent | null;
@@ -110,6 +119,7 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     removeEdit(): void;
     edit(on?: boolean, needDraw?: boolean): boolean;
     isEnableEditAddMidPoint(): boolean;
+    isEnableEditDropPoint(): boolean;
     onReadonlyChange(readonly: boolean): void;
     getMainShapeInfo(): {
         strokeWidth: any;

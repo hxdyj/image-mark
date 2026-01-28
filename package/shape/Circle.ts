@@ -1,5 +1,5 @@
 import { Circle, G } from "@svgdotjs/svg.js";
-import { EditPointItem, ImageMarkShape, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
+import { EditPointItem, ImageMarkShape, MinimapDrawContext, MouseEvent2DataOptions, ShapeData, ShapeOptions } from "./Shape";
 import ImageMark from "../index";
 import { twoPointsDistance } from "../utils/cartesianCoordinateSystem";
 import { RectEditPointClassName } from "./Rect";
@@ -205,6 +205,24 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		super.onDocumentMouseUp(event)
 		this.onDocumentMouseMove(event, true)
 		this.endEditShape()
+	}
+
+	drawMinimap(drawContext: MinimapDrawContext): void {
+		const { ctx, scale, fill, stroke, strokeWidth } = drawContext;
+		const { x, y, r } = this.data;
+
+		ctx.fillStyle = fill || 'rgba(255, 125, 0, 0.3)';
+		ctx.strokeStyle = stroke || '#FF7D00';
+		ctx.lineWidth = strokeWidth || 1;
+
+		const scaledX = x * scale;
+		const scaledY = y * scale;
+		const scaledR = r * scale;
+
+		ctx.beginPath();
+		ctx.arc(scaledX, scaledY, scaledR, 0, 2 * Math.PI);
+		ctx.fill();
+		ctx.stroke();
 	}
 }
 
