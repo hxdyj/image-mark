@@ -3,48 +3,43 @@ layout: doc
 footer: false
 ---
 
-# 怎么用鼠标绘制图形
+# 鼠标绘制图形
 
-### 示例
+本节介绍如何使用鼠标绘制图形的基本流程。如需了解所有图形类型，请查看 [所有图形类型](/start/all-shapes)。
 
-使用鼠标画一个 Rect。
+## 基本流程
 
-```html
-<div>
-	<div id="container"></div>
-	<button id="drawing-rect">Draw Rect</button>
-</div>
+1. 获取 ShapePlugin 实例
+2. 创建 Shape 实例
+3. 调用 `startDrawing()` 开始绘制
 
-<script type="module">
-	import ImageMark, { ShapePlugin } from 'mark-img'
+## 示例：绘制矩形
 
-	const imgMark = new ImageMark({
-		el: '#container',
-		src: '/public/img/demo-parking.jpg',
-		pluginOptions: {
-			shape: {
-				shapeList: [],
-			},
-		},
-	})
+```ts
+import ImageMark, { ImageMarkRect } from 'mark-img'
 
-	const btn = document.querySelector('#drawing-rect')
+const imgMark = new ImageMark({
+	el: '#container',
+	src: './example.jpg',
+})
 
-	btn.onclick = () => {
-		const shapePlugin = imgMark.plugin[ShapePlugin.pluginName]
-		const newRectShapeData = {
-			shapeName: 'rect',
-			x: 0,
-			y: 0,
-			width: 0,
-			height: 0,
-		}
-
-		const newRectShape = new ImageMarkRect(newRectShapeData, imgMark, {
-			// shape options
-		})
-
-		shapePlugin.startDrawing(rectInstance) // 开始绘制
-	}
-</script>
+// 点击按钮开始绘制
+document.querySelector('#draw-btn').onclick = () => {
+	imgMark.getShapePlugin()?.startDrawing(new ImageMarkRect({
+		shapeName: 'rect',
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0,
+	}, imgMark))
+}
 ```
+
+## 绘制时的快捷键
+
+| 快捷键 | 作用 |
+|--------|------|
+| `Space` | 按住可拖拽平移画布 |
+| `Enter` | 确认多边形/折线绘制 |
+| `Delete` | 删除最后一个点 |
+| `Esc` | 取消绘制 |

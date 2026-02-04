@@ -11,15 +11,46 @@ export const zh = defineConfig({
 			'/start/': {
 				base: '/start',
 				items: [
-					{ text: '简介', link: '/introduction' },
-					{ text: '开始', link: '/start' },
-					{ text: '如何使用插件', link: '/use-plugin' },
-					{ text: '如何使用Action', link: '/use-action' },
-					{ text: '怎么用鼠标绘制图形', link: '/draw-shape' },
-					{ text: '如何监听事件', link: '/event-listener' },
-					{ text: '更改selection插件选中时候颜色', link: '/custom-selection-action' },
-					// { text: '编写自己的插件', link: '/extend-plugin' },
-					// { text: '编写自己的Action', link: '/extend-action' },
+					{
+						text: '入门篇',
+						items: [
+							{ text: '简介', link: '/introduction' },
+							{ text: '开始', link: '/start' },
+						]
+					},
+					{
+						text: '图形篇',
+						items: [
+							{ text: '鼠标绘制图形', link: '/draw-shape' },
+							{ text: '所有图形类型', link: '/all-shapes' },
+						]
+					},
+					{
+						text: '进阶篇',
+						items: [
+							{ text: '图形数据管理', link: '/binddata' },
+							{ text: '视图控制', link: '/view-control' },
+							{ text: '如何监听事件', link: '/event-listener' },
+							{ text: '撤销与重做', link: '/history' },
+						]
+					},
+					{
+						text: '扩展篇',
+						items: [
+							{ text: '如何使用插件', link: '/use-plugin' },
+							{ text: '如何使用 Action', link: '/use-action' },
+							{ text: '自定义图形样式', link: '/custom-shape-style' },
+							{ text: '自定义选中样式', link: '/custom-selection-action' },
+						]
+					},
+					{
+						text: '实战篇',
+						items: [
+							{ text: '数据导入导出', link: '/data-export' },
+							{ text: 'React 集成指南', link: '/react-integration' },
+							{ text: 'Vue 集成指南', link: '/vue-integration' },
+						]
+					},
 				]
 			},
 			'/api/': {

@@ -3,48 +3,44 @@ layout: doc
 footer: false
 ---
 
-# How to Draw Shapes with a Mouse
+# Drawing Shapes with Mouse
 
-### Example
+This section introduces the basic flow of drawing shapes with a mouse. For all shape types, see [All Shape Types](/en/start/all-shapes).
 
-Draw a Rect using a mouse.
+## Basic Flow
 
-```html
-<div>
-	<div id="container"></div>
-	<button id="drawing-rect">Draw Rect</button>
-</div>
+1. Get the ShapePlugin instance
+2. Create a Shape instance
+3. Call `startDrawing()` to begin
 
-<script type="module">
-	import ImageMark, { ShapePlugin } from 'mark-img'
+## Example: Drawing a Rect
 
-	const imgMark = new ImageMark({
-		el: '#container',
-		src: '/public/img/demo-parking.jpg',
-		pluginOptions: {
-			shape: {
-				shapeList: [],
-			},
-		},
-	})
+```ts
+import ImageMark, { ImageMarkRect } from 'mark-img'
 
-	const btn = document.querySelector('#drawing-rect')
+const imgMark = new ImageMark({
+	el: '#container',
+	src: './example.jpg',
+})
 
-	btn.onclick = () => {
-		const shapePlugin = imgMark.plugin[ShapePlugin.pluginName]
-		const newRectShapeData = {
-			shapeName: 'rect',
-			x: 0,
-			y: 0,
-			width: 0,
-			height: 0,
-		}
-
-		const newRectShape = new ImageMarkRect(newRectShapeData, imgMark, {
-			// shape options
-		})
-
-		shapePlugin.startDrawing(rectInstance) //  start drawing
-	}
-</script>
+// Click button to start drawing
+document.querySelector('#draw-btn').onclick = () => {
+	imgMark.getShapePlugin()?.startDrawing(new ImageMarkRect({
+		shapeName: 'rect',
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0,
+	}, imgMark))
+}
 ```
+
+## Shortcuts While Drawing
+
+| Shortcut | Action |
+|----------|--------|
+| `Space` | Hold to pan the canvas |
+| `Enter` | Confirm polygon/polyline |
+| `Delete` | Remove last point |
+| `Esc` | Cancel drawing |
+

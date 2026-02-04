@@ -14,15 +14,46 @@ export const en = defineConfig({
 			'/en/start/': {
 				base: '/en/start',
 				items: [
-					{ text: 'Introduction', link: '/introduction' },
-					{ text: 'Getting Started', link: '/start' },
-					{ text: 'How to Use the Plugin', link: '/use-plugin' },
-					{ text: 'How to Use Action', link: '/use-action' },
-					{ text: 'How to Draw Shapes with the Mouse', link: '/draw-shape' },
-					{ text: 'How to Listen Events', link: '/event-listener' },
-					{ text: 'Customize Selection Plugin Color on Selection', link: '/custom-selection-action' },
-					// { text: 'Write Your Own Plugin', link: '/extend-plugin' },
-					// { text: 'Write Your Own Action', link: '/extend-action' },
+					{
+						text: 'Getting Started',
+						items: [
+							{ text: 'Introduction', link: '/introduction' },
+							{ text: 'Quick Start', link: '/start' },
+						]
+					},
+					{
+						text: 'Shapes',
+						items: [
+							{ text: 'Drawing Shapes', link: '/draw-shape' },
+							{ text: 'All Shape Types', link: '/all-shapes' },
+						]
+					},
+					{
+						text: 'Advanced',
+						items: [
+							{ text: 'Shape Data Management', link: '/binddata' },
+							{ text: 'View Control', link: '/view-control' },
+							{ text: 'Event Listening', link: '/event-listener' },
+							{ text: 'Undo & Redo', link: '/history' },
+						]
+					},
+					{
+						text: 'Customization',
+						items: [
+							{ text: 'Using Plugins', link: '/use-plugin' },
+							{ text: 'Using Actions', link: '/use-action' },
+							{ text: 'Custom Shape Style', link: '/custom-shape-style' },
+							{ text: 'Custom Selection Style', link: '/custom-selection-action' },
+						]
+					},
+					{
+						text: 'Practical',
+						items: [
+							{ text: 'Data Import & Export', link: '/data-export' },
+							{ text: 'React Integration', link: '/react-integration' },
+							{ text: 'Vue Integration', link: '/vue-integration' },
+						]
+					},
 				]
 			},
 			'/en/api/': {
