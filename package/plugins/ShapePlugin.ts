@@ -41,6 +41,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 				'onDelete',
 				'onResize',
 				'onContainerMouseDown',
+				'onContainerDbClick',
 				'onDocumentMouseMove',
 				'onDocumentMouseUp',
 				'onContainerMouseMove',
@@ -129,6 +130,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.on(EventBusEventName.scale, this.onScale)
 		this.imageMark.container.addEventListener('mousedown', this.onContainerMouseDown)
 		this.imageMark.container.addEventListener('mousemove', this.onContainerMouseMove)
+		this.imageMark.container.addEventListener('dblclick', this.onContainerDbClick)
 		document.addEventListener('mousemove', this.onDocumentMouseMove)
 		document.addEventListener('mouseup', this.onDocumentMouseUp)
 	}
@@ -144,6 +146,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 
 		this.imageMark.container.removeEventListener('mousedown', this.onContainerMouseDown)
 		this.imageMark.container.removeEventListener('mousemove', this.onContainerMouseMove)
+		this.imageMark.container.removeEventListener('dblclick', this.onContainerDbClick)
 		document.removeEventListener('mousemove', this.onDocumentMouseMove)
 		document.removeEventListener('mouseup', this.onDocumentMouseUp)
 	}
@@ -490,6 +493,22 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 			// mouseEvent2Data 可能会在内部调用 endDrawing，导致 drawingShape 变为 null
 			newData && this.drawingShape && this.drawing(newData)
 		}
+	}
+
+	onContainerDbClick(event: MouseEvent) {
+		if (!this.imageMark.status.shape_drawing || !this.drawingShape) return
+		if (this.programmaticDrawing) return
+		if (this.drawingShape.mouseDrawType !== 'multiPress') return
+		const doubleClickEndDrawMultiPressShape = this.imageMark?.options?.action?.doubleClickEndDrawMultiPressShape ?? true
+		if (!doubleClickEndDrawMultiPressShape) return
+		// 双击会触发两次mousedown，第二次mousedown会添加一个重复的点，需要去掉
+		this.drawingPointTrace.pop()
+		const newData = this.drawingShape.mouseEvent2Data({
+			pointList: this.drawingPointTrace,
+			auxiliaryPoint: this.drawingShape.data.auxiliaryPoint
+		})
+		newData && this.drawingShape && this.drawing(newData)
+		this.endDrawing()
 	}
 
 	onContainerMouseMove(event: MouseEvent) {

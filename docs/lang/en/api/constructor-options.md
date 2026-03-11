@@ -39,6 +39,7 @@ const imageMark = new ImageMark({
 		enableDrawShapeOutOfImg?: boolean // Whether to allow drawing shapes to exceed the image, default is `false`
 		enableEditShapeOutOfImg?: boolean // Whether to allow editing shapes to exceed the image, default is `false`
 		enableMoveShapeOutOfImg?: boolean // Whether to allow moving shapes to exceed the image, default is `false`
+		doubleClickEndDrawMultiPressShape?: boolean // Whether to allow double-click to finish drawing multiPress shapes (e.g. polygon, polyline), default is `true`
 	}
 	pluginOptions?: {
 		[key: string]: any // [pluginName]: [pluginOptions] plugin's configuration, see more at plugin document

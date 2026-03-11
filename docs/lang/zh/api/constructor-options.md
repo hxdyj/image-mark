@@ -42,6 +42,7 @@ const imageMark = new ImageMark({
 		enableDrawShapeOutOfImg?: boolean // 是否允许绘制时超出图片, 默认`false`
 		enableEditShapeOutOfImg?: boolean // 是否允许编辑时超出图片, 默认`false`
 		enableMoveShapeOutOfImg?: boolean // 是否允许移动时超出图片, 默认`false`
+		doubleClickEndDrawMultiPressShape?: boolean // 是否允许双击结束多次点击绘制(如多边形、折线), 默认`true`
 	}
 	pluginOptions?: {
 		[key: string]: any // [插件名称]：[插件配置] 插件的配置项，具体请参考插件文档

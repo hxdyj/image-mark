@@ -43,3 +43,4 @@ document.querySelector('#draw-btn').onclick = () => {
 | `Enter` | 确认多边形/折线绘制 |
 | `Delete` | 删除最后一个点 |
 | `Esc` | 取消绘制 |
+| `双击` | 结束多边形/折线绘制 |

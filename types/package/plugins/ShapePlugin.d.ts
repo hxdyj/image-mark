@@ -72,6 +72,7 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     holdShape: ImageMarkShape | null;
     setHoldShape(shape: ImageMarkShape | null): void;
     onContainerMouseDown(event: MouseEvent): void;
+    onContainerDbClick(event: MouseEvent): void;
     onContainerMouseMove(event: MouseEvent): void;
     onDocumentMouseMove(event: MouseEvent): void;
     onDocumentMouseUp(event: MouseEvent): void;

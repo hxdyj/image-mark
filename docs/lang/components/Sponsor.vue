@@ -22,7 +22,12 @@ const personalList: Item[] = [
 		name: '今天胖了嘛',
 		imgName: '今天胖了嘛.jpg',
 		price: '青铜',
-	}
+	},
+	{
+		name: 'Summer',
+		imgName: 'Summer.jpg',
+		price: '黄金',
+	},
 ]
 
 const props = withDefaults(defineProps<{

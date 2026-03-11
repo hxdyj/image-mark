@@ -25,22 +25,27 @@ const imgMark = new ImageMark({
 
 // Click button to start drawing
 document.querySelector('#draw-btn').onclick = () => {
-	imgMark.getShapePlugin()?.startDrawing(new ImageMarkRect({
-		shapeName: 'rect',
-		x: 0,
-		y: 0,
-		width: 0,
-		height: 0,
-	}, imgMark))
+	imgMark.getShapePlugin()?.startDrawing(
+		new ImageMarkRect(
+			{
+				shapeName: 'rect',
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0,
+			},
+			imgMark
+		)
+	)
 }
 ```
 
 ## Shortcuts While Drawing
 
-| Shortcut | Action |
-|----------|--------|
-| `Space` | Hold to pan the canvas |
-| `Enter` | Confirm polygon/polyline |
-| `Delete` | Remove last point |
-| `Esc` | Cancel drawing |
-
+| Shortcut       | Action                          |
+| -------------- | ------------------------------- |
+| `Space`        | Hold to pan the canvas          |
+| `Enter`        | Confirm polygon/polyline        |
+| `Delete`       | Remove last point               |
+| `Esc`          | Cancel drawing                  |
+| `Double-click` | Finish polygon/polyline drawing |

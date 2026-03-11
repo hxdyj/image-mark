@@ -61,6 +61,7 @@ export type ImageMarkOptions = {
         enableDrawShapeOutOfImg?: boolean;
         enableEditShapeOutOfImg?: boolean;
         enableMoveShapeOutOfImg?: boolean;
+        doubleClickEndDrawMultiPressShape?: boolean;
     };
     pluginOptions?: {
         [key: string]: any;

@@ -75,6 +75,7 @@ export type ImageMarkOptions = {
 		enableDrawShapeOutOfImg?: boolean
 		enableEditShapeOutOfImg?: boolean
 		enableMoveShapeOutOfImg?: boolean
+		doubleClickEndDrawMultiPressShape?: boolean // 默认 true
 	}
 	pluginOptions?: {
 		[key: string]: any // [插件名称]：[插件配置]
@@ -135,6 +136,7 @@ const defaultOptions: DeepPartial<ImageMarkOptions> = {
 		enableDrawShapeOutOfImg: false,
 		enableMoveShapeOutOfImg: false,
 		enableEditShapeOutOfImg: false,
+		doubleClickEndDrawMultiPressShape: true,
 	}
 }
 
