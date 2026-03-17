@@ -30,6 +30,7 @@ export interface ShapeData {
 export type ShapeAttr =
 	| {
 			stroke?: StrokeData // 默认值 { width:10, color:'#FF7D00'}
+			editPointSizeRatio?: number // 编辑点大小比例，默认值 1
 			fill?: string
 			auxiliary?: {
 				// 辅助线的配置，比如polygon的辅助线

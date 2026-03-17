@@ -39,7 +39,7 @@ export class SelectionAction extends Action {
 		this.uid = shape.data.uuid + '_' + uid(6)
 		this.bindEventThis(['onMouseDown', 'onMouseUp', 'draw'])
 		this.bindEvents()
-		this.attr = defaultsDeep(this.getSelectionActionOptions()?.setAttr?.(this) || {}, this.attr)
+		this.attr = defaultsDeep(this.getSelectionActionOptions()?.setAttr?.(this) || {}, this.imageMark.getSelectionPlugin()?.getSelectionPluginOptions().selectionActionOptions?.setAttr?.(this) || {}, this.attr)
 	}
 
 	protected bindEvents() {

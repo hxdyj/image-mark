@@ -119,6 +119,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		})
 
 		const { strokeWidth, optimalStrokeColor, strokeColor } = this.getMainShapeInfo()
+		const editPointSizeRatio = this.attr?.editPointSizeRatio ?? 1
 
 		// 渲染顶点控制点
 		editPointList.forEach(point => {
@@ -126,7 +127,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 			const findCircle = g.find(`.${className}`)[0]
 			const circle = findCircle || new Circle().addClass(className).addClass('edit-move-point').attr('data-index', point.className).attr('data-type', 'vertex') as Circle
 			circle.center(point.x, point.y).attr({
-				r: (strokeWidth)
+				r: (strokeWidth) * editPointSizeRatio
 			}).fill(optimalStrokeColor)
 			circle.addTo(g)
 			if (!findCircle) {
@@ -156,18 +157,18 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 				midCircle.attr({
 					cx: midX,
 					cy: midY,
-					r: strokeWidth * 1.6
+					r: strokeWidth * 1.6 * editPointSizeRatio
 				}).fill(darkenColor(optimalStrokeColor, 30))
 				midCircle.addTo(midGroup)
 
 				// 加号（使用主色）
-				const plusSize = strokeWidth * 0.8
+				const plusSize = strokeWidth * 0.8 * editPointSizeRatio
 				const plusLine1 = new Line()
 					.plot(midX - plusSize, midY, midX + plusSize, midY)
-					.stroke({ color: strokeColor, width: strokeWidth * 0.5 })
+					.stroke({ color: strokeColor, width: strokeWidth * 0.5 * editPointSizeRatio })
 				const plusLine2 = new Line()
 					.plot(midX, midY - plusSize, midX, midY + plusSize)
-					.stroke({ color: strokeColor, width: strokeWidth * 0.5 })
+					.stroke({ color: strokeColor, width: strokeWidth * 0.5 * editPointSizeRatio })
 				plusLine1.addTo(midGroup)
 				plusLine2.addTo(midGroup)
 

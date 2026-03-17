@@ -18,6 +18,7 @@ export type MouseEvent2DataOptions = {
 
 export type ShapeAttr = {
 	stroke?: StrokeData
+	editPointSizeRatio?: number // 编辑点大小比例，默认 1
 	fill?: string
 	auxiliary?: {
 		stroke?: StrokeData

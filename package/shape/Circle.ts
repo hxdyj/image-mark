@@ -63,6 +63,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	protected drawCenterPoint() {
 		const { x, y } = this.data
 		const { strokeWidth, optimalStrokeColor } = this.getMainShapeInfo()
+		const editPointSizeRatio = this.attr?.editPointSizeRatio ?? 1
 
 		let centerPoint = this.shapeInstance.findOne(`#${this.getCenterPointId()}`) as Circle
 		if (!centerPoint) {
@@ -71,7 +72,7 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		}
 
 		centerPoint.center(x, y).attr({
-			r: strokeWidth
+			r: strokeWidth * editPointSizeRatio
 		}).fill(optimalStrokeColor)
 	}
 
@@ -151,12 +152,13 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 		]
 
 		const { strokeWidth, optimalStrokeColor } = this.getMainShapeInfo()
+		const editPointSizeRatio = this.attr?.editPointSizeRatio ?? 1
 
 		editPointList.forEach(point => {
 			const findCircle = g.find(`.${point.className}`)[0]
 			const circle = findCircle || new Circle().addClass(point.className) as Circle
 			circle.center(point.x, point.y).attr({
-				r: (strokeWidth)
+				r: (strokeWidth) * editPointSizeRatio
 			}).fill(optimalStrokeColor)
 			circle.addTo(g)
 			if (!findCircle) {

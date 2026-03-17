@@ -109,13 +109,14 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 		]
 
 		const { strokeWidth, optimalStrokeColor } = this.getMainShapeInfo()
+		const editPointSizeRatio = this.attr?.editPointSizeRatio ?? 1
 
 		editPointList.forEach(point => {
 			const className = this.getEditPointClassName(point.className)
 			const findCircle = g.find(`.${className}`)[0]
 			const circle = findCircle || new Circle().addClass(className).addClass('edit-move-point').attr('data-index', point.className) as Circle
 			circle.center(point.x, point.y).attr({
-				r: (strokeWidth)
+				r: (strokeWidth) * editPointSizeRatio
 			}).fill(optimalStrokeColor)
 			circle.addTo(g)
 			if (!findCircle) {

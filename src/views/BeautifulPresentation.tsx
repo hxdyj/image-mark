@@ -7,12 +7,12 @@ import { demoData } from '../data/fullDemo.data';
 import { Badge, Button, ColorPicker, Descriptions, Divider, Drawer, Empty, Form, Input, Menu, Message, Modal, Popover, Radio, Select, Space, Table, Tooltip, Trigger, Upload } from '@arco-design/web-react';
 import { IconFont } from '../components/Iconfont';
 import { IconRedo, IconUndo } from '@arco-design/web-react/icon';
-import { SelectionType } from '#/plugins/SelectionPlugin';
+import { SelectionPlugin, SelectionType } from '#/plugins/SelectionPlugin';
 import { useLocalStorage } from 'usehooks-ts'
 import { ModalReturnProps } from '@arco-design/web-react/es/Modal/modal';
 import { ImageData } from '#/shape/Image';
 import Editor, { useMonaco, loader } from '@monaco-editor/react';
-import { clone, debounce, set } from 'lodash-es';
+import { clone, debounce, fill, set } from 'lodash-es';
 import { useImmer } from 'use-immer';
 import { LabeledValue, OptionInfo } from '@arco-design/web-react/es/Select/interface';
 import { uid } from 'uid';
@@ -114,6 +114,7 @@ export function BeautifulPresentation() {
 	const shapeOptions: ShapeOptions = {
 		setAttr(shapeInstance: ImageMarkShape) {
 			return {
+				editPointSizeRatio: 2.5,
 				label: {
 					font: {
 						// fill: 'black',
@@ -265,6 +266,15 @@ export function BeautifulPresentation() {
 				[ShapePlugin.pluginName]: {
 					shapeList: shapeList.current,
 					shapeOptions
+				},
+				[SelectionPlugin.pluginName]: {
+					selectionActionOptions: {
+						setAttr() {
+							return {
+								padding: 20
+							}
+						}
+					}
 				}
 			},
 		})

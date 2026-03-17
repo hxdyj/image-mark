@@ -30,6 +30,7 @@ export interface ShapeData {
 export type ShapeAttr =
 	| {
 			stroke?: StrokeData // Default value { width:10, color:'#FF7D00'}
+			editPointSizeRatio?: number // Edit point size ratio, default value 1
 			fill?: string
 			auxiliary?: {
 				// Configuration for auxiliary lines, such as polygon auxiliary lines

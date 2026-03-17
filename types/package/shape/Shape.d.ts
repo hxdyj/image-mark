@@ -9,6 +9,7 @@ export type MouseEvent2DataOptions = {
 };
 export type ShapeAttr = {
     stroke?: StrokeData;
+    editPointSizeRatio?: number;
     fill?: string;
     auxiliary?: {
         stroke?: StrokeData;
