@@ -1,4 +1,4 @@
-import { Action, ImageMark } from '../index';
+import { Action, EndDrawMultiPressShapeOperate, ImageMark } from '../index';
 import { Plugin } from './plugin';
 import { ImageMarkShape, ShapeData, ShapeOptions } from '../shape/Shape';
 import { Point } from '@svgdotjs/svg.js';
@@ -71,8 +71,11 @@ export declare class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin
     dropLastMouseTrace(): void;
     holdShape: ImageMarkShape | null;
     setHoldShape(shape: ImageMarkShape | null): void;
+    getEndDrawMultiPressShapeOperateList(): ("double-click" | "right-mouse-click")[];
+    canEndDrawMultiPressShapeByOperate(operate: EndDrawMultiPressShapeOperate): boolean;
     onContainerMouseDown(event: MouseEvent): void;
     onContainerDbClick(event: MouseEvent): void;
+    onNativeContainerContextMenu(event: Event): void;
     onContainerMouseMove(event: MouseEvent): void;
     onDocumentMouseMove(event: MouseEvent): void;
     onDocumentMouseUp(event: MouseEvent): void;

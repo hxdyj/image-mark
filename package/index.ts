@@ -45,6 +45,8 @@ export type DirectionOutOfInfo = {
 
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
 export type StartPosition = 'center' | 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom'
+export const END_DRAW_MULTI_PRESS_SHAPE_OPERATE_LIST = ['double-click', 'right-mouse-click'] as const
+export type EndDrawMultiPressShapeOperate = typeof END_DRAW_MULTI_PRESS_SHAPE_OPERATE_LIST[number]
 export type ImageMarkOptions = {
 	el: ContainerType
 	src: string
@@ -75,7 +77,7 @@ export type ImageMarkOptions = {
 		enableDrawShapeOutOfImg?: boolean
 		enableEditShapeOutOfImg?: boolean
 		enableMoveShapeOutOfImg?: boolean
-		doubleClickEndDrawMultiPressShape?: boolean // 默认 true
+		endDrawMultiPressShapeOperate?: EndDrawMultiPressShapeOperate[] // 默认 ['right-mouse-click']
 	}
 	pluginOptions?: {
 		[key: string]: any // [插件名称]：[插件配置]
@@ -136,7 +138,7 @@ const defaultOptions: DeepPartial<ImageMarkOptions> = {
 		enableDrawShapeOutOfImg: false,
 		enableMoveShapeOutOfImg: false,
 		enableEditShapeOutOfImg: false,
-		doubleClickEndDrawMultiPressShape: true,
+		endDrawMultiPressShapeOperate: ['right-mouse-click'],
 	}
 }
 

@@ -32,6 +32,8 @@ export type DirectionOutOfInfo = {
 };
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover';
 export type StartPosition = 'center' | 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom';
+export declare const END_DRAW_MULTI_PRESS_SHAPE_OPERATE_LIST: readonly ["double-click", "right-mouse-click"];
+export type EndDrawMultiPressShapeOperate = typeof END_DRAW_MULTI_PRESS_SHAPE_OPERATE_LIST[number];
 export type ImageMarkOptions = {
     el: ContainerType;
     src: string;
@@ -61,7 +63,7 @@ export type ImageMarkOptions = {
         enableDrawShapeOutOfImg?: boolean;
         enableEditShapeOutOfImg?: boolean;
         enableMoveShapeOutOfImg?: boolean;
-        doubleClickEndDrawMultiPressShape?: boolean;
+        endDrawMultiPressShapeOperate?: EndDrawMultiPressShapeOperate[];
     };
     pluginOptions?: {
         [key: string]: any;

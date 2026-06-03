@@ -332,9 +332,8 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 	}
 
 	onDocumentMouseMove(event: MouseEvent, emit = false) {
-		super.onDocumentMouseMove(event)
-		const evt = event as MouseEvent
-		if (evt.button === 0 && this.editMouseDownEvent) {
+		super.onDocumentMouseMove(event, emit)
+		if (this.editMouseDownEvent) {
 			event.stopPropagation()
 			const list = this.getEditPoint(event)
 			const newData = getBoundingBoxByTwoPoints(...list)
@@ -343,13 +342,6 @@ export class ImageMarkImage extends ImageMarkShape<ImageData> {
 				...newData
 			}, emit)
 		}
-	}
-	onDocumentMouseUp(event: MouseEvent) {
-		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event, true)
-		this.endEditShape()
-		this.onEndDrawing()
-		this.draw()
 	}
 
 	// 用于 minimap 绘制的缓存图片

@@ -7,6 +7,8 @@ footer: false
 
 Shape 类是所有形状的基类，它提供了一些基本的属性和方法。可以继承此类来实现自己的形状。
 
+补充说明：进入编辑模式后，编辑点默认采用“点击开始 / 点击结束”的交互方式。左键点击编辑点开始移动，移动过程中鼠标位置会实时生效；再次左键点击容器或编辑点即可结束本次编辑。
+
 ## 类名
 
 `ImageMarkShape`
@@ -60,7 +62,7 @@ export type ShapeOptions = {
 	initDrawFunc?: ShapeDrawFunc // 自定义初始绘制函数
 	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean // 是否允许编辑，返回 false 则不允许进入编辑模式
 	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时添加中位点，只有折线和多边形才需要添加中位点。如果为 null 或 undefined 则允许
-	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时双击删除顶点，只有折线和多边形才支持删除顶点。如果为 null 或 undefined 则允许
+	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时右键删除顶点，只有折线和多边形才支持删除顶点。如果为 null 或 undefined 则允许
 }
 
 //鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
@@ -361,7 +363,7 @@ isEnableEditAddMidPoint(): boolean
 ### isEnableEditDropPoint
 
 ```ts
-// 判断是否允许在编辑模式下双击删除顶点（仅折线和多边形支持）
+// 判断是否允许在编辑模式下右键删除顶点（仅折线和多边形支持）
 // 如果 options.enableEditDropPoint 为 null 或 undefined，则返回 true
 isEnableEditDropPoint(): boolean
 ```

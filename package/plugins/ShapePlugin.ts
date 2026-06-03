@@ -1,4 +1,4 @@
-import { Action, ImageMark } from "../index";
+import { Action, EndDrawMultiPressShapeOperate, ImageMark } from "../index";
 import { Plugin } from "./plugin";
 import { ImageMarkShape, ShapeData, ShapeOptions } from "../shape/Shape";
 import { EventBusEventName } from "../event/const";
@@ -42,6 +42,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 				'onResize',
 				'onContainerMouseDown',
 				'onContainerDbClick',
+				'onNativeContainerContextMenu',
 				'onDocumentMouseMove',
 				'onDocumentMouseUp',
 				'onContainerMouseMove',
@@ -128,9 +129,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.on(EventBusEventName.resize, this.onResize)
 		this.imageMark.on(EventBusEventName.first_render, this.onFirstRender)
 		this.imageMark.on(EventBusEventName.scale, this.onScale)
-		this.imageMark.container.addEventListener('mousedown', this.onContainerMouseDown)
+		this.imageMark.container.addEventListener('mousedown', this.onContainerMouseDown, true)
 		this.imageMark.container.addEventListener('mousemove', this.onContainerMouseMove)
 		this.imageMark.container.addEventListener('dblclick', this.onContainerDbClick)
+		this.imageMark.container.addEventListener('contextmenu', this.onNativeContainerContextMenu, true)
 		document.addEventListener('mousemove', this.onDocumentMouseMove)
 		document.addEventListener('mouseup', this.onDocumentMouseUp)
 	}
@@ -144,9 +146,10 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.imageMark.off(EventBusEventName.first_render, this.onFirstRender)
 		this.imageMark.off(EventBusEventName.scale, this.onScale)
 
-		this.imageMark.container.removeEventListener('mousedown', this.onContainerMouseDown)
+		this.imageMark.container.removeEventListener('mousedown', this.onContainerMouseDown, true)
 		this.imageMark.container.removeEventListener('mousemove', this.onContainerMouseMove)
 		this.imageMark.container.removeEventListener('dblclick', this.onContainerDbClick)
+		this.imageMark.container.removeEventListener('contextmenu', this.onNativeContainerContextMenu, true)
 		document.removeEventListener('mousemove', this.onDocumentMouseMove)
 		document.removeEventListener('mouseup', this.onDocumentMouseUp)
 	}
@@ -352,6 +355,7 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 	endDrawing(cancel = false) {
 		if (!this.drawingShape) throw new Error('drawingShape is null')
 		this.drawingShape.onEndDrawing()
+		cancel = cancel || !this.drawingShape.canFinishDrawing()
 		const shapeData = cloneDeep(this.drawingShape.data)
 		this.drawingShape.destroy()
 		if (!cancel) {
@@ -476,7 +480,17 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		this.holdShape = shape
 	}
 
+	getEndDrawMultiPressShapeOperateList() {
+		return this.imageMark?.options?.action?.endDrawMultiPressShapeOperate ?? ['right-mouse-click']
+	}
+
+	canEndDrawMultiPressShapeByOperate(operate: EndDrawMultiPressShapeOperate) {
+		return this.getEndDrawMultiPressShapeOperateList().includes(operate)
+	}
+
 	onContainerMouseDown(event: MouseEvent) {
+		this.holdShape?.onDocumentMouseDown(event)
+		if (this.imageMark.status.shape_editing) return
 		if (!this.imageMark.status.shape_drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 
@@ -499,13 +513,29 @@ export class ShapePlugin<T extends ShapeData = ShapeData> extends Plugin {
 		if (!this.imageMark.status.shape_drawing || !this.drawingShape) return
 		if (this.programmaticDrawing) return
 		if (this.drawingShape.mouseDrawType !== 'multiPress') return
-		const doubleClickEndDrawMultiPressShape = this.imageMark?.options?.action?.doubleClickEndDrawMultiPressShape ?? true
-		if (!doubleClickEndDrawMultiPressShape) return
+		if (!this.canEndDrawMultiPressShapeByOperate('double-click')) return
 		// 双击会触发两次mousedown，第二次mousedown会添加一个重复的点，需要去掉
 		this.drawingPointTrace.pop()
 		const newData = this.drawingShape.mouseEvent2Data({
 			pointList: this.drawingPointTrace,
 			auxiliaryPoint: this.drawingShape.data.auxiliaryPoint
+		})
+		newData && this.drawingShape && this.drawing(newData)
+		this.endDrawing()
+	}
+
+	onNativeContainerContextMenu(event: Event) {
+		if (!this.imageMark.status.shape_drawing || !this.drawingShape) return
+		if (this.programmaticDrawing) return
+		if (this.drawingShape.mouseDrawType !== 'multiPress') return
+		if (!this.canEndDrawMultiPressShapeByOperate('right-mouse-click')) return
+
+		event.preventDefault()
+		event.stopImmediatePropagation()
+		const mouseEvent = event as MouseEvent
+		const newData = this.drawingShape.mouseEvent2Data({
+			pointList: this.drawingPointTrace,
+			auxiliaryPoint: this.mouseEvent2LimitPoint(mouseEvent).point
 		})
 		newData && this.drawingShape && this.drawing(newData)
 		this.endDrawing()

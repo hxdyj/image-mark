@@ -26,6 +26,5 @@ export declare class ImageMarkCircle extends ImageMarkShape<CircleData> {
     drawEdit(): void;
     getEditR(event: MouseEvent): number;
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
-    onDocumentMouseUp(event: MouseEvent): void;
     drawMinimap(drawContext: MinimapDrawContext): void;
 }

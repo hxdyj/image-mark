@@ -192,9 +192,8 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 	}
 
 	onDocumentMouseMove(event: MouseEvent, emit = false) {
-		super.onDocumentMouseMove(event)
-		const evt = event as MouseEvent
-		if (evt.button === 0 && this.editMouseDownEvent) {
+		super.onDocumentMouseMove(event, emit)
+		if (this.editMouseDownEvent) {
 			event.stopPropagation()
 			const r = this.getEditR(event)
 			this.updateData({
@@ -202,11 +201,6 @@ export class ImageMarkCircle extends ImageMarkShape<CircleData> {
 				r
 			}, emit)
 		}
-	}
-	onDocumentMouseUp(event: MouseEvent) {
-		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event, true)
-		this.endEditShape()
 	}
 
 	drawMinimap(drawContext: MinimapDrawContext): void {

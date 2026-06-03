@@ -39,7 +39,7 @@ const imageMark = new ImageMark({
 		enableDrawShapeOutOfImg?: boolean // Whether to allow drawing shapes to exceed the image, default is `false`
 		enableEditShapeOutOfImg?: boolean // Whether to allow editing shapes to exceed the image, default is `false`
 		enableMoveShapeOutOfImg?: boolean // Whether to allow moving shapes to exceed the image, default is `false`
-		doubleClickEndDrawMultiPressShape?: boolean // Whether to allow double-click to finish drawing multiPress shapes (e.g. polygon, polyline), default is `true`
+		endDrawMultiPressShapeOperate?: EndDrawMultiPressShapeOperate[] // Operations that can finish multiPress drawing (e.g. polygon, polyline), default is `['right-mouse-click']`, available values: `'double-click' | 'right-mouse-click'`
 	}
 	pluginOptions?: {
 		[key: string]: any // [pluginName]: [pluginOptions] plugin's configuration, see more at plugin document
@@ -62,4 +62,6 @@ export type BoundingBox = {
 export type StartPosition = 'center' | 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom'
 
 export type InitialScaleSize = 'fit' | 'original' | 'width' | 'height' | 'cover'
+
+export type EndDrawMultiPressShapeOperate = 'double-click' | 'right-mouse-click'
 ```

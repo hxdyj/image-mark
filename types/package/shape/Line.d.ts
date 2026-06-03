@@ -25,6 +25,5 @@ export declare class ImageMarkLine extends ImageMarkShape<LineData> {
         point: Point;
     };
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
-    onDocumentMouseUp(event: MouseEvent): void;
     drawMinimap(drawContext: MinimapDrawContext): void;
 }

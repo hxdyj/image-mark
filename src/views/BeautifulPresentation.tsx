@@ -353,9 +353,19 @@ export function BeautifulPresentation() {
 	}, [src])
 	const drawingTipFlag = startDrawing && ['polygon', 'polyline'].includes(status.shape_drawing?.data.shapeName || '')
 	const drawingTwoTimesTipFlag = startDrawing && ['image', 'line', 'rect', 'circle'].includes(status.shape_drawing?.data.shapeName || '')
+	const editingTipFlag = !!status.shape_editing
+	const singleSelectedShape = selectShapeList.length === 1 ? selectShapeList[0] : null
+	const selectedShapeName = singleSelectedShape?.data.shapeName || ''
+	const endDrawOperateList = imgMark.current?.options?.action?.endDrawMultiPressShapeOperate ?? ['right-mouse-click']
+	const multiPressFinishOperateTip = [
+		'press <kbd>enter</kbd>',
+		endDrawOperateList.includes('double-click') ? '<kbd>double-click</kbd>' : '',
+		endDrawOperateList.includes('right-mouse-click') ? '<kbd>right-click</kbd>' : '',
+	].filter(Boolean).join(' or ')
 	const drawType = status?.shape_drawing && !startDrawing
 	const hasSelectShape = !drawType && selectShapeList.length > 0 && !drawingTipFlag
-	const showStatusTip = drawingTipFlag || hasSelectShape || drawType || drawingTwoTimesTipFlag
+	const selectedShapeEditingTipFlag = hasSelectShape && !!singleSelectedShape && !editingTipFlag
+	const showStatusTip = drawingTipFlag || hasSelectShape || drawType || drawingTwoTimesTipFlag || editingTipFlag
 	return (
 		<div className="comp-beautiful-presentation flex flex-col h-full min-h-[500px]" >
 
@@ -735,20 +745,54 @@ export function BeautifulPresentation() {
 								drawingTwoTimesTipFlag ?
 									<>
 										<div>press <kbd>delete</kbd>/<kbd>esc</kbd> to cancel drawing shape</div>
-										<div>click last point to confirm drawing shape</div>
+										<div>click second point to confirm drawing shape</div>
 									</> : null
 							}
 							{
 								drawingTipFlag ?
 									<>
 										<div>press <kbd>delete</kbd> to delete last point</div>
-										<div>press <kbd>enter</kbd> to confirm drawing shape</div>
+										<div dangerouslySetInnerHTML={{ __html: `${multiPressFinishOperateTip} to confirm drawing shape` }} />
 										<div>press <kbd>esc</kbd> to cancel drawing shape</div>
+										{
+											status.shape_drawing?.data.shapeName === 'polygon' ?
+												<div>polygon needs at least 3 points or the drawing will be discarded</div> : null
+										}
+										{
+											status.shape_drawing?.data.shapeName === 'polyline' ?
+												<div>polyline needs at least 2 points or the drawing will be discarded</div> : null
+										}
 									</> : null
 							}
 							{
 								hasSelectShape ?
-									<div>press <kbd>delete</kbd> to delete selected shapes</div> : null
+									<>
+										<div>press <kbd>delete</kbd> to delete selected shapes</div>
+									</> : null
+							}
+							{
+								selectedShapeEditingTipFlag ?
+									<>
+										<div>left-click a move point to start moving</div>
+										{
+											['polygon', 'polyline'].includes(selectedShapeName) ?
+												<div>click a midpoint to add a point and move it immediately</div> : null
+										}
+										{
+											selectedShapeName === 'polygon' ?
+												<div>right-click a vertex to delete it, polygon must keep at least 3 points</div> : null
+										}
+										{
+											selectedShapeName === 'polyline' ?
+												<div>right-click a vertex to delete it, polyline must keep at least 2 points</div> : null
+										}
+									</> : null
+							}
+							{
+								editingTipFlag ?
+									<>
+										<div>click again to stop</div>
+									</> : null
 							}
 							{
 								drawType ?
@@ -756,9 +800,9 @@ export function BeautifulPresentation() {
 										'dot': <div>click on container to confirm drawing dot</div>,
 										'line': <div>click two times to draw line</div>,
 										'pathline': <div>click two times to draw pathline</div>,
-										'polyline': <div>click on container multiple to drawing polyline</div>,
+										'polyline': <div dangerouslySetInnerHTML={{ __html: `click on container multiple times to draw polyline, then ${multiPressFinishOperateTip} to finish` }} />,
 										'rect': <div>click two times to draw rect</div>,
-										'polygon': <div>click on container multiple to drawing polygon</div>,
+										'polygon': <div dangerouslySetInnerHTML={{ __html: `click on container multiple times to draw polygon, then ${multiPressFinishOperateTip} to finish` }} />,
 										'circle': <div>click two times to draw circle</div>,
 										'image': <div>click two times to draw image</div>,
 									}[status.shape_drawing?.data?.shapeName || '']

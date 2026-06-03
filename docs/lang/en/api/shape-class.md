@@ -7,6 +7,8 @@ footer: false
 
 The Shape class is the base class for all shapes, providing some basic properties and methods. You can inherit this class to implement your own shapes.
 
+Additional note: In edit mode, edit points use a "click to start / click to finish" interaction by default. Left-click an edit point to start moving it, and the shape updates with the mouse position in real time; left-click the container or the edit point again to finish the edit.
+
 ## Class Name
 
 `ImageMarkShape`
@@ -60,7 +62,7 @@ export type ShapeOptions = {
 	initDrawFunc?: ShapeDrawFunc // Custom initial drawing function
 	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean // Whether to allow editing, returns false to prevent entering edit mode
 	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // Whether to enable adding midpoints during editing, only polyline and polygon need to add midpoints. If null or undefined, it is allowed
-	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // Whether to enable double-click to delete vertices during editing, only polyline and polygon support deleting vertices. If null or undefined, it is allowed
+	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // Whether to enable right-click to delete vertices during editing, only polyline and polygon support deleting vertices. If null or undefined, it is allowed
 }
 
 // Mouse drawing type, oneTouch: draw with one stroke, multiPress: draw with multiple clicks
@@ -361,7 +363,7 @@ isEnableEditAddMidPoint(): boolean
 ### isEnableEditDropPoint
 
 ```ts
-// Determine whether double-clicking to delete vertices is allowed in edit mode (only supported by polyline and polygon)
+// Determine whether right-clicking to delete vertices is allowed in edit mode (only supported by polyline and polygon)
 // If options.enableEditDropPoint is null or undefined, returns true
 isEnableEditDropPoint(): boolean
 ```

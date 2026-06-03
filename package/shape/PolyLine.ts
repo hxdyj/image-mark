@@ -15,13 +15,9 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 	static minVertexCount = 2 // PolyLine 最少需要 2 个顶点
 	readonly mouseDrawType: ShapeMouseDrawType = 'multiPress'
 
-	// 用于检测双击的状态
-	private lastVertexClickTime: number = 0
-	private lastVertexClickIndex: number = -1
-
 	constructor(data: PolyLineData, imageMarkInstance: ImageMark, options?: ShapeOptions) {
 		super(data, imageMarkInstance, options)
-		this.bindEventThis(['onVertexMouseDown'])
+		this.bindEventThis(['onVertexMouseDown', 'onVertexContextMenu'])
 	}
 
 	draw(): G {
@@ -96,6 +92,10 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 		delete this.data.auxiliaryPoint
 	}
 
+	canFinishDrawing() {
+		return this.getVertexCount() >= ImageMarkPolyLine.minVertexCount
+	}
+
 	getEditPointClassName(className: number) {
 		return `edit-point-${className}`
 	}
@@ -132,6 +132,7 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 			circle.addTo(g)
 			if (!findCircle) {
 				circle.on('mousedown', this.onVertexMouseDown)
+				circle.on('contextmenu', this.onVertexContextMenu)
 			}
 		})
 
@@ -211,63 +212,44 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 
 		// 更新数据并触发事件
 		this.updateData(this.data, true)
+		const newPointIndex = index + 1
+		const newEditPoint = this.getEditGroup<G>()?.find(`.${this.getEditPointClassName(newPointIndex)}`)?.[0] as Circle | undefined
+		if (newEditPoint) {
+			this.startEditShapeByElement(newEditPoint, mouseEvent.clientX, mouseEvent.clientY)
+		}
 	}
 
 	onVertexMouseDown = (event: Event) => {
 		event.stopPropagation()
-		const now = Date.now()
+		this.startEditShape(event)
+	}
 
-		// 获取顶点索引
+	onVertexContextMenu = (event: Event) => {
+		event.preventDefault()
+		event.stopPropagation()
+		if (this.imageMark.options.readonly) return
+		if (this.imageMark.status.shape_drawing) return
+		if (!this.isEnableEditDropPoint()) return
+
 		// @ts-ignore
 		let target = event.target.instance
 		while (target && target.attr('data-index') === undefined) {
 			target = target.parent()
 		}
 		const index = target?.attr('data-index') as number
-		if (index === undefined) {
-			this.startEditShape(event)
-			return
+		if (index === undefined) return
+
+		const vertexCount = this.data.points.length / 2
+		if (vertexCount <= ImageMarkPolyLine.minVertexCount) return
+
+		if (this.imageMark.status.shape_editing === this) {
+			this.endEditShape()
 		}
 
-		// 检测双击：同一个顶点，间隔小于 300ms
-		const isDoubleClick = (now - this.lastVertexClickTime < 300) && (index === this.lastVertexClickIndex)
-
-		// 更新点击记录
-		this.lastVertexClickTime = now
-		this.lastVertexClickIndex = index
-
-		if (isDoubleClick) {
-			// 双击删除顶点
-			// 只读模式检查
-			if (this.imageMark.options.readonly) return
-
-			// 绘制中不允许删除
-			if (this.imageMark.status.shape_drawing) return
-
-			// 检查是否启用删除顶点功能
-			if (!this.isEnableEditDropPoint()) return
-
-			// 最小顶点数检查
-			const vertexCount = this.data.points.length / 2
-			if (vertexCount <= ImageMarkPolyLine.minVertexCount) return
-
-			// 保存快照用于撤销
-			this.startModifyData()
-
-			// 删除顶点
-			const deleteIndex = index * 2
-			this.data.points.splice(deleteIndex, 2)
-
-			// 更新数据并触发事件
-			this.updateData(this.data, true)
-
-			// 重置点击记录，避免连续删除
-			this.lastVertexClickTime = 0
-			this.lastVertexClickIndex = -1
-		} else {
-			// 普通点击，开始拖拽
-			this.startEditShape(event)
-		}
+		this.startModifyData()
+		const deleteIndex = index * 2
+		this.data.points.splice(deleteIndex, 2)
+		this.updateData(this.data, true)
 	}
 
 	deleteVertex(index: number): boolean {
@@ -323,23 +305,14 @@ export class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
 	}
 
 	onDocumentMouseMove(event: MouseEvent, emit = false) {
-		super.onDocumentMouseMove(event)
-		const evt = event as MouseEvent
-		if (evt.button === 0 && this.editMouseDownEvent) {
+		super.onDocumentMouseMove(event, emit)
+		if (this.editMouseDownEvent) {
 			event.stopPropagation()
 			const { index, point } = this.getEditPoint(event)
 			const startIndex = index * 2
 			this.data.points.splice(startIndex, 2, point.x, point.y)
 			this.updateData(this.data, emit)
 		}
-		this.getEditShape()?.addClass('edit-moving-point')
-	}
-
-	onDocumentMouseUp(event: MouseEvent) {
-		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event, true)
-		this.getEditShape()?.removeClass('edit-moving-point')
-		this.endEditShape()
 	}
 
 	drawMinimap(drawContext: MinimapDrawContext): void {

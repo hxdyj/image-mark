@@ -112,7 +112,7 @@ const shapeOptions = {
 		return true
 	},
 
-	// 控制折线/多边形编辑时是否允许双击删除顶点
+	// 控制折线/多边形编辑时是否允许右键删除顶点
 	enableEditDropPoint(shapeInstance) {
 		return true
 	},

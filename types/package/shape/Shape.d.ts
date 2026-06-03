@@ -72,9 +72,10 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     protected drawFuncList: ShapeDrawFunc[];
     drawLabel(): G | undefined;
     onEndDrawing(): void;
+    canFinishDrawing(): boolean;
     actionListForEach(callback: (action: Action) => void): void;
     onContainerMouseMove(event: MouseEvent): void;
-    onDocumentMouseMove(event: MouseEvent): void;
+    onDocumentMouseMove(event: MouseEvent, _emit?: boolean): void;
     onDocumentMouseUp(event: MouseEvent): void;
     addDrawFunc(func: ShapeDrawFunc): void;
     removeDrawFunc(func: ShapeDrawFunc): void;
@@ -113,7 +114,10 @@ export declare abstract class ImageMarkShape<T extends ShapeData = ShapeData> ex
     abstract drawEdit(): void;
     editMouseDownEvent: MouseEvent | null;
     editOriginData: T | null;
+    protected getEditTargetShape(event?: Event | MouseEvent | null): Shape | null;
+    protected startEditShapeByElement(target: Shape, clientX?: number, clientY?: number): void;
     startEditShape(event: Event): void;
+    onDocumentMouseDown(event: MouseEvent): void;
     endEditShape(): void;
     dataSnapshot: T | null;
     startModifyData(): void;

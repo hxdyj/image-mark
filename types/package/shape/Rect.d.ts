@@ -23,6 +23,5 @@ export declare class ImageMarkRect extends ImageMarkShape<RectData> {
     getEditEventPointType(): RectEditPointClassName;
     getEditPoint(event: MouseEvent): [Point, Point];
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
-    onDocumentMouseUp(event: MouseEvent): void;
     drawMinimap(drawContext: MinimapDrawContext): void;
 }

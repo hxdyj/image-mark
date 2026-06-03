@@ -10,8 +10,6 @@ export declare class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
     static shapeName: string;
     static minVertexCount: number;
     readonly mouseDrawType: ShapeMouseDrawType;
-    private lastVertexClickTime;
-    private lastVertexClickIndex;
     constructor(data: PolygonData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
@@ -22,10 +20,12 @@ export declare class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
     drawEdit(): void;
     onMidPointMouseDown: (event: Event) => void;
     onVertexMouseDown: (event: Event) => void;
+    onVertexContextMenu: (event: Event) => void;
     deleteVertex(index: number): boolean;
     getVertexCount(): number;
     canDeleteVertex(): boolean;
     onEndDrawing(): void;
+    canFinishDrawing(): boolean;
     getEditShape(): Circle;
     getEditEventPointIndex(): any;
     getEditPoint(event: MouseEvent): {
@@ -33,6 +33,5 @@ export declare class ImageMarkPolygon extends ImageMarkShape<PolygonData> {
         point: Point;
     };
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
-    onDocumentMouseUp(event: MouseEvent): void;
     drawMinimap(drawContext: MinimapDrawContext): void;
 }

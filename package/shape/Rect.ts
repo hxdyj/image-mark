@@ -287,9 +287,8 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 	}
 
 	onDocumentMouseMove(event: MouseEvent, emit = false) {
-		super.onDocumentMouseMove(event)
-		const evt = event as MouseEvent
-		if (evt.button === 0 && this.editMouseDownEvent) {
+		super.onDocumentMouseMove(event, emit)
+		if (this.editMouseDownEvent) {
 			event.stopPropagation()
 			const list = this.getEditPoint(event)
 			const newData = getBoundingBoxByTwoPoints(...list)
@@ -298,11 +297,6 @@ export class ImageMarkRect extends ImageMarkShape<RectData> {
 				...newData
 			}, emit)
 		}
-	}
-	onDocumentMouseUp(event: MouseEvent) {
-		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event, true)
-		this.endEditShape()
 	}
 
 	drawMinimap(drawContext: MinimapDrawContext): void {

@@ -45,7 +45,7 @@ export type ShapeOptions = {
 	initDrawFunc?: ShapeDrawFunc
 	enableEdit?: (shapeInstance: ImageMarkShape) => Boolean
 	enableEditAddMidPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时添加中位点 只有折线和多边形才需要添加中位点
-	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时双击删除顶点 只有折线和多边形才需要删除顶点
+	enableEditDropPoint?: (shapeInstance: ImageMarkShape) => Boolean // 是否启用编辑时右键删除顶点 只有折线和多边形才需要删除顶点
 }
 //鼠标绘制类型，oneTouch:一笔绘制，multiPress:多次点击绘制
 export type ShapeMouseDrawType = 'oneTouch' | 'multiPress'
@@ -200,6 +200,11 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 
 	}
 
+	// 结束绘制前的最终校验，返回 false 时本次绘制会被丢弃
+	canFinishDrawing() {
+		return true
+	}
+
 	actionListForEach(callback: (action: Action) => void) {
 		Object.values(this.action).forEach(action => callback(action))
 	}
@@ -208,7 +213,7 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 		this.actionListForEach(action => action.onContainerMouseMove(event))
 	}
 
-	onDocumentMouseMove(event: MouseEvent) {
+	onDocumentMouseMove(event: MouseEvent, _emit = false) {
 		this.actionListForEach(action => action.onDocumentMouseMove(event))
 	}
 	onDocumentMouseUp(event: MouseEvent) {
@@ -419,19 +424,56 @@ export abstract class ImageMarkShape<T extends ShapeData = ShapeData> extends Ev
 	editMouseDownEvent: MouseEvent | null = null
 	editOriginData: T | null = null
 
+	protected getEditTargetShape(event: Event | MouseEvent | null = this.editMouseDownEvent) {
+		//@ts-ignore
+		return event?.target?.instance as Shape | null
+	}
+
+	protected startEditShapeByElement(target: Shape, clientX = 0, clientY = 0) {
+		const event = {
+			button: 0,
+			clientX,
+			clientY,
+			target: {
+				instance: target
+			},
+			stopPropagation() { }
+		} as unknown as Event
+		this.startEditShape(event)
+	}
+
 	startEditShape(event: Event) {
+		const mouseEvent = event as MouseEvent
+		if (mouseEvent.button !== 0) return
 		event.stopPropagation()
+		const currentEditingShape = this.imageMark.status.shape_editing
+		if (currentEditingShape === this) {
+			this.onDocumentMouseMove(mouseEvent, true)
+			this.endEditShape()
+			return
+		} else if (currentEditingShape) {
+			currentEditingShape.endEditShape()
+		}
 		this.editMouseDownEvent = event as unknown as MouseEvent
 		this.editOriginData = cloneDeep(this.data)
+		this.getEditTargetShape()?.addClass('edit-moving-point')
 		this.imageMark.getShapePlugin()?.setHoldShape(this)
 		this.startModifyData()
 		this.imageMark.status.shape_editing = this
 		this.imageMark.eventBus.emit(EventBusEventName.shape_start_edit, this, this.imageMark)
 	}
 
+	onDocumentMouseDown(event: MouseEvent) {
+		if (event.button !== 0) return
+		if (this.imageMark.status.shape_editing !== this || !this.editMouseDownEvent) return
+		event.stopPropagation()
+		this.onDocumentMouseMove(event, true)
+		this.endEditShape()
+	}
 
 	endEditShape() {
 		if (!this.imageMark.status.shape_editing) return
+		this.getEditTargetShape()?.removeClass('edit-moving-point')
 		this.editMouseDownEvent = null
 		this.editOriginData = null
 		this.imageMark.getShapePlugin()?.setHoldShape(null)
@@ -532,4 +574,3 @@ export interface ShapeData {
 	label?: string
 	[x: string]: any
 }
-

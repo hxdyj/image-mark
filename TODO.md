@@ -39,4 +39,5 @@
 - [x] Plygon Polyline 编辑过程删除正常的点
 - [ ] 最后选中的shape在最上层绘制，然后如果连续点击，切换到范围内其他shape
 - [ ] 点击空白区域，取消选中所有shape
-- [ ] polygon polyline 右击完成绘制
+- [x] polygon polyline 右击完成绘制
+- [ ] beautiful里边的提示也要完善

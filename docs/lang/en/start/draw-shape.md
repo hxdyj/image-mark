@@ -49,3 +49,5 @@ document.querySelector('#draw-btn').onclick = () => {
 | `Delete`       | Remove last point               |
 | `Esc`          | Cancel drawing                  |
 | `Double-click` | Finish polygon/polyline drawing |
+
+Additional note: A polygon requires at least `3` points, and a polyline requires at least `2` points. If drawing ends before reaching the minimum, the drawing is discarded.

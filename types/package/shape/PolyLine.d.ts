@@ -10,19 +10,19 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
     static shapeName: string;
     static minVertexCount: number;
     readonly mouseDrawType: ShapeMouseDrawType;
-    private lastVertexClickTime;
-    private lastVertexClickIndex;
     constructor(data: PolyLineData, imageMarkInstance: ImageMark, options?: ShapeOptions);
     draw(): G;
     translate(x: number, y: number): void;
     fixData(data?: PolyLineData | undefined): void;
     mouseEvent2Data(options: MouseEvent2DataOptions): PolyLineData | null;
     onEndDrawing(): void;
+    canFinishDrawing(): boolean;
     getEditPointClassName(className: number): string;
     getMidPointClassName(index: number): string;
     drawEdit(): void;
     onMidPointMouseDown: (event: Event) => void;
     onVertexMouseDown: (event: Event) => void;
+    onVertexContextMenu: (event: Event) => void;
     deleteVertex(index: number): boolean;
     getVertexCount(): number;
     canDeleteVertex(): boolean;
@@ -33,6 +33,5 @@ export declare class ImageMarkPolyLine extends ImageMarkShape<PolyLineData> {
         point: Point;
     };
     onDocumentMouseMove(event: MouseEvent, emit?: boolean): void;
-    onDocumentMouseUp(event: MouseEvent): void;
     drawMinimap(drawContext: MinimapDrawContext): void;
 }

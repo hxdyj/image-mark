@@ -161,9 +161,8 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 	}
 
 	onDocumentMouseMove(event: MouseEvent, emit = false) {
-		super.onDocumentMouseMove(event)
-		const evt = event as MouseEvent
-		if (evt.button === 0 && this.editMouseDownEvent) {
+		super.onDocumentMouseMove(event, emit)
+		if (this.editMouseDownEvent) {
 			event.stopPropagation()
 			const { index, point } = this.getEditPoint(event)
 			this.updateData({
@@ -172,14 +171,6 @@ export class ImageMarkLine extends ImageMarkShape<LineData> {
 				[index === 0 ? 'y' : 'y2']: point.y,
 			}, emit)
 		}
-		this.getEditShape()?.addClass('edit-moving-point')
-	}
-
-	onDocumentMouseUp(event: MouseEvent) {
-		super.onDocumentMouseUp(event)
-		this.onDocumentMouseMove(event, true)
-		this.getEditShape()?.removeClass('edit-moving-point')
-		this.endEditShape()
 	}
 
 	drawMinimap(drawContext: MinimapDrawContext): void {

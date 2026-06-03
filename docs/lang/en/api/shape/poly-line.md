@@ -16,16 +16,18 @@ Click multiple times to complete drawing:
 4. Press `Enter` to confirm and complete drawing, or press `Esc` to cancel
 5. Press `Backspace` to delete the last point
 
+Note: A polyline requires at least `2` points. If drawing ends with fewer than `2` points, the drawing is discarded and no shape is created.
+
 You can hold the space key to pan the canvas while drawing.
 
 ## Editing
 
 After selecting a polyline, it enters edit mode:
-1. Drag vertices to adjust the polyline shape
+1. Click a vertex once to start moving it, and click again to finish moving
 2. Midpoint controls with a plus sign are displayed between adjacent vertices. Click a midpoint to insert a new vertex at that position
-3. Double-click a vertex to delete it (polyline must keep at least 2 vertices)
+3. Right-click a vertex to delete it (polyline must keep at least 2 vertices)
 4. Use `ShapeOptions.enableEditAddMidPoint` to control whether midpoints are displayed
-5. Use `ShapeOptions.enableEditDropPoint` to control whether double-click to delete vertex is enabled
+5. Use `ShapeOptions.enableEditDropPoint` to control whether right-click to delete vertex is enabled
 
 ## Data
 
